@@ -1,0 +1,14 @@
+CREATE TABLE course (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT,
+    distance REAL DEFAULT 0,
+    maxRegistrants INTEGER DEFAULT 0,
+    startLat REAL DEFAULT 0,
+    startLong REAL DEFAULT 0,
+    updatedAt TEXT
+);
+
+select_all:
+SELECT *
+FROM course
+WHERE id IS ?;

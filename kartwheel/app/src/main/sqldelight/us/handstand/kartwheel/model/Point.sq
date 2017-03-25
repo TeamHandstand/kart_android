@@ -1,0 +1,13 @@
+CREATE TABLE point (
+    id TEXT NOT NULL PRIMARY KEY,
+    isVertex INTEGER DEFAULT 1,
+    latitude REAL DEFAULT 0,
+    longitude REAL DEFAULT 0,
+    stepOrder INTEGER DEFAULT 0,
+    updatedAt TEXT
+);
+
+select_all:
+SELECT *
+FROM point
+WHERE id IS ?;

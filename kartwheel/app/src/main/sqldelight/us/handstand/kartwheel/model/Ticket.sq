@@ -1,0 +1,16 @@
+CREATE TABLE ticket (
+    id TEXT NOT NULL PRIMARY KEY,
+    code TEXT,
+    claimedAt TEXT,
+    eventId TEXT,
+    forfeitedAt TEXT,
+    playerId TEXT,
+    purchasedAt TEXT,
+    purchaserId TEXT,
+    updatedAt TEXT
+);
+
+select_all:
+SELECT *
+FROM ticket
+WHERE id IS ?;

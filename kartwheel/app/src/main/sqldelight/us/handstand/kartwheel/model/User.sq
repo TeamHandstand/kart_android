@@ -1,0 +1,32 @@
+CREATE TABLE user (
+    id TEXT NOT NULL PRIMARY KEY,
+    authToken TEXT,
+    birth TEXT NOT NULL,
+    cell TEXT NOT NULL,
+    charmanderOrSquirtle TEXT NOT NULL,
+    email TEXT NOT NULL,
+    eventId TEXT,
+    facetimeCount INTEGER,
+    firstName TEXT NOT NULL,
+    furbyOrTamagachi TEXT NOT NULL,
+    imageUrl TEXT,
+    lastName TEXT NOT NULL,
+    miniGameId TEXT,
+    nickName TEXT NOT NULL,
+    pancakeOrWaffle TEXT NOT NULL,
+    pushDeviceToken TEXT,
+    raceId TEXT,
+    referralType TEXT,
+    totalAntiMiles REAL,
+    totalDistanceMiles REAL,
+    updatedAt TEXT
+);
+
+select_all:
+SELECT *
+FROM user
+WHERE id IS ?;
+
+insert_row:
+INSERT INTO user(id, authToken, birth, cell, charmanderOrSquirtle, email, firstName, furbyOrTamagachi, lastName, nickName, pancakeOrWaffle)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);

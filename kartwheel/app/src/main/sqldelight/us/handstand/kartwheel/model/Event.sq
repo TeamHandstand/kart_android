@@ -1,0 +1,16 @@
+CREATE TABLE event (
+    id TEXT NOT NULL PRIMARY KEY,
+    endTime INTEGER NOT NULL,
+    updatedAt TEXT NOT NULL,
+    name TEXT NOT NULL,
+    startTime INTEGER NOT NULL
+);
+
+select_all:
+SELECT *
+FROM event
+WHERE id IS ?;
+
+insert_row:
+INSERT INTO event(id, updatedAt, name, startTime, endTime)
+VALUES (?, ?, ?, ?, ?);

@@ -1,0 +1,19 @@
+CREATE TABLE race (
+    id TEXT NOT NULL PRIMARY KEY,
+    endTime TEXT,
+    funQuestion TEXT,
+    openSpots INTEGER DEFAULT 20,
+    raceOrder INTEGER DEFAULT 0,
+    replayUrl TEXT,
+    shortAnswer1 TEXT,
+    shortAnswer2 TEXT,
+    slug TEXT,
+    startTime TEXT,
+    updatedAt TEXT,
+    videoUrl TEXT
+);
+
+select_all:
+SELECT *
+FROM race
+WHERE id IS ?;

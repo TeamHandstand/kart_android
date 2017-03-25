@@ -1,0 +1,13 @@
+CREATE TABLE item_zone (
+    id TEXT NOT NULL PRIMARY KEY,
+    latitude REAL DEFAULT 0,
+    longitude REAL DEFAULT 0,
+    courseId TEXT,
+    activeBlockCount INTEGER,
+    updatedAt TEXT
+);
+
+select_all:
+SELECT *
+FROM item_zone
+WHERE id IS ?;

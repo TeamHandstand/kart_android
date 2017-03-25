@@ -1,0 +1,27 @@
+CREATE TABLE user_race_info (
+    id TEXT NOT NULL PRIMARY KEY,
+    challengeId TEXT,
+    completionPercent REAL DEFAULT 0,
+    courseId TEXT,
+    currentLap INTEGER DEFAULT 0,
+    endTime TEXT,
+    funAnswerDisplayText TEXT,
+    itemId TEXT,
+    latitude REAL DEFAULT 37.770968,
+    longitude REAL DEFAULT -122.432627,
+    raceId TEXT,
+    ranking INTEGER DEFAULT 0,
+    removedAt TEXT,
+    state TEXT DEFAULT 'attached',
+    targeted INTEGER DEFAULT 0,
+    targetedBy TEXT,
+    totalAntiMiles REAL DEFAULT 0,
+    totalMileage REAL DEFAULT 0,
+    totalTime REAL DEFAULT 0,
+    updatedAt TEXT
+);
+
+select_all:
+SELECT *
+FROM user_race_info
+WHERE id IS ?;

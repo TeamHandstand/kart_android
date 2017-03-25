@@ -1,0 +1,15 @@
+CREATE TABLE dropped_item (
+    id TEXT NOT NULL PRIMARY KEY,
+    droppedAt TEXT,
+    itemId TEXT,
+    latitude REAL DEFAULT 0,
+    longitude REAL DEFAULT 0,
+    raceId TEXT,
+    steppedOnAt TEXT,
+    updatedAt TEXT
+);
+
+select_all:
+SELECT *
+FROM dropped_item
+WHERE id IS ?;

@@ -1,0 +1,14 @@
+CREATE TABLE item (
+    id TEXT NOT NULL PRIMARY KEY,
+    imageUrl TEXT,
+    displayableName TEXT,
+    slug TEXT,
+    attackType TEXT,
+    challengeId TEXT,
+    updatedAt TEXT
+);
+
+select_all:
+SELECT *
+FROM item
+WHERE id IS ?;
