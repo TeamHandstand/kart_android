@@ -51,19 +51,26 @@ public class CriticalInformationFragment extends Fragment implements TicketActiv
         leftImage.setOnClickListener(this);
         rightImage = ViewUtil.findView(fragmentViewGroup, R.id.right_image);
         rightImage.setOnClickListener(this);
-        return super.onCreateView(inflater, container, savedInstanceState);
+        currentQuestion = FOOD;
+        selectedAnswer = NONE;
+        return fragmentViewGroup;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        currentQuestion = getActivity().getIntent().hasExtra(User.PANCAKEORWAFFLE) ? FOOD : POKEMON;
+        updateState();
+    }
+
+    private void updateState() {
+        currentQuestion = getActivity().getIntent().hasExtra(User.PANCAKEORWAFFLE) ? POKEMON : FOOD;
         critInfoText.setText(currentQuestion == FOOD ? R.string.pancakes_waffles : R.string.charmander_squirtle);
         leftImage.setImageResource(currentQuestion == FOOD ? R.mipmap.pancakes : R.mipmap.charmander);
         rightImage.setImageResource(currentQuestion == FOOD ? R.mipmap.waffles : R.mipmap.squirtle);
 
         leftImage.setSelected(selectedAnswer == LEFT);
         rightImage.setSelected(selectedAnswer == RIGHT);
+        ((TicketActivity) getActivity()).setButtonState(selectedAnswer == NONE ? R.color.grey_button_disabled : R.color.blue, R.string.next, selectedAnswer != NONE);
     }
 
     @Override
@@ -71,13 +78,11 @@ public class CriticalInformationFragment extends Fragment implements TicketActiv
         if (v.getId() == R.id.left_image || v.getId() == R.id.right_image) {
             selectedAnswer = (v.getId() == R.id.left_image ? LEFT : RIGHT);
             ((TicketActivity) getActivity()).setButtonState(R.color.blue, R.string.next, true);
-        } else {
-            if (selectedAnswer != NONE) {
-                getActivity().getIntent().putExtra(currentQuestion == FOOD ? User.PANCAKEORWAFFLE : User.CHARMANDERORSQUIRTLE, selectedAnswer);
-                currentQuestion = (currentQuestion == FOOD ? POKEMON : FINISHED);
-                selectedAnswer = NONE;
-            }
-            ((TicketActivity) getActivity()).setButtonState(R.color.grey_button_disabled, R.string.next, false);
+        } else if (selectedAnswer != NONE) {
+            getActivity().getIntent().putExtra(currentQuestion == FOOD ? User.PANCAKEORWAFFLE : User.CHARMANDERORSQUIRTLE, selectedAnswer);
+            currentQuestion = (currentQuestion == FOOD ? POKEMON : FINISHED);
+            selectedAnswer = NONE;
+            updateState();
         }
     }
 }

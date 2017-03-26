@@ -1,22 +1,25 @@
+import java.lang.Boolean;
+
 CREATE TABLE user (
     id TEXT NOT NULL PRIMARY KEY,
     authToken TEXT,
-    birth TEXT NOT NULL,
-    cell TEXT NOT NULL,
-    charmanderOrSquirtle TEXT NOT NULL,
-    email TEXT NOT NULL,
+    birth TEXT,
+    cell TEXT,
+    charmanderOrSquirtle TEXT,
+    email TEXT,
     eventId TEXT,
     facetimeCount INTEGER,
-    firstName TEXT NOT NULL,
-    furbyOrTamagachi TEXT NOT NULL,
+    firstName TEXT,
     imageUrl TEXT,
-    lastName TEXT NOT NULL,
+    lastName TEXT,
     miniGameId TEXT,
-    nickName TEXT NOT NULL,
-    pancakeOrWaffle TEXT NOT NULL,
+    nickName TEXT,
+    pancakeOrWaffle TEXT,
     pushDeviceToken TEXT,
+    pushEnabled INTEGER AS Boolean DEFAULT 0,
     raceId TEXT,
     referralType TEXT,
+    teamId TEXT,
     totalAntiMiles REAL,
     totalDistanceMiles REAL,
     updatedAt TEXT
@@ -28,5 +31,7 @@ FROM user
 WHERE id IS ?;
 
 insert_row:
-INSERT INTO user(id, authToken, birth, cell, charmanderOrSquirtle, email, firstName, furbyOrTamagachi, lastName, nickName, pancakeOrWaffle)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+INSERT INTO user(id, authToken, birth, cell, charmanderOrSquirtle, email, eventId, facetimeCount,
+firstName, imageUrl, lastName, miniGameId, nickName, pancakeOrWaffle, raceId, referralType, teamId,
+totalAntiMiles, totalDistanceMiles, updatedAt)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);

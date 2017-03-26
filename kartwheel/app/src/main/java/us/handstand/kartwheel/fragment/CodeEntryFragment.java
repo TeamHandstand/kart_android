@@ -28,6 +28,6 @@ public class CodeEntryFragment extends Fragment implements TicketActivity.Ticket
 
     @Override
     public void onClick(View v) {
-        getActivity().getIntent().putExtra(Ticket.CODE, codeEntry.getText().toString().toLowerCase());
+        getActivity().getIntent().putExtra(Ticket.CODE, codeEntry.getText().toString().toLowerCase().replace(" ", ""));
     }
 }

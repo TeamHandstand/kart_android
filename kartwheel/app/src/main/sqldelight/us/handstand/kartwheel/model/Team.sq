@@ -1,12 +1,20 @@
+import java.util.List;
+import us.handstand.kartwheel.model.Ticket;
+import us.handstand.kartwheel.model.User;
+
 CREATE TABLE team (
     id TEXT NOT NULL PRIMARY KEY,
     bronzeCount INTEGER,
     eventId TEXT,
     goldCount INTEGER,
-    silverCount INTEGER,
+    name TEXT,
     ribbonCount INTEGER,
     ranking INTEGER,
-    updatedAt TEXT
+    silverCount INTEGER,
+    slug TEXT,
+    tickets BLOB AS List<Ticket>,
+    updatedAt TEXT,
+    users BLOB AS List<User>
 );
 
 select_all:
@@ -15,5 +23,5 @@ FROM team
 WHERE id IS ?;
 
 insert_row:
-INSERT INTO team(id)
-VALUES (?);
+INSERT INTO team(id, bronzeCount, eventId, goldCount, name, ribbonCount, ranking, silverCount, slug, tickets, updatedAt, users)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);

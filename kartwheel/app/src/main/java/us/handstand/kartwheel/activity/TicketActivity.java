@@ -4,6 +4,7 @@ package us.handstand.kartwheel.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.annotation.IntDef;
@@ -12,18 +13,26 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.gson.JsonObject;
+
+import org.json.JSONObject;
 
 import retrofit2.Call;
 import retrofit2.Response;
 import us.handstand.kartwheel.R;
 import us.handstand.kartwheel.fragment.AlreadyClaimedFragment;
 import us.handstand.kartwheel.fragment.CodeEntryFragment;
+import us.handstand.kartwheel.fragment.CriticalInformationFragment;
 import us.handstand.kartwheel.fragment.TOSFragment;
 import us.handstand.kartwheel.fragment.WelcomeFragment;
 import us.handstand.kartwheel.layout.ViewUtil;
-import us.handstand.kartwheel.model.Team;
+import us.handstand.kartwheel.model.AndroidStorage;
+import us.handstand.kartwheel.model.Database;
 import us.handstand.kartwheel.model.Ticket;
 import us.handstand.kartwheel.model.User;
 import us.handstand.kartwheel.network.API;
@@ -36,7 +45,6 @@ public class TicketActivity extends AppCompatActivity implements View.OnClickLis
     private @interface FragmentType {
     }
 
-    public static final String INTENT_EXTRA_USER_BUNDLE = "user_bundle";
     private static final String INTENT_EXTRA_FRAGMENT_TYPE = "fragment_type";
     private static final int TOS = 0;
     private static final int CODE_ENTRY = 1;
@@ -90,6 +98,12 @@ public class TicketActivity extends AppCompatActivity implements View.OnClickLis
                 title.setText(R.string.welcome);
                 button.setText(R.string.im_ready);
                 ticketFragment = new WelcomeFragment();
+                break;
+            case CRITICAL_INFO:
+                title.setText(R.string.welcome);
+                button.setText(R.string.next);
+                ticketFragment = new CriticalInformationFragment();
+                break;
         }
         if (ticketFragment != null) {
             getIntent().putExtra(INTENT_EXTRA_FRAGMENT_TYPE, type);
@@ -133,14 +147,26 @@ public class TicketActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             case CODE_ENTRY:
                 if (getIntent().hasExtra(Ticket.CODE)) {
-                    API.claimTicket(getIntent().getStringExtra(Ticket.CODE), new API.APICallback<Team>() {
+                    API.claimTicket(getIntent().getStringExtra(Ticket.CODE), new API.APICallback<JsonObject>() {
                         @Override
-                        public void onResponse(Call<Team> call, Response<Team> response) {
+                        public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                             if (response.code() == 200) {
-                                runOnUiThread(() -> onLoginSuccess());
+                                runOnUiThread(() -> onSuccessfulClaim());
                             } else if (response.code() == 409) {
                                 runOnUiThread(() -> showFragment(ALREADY_CLAIMED));
+                            } else if (response.errorBody() != null) {
+                                try {
+                                    JSONObject error = new JSONObject(response.errorBody().string());
+                                    Toast.makeText(TicketActivity.this, error.getString("error"), Toast.LENGTH_LONG).show();
+                                } catch (Exception ignore) {
+                                }
                             }
+                        }
+
+                        @Override
+                        public void onFailure(Call<JsonObject> call, Throwable t) {
+                            super.onFailure(call, t);
+                            Toast.makeText(TicketActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -170,14 +196,24 @@ public class TicketActivity extends AppCompatActivity implements View.OnClickLis
                         getIntent().hasExtra(User.FIRSTNAME) &&
                         getIntent().hasExtra(User.LASTNAME) &&
                         getIntent().hasExtra(User.NICKNAME)) {
-                    onLoginSuccess();
+                    onSuccessfulClaim();
                 }
                 break;
         }
     }
 
-    private void onLoginSuccess() {
-        startActivity(GameInfoActivity.getStartIntent(this));
-        finish();
+    private void onSuccessfulClaim() {
+        String ticketCode = getIntent().getStringExtra(Ticket.CODE);
+        AndroidStorage.set(AndroidStorage.EMOJI_CODE, ticketCode);
+        Database.get().createQuery(Ticket.TABLE_NAME, "select * from ticket where code is ?", ticketCode)
+                .subscribe(query -> {
+                    Cursor cursor = query.run();
+                    if (cursor != null && cursor.moveToFirst()) {
+                        Ticket ticket = Ticket.SELECT_ALL_MAPPER.map(cursor);
+                        Log.e(TicketActivity.class.getName(), API.gson.toJson(ticket));
+                        AndroidStorage.set(AndroidStorage.USER_ID, ticket.playerId());
+                        runOnUiThread(() -> showFragment(CRITICAL_INFO));
+                    }
+                }, Throwable::printStackTrace);
     }
 }

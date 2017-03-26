@@ -8,11 +8,11 @@ import android.support.annotation.StringDef;
 
 public class AndroidStorage {
     public static final String USER_ID = "user_id";
-    public static final String PASSWORD = "password";
+    public static final String EMOJI_CODE = "emoji_code";
     public static final String SERVER = "server";
     public static final String PORT = "port";
 
-    @StringDef({USER_ID, PASSWORD, SERVER, PORT})
+    @StringDef({USER_ID, EMOJI_CODE, SERVER, PORT})
     public @interface KEYS {
     }
 

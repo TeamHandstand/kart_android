@@ -34,16 +34,17 @@
         android:id="@+id/fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/buttonPanel"
-        android:layout_below="@+id/title" />
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/title"
+        android:layout_marginBottom="72dp" />
 
     <LinearLayout
         android:id="@+id/buttonPanel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:padding="16dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/additional_button"
