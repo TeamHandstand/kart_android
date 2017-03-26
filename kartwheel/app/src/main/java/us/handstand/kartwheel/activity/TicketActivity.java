@@ -94,15 +94,15 @@ public class TicketActivity extends AppCompatActivity implements View.OnClickLis
                 setAdditionalButtonState(R.color.green, R.string.contact_us, true);
                 ticketFragment = new AlreadyClaimedFragment();
                 break;
-            case WELCOME:
-                title.setText(R.string.welcome);
-                button.setText(R.string.im_ready);
-                ticketFragment = new WelcomeFragment();
-                break;
             case CRITICAL_INFO:
                 title.setText(R.string.welcome);
                 button.setText(R.string.next);
                 ticketFragment = new CriticalInformationFragment();
+                break;
+            case WELCOME:
+                title.setText(R.string.welcome);
+                ticketFragment = new WelcomeFragment();
+                setButtonState(R.color.grey_button_disabled, R.string.im_ready, false);
                 break;
         }
         if (ticketFragment != null) {
@@ -196,7 +196,8 @@ public class TicketActivity extends AppCompatActivity implements View.OnClickLis
                         getIntent().hasExtra(User.FIRSTNAME) &&
                         getIntent().hasExtra(User.LASTNAME) &&
                         getIntent().hasExtra(User.NICKNAME)) {
-                    onSuccessfulClaim();
+                    // TODO: Save user object and then show game info
+                    Toast.makeText(this, "Should create user here!", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }

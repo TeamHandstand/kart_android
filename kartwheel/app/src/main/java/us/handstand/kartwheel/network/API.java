@@ -60,6 +60,7 @@ public class API {
         kartWheelService = retrofit.create(KartWheelService.class);
     }
 
+    // TODO: Show loading animation when claiming ticket
     public static void claimTicket(String ticketCode, final APICallback<JsonObject> apiCallback) {
         Database.get().delete(Ticket.TABLE_NAME, null);
         Database.get().delete(User.TABLE_NAME, null);
@@ -77,20 +78,6 @@ public class API {
                             Log.e(TAG, response.body().toString());
                             Team team = gson.fromJson(response.body().get("team"), Team.class);
                             team.insert();
-                            /*
-                           "id":"d7c3b1aa-cb22-4447-9ba6-77d361102dfb"
-                           ,"name":"team-2"
-                           ,"slug":null
-                           ,"goldCount":0
-                           ,"silverCount":0
-                           ,"bronzeCount":0
-                           ,"ribbonCount":0
-                           ,"eventId":"6bcf26fb-daac-4d9a-8000-8448cc5fb530"
-                           ,"users":[{"id":"f879f6ad-9f1c-4bb6-a3d4-7416645f2a4b","firstName":"Gil","lastName":"Levy","teamId":"d7c3b1aa-cb22-4447-9ba6-77d361102dfb","nickName":"gilly","cell":null,"email":"gil@handstandwith.us","referralType":null,"imageUrl":null,"pushEnabled":false,"facetimeCount":0,"pushDeviceToken":null,"pancakeOrWaffle":null,"charmanderOrSquirtle":null}
-                                    ,{"id":"83fd76d5-ef5f-45c7-bb6f-417c7e1f979f","firstName":"Kyler","lastName":"Evitt","teamId":"d7c3b1aa-cb22-4447-9ba6-77d361102dfb","nickName":"kylery","cell":null,"email":"kyler@handstandwith.us","referralType":null,"imageUrl":null,"pushEnabled":false,"facetimeCount":0,"pushDeviceToken":null,"pancakeOrWaffle":null,"charmanderOrSquirtle":null}]
-                          ,"tickets":[{"id":"f3a8d34f-5b03-40d9-8794-7988ebab09b8","code":"👽🎮🙈","claimedAt":"2017-03-26T09:09:29.968Z","playerId":"83fd76d5-ef5f-45c7-bb6f-417c7e1f979f","teamId":"d7c3b1aa-cb22-4447-9ba6-77d361102dfb","priceTierId":null,"paymentId":null,"forfeitedAt":null,"purchasedAt":null}
-                                     ,{"id":"f763c3ac-4ff3-4c64-a77a-95a54f1b5a1b","code":"🎨🙊💩","claimedAt":"2017-03-26T09:11:31.008Z","playerId":"f879f6ad-9f1c-4bb6-a3d4-7416645f2a4b","teamId":"d7c3b1aa-cb22-4447-9ba6-77d361102dfb","priceTierId":null,"paymentId":null,"forfeitedAt":null,"purchasedAt":null}]}}
-                             */
 
                             List<User> users = team.users() == null ? Collections.emptyList() : team.users();
                             for (User user : users) {
