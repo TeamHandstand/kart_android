@@ -107,7 +107,9 @@ public class TicketActivity extends AppCompatActivity implements View.OnClickLis
         }
         if (ticketFragment != null) {
             getIntent().putExtra(INTENT_EXTRA_FRAGMENT_TYPE, type);
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment, (Fragment) ticketFragment).commit();
+            if (!isFinishing() && !getSupportFragmentManager().isDestroyed()) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment, (Fragment) ticketFragment).commit();
+            }
         }
     }
 
