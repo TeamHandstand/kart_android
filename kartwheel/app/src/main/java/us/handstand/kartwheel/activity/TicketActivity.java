@@ -6,9 +6,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
-import android.support.annotation.IdRes;
 import android.support.annotation.IntDef;
-import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
@@ -23,26 +21,29 @@ import us.handstand.kartwheel.R;
 import us.handstand.kartwheel.fragment.AlreadyClaimedFragment;
 import us.handstand.kartwheel.fragment.CodeEntryFragment;
 import us.handstand.kartwheel.fragment.TOSFragment;
+import us.handstand.kartwheel.fragment.WelcomeFragment;
 import us.handstand.kartwheel.layout.ViewUtil;
 import us.handstand.kartwheel.model.Team;
+import us.handstand.kartwheel.model.Ticket;
+import us.handstand.kartwheel.model.User;
 import us.handstand.kartwheel.network.API;
 
 public class TicketActivity extends AppCompatActivity implements View.OnClickListener {
-    public interface TicketFragment {
-        @Nullable
-        Bundle onButtonClicked(@IdRes int id);
+    public interface TicketFragment extends View.OnClickListener {
     }
 
-    @IntDef({TOS, CODE_ENTRY, CRITICAL_INFO, ALREADY_CLAIMED, FORFEIT})
+    @IntDef({TOS, CODE_ENTRY, CRITICAL_INFO, WELCOME, ALREADY_CLAIMED, FORFEIT})
     private @interface FragmentType {
     }
 
+    public static final String INTENT_EXTRA_USER_BUNDLE = "user_bundle";
     private static final String INTENT_EXTRA_FRAGMENT_TYPE = "fragment_type";
     private static final int TOS = 0;
     private static final int CODE_ENTRY = 1;
     private static final int CRITICAL_INFO = 2;
-    private static final int ALREADY_CLAIMED = 3;
-    private static final int FORFEIT = 4;
+    private static final int WELCOME = 3;
+    private static final int ALREADY_CLAIMED = 4;
+    private static final int FORFEIT = 5;
 
     private TextView title;
     private AppCompatButton button;
@@ -85,6 +86,10 @@ public class TicketActivity extends AppCompatActivity implements View.OnClickLis
                 setAdditionalButtonState(R.color.green, R.string.contact_us, true);
                 ticketFragment = new AlreadyClaimedFragment();
                 break;
+            case WELCOME:
+                title.setText(R.string.welcome);
+                button.setText(R.string.im_ready);
+                ticketFragment = new WelcomeFragment();
         }
         if (ticketFragment != null) {
             getIntent().putExtra(INTENT_EXTRA_FRAGMENT_TYPE, type);
@@ -121,27 +126,20 @@ public class TicketActivity extends AppCompatActivity implements View.OnClickLis
             return;
         }
 
-        Bundle buttonClickedBundle = ticketFragment.onButtonClicked(v.getId());
+        ticketFragment.onClick(v);
         switch (getCurrentFragmentType()) {
             case TOS:
                 showFragment(CODE_ENTRY);
                 break;
             case CODE_ENTRY:
-                if (buttonClickedBundle != null && buttonClickedBundle.containsKey(CodeEntryFragment.BUNDLE_CODE_KEY)) {
-                    String ticketCode = buttonClickedBundle.getString(CodeEntryFragment.BUNDLE_CODE_KEY, "");
-                    API.claimTicket(ticketCode, new API.APICallback<Team>() {
+                if (getIntent().hasExtra(Ticket.CODE)) {
+                    API.claimTicket(getIntent().getStringExtra(Ticket.CODE), new API.APICallback<Team>() {
                         @Override
                         public void onResponse(Call<Team> call, Response<Team> response) {
-                            switch (response.code()) {
-                                case 200:
-                                    // TODO
-                                    break;
-                                case 404:
-                                    // TODO
-                                    break;
-                                case 409:
-                                    runOnUiThread(() -> showFragment(ALREADY_CLAIMED));
-                                    break;
+                            if (response.code() == 200) {
+                                runOnUiThread(() -> onLoginSuccess());
+                            } else if (response.code() == 409) {
+                                runOnUiThread(() -> showFragment(ALREADY_CLAIMED));
                             }
                         }
                     });
@@ -149,18 +147,37 @@ public class TicketActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             case ALREADY_CLAIMED:
                 if (v.getId() == R.id.additional_button) {
-                    final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
-
-                    emailIntent.setType("plain/text");
-                    emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{getResources().getString(R.string.email)});
-                    emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getResources().getString(R.string.contact_us_subject_line));
-                    emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, getResources().getString(R.string.contact_us_body));
-
+                    final Intent emailIntent = new Intent(Intent.ACTION_SEND)
+                            .setType("plain/text")
+                            .putExtra(Intent.EXTRA_EMAIL, new String[]{getResources().getString(R.string.support_email)})
+                            .putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.contact_us_subject_line))
+                            .putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.contact_us_body));
                     startActivity(Intent.createChooser(emailIntent, getResources().getString(R.string.contact_us)));
                 } else {
                     showFragment(CODE_ENTRY);
                 }
                 break;
+            case CRITICAL_INFO:
+                if (getIntent().hasExtra(User.PANCAKEORWAFFLE) &&
+                        getIntent().hasExtra(User.CHARMANDERORSQUIRTLE)) {
+                    showFragment(WELCOME);
+                }
+                break;
+            case WELCOME:
+                if (getIntent().hasExtra(User.BIRTH) &&
+                        getIntent().hasExtra(User.CELL) &&
+                        getIntent().hasExtra(User.EMAIL) &&
+                        getIntent().hasExtra(User.FIRSTNAME) &&
+                        getIntent().hasExtra(User.LASTNAME) &&
+                        getIntent().hasExtra(User.NICKNAME)) {
+                    onLoginSuccess();
+                }
+                break;
         }
+    }
+
+    private void onLoginSuccess() {
+        startActivity(GameInfoActivity.getStartIntent(this));
+        finish();
     }
 }

@@ -2,7 +2,6 @@ package us.handstand.kartwheel.fragment;
 
 
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -57,9 +56,7 @@ public class TOSFragment extends Fragment implements TicketActivity.TicketFragme
         ((TicketActivity) getActivity()).setButtonState(R.color.blue, R.string.lets_go, true);
     }
 
-    @Nullable
     @Override
-    public Bundle onButtonClicked(@IdRes int id) {
-        return null;
+    public void onClick(View v) {
     }
 }

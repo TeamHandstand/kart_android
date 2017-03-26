@@ -2,7 +2,6 @@ package us.handstand.kartwheel.fragment;
 
 
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -22,15 +21,11 @@ public class AlreadyClaimedFragment extends Fragment implements TicketActivity.T
         return fragmentViewGroup;
     }
 
-    @Nullable
-    @Override
-    public Bundle onButtonClicked(@IdRes int id) {
-        return null;
-    }
-
     @Override
     public void onClick(View v) {
-        // TODO: Where do we send them?
+        if (v.getId() == R.id.already_claimed_link) {
+            // TODO: Where do we send the user?
 //        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("")));
+        }
     }
 }

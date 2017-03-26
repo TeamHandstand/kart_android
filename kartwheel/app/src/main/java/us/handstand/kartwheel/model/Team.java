@@ -8,7 +8,7 @@ import com.squareup.sqldelight.RowMapper;
 
 @AutoValue
 public abstract class Team implements TeamModel {
-    public static final TeamModel.Factory<Team> FACTORY = new TeamModel.Factory<>((_id, bronzeCount, eventId, goldCount, silverCount, ribbonCount, ranking, updatedAt) -> new AutoValue_Team(_id, bronzeCount, eventId, goldCount, silverCount, ribbonCount, ranking, updatedAt));
+    public static final TeamModel.Factory<Team> FACTORY = new TeamModel.Factory<>(AutoValue_Team::new);
     public static final RowMapper<Team> SELECT_ALL_MAPPER = FACTORY.select_allMapper();
 
     // Required by Gson

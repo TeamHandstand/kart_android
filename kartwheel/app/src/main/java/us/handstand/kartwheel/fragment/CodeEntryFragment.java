@@ -2,7 +2,6 @@ package us.handstand.kartwheel.fragment;
 
 
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,10 +12,10 @@ import android.widget.EditText;
 import us.handstand.kartwheel.R;
 import us.handstand.kartwheel.activity.TicketActivity;
 import us.handstand.kartwheel.layout.ViewUtil;
+import us.handstand.kartwheel.model.Ticket;
 
 public class CodeEntryFragment extends Fragment implements TicketActivity.TicketFragment {
 
-    public static final String BUNDLE_CODE_KEY = "bundle_code_key";
     private EditText codeEntry;
 
     @Nullable
@@ -27,11 +26,8 @@ public class CodeEntryFragment extends Fragment implements TicketActivity.Ticket
         return fragmentView;
     }
 
-    @Nullable
     @Override
-    public Bundle onButtonClicked(@IdRes int id) {
-        Bundle bundle = new Bundle();
-        bundle.putString(BUNDLE_CODE_KEY, codeEntry.getText().toString().toLowerCase());
-        return bundle;
+    public void onClick(View v) {
+        getActivity().getIntent().putExtra(Ticket.CODE, codeEntry.getText().toString().toLowerCase());
     }
 }

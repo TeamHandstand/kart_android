@@ -8,7 +8,7 @@ import com.squareup.sqldelight.RowMapper;
 
 @AutoValue
 public abstract class User implements UserModel {
-    public static final Factory<User> FACTORY = new Factory<>((_id, authToken, birth, cell, charmanderOrSquirtle, email, eventId, facetimeCount, firstName, furbyOrTamagachi, imageUrl, lastName, miniGameId, nickName, pancakeOrWaffle, pushDeviceToken, raceId, referralType, totalAntiMiles, totalDistanceMiles, updatedAt) -> new AutoValue_User(_id, authToken, birth, cell, charmanderOrSquirtle, email, eventId, facetimeCount, firstName, furbyOrTamagachi, imageUrl, lastName, miniGameId, nickName, pancakeOrWaffle, pushDeviceToken, raceId, referralType, totalAntiMiles, totalDistanceMiles, updatedAt));
+    public static final Factory<User> FACTORY = new Factory<>(AutoValue_User::new);
     public static final RowMapper<User> SELECT_ALL_MAPPER = FACTORY.select_allMapper();
 
     // Needed by Gson

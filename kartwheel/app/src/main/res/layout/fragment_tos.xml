@@ -15,15 +15,11 @@
 
     <TextView
         android:id="@+id/title"
+        style="@style/TicketContentTitleStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/logo"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
-        android:text="@string/tos"
-        android:textAllCaps="true"
-        android:textColor="@color/red"
-        android:textStyle="bold" />
+        android:text="@string/tos" />
 
     <ScrollView
         android:id="@+id/tos_scroll_view"
