@@ -2,9 +2,9 @@ package us.handstand.kartwheel.fragment;
 
 
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.AppCompatButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,12 +59,7 @@ public class TOSFragment extends Fragment implements TicketActivity.TicketFragme
 
     @Nullable
     @Override
-    public Bundle onButtonClicked(AppCompatButton button) {
+    public Bundle onButtonClicked(@IdRes int id) {
         return null;
-    }
-
-    @Override
-    public int getFragmentType() {
-        return TicketActivity.TOS;
     }
 }

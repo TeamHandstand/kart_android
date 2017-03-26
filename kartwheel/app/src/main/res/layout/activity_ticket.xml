@@ -39,10 +39,10 @@
 
     <LinearLayout
         android:id="@+id/buttonPanel"
-        android:layout_margin="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:padding="16dp"
         android:orientation="vertical">
 
         <android.support.v7.widget.AppCompatButton
@@ -50,11 +50,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:enabled="false"
-            android:text="@string/scroll_down"
+            android:text="@string/contact_us"
             android:textAllCaps="true"
             android:textColor="@android:color/white"
             android:visibility="gone"
-            app:backgroundTint="@color/grey_button_disabled" />
+            app:backgroundTint="@color/green" />
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/button"

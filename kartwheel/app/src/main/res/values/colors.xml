@@ -6,4 +6,5 @@
     <color name="grey_button_disabled">@android:color/darker_gray</color>
     <color name="blue">@android:color/holo_blue_bright</color>
     <color name="red">@android:color/holo_red_dark</color>
+    <color name="green">@android:color/holo_green_dark</color>
 </resources>

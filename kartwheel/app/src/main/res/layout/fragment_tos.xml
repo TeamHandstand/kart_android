@@ -19,14 +19,18 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/logo"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
         android:text="@string/tos"
-        android:textAllCaps="true" />
+        android:textAllCaps="true"
+        android:textColor="@color/red"
+        android:textStyle="bold" />
 
     <ScrollView
         android:id="@+id/tos_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/title">
+        android:layout_below="@+id/title"
+        android:elevation="5dp">
 
         <TextView
             android:id="@+id/tos"

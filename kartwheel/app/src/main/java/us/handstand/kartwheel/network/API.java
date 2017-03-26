@@ -70,7 +70,6 @@ public class API {
                             ContentValues contentValues = new ContentValues();
                             contentValues.put(Team.ID, team.id());
                             Database.get().insert(Team.TABLE_NAME, contentValues);
-                            apiCallback.onResponse(call, response);
                             return;
                         case 404:
                             Log.e(TAG, "Not found");
@@ -81,7 +80,7 @@ public class API {
                         default:
                             Log.e(TAG, "Code: " + response.code());
                     }
-                    apiCallback.onFailure(call, new Throwable("Code: " + response.code()));
+                    apiCallback.onResponse(call, response);
                 } catch (Exception e) {
                     Log.e(TAG, "getProtocols#onResponse", e);
                 }
