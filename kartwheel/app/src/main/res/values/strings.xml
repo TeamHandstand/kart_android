@@ -21,6 +21,18 @@
     <string name="lets_go">Let\'s go</string>
     <string name="tos">Terms &amp; Conditions</string>
     <string name="enter_code">Enter your ticket code</string>
+    <string name="your_team">Your team</string>
+    <string name="where_when">When &amp; Where</string>
+    <string name="the_items">The items</string>
+    <string name="event_when_where">Meet at Hellman Hollow, May 13th, at high noon. Do NOT be late,
+        and wear your finest costumed athletic attire.</string>
+    <string name="event_banana">The attackee must stop running and play the infamous reorientation game!</string>
+    <string name="event_acorn">Toss an acorn, eat a rabbit. Acorns will do other things that you knew could happen.</string>
+    <string name="event_earthquake">Everybody in the race - except for the attacker - must stop running and
+    record a 12s video answering our ridiculous prompt (TODO: WHAT ELSE DOES THIS SAY)</string>
+    <string name="banana">Banana</string>
+    <string name="acorn">Acorn</string>
+    <string name="earthquake">Earthquake</string>
     <string name="does_not_have_code">Don\'t have code? You\'ll either need to\n phone a friend
     or <a href="www.handstand.us/karwheel">get one online</a>!</string>
     <string name="already_claimed_explanation">Someone has already claimed this ticket! In order to use this code,

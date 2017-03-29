@@ -12,4 +12,4 @@ CREATE TABLE dropped_item (
 select_all:
 SELECT *
 FROM dropped_item
-WHERE id IS ?;
+WHERE id=?;

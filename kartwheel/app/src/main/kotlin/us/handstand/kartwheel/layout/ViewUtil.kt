@@ -2,8 +2,10 @@ package us.handstand.kartwheel.layout
 
 
 import android.app.Activity
+import android.content.Context
 import android.support.annotation.IdRes
 import android.text.TextUtils
+import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
@@ -20,5 +22,9 @@ object ViewUtil {
 
     fun isEmpty(editText: EditText?): Boolean {
         return TextUtils.isEmpty(editText?.text?.toString())
+    }
+
+    fun dpToPx(context: Context, dp: Int): Int {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(), context.resources.displayMetrics).toInt()
     }
 }

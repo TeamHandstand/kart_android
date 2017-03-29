@@ -16,4 +16,4 @@ CREATE TABLE race (
 select_all:
 SELECT *
 FROM race
-WHERE id IS ?;
+WHERE id=?;

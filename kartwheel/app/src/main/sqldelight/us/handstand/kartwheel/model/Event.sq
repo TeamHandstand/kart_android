@@ -9,7 +9,7 @@ CREATE TABLE event (
 select_all:
 SELECT *
 FROM event
-WHERE id IS ?;
+WHERE id=?;
 
 insert_row:
 INSERT INTO event(id, updatedAt, name, startTime, endTime)

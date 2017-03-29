@@ -20,7 +20,7 @@ CREATE TABLE team (
 select_all:
 SELECT *
 FROM team
-WHERE id IS ?;
+WHERE id=?;
 
 insert_row:
 INSERT INTO team(id, bronzeCount, eventId, goldCount, name, ribbonCount, ranking, silverCount, slug, tickets, updatedAt, users)

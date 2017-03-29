@@ -11,4 +11,4 @@ CREATE TABLE course (
 select_all:
 SELECT *
 FROM course
-WHERE id IS ?;
+WHERE id = ?;

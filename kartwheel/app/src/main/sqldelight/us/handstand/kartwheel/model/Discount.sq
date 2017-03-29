@@ -10,7 +10,7 @@ CREATE TABLE discount (
 select_all:
 SELECT *
 FROM discount
-WHERE id IS ?;
+WHERE id=?;
 
 insert_row:
 INSERT INTO discount(id)

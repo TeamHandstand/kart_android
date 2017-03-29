@@ -16,4 +16,4 @@ CREATE TABLE ticket (
 select_all:
 SELECT *
 FROM ticket
-WHERE code IS ?;
+WHERE code=?;

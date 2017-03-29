@@ -24,4 +24,4 @@ CREATE TABLE user_race_info (
 select_all:
 SELECT *
 FROM user_race_info
-WHERE id IS ?;
+WHERE id=?;

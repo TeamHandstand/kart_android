@@ -10,4 +10,4 @@ CREATE TABLE point (
 select_all:
 SELECT *
 FROM point
-WHERE id IS ?;
+WHERE id=?;

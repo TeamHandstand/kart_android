@@ -1,7 +1,6 @@
 package us.handstand.kartwheel.activity
 
 
-import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
@@ -15,6 +14,7 @@ import android.support.v7.widget.AppCompatButton
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.fragment.*
 import us.handstand.kartwheel.layout.ViewUtil
@@ -37,12 +37,6 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener {
         @IntDef(TOS.toLong(), CODE_ENTRY.toLong(), CRITICAL_INFO.toLong(), WELCOME.toLong(),
                 ALREADY_CLAIMED.toLong(), FORFEIT.toLong(), GAME_INFO.toLong())
         private annotation class FragmentType
-
-        internal fun getStartIntent(context: Context): Intent {
-            val intent = Intent(context, TicketActivity::class.java)
-            intent.putExtra(INTENT_EXTRA_FRAGMENT_TYPE, TOS)
-            return intent
-        }
     }
 
     internal var title: TextView? = null
@@ -59,7 +53,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener {
         additionalButton = ViewUtil.findView(this, R.id.additional_button)
         button!!.setOnClickListener(this)
         additionalButton!!.setOnClickListener(this)
-        showFragment(currentFragmentType)
+        showFragment(if (KartWheel.user == null) TOS else GAME_INFO)
     }
 
     fun showFragment(@FragmentType type: Int) {
@@ -89,6 +83,10 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener {
                 title!!.setText(R.string.welcome)
                 ticketFragment = WelcomeFragment()
                 setButtonState(R.color.grey_button_disabled, R.string.im_ready, false)
+            }
+            GAME_INFO -> {
+                title!!.setText(R.string.app_name)
+                ticketFragment = GameInfoFragment()
             }
         }
         if (ticketFragment != null) {
@@ -129,19 +127,12 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener {
         ticketFragment!!.onClick(v)
         when (currentFragmentType) {
             TOS -> showFragment(CODE_ENTRY)
+
             CODE_ENTRY -> if (intent.hasExtra(TicketModel.CODE)) {
                 API.claimTicket(intent.getStringExtra(TicketModel.CODE), object : API.APICallback<Ticket>() {
                     override fun onSuccess(response: Ticket) {
                         if (response.isClaimed) {
-                            API.getRaces(AndroidStorage.get(AndroidStorage.EVENT_ID), object : API.APICallback<List<Race>>() {
-                                override fun onSuccess(response: List<Race>) {
-                                    showFragment(GAME_INFO)
-                                }
-
-                                override fun onFailure(errorCode: Int, errorResponse: String) {
-                                    Toast.makeText(this@TicketActivity, "Failed to get races " + errorResponse, Toast.LENGTH_LONG).show()
-                                }
-                            })
+                            showFragment(GAME_INFO)
                         } else {
                             runOnUiThread { showFragment(CRITICAL_INFO) }
                         }
@@ -156,6 +147,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener {
                     }
                 })
             }
+
             ALREADY_CLAIMED -> if (v.getId() == R.id.additional_button) {
                 val emailIntent = Intent(Intent.ACTION_SEND)
                         .setType("plain/text")
@@ -166,32 +158,39 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener {
             } else {
                 showFragment(CODE_ENTRY)
             }
+
             CRITICAL_INFO -> if (intent.hasExtra(UserModel.PANCAKEORWAFFLE) && intent.hasExtra(UserModel.CHARMANDERORSQUIRTLE)) {
                 showFragment(WELCOME)
             }
+
             WELCOME -> if (intent.hasExtra(UserModel.BIRTH) &&
                     intent.hasExtra(UserModel.CELL) &&
                     intent.hasExtra(UserModel.EMAIL) &&
                     intent.hasExtra(UserModel.FIRSTNAME) &&
                     intent.hasExtra(UserModel.LASTNAME) &&
                     intent.hasExtra(UserModel.NICKNAME)) {
-                val user = User.FACTORY.creator.create(AndroidStorage.get(AndroidStorage.USER_ID), null, // authToken
+                val user = User.FACTORY.creator.create(Storage.userId, null, // authToken
                         intent.getStringExtra(UserModel.BIRTH),
                         intent.getStringExtra(UserModel.CELL),
                         intent.getStringExtra(UserModel.CHARMANDERORSQUIRTLE),
                         intent.getStringExtra(UserModel.EMAIL),
-                        AndroidStorage.get(AndroidStorage.EVENT_ID), null, // facetime count
-                        intent.getStringExtra(UserModel.FIRSTNAME), null, // imageUrl
-                        intent.getStringExtra(UserModel.LASTNAME), null, // miniGameId
+                        Storage.eventId,
+                        null, // facetime count
+                        intent.getStringExtra(UserModel.FIRSTNAME),
+                        null, // imageUrl
+                        intent.getStringExtra(UserModel.LASTNAME),
+                        null, // miniGameId
                         intent.getStringExtra(UserModel.NICKNAME),
-                        intent.getStringExtra(UserModel.PANCAKEORWAFFLE), null, null, null, null, null, null, null, null// updated at
-                )// device token
-                // push enabled
-                // race id
-                // referral type
-                // team id
-                // total anti miles
-                // total distance miles
+                        intent.getStringExtra(UserModel.PANCAKEORWAFFLE),
+                        null, // device token
+                        null, // push enabled
+                        null, // race id
+                        null, // referral type
+                        null, // team id
+                        null, // total anti miles
+                        null, // total distance miles
+                        null // updated at
+                )
                 API.updateUser(user, object : API.APICallback<User>() {
                     override fun onSuccess(response: User) {
                         runOnUiThread { showFragment(GAME_INFO) }

@@ -28,7 +28,12 @@ CREATE TABLE user (
 select_all:
 SELECT *
 FROM user
-WHERE id IS ?;
+WHERE id = ?;
+
+select_from_team:
+SELECT *
+from user
+WHERE teamId = ?;
 
 insert_row:
 INSERT INTO user(id, authToken, birth, cell, charmanderOrSquirtle, email, eventId, facetimeCount,

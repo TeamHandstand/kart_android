@@ -54,12 +54,13 @@ object API {
                         Log.e(TAG, response.body().toString())
                         val team = gson.fromJson(response.body().get("team"), Team::class.java)
                         team.insert()
-                        AndroidStorage.set(AndroidStorage.EMOJI_CODE, ticketCode)
-                        AndroidStorage.set(AndroidStorage.TEAM_ID, team.id())
-                        AndroidStorage.set(AndroidStorage.EVENT_ID, team.eventId()!!)
+                        Storage.code = ticketCode
+                        Storage.teamId = team.id()
+                        Storage.eventId = team.eventId()!!
 
                         val users = if (team.users() == null) emptyList<User>() else team.users()
                         for (user in users!!) {
+                            Log.e(TAG, user.id())
                             user.insert()
                         }
 
@@ -67,7 +68,7 @@ object API {
                         for (ticket in tickets!!) {
                             if (ticketCode == ticket.code()) {
                                 userTicket = ticket
-                                AndroidStorage.set(AndroidStorage.USER_ID, userTicket.playerId()!!)
+                                Storage.userId = userTicket.playerId()!!
                             }
                             ticket.insert()
                         }
@@ -78,7 +79,6 @@ object API {
                 } catch (e: Exception) {
                     Log.e(TAG, "claimTicket#onResponse", e)
                 }
-
             }
 
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
@@ -88,7 +88,7 @@ object API {
     }
 
     fun getRaces(eventId: String, apiCallback: APICallback<List<Race>>) {
-        kartWheelService!!.getRaces(AndroidStorage.get(AndroidStorage.USER_ID), eventId).enqueue(object : Callback<JsonObject> {
+        kartWheelService!!.getRaces(Storage.userId, eventId).enqueue(object : Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                 try {
                     if (response.code() == 200) {
@@ -116,7 +116,7 @@ object API {
     fun updateUser(user: User, apiCallback: APICallback<User>) {
         val jsonObject = JsonObject()
         jsonObject.addProperty("user", gson.toJson(user))
-        kartWheelService!!.updateUser(AndroidStorage.get(AndroidStorage.USER_ID), AndroidStorage.get(AndroidStorage.EVENT_ID), jsonObject)
+        kartWheelService!!.updateUser(Storage.userId, Storage.eventId, jsonObject)
                 .enqueue(object : Callback<JsonObject> {
                     override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                         try {
@@ -130,7 +130,6 @@ object API {
                         } catch (e: Exception) {
                             Log.e(TAG, "updateUser#onResponse", e)
                         }
-
                     }
 
                     override fun onFailure(call: Call<JsonObject>, t: Throwable) {

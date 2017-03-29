@@ -11,4 +11,4 @@ CREATE TABLE item (
 select_all:
 SELECT *
 FROM item
-WHERE id IS ?;
+WHERE id=?;

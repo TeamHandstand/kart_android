@@ -10,4 +10,4 @@ CREATE TABLE item_zone (
 select_all:
 SELECT *
 FROM item_zone
-WHERE id IS ?;
+WHERE id=?;
