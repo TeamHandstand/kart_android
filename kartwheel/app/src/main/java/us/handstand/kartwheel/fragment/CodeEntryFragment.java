@@ -9,20 +9,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import us.handstand.kartwheel.R;
 import us.handstand.kartwheel.activity.TicketActivity;
-import us.handstand.kartwheel.layout.ViewUtil;
 import us.handstand.kartwheel.model.Ticket;
 
 public class CodeEntryFragment extends Fragment implements TicketActivity.TicketFragment {
 
-    private EditText codeEntry;
+    @BindView(R.id.code_edit_text)
+    EditText codeEntry;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup fragmentView = (ViewGroup) inflater.inflate(R.layout.fragment_code_entry, container, false);
-        codeEntry = ViewUtil.findView(fragmentView, R.id.code_edit_text);
+        View fragmentView = inflater.inflate(R.layout.fragment_code_entry, container, false);
+        ButterKnife.bind(this, fragmentView);
         return fragmentView;
     }
 

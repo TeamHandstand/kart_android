@@ -11,40 +11,45 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import us.handstand.kartwheel.R;
 import us.handstand.kartwheel.activity.TicketActivity;
 import us.handstand.kartwheel.layout.ViewUtil;
 import us.handstand.kartwheel.model.User;
+import us.handstand.kartwheel.util.DateFormatter;
 
 public class WelcomeFragment extends Fragment implements TicketActivity.TicketFragment, TextWatcher {
 
-    private EditText birth;
-    private EditText cell;
-    private EditText email;
-    private EditText firstName;
-    private EditText lastName;
-    private EditText nickname;
+    @BindView(R.id.birth)
+    EditText birth;
+    @BindView(R.id.cell)
+    EditText cell;
+    @BindView(R.id.email)
+    EditText email;
+    @BindView(R.id.first_name)
+    EditText firstName;
+    @BindView(R.id.last_name)
+    EditText lastName;
+    @BindView(R.id.nickname)
+    EditText nickname;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup fragmentView = (ViewGroup) inflater.inflate(R.layout.fragment_welcome, container, false);
-        birth = ViewUtil.findView(fragmentView, R.id.birth);
+        View fragmentView = inflater.inflate(R.layout.fragment_welcome, container, false);
+        ButterKnife.bind(this, fragmentView);
         birth.addTextChangedListener(this);
-        cell = ViewUtil.findView(fragmentView, R.id.cell);
         cell.addTextChangedListener(this);
-        email = ViewUtil.findView(fragmentView, R.id.email);
         email.addTextChangedListener(this);
-        firstName = ViewUtil.findView(fragmentView, R.id.first_name);
         firstName.addTextChangedListener(this);
-        lastName = ViewUtil.findView(fragmentView, R.id.last_name);
         lastName.addTextChangedListener(this);
-        nickname = ViewUtil.findView(fragmentView, R.id.nickname);
         nickname.addTextChangedListener(this);
         return fragmentView;
     }
 
     private boolean isValidInput() {
+        // TODO: better validation, birth and cell not required
         return !ViewUtil.isEmpty(birth) && !ViewUtil.isEmpty(cell) && !ViewUtil.isEmpty(email) &&
                 !ViewUtil.isEmpty(firstName) && !ViewUtil.isEmpty(lastName) && !ViewUtil.isEmpty(nickname);
     }
@@ -52,7 +57,7 @@ public class WelcomeFragment extends Fragment implements TicketActivity.TicketFr
     @Override
     public void onClick(View v) {
         if (isValidInput()) {
-            getActivity().getIntent().putExtra(User.BIRTH, birth.getText().toString());
+            getActivity().getIntent().putExtra(User.BIRTH, DateFormatter.getString(DateFormatter.get(birth.getText().toString())));
             getActivity().getIntent().putExtra(User.CELL, cell.getText().toString());
             getActivity().getIntent().putExtra(User.EMAIL, email.getText().toString());
             getActivity().getIntent().putExtra(User.FIRSTNAME, firstName.getText().toString());

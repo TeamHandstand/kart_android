@@ -3,7 +3,7 @@
     <string name="support_email">support@handstandwith.us</string>
     <string name="already_claimed_title">Invalid ticket</string>
     <string name="contact_us_subject_line">KartWheel - Android</string>
-    <string name="contact_us_body">KartWheel - Android</string>
+    <string name="contact_us_body">My ticket was already claimed! %s$1</string>
     <string name="scroll_down">Scroll down</string>
     <string name="critical_information">Critical information</string>
     <string name="pancakes_waffles">Pancakes or Waffles?</string>

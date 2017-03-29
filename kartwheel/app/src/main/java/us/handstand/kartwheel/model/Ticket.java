@@ -2,6 +2,7 @@ package us.handstand.kartwheel.model;
 
 
 import android.content.ContentValues;
+import android.text.TextUtils;
 
 import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
@@ -29,6 +30,10 @@ public abstract class Ticket implements TicketModel {
         cv.put(UPDATEDAT, updatedAt());
 
         Database.get().insert(TABLE_NAME, cv);
+    }
+
+    public boolean isClaimed() {
+        return !TextUtils.isEmpty(claimedAt());
     }
 
     // Required by Gson

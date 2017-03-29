@@ -4,7 +4,6 @@ package us.handstand.kartwheel.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.annotation.IntDef;
@@ -13,17 +12,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.JsonObject;
+import java.util.List;
 
-import org.json.JSONObject;
-
-import retrofit2.Call;
-import retrofit2.Response;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import us.handstand.kartwheel.R;
 import us.handstand.kartwheel.fragment.AlreadyClaimedFragment;
 import us.handstand.kartwheel.fragment.CodeEntryFragment;
@@ -32,7 +28,7 @@ import us.handstand.kartwheel.fragment.TOSFragment;
 import us.handstand.kartwheel.fragment.WelcomeFragment;
 import us.handstand.kartwheel.layout.ViewUtil;
 import us.handstand.kartwheel.model.AndroidStorage;
-import us.handstand.kartwheel.model.Database;
+import us.handstand.kartwheel.model.Race;
 import us.handstand.kartwheel.model.Ticket;
 import us.handstand.kartwheel.model.User;
 import us.handstand.kartwheel.network.API;
@@ -41,7 +37,7 @@ public class TicketActivity extends AppCompatActivity implements View.OnClickLis
     public interface TicketFragment extends View.OnClickListener {
     }
 
-    @IntDef({TOS, CODE_ENTRY, CRITICAL_INFO, WELCOME, ALREADY_CLAIMED, FORFEIT})
+    @IntDef({TOS, CODE_ENTRY, CRITICAL_INFO, WELCOME, ALREADY_CLAIMED, FORFEIT, GAME_INFO})
     private @interface FragmentType {
     }
 
@@ -52,10 +48,11 @@ public class TicketActivity extends AppCompatActivity implements View.OnClickLis
     private static final int WELCOME = 3;
     private static final int ALREADY_CLAIMED = 4;
     private static final int FORFEIT = 5;
+    private static final int GAME_INFO = 6;
 
-    private TextView title;
-    private AppCompatButton button;
-    private AppCompatButton additionalButton;
+    @BindView(R.id.title_text) TextView title;
+    @BindView(R.id.button) AppCompatButton button;
+    @BindView(R.id.additional_button) AppCompatButton additionalButton;
     private TicketFragment ticketFragment;
 
     static Intent getStartIntent(Context context) {
@@ -68,8 +65,7 @@ public class TicketActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ticket);
-        title = ViewUtil.findView(this, R.id.title_text);
-        button = ViewUtil.findView(this, R.id.button);
+        ButterKnife.bind(this);
         button.setOnClickListener(this);
         additionalButton = ViewUtil.findView(this, R.id.additional_button);
         additionalButton.setOnClickListener(this);
@@ -149,26 +145,33 @@ public class TicketActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             case CODE_ENTRY:
                 if (getIntent().hasExtra(Ticket.CODE)) {
-                    API.claimTicket(getIntent().getStringExtra(Ticket.CODE), new API.APICallback<JsonObject>() {
+                    API.claimTicket(getIntent().getStringExtra(Ticket.CODE), new API.APICallback<Ticket>() {
                         @Override
-                        public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                            if (response.code() == 200) {
-                                runOnUiThread(() -> onSuccessfulClaim());
-                            } else if (response.code() == 409) {
-                                runOnUiThread(() -> showFragment(ALREADY_CLAIMED));
-                            } else if (response.errorBody() != null) {
-                                try {
-                                    JSONObject error = new JSONObject(response.errorBody().string());
-                                    Toast.makeText(TicketActivity.this, error.getString("error"), Toast.LENGTH_LONG).show();
-                                } catch (Exception ignore) {
-                                }
+                        public void onSuccess(Ticket ticket) {
+                            if (ticket.isClaimed()) {
+                                API.getRaces(AndroidStorage.getString(AndroidStorage.EVENT_ID), new API.APICallback<List<Race>>() {
+                                    @Override
+                                    public void onSuccess(List<Race> response) {
+                                        showFragment(GAME_INFO);
+                                    }
+
+                                    @Override
+                                    public void onFailure(int errorCode, String errorResponse) {
+                                        Toast.makeText(TicketActivity.this, "Failed to get races " + errorResponse, Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            } else {
+                                runOnUiThread(() -> showFragment(CRITICAL_INFO));
                             }
                         }
 
                         @Override
-                        public void onFailure(Call<JsonObject> call, Throwable t) {
-                            super.onFailure(call, t);
-                            Toast.makeText(TicketActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
+                        public void onFailure(int errorCode, String errorResponse) {
+                            if (errorCode == 409) {
+                                runOnUiThread(() -> showFragment(ALREADY_CLAIMED));
+                            } else if (errorResponse != null) {
+                                Toast.makeText(TicketActivity.this, errorResponse, Toast.LENGTH_LONG).show();
+                            }
                         }
                     });
                 }
@@ -179,7 +182,7 @@ public class TicketActivity extends AppCompatActivity implements View.OnClickLis
                             .setType("plain/text")
                             .putExtra(Intent.EXTRA_EMAIL, new String[]{getResources().getString(R.string.support_email)})
                             .putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.contact_us_subject_line))
-                            .putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.contact_us_body));
+                            .putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.contact_us_body, getIntent().getStringExtra(Ticket.CODE)));
                     startActivity(Intent.createChooser(emailIntent, getResources().getString(R.string.contact_us)));
                 } else {
                     showFragment(CODE_ENTRY);
@@ -198,25 +201,42 @@ public class TicketActivity extends AppCompatActivity implements View.OnClickLis
                         getIntent().hasExtra(User.FIRSTNAME) &&
                         getIntent().hasExtra(User.LASTNAME) &&
                         getIntent().hasExtra(User.NICKNAME)) {
-                    // TODO: Save user object and then show game info
-                    Toast.makeText(this, "Should create user here!", Toast.LENGTH_SHORT).show();
+                    User user = User.FACTORY.creator.create(AndroidStorage.getString(AndroidStorage.USER_ID),
+                            null,  // authToken
+                            getIntent().getStringExtra(User.BIRTH),
+                            getIntent().getStringExtra(User.CELL),
+                            getIntent().getStringExtra(User.CHARMANDERORSQUIRTLE),
+                            getIntent().getStringExtra(User.EMAIL),
+                            AndroidStorage.getString(AndroidStorage.EVENT_ID),
+                            null, // facetime count
+                            getIntent().getStringExtra(User.FIRSTNAME),
+                            null, // imageUrl
+                            getIntent().getStringExtra(User.LASTNAME),
+                            null, // miniGameId
+                            getIntent().getStringExtra(User.NICKNAME),
+                            getIntent().getStringExtra(User.PANCAKEORWAFFLE),
+                            null, // device token
+                            null, // push enabled
+                            null, // race id
+                            null, // referral type
+                            null, // team id
+                            null, // total anti miles
+                            null, // total distance miles
+                            null // updated at
+                    );
+                    API.updateUser(user, new API.APICallback<User>() {
+                        @Override
+                        public void onSuccess(User response) {
+                            runOnUiThread(() -> showFragment(GAME_INFO));
+                        }
+
+                        @Override
+                        public void onFailure(int errorCode, String errorResponse) {
+                            Toast.makeText(TicketActivity.this, "Unable to create user: " + errorResponse, Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
                 break;
         }
-    }
-
-    private void onSuccessfulClaim() {
-        String ticketCode = getIntent().getStringExtra(Ticket.CODE);
-        AndroidStorage.set(AndroidStorage.EMOJI_CODE, ticketCode);
-        Database.get().createQuery(Ticket.TABLE_NAME, "select * from ticket where code is ?", ticketCode)
-                .subscribe(query -> {
-                    Cursor cursor = query.run();
-                    if (cursor != null && cursor.moveToFirst()) {
-                        Ticket ticket = Ticket.SELECT_ALL_MAPPER.map(cursor);
-                        Log.e(TicketActivity.class.getName(), API.gson.toJson(ticket));
-                        AndroidStorage.set(AndroidStorage.USER_ID, ticket.playerId());
-                        runOnUiThread(() -> showFragment(CRITICAL_INFO));
-                    }
-                }, Throwable::printStackTrace);
     }
 }

@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -16,8 +17,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import us.handstand.kartwheel.model.AndroidStorage;
 import us.handstand.kartwheel.model.Database;
 import us.handstand.kartwheel.model.GsonAdapterFactory;
+import us.handstand.kartwheel.model.Race;
 import us.handstand.kartwheel.model.Team;
 import us.handstand.kartwheel.model.Ticket;
 import us.handstand.kartwheel.model.User;
@@ -28,24 +31,10 @@ public class API {
             .registerTypeAdapterFactory(GsonAdapterFactory.create())
             .create();
 
-    public static abstract class APICallback<T> implements Callback<T> {
-        private final APICallback<T> delegate;
+    public static abstract class APICallback<T> {
+        public abstract void onSuccess(T response);
 
-        public APICallback() {
-            this(null);
-        }
-
-        APICallback(APICallback<T> delegate) {
-            this.delegate = delegate;
-        }
-
-        @Override
-        public void onFailure(Call<T> call, Throwable t) {
-            if (delegate != null) {
-                delegate.onFailure(call, t);
-            }
-            t.printStackTrace();
-        }
+        public abstract void onFailure(int errorCode, String errorResponse);
     }
 
     private static Retrofit retrofit;
@@ -61,48 +50,107 @@ public class API {
     }
 
     // TODO: Show loading animation when claiming ticket
-    public static void claimTicket(String ticketCode, final APICallback<JsonObject> apiCallback) {
+    public static void claimTicket(String ticketCode, final APICallback<Ticket> apiCallback) {
         Database.get().delete(Ticket.TABLE_NAME, null);
         Database.get().delete(User.TABLE_NAME, null);
         Database.get().delete(Team.TABLE_NAME, null);
 
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("code", ticketCode);
-        kartWheelService.claimTicket(jsonObject).enqueue(new APICallback<JsonObject>(apiCallback) {
+        kartWheelService.claimTicket(jsonObject).enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 try {
-                    switch (response.code()) {
-                        case 200:
-                            Database.get().delete(Team.TABLE_NAME, null);
-                            Log.e(TAG, response.body().toString());
-                            Team team = gson.fromJson(response.body().get("team"), Team.class);
-                            team.insert();
+                    Ticket userTicket = null;
+                    if (response.code() == 200) {
+                        Database.get().delete(Team.TABLE_NAME, null);
+                        Log.e(TAG, response.body().toString());
+                        Team team = gson.fromJson(response.body().get("team"), Team.class);
+                        team.insert();
+                        AndroidStorage.set(AndroidStorage.EMOJI_CODE, ticketCode);
+                        AndroidStorage.set(AndroidStorage.TEAM_ID, team.id());
+                        AndroidStorage.set(AndroidStorage.EVENT_ID, team.eventId());
 
-                            List<User> users = team.users() == null ? Collections.emptyList() : team.users();
-                            for (User user : users) {
-                                user.insert();
-                            }
+                        List<User> users = team.users() == null ? Collections.emptyList() : team.users();
+                        for (User user : users) {
+                            user.insert();
+                        }
 
-                            List<Ticket> tickets = team.tickets() == null ? Collections.emptyList() : team.tickets();
-                            for (Ticket ticket : tickets) {
-                                ticket.insert();
+                        List<Ticket> tickets = team.tickets() == null ? Collections.emptyList() : team.tickets();
+                        for (Ticket ticket : tickets) {
+                            if (ticketCode.equals(ticket.code())) {
+                                userTicket = ticket;
+                                AndroidStorage.set(AndroidStorage.USER_ID, ticket.playerId());
                             }
-                            break;
-                        case 404:
-                            Log.e(TAG, "Not found");
-                            break;
-                        case 409:
-                            Log.e(TAG, "Already claimed");
-                            break;
-                        default:
-                            Log.e(TAG, "Code: " + response.code());
+                            ticket.insert();
+                        }
+                        apiCallback.onSuccess(userTicket);
+                    } else {
+                        apiCallback.onFailure(response.code(), response.body().get("error").getAsString());
                     }
-                    apiCallback.onResponse(call, response);
                 } catch (Exception e) {
-                    Log.e(TAG, "getProtocols#onResponse", e);
+                    Log.e(TAG, "claimTicket#onResponse", e);
                 }
             }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                t.printStackTrace();
+            }
         });
+    }
+
+    public static void getRaces(String eventId, final APICallback<List<Race>> apiCallback) {
+        kartWheelService.getRaces(AndroidStorage.getString(AndroidStorage.USER_ID), eventId).enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                try {
+                    if (response.code() == 200) {
+                        Race[] races = gson.fromJson(response.body().get("races"), Race[].class);
+                        for (Race race : races) {
+                            race.insert();
+                            Log.e(TAG, "getRaces#onResponse:" + gson.toJson(race));
+                        }
+                        apiCallback.onSuccess(Arrays.asList(races));
+                    } else {
+                        apiCallback.onFailure(response.code(), response.errorBody().string());
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "getRaces#onResponse", e);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    public static void updateUser(User user, final APICallback<User> apiCallback) {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("user", gson.toJson(user));
+        kartWheelService.updateUser(AndroidStorage.getString(AndroidStorage.USER_ID), AndroidStorage.getString(AndroidStorage.EVENT_ID), jsonObject)
+                .enqueue(new Callback<JsonObject>() {
+                    @Override
+                    public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                        try {
+                            if (response.code() == 200) {
+                                User updatedUser = gson.fromJson(response.body().get("user"), User.class);
+                                updatedUser.insert();
+                                apiCallback.onSuccess(updatedUser);
+                            } else {
+                                apiCallback.onFailure(response.code(), response.errorBody().string());
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "updateUser#onResponse", e);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<JsonObject> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
     }
 }

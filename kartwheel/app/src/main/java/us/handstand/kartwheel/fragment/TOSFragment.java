@@ -10,19 +10,21 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ScrollView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import us.handstand.kartwheel.R;
 import us.handstand.kartwheel.activity.TicketActivity;
-import us.handstand.kartwheel.layout.ViewUtil;
 
 public class TOSFragment extends Fragment implements TicketActivity.TicketFragment, ViewTreeObserver.OnScrollChangedListener {
 
-    private ScrollView scrollView;
+    @BindView(R.id.tos_scroll_view)
+    ScrollView scrollView;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup fragmentView = (ViewGroup) inflater.inflate(R.layout.fragment_tos, container, false);
-        scrollView = ViewUtil.findView(fragmentView, R.id.tos_scroll_view);
+        View fragmentView = inflater.inflate(R.layout.fragment_tos, container, false);
+        ButterKnife.bind(this, fragmentView);
         return fragmentView;
     }
 

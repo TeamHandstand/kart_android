@@ -11,16 +11,20 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import us.handstand.kartwheel.R;
 import us.handstand.kartwheel.activity.TicketActivity;
-import us.handstand.kartwheel.layout.ViewUtil;
 import us.handstand.kartwheel.model.User;
 
 public class CriticalInformationFragment extends Fragment implements TicketActivity.TicketFragment, View.OnClickListener {
 
-    private TextView critInfoText;
-    private ImageView leftImage;
-    private ImageView rightImage;
+    @BindView(R.id.critical_information_question)
+    TextView critInfoText;
+    @BindView(R.id.left_image)
+    ImageView leftImage;
+    @BindView(R.id.right_image)
+    ImageView rightImage;
     @Question
     private int currentQuestion;
     @Answer
@@ -45,15 +49,13 @@ public class CriticalInformationFragment extends Fragment implements TicketActiv
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup fragmentViewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_crit_info, container, false);
-        critInfoText = ViewUtil.findView(fragmentViewGroup, R.id.critical_information_question);
-        leftImage = ViewUtil.findView(fragmentViewGroup, R.id.left_image);
+        View view = inflater.inflate(R.layout.fragment_crit_info, container, false);
+        ButterKnife.bind(this, view);
         leftImage.setOnClickListener(this);
-        rightImage = ViewUtil.findView(fragmentViewGroup, R.id.right_image);
         rightImage.setOnClickListener(this);
         currentQuestion = FOOD;
         selectedAnswer = NONE;
-        return fragmentViewGroup;
+        return view;
     }
 
     @Override
