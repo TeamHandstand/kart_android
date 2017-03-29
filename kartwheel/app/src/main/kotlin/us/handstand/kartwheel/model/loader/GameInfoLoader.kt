@@ -1,35 +1,18 @@
-package us.handstand.kartwheel.model.loader;
+package us.handstand.kartwheel.model.loader
 
-import android.content.Context;
-import android.database.Cursor;
+import android.content.Context
+import us.handstand.kartwheel.model.Database
+import us.handstand.kartwheel.model.Team
 
-import com.squareup.sqlbrite.BriteDatabase;
-import com.squareup.sqldelight.SqlDelightStatement;
+class GameInfoLoader(context: Context, private val teamId: String) : CachedAsyncLoader<List<String>>(context) {
 
-import java.util.Collections;
-import java.util.List;
-
-import us.handstand.kartwheel.model.Database;
-import us.handstand.kartwheel.model.Team;
-
-public class GameInfoLoader extends CachedAsyncLoader<List<String>> {
-
-    private static final String TAG = GameInfoLoader.class.getName();
-    private final String teamId;
-
-    public GameInfoLoader(Context context, String teamId) {
-        super(context);
-        this.teamId = teamId;
-    }
-
-    @Override
-    public List<String> loadInBackground() {
-        BriteDatabase db = Database.get();
-        SqlDelightStatement statement = Team.FACTORY.select_all(teamId);
-        Team team = null;
-        try (Cursor cursor = db.query(statement.statement, statement.args)) {
+    override fun loadInBackground(): List<String> {
+        val db = Database.get()
+        val statement = Team.FACTORY.select_all(teamId)
+        var team: Team? = null
+        db.query(statement.statement, *statement.args).use { cursor ->
             if (cursor.moveToFirst()) {
-                team = Team.SELECT_ALL_MAPPER.map(cursor);
+                team = Team.SELECT_ALL_MAPPER.map(cursor)
             }
         }
 
@@ -55,6 +38,11 @@ public class GameInfoLoader extends CachedAsyncLoader<List<String>> {
         });
 
         Collections.sort(result);*/
-        return Collections.emptyList();
+        return emptyList()
+    }
+
+    companion object {
+
+        private val TAG = GameInfoLoader::class.java.name
     }
 }

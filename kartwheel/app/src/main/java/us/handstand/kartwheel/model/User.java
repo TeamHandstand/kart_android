@@ -38,7 +38,7 @@ public abstract class User implements UserModel {
         cv.put(TOTALDISTANCEMILES, totalDistanceMiles());
         cv.put(UPDATEDAT, updatedAt());
 
-        Database.get().insert(TABLE_NAME, cv);
+        Database.Companion.get().insert(TABLE_NAME, cv);
     }
 
     // Needed by Gson

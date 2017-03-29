@@ -24,7 +24,7 @@ public abstract class Race implements RaceModel {
         cv.put(STARTTIME, startTime());
         cv.put(UPDATEDAT, updatedAt());
 
-        Database.get().insert(TABLE_NAME, cv);
+        Database.Companion.get().insert(TABLE_NAME, cv);
     }
 
     // Required by Gson

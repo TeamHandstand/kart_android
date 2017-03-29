@@ -29,7 +29,7 @@ public abstract class Ticket implements TicketModel {
         cv.put(TEAMID, teamId());
         cv.put(UPDATEDAT, updatedAt());
 
-        Database.get().insert(TABLE_NAME, cv);
+        Database.Companion.get().insert(TABLE_NAME, cv);
     }
 
     public boolean isClaimed() {

@@ -35,7 +35,7 @@ public abstract class Team implements TeamModel {
         teamCV.put(Team.SLUG, slug());
         teamCV.put(Team.UPDATEDAT, updatedAt());
 
-        Database.get().insert(TABLE_NAME, teamCV);
+        Database.Companion.get().insert(TABLE_NAME, teamCV);
     }
 
     // Required by Gson
