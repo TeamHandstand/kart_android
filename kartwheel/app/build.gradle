@@ -31,11 +31,11 @@ android {
     }
     buildTypes {
         debug {
-            buildConfigField "String", "SERVER", "http://10.0.0.173:3000"
+            buildConfigField "String", "SERVER", "\"http://10.0.0.173:3000\""
         }
 
         release {
-            buildConfigField "String", "SERVER", "https://www.handstandwith.us/kartwheel"
+            buildConfigField "String", "SERVER", "\"https://www.handstandwith.us/kartwheel\""
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
