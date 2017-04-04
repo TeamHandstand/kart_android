@@ -14,11 +14,14 @@ import android.support.v7.widget.AppCompatButton
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import com.google.gson.JsonObject
 import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.fragment.*
 import us.handstand.kartwheel.layout.ViewUtil
-import us.handstand.kartwheel.model.*
+import us.handstand.kartwheel.model.Storage
+import us.handstand.kartwheel.model.Ticket
+import us.handstand.kartwheel.model.User
 import us.handstand.kartwheel.network.API
 
 class TicketActivity : AppCompatActivity(), View.OnClickListener {
@@ -26,17 +29,17 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener {
 
     companion object {
         private const val INTENT_EXTRA_FRAGMENT_TYPE = "fragment_type"
-        private const val TOS = 0
-        private const val CODE_ENTRY = 1
-        private const val CRITICAL_INFO = 2
-        private const val WELCOME = 3
-        private const val ALREADY_CLAIMED = 4
-        private const val FORFEIT = 5
-        private const val GAME_INFO = 6
+        const val TOS = 0
+        const val CODE_ENTRY = 1
+        const val CRITICAL_INFO = 2
+        const val WELCOME = 3
+        const val ALREADY_CLAIMED = 4
+        const val FORFEIT = 5
+        const val GAME_INFO = 6
 
         @IntDef(TOS.toLong(), CODE_ENTRY.toLong(), CRITICAL_INFO.toLong(), WELCOME.toLong(),
                 ALREADY_CLAIMED.toLong(), FORFEIT.toLong(), GAME_INFO.toLong())
-        private annotation class FragmentType
+        annotation class FragmentType
     }
 
     internal var title: TextView? = null
@@ -66,7 +69,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener {
             }
             CODE_ENTRY -> {
                 ticketFragment = CodeEntryFragment()
-                button!!.setText(R.string.lets_go)
+                setButtonState(R.color.blue, R.string.lets_go, true)
             }
             ALREADY_CLAIMED -> {
                 title!!.setText(R.string.already_claimed_title)
@@ -87,6 +90,13 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener {
             GAME_INFO -> {
                 title!!.setText(R.string.app_name)
                 ticketFragment = GameInfoFragment()
+                // TODO: FAB Buttons
+            }
+            FORFEIT -> {
+                title!!.setText(R.string.forfeit_ticket_title)
+                ticketFragment = ForfeitFragment()
+                setAdditionalButtonState(R.color.blue, R.string.keep_ticket, true)
+                setButtonState(R.color.red, R.string.forfeit_ticket, true)
             }
         }
         if (ticketFragment != null) {
@@ -128,8 +138,8 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener {
         when (currentFragmentType) {
             TOS -> showFragment(CODE_ENTRY)
 
-            CODE_ENTRY -> if (intent.hasExtra(TicketModel.CODE)) {
-                API.claimTicket(intent.getStringExtra(TicketModel.CODE), object : API.APICallback<Ticket>() {
+            CODE_ENTRY -> if (intent.hasExtra(Ticket.CODE)) {
+                API.claimTicket(intent.getStringExtra(Ticket.CODE), object : API.APICallback<Ticket>() {
                     override fun onSuccess(response: Ticket) {
                         if (response.isClaimed) {
                             showFragment(GAME_INFO)
@@ -153,35 +163,36 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener {
                         .setType("plain/text")
                         .putExtra(Intent.EXTRA_EMAIL, arrayOf(resources.getString(R.string.support_email)))
                         .putExtra(Intent.EXTRA_SUBJECT, resources.getString(R.string.contact_us_subject_line))
-                        .putExtra(Intent.EXTRA_TEXT, resources.getString(R.string.contact_us_body, intent.getStringExtra(TicketModel.CODE)))
+                        .putExtra(Intent.EXTRA_TEXT, resources.getString(R.string.contact_us_body, intent.getStringExtra(Ticket.CODE)))
                 startActivity(Intent.createChooser(emailIntent, resources.getString(R.string.contact_us)))
             } else {
                 showFragment(CODE_ENTRY)
             }
 
-            CRITICAL_INFO -> if (intent.hasExtra(UserModel.PANCAKEORWAFFLE) && intent.hasExtra(UserModel.CHARMANDERORSQUIRTLE)) {
+            CRITICAL_INFO -> if (intent.hasExtra(User.PANCAKEORWAFFLE) && intent.hasExtra(User.CHARMANDERORSQUIRTLE)) {
                 showFragment(WELCOME)
             }
 
-            WELCOME -> if (intent.hasExtra(UserModel.BIRTH) &&
-                    intent.hasExtra(UserModel.CELL) &&
-                    intent.hasExtra(UserModel.EMAIL) &&
-                    intent.hasExtra(UserModel.FIRSTNAME) &&
-                    intent.hasExtra(UserModel.LASTNAME) &&
-                    intent.hasExtra(UserModel.NICKNAME)) {
-                val user = User.FACTORY.creator.create(Storage.userId, null, // authToken
-                        intent.getStringExtra(UserModel.BIRTH),
-                        intent.getStringExtra(UserModel.CELL),
-                        intent.getStringExtra(UserModel.CHARMANDERORSQUIRTLE),
-                        intent.getStringExtra(UserModel.EMAIL),
+            WELCOME -> if (intent.hasExtra(User.BIRTH) &&
+                    intent.hasExtra(User.CELL) &&
+                    intent.hasExtra(User.EMAIL) &&
+                    intent.hasExtra(User.FIRSTNAME) &&
+                    intent.hasExtra(User.LASTNAME) &&
+                    intent.hasExtra(User.NICKNAME)) {
+                val user = User.FACTORY.creator.create(Storage.userId,
+                        null, // authToken
+                        intent.getStringExtra(User.BIRTH),
+                        intent.getStringExtra(User.CELL),
+                        intent.getStringExtra(User.CHARMANDERORSQUIRTLE),
+                        intent.getStringExtra(User.EMAIL),
                         Storage.eventId,
                         null, // facetime count
-                        intent.getStringExtra(UserModel.FIRSTNAME),
+                        intent.getStringExtra(User.FIRSTNAME),
                         null, // imageUrl
-                        intent.getStringExtra(UserModel.LASTNAME),
+                        intent.getStringExtra(User.LASTNAME),
                         null, // miniGameId
-                        intent.getStringExtra(UserModel.NICKNAME),
-                        intent.getStringExtra(UserModel.PANCAKEORWAFFLE),
+                        intent.getStringExtra(User.NICKNAME),
+                        intent.getStringExtra(User.PANCAKEORWAFFLE),
                         null, // device token
                         null, // push enabled
                         null, // race id
@@ -201,8 +212,29 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener {
                     }
                 })
             }
+            FORFEIT -> {
+                if (v.id == R.id.additional_button) {
+                    // Keep ticket
+                    intent.removeExtra(Ticket.ID)
+                    intent.removeExtra(Ticket.CODE)
+                    showFragment(GAME_INFO)
+                } else if (v.id == R.id.button) {
+                    // Forfeit ticket
+                    API.forfeitTicket(intent.getStringExtra(Ticket.ID), object : API.APICallback<JsonObject>() {
+                        override fun onSuccess(response: JsonObject) {
+                            Toast.makeText(this@TicketActivity, "Ticket forfeited", Toast.LENGTH_LONG).show()
+                            intent.removeExtra(Ticket.ID)
+                            intent.removeExtra(Ticket.CODE)
+                            KartWheel.logout()
+                            showFragment(CODE_ENTRY)
+                        }
+
+                        override fun onFailure(errorCode: Int, errorResponse: String) {
+                            Toast.makeText(this@TicketActivity, "Unable to forfeit ticket: " + errorResponse, Toast.LENGTH_LONG).show()
+                        }
+                    })
+                }
+            }
         }
     }
-
-
 }

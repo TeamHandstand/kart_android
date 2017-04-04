@@ -1,16 +1,22 @@
 package us.handstand.kartwheel.layout
 
 import android.content.Context
+import android.database.Cursor
 import android.util.AttributeSet
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.TextView
 import us.handstand.kartwheel.R
+import us.handstand.kartwheel.model.Database
+import us.handstand.kartwheel.model.Ticket
+import us.handstand.kartwheel.model.User
 
 class GameInfoPlayerView : RelativeLayout, View.OnClickListener {
 
+    var forfeitClickListener: OnForfeitClickListener? = null
     private var playerNumber: TextView? = null
     private var playerName: TextView? = null
+    private var ticket: Ticket? = null
     private var isClaimed: Boolean = false
 
     constructor(context: Context?) : super(context) {
@@ -41,11 +47,13 @@ class GameInfoPlayerView : RelativeLayout, View.OnClickListener {
 
         val p = ViewUtil.dpToPx(context, 16)
         setPadding(p, p, p, p)
-
     }
 
-    fun setPlayerName(playerName: String) {
-        this.playerName!!.text = playerName
+    fun setUser(user: User) {
+        this.playerName!!.text = user.firstName() + " " + user.lastName()
+        val query = Ticket.FACTORY.select_for_player(user.id())
+        Database.get().createQuery(Ticket.TABLE_NAME, query.statement, *query.args)
+                .subscribe({ setTicket(it.run()) })
     }
 
     fun setClaimed(claimed: Boolean) {
@@ -53,7 +61,28 @@ class GameInfoPlayerView : RelativeLayout, View.OnClickListener {
         playerNumber!!.setTextColor(if (isClaimed) resources.getColor(R.color.green) else resources.getColor(R.color.red))
     }
 
-    override fun onClick(v: View?) {
+    private fun setTicket(cursor: Cursor?) {
+        cursor.use {
+            if (cursor!!.moveToFirst()) {
+                ticket = Ticket.FACTORY.select_for_playerMapper().map(cursor)
+            }
+        }
+    }
+
+    fun setOnForfeitClickListener(clickListener: OnForfeitClickListener) {
+        forfeitClickListener = clickListener
+    }
+
+    override fun onClick(v: View) {
+        if (v.id == R.id.forfeit && forfeitClickListener != null && ticket != null) {
+            forfeitClickListener!!.onPlayerForfeitClick(ticket!!)
+        }
+    }
+
+    companion object {
+        interface OnForfeitClickListener {
+            fun onPlayerForfeitClick(ticket: Ticket)
+        }
     }
 
 }

@@ -33,6 +33,7 @@ class Database private constructor(context: Context) : SQLiteOpenHelper(context,
         private var database: Database? = null
         private val DB_NAME = "kart_wheel"
         private val VERSION = 1
+        private val tables = arrayOf(Team.TABLE_NAME, Ticket.TABLE_NAME, User.TABLE_NAME, Race.TABLE_NAME)
 
         fun initialize(context: Context) {
             if (database == null) {
@@ -45,6 +46,12 @@ class Database private constructor(context: Context) : SQLiteOpenHelper(context,
                 throw RuntimeException("Database should be initialized on app startup!")
             }
             return database!!.db
+        }
+
+        fun clear() {
+            for (table in tables) {
+                get().writableDatabase.delete(table, null, null)
+            }
         }
     }
 }

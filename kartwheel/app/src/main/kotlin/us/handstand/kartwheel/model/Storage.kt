@@ -7,23 +7,19 @@ import android.preference.PreferenceManager
 import android.support.annotation.StringDef
 
 class Storage private constructor(context: Context) {
-    private val context: Context
-
-    init {
-        this.context = context.applicationContext
-    }
+    private val context: Context = context.applicationContext
 
     private val prefs: SharedPreferences
         get() = PreferenceManager.getDefaultSharedPreferences(context)
 
     companion object {
-        const val USER_ID = "user_id"
-        const val TEAM_ID = "team_id"
-        const val EVENT_ID = "event_id"
-        const val EMOJI_CODE = "emoji_code"
+        private const val USER_ID = "user_id"
+        private const val TEAM_ID = "team_id"
+        private const val EVENT_ID = "event_id"
+        private const val EMOJI_CODE = "emoji_code"
 
         @StringDef(USER_ID, EMOJI_CODE, EVENT_ID, TEAM_ID)
-        annotation class KEYS
+        private annotation class KEYS
 
         private var instance: Storage? = null
 
@@ -63,11 +59,18 @@ class Storage private constructor(context: Context) {
             }
 
         private fun get(@KEYS key: String): String {
-            return instance!!.prefs.getString(key, null)
+            return instance!!.prefs.getString(key, "")
         }
 
         private operator fun set(@KEYS key: String, value: String) {
             instance!!.prefs.edit().putString(key, value).apply()
+        }
+
+        fun clear() {
+            userId = ""
+            teamId = ""
+            eventId = ""
+            code = ""
         }
     }
 }

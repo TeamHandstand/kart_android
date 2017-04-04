@@ -137,4 +137,25 @@ object API {
                     }
                 })
     }
+
+    fun forfeitTicket(ticketId: String, apiCallback: APICallback<JsonObject>) {
+        kartWheelService!!.forfeitTicket(Storage.userId, Storage.eventId, ticketId)
+                .enqueue(object : Callback<JsonObject> {
+                    override fun onResponse(call: Call<JsonObject>?, response: Response<JsonObject>) {
+                        try {
+                            if (response.code() == 200) {
+                                apiCallback.onSuccess(response.body())
+                            } else {
+                                apiCallback.onFailure(response.code(), response.errorBody().string())
+                            }
+                        } catch (e: Exception) {
+                            Log.e(TAG, "forfeitTicket#onResponse", e)
+                        }
+                    }
+
+                    override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                        t.printStackTrace()
+                    }
+                })
+    }
 }

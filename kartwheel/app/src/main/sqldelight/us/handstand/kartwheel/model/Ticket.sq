@@ -17,3 +17,8 @@ select_all:
 SELECT *
 FROM ticket
 WHERE code=?;
+
+select_for_player:
+SELECT *
+FROM ticket
+WHERE playerId=?;

@@ -2,14 +2,8 @@ package us.handstand.kartwheel.network
 
 
 import com.google.gson.JsonObject
-
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.POST
-import retrofit2.http.PUT
-import retrofit2.http.Path
+import retrofit2.http.*
 
 internal interface KartWheelService {
 
@@ -21,4 +15,7 @@ internal interface KartWheelService {
 
     @PUT("events/{eventId}/users/{userId}")
     fun updateUser(@Header("auth-id") @Path("userId") userId: String, @Path("eventId") eventId: String, @Body user: JsonObject): Call<JsonObject>
+
+    @POST("events/{eventId}/tickets/{ticketId}/forfeit")
+    fun forfeitTicket(@Header("auth-id") userId: String, @Path("eventId") eventId: String, @Path("ticketId") ticketId: String): Call<JsonObject>
 }

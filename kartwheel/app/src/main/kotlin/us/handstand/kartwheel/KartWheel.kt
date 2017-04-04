@@ -2,6 +2,7 @@ package us.handstand.kartwheel
 
 
 import android.app.Application
+import android.text.TextUtils
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -20,15 +21,17 @@ class KartWheel : Application(), Interceptor {
         Database.initialize(this)
         API.initialize(okHttpClient, "http://10.0.0.173:3000")
 
-        val query = User.FACTORY.select_all(Storage.userId)
-        Database.get().createQuery(query.statement, query.statement, *query.args).subscribe({
-            val cursor = it.run()
-            cursor.use { cursor ->
-                if (cursor!!.moveToFirst()) {
-                    user = User.SELECT_ALL_MAPPER.map(cursor)
+        if (!TextUtils.isEmpty(Storage.userId)) {
+            val query = User.FACTORY.select_all(Storage.userId)
+            Database.get().createQuery(query.statement, query.statement, *query.args).subscribe({
+                val cursor = it.run()
+                cursor.use { cursor ->
+                    if (cursor!!.moveToFirst()) {
+                        user = User.SELECT_ALL_MAPPER.map(cursor)
+                    }
                 }
-            }
-        })
+            })
+        }
     }
 
     @Throws(IOException::class)
@@ -42,5 +45,10 @@ class KartWheel : Application(), Interceptor {
     companion object {
         var user: User? = null
             private set
+
+        fun logout() {
+            Storage.clear()
+            Database.clear()
+        }
     }
 }

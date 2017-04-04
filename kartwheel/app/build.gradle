@@ -17,7 +17,7 @@ apply plugin: 'com.squareup.sqldelight'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.1"
+    buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "us.handstand.kartwheel"
         minSdkVersion 19
@@ -55,7 +55,7 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.3.0'
+    compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.squareup.sqlbrite:sqlbrite:1.1.1'
     compile 'com.squareup.sqlbrite:sqlbrite:1.1.1'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
