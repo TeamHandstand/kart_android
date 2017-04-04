@@ -19,7 +19,7 @@ class KartWheel : Application(), Interceptor {
         super.onCreate()
         Storage.initialize(this)
         Database.initialize(this)
-        API.initialize(okHttpClient, "http://10.0.0.173:3000")
+        API.initialize(okHttpClient, BuildConfig.SERVER)
 
         if (!TextUtils.isEmpty(Storage.userId)) {
             val query = User.FACTORY.select_all(Storage.userId)
