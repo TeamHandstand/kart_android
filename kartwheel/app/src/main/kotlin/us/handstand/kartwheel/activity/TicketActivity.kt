@@ -144,13 +144,13 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener {
                         if (response.isClaimed) {
                             showFragment(GAME_INFO)
                         } else {
-                            runOnUiThread { showFragment(CRITICAL_INFO) }
+                            showFragment(CRITICAL_INFO)
                         }
                     }
 
                     override fun onFailure(errorCode: Int, errorResponse: String) {
                         if (errorCode == 409) {
-                            runOnUiThread { showFragment(ALREADY_CLAIMED) }
+                            showFragment(ALREADY_CLAIMED)
                         } else {
                             Toast.makeText(this@TicketActivity, errorResponse, Toast.LENGTH_LONG).show()
                         }
@@ -204,7 +204,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener {
                 )
                 API.updateUser(user, object : API.APICallback<User>() {
                     override fun onSuccess(response: User) {
-                        runOnUiThread { showFragment(GAME_INFO) }
+                        showFragment(GAME_INFO)
                     }
 
                     override fun onFailure(errorCode: Int, errorResponse: String) {
