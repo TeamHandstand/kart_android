@@ -28,7 +28,7 @@ android {
     }
     buildTypes {
         debug {
-            buildConfigField "String", "SERVER", "\"http://10.0.0.173:3000\""
+            buildConfigField "String", "SERVER", "\"http://localhost:3000\""
         }
 
         release {
