@@ -88,7 +88,7 @@ object API {
     }
 
     fun getRaces(eventId: String, apiCallback: APICallback<List<Race>>) {
-        kartWheelService!!.getRaces(Storage.userId, eventId).enqueue(object : Callback<JsonObject> {
+        kartWheelService!!.getRaces(eventId).enqueue(object : Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                 try {
                     if (response.code() == 200) {
@@ -139,7 +139,7 @@ object API {
     }
 
     fun forfeitTicket(ticketId: String, apiCallback: APICallback<JsonObject>) {
-        kartWheelService!!.forfeitTicket(Storage.userId, Storage.eventId, ticketId)
+        kartWheelService!!.forfeitTicket(Storage.eventId, ticketId)
                 .enqueue(object : Callback<JsonObject> {
                     override fun onResponse(call: Call<JsonObject>?, response: Response<JsonObject>) {
                         try {

@@ -39,6 +39,9 @@ class KartWheel : Application(), Interceptor {
         val requestBuilder = chain.request().newBuilder()
         requestBuilder.header("Content-Type", "application/json")
         requestBuilder.header("Accept", "application/json")
+        if (!TextUtils.isEmpty(Storage.userId)) {
+            requestBuilder.header("auth-id", Storage.userId)
+        }
         return chain.proceed(requestBuilder.build())
     }
 
