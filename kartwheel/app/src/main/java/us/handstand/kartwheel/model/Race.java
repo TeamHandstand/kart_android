@@ -2,6 +2,8 @@ package us.handstand.kartwheel.model;
 
 
 import android.content.ContentValues;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
@@ -10,7 +12,12 @@ import com.squareup.sqldelight.RowMapper;
 
 @AutoValue
 public abstract class Race implements RaceModel {
-    public static final RaceModel.Factory<Race> FACTORY = new RaceModel.Factory<>(AutoValue_Race::new);
+    public static final RaceModel.Factory<Race> FACTORY = new RaceModel.Factory<>(new Creator<Race>() {
+        @Override
+        public Race create(@NonNull String id, @Nullable String endTime, @Nullable String funQuestion, @Nullable Long openSpots, @Nullable Long raceOrder, @Nullable String replayUrl, @Nullable String shortAnswer1, @Nullable String shortAnswer2, @Nullable String slug, @Nullable String startTime, @Nullable String updatedAt, @Nullable String videoUrl) {
+            return new AutoValue_Race(id, endTime, funQuestion, openSpots, raceOrder, replayUrl, shortAnswer1, shortAnswer2, slug, startTime, updatedAt, videoUrl);
+        }
+    });
     public static final RowMapper<Race> SELECT_ALL_MAPPER = FACTORY.select_allMapper();
 
     public void insert() {

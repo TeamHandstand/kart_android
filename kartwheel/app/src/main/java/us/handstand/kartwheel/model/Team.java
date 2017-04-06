@@ -3,6 +3,7 @@ package us.handstand.kartwheel.model;
 
 import android.content.ContentValues;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
@@ -19,7 +20,12 @@ import java.util.List;
 
 @AutoValue
 public abstract class Team implements TeamModel {
-    public static final TeamModel.Factory<Team> FACTORY = new TeamModel.Factory<>(AutoValue_Team::new, new <Ticket>ListTicketColumnAdapter(), new <User>ListTicketColumnAdapter());
+    public static final TeamModel.Factory<Team> FACTORY = new TeamModel.Factory<>(new Creator<Team>() {
+        @Override
+        public Team create(@NonNull String id, @Nullable Long bronzeCount, @Nullable String eventId, @Nullable Long goldCount, @Nullable String name, @Nullable Long ribbonCount, @Nullable Long ranking, @Nullable Long silverCount, @Nullable String slug, @Nullable List<Ticket> tickets, @Nullable String updatedAt, @Nullable List<User> users) {
+            return new AutoValue_Team(id, bronzeCount, eventId, goldCount, name, ribbonCount, ranking, silverCount, slug, tickets, updatedAt, users);
+        }
+    }, new <Ticket>ListTicketColumnAdapter(), new <User>ListTicketColumnAdapter());
     public static final RowMapper<Team> SELECT_ALL_MAPPER = FACTORY.select_allMapper();
 
     public void insert() {
