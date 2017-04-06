@@ -139,8 +139,10 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener {
             TOS -> showFragment(CODE_ENTRY)
 
             CODE_ENTRY -> if (intent.hasExtra(Ticket.CODE)) {
+                (ticketFragment as CodeEntryFragment).setProgressVisibility(View.VISIBLE)
                 API.claimTicket(intent.getStringExtra(Ticket.CODE), object : API.APICallback<Ticket>() {
                     override fun onSuccess(response: Ticket) {
+                        (ticketFragment as CodeEntryFragment).setProgressVisibility(View.GONE)
                         if (response.isClaimed) {
                             showFragment(GAME_INFO)
                         } else {
@@ -149,6 +151,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener {
                     }
 
                     override fun onFailure(errorCode: Int, errorResponse: String) {
+                        (ticketFragment as CodeEntryFragment).setProgressVisibility(View.GONE)
                         if (errorCode == 409) {
                             showFragment(ALREADY_CLAIMED)
                         } else {
