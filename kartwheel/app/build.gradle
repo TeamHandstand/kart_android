@@ -28,6 +28,7 @@ android {
     }
     buildTypes {
         debug {
+            // 10.0.2.2 is the address that the android emulator uses to access the host machine
             buildConfigField "String", "SERVER", "\"http://10.0.2.2:3000\""
         }
 
