@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.view.ViewCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatButton
+import android.text.TextUtils.isEmpty
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -56,7 +57,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener {
         additionalButton = ViewUtil.findView(this, R.id.additional_button)
         button!!.setOnClickListener(this)
         additionalButton!!.setOnClickListener(this)
-        showFragment(if (KartWheel.user == null) TOS else GAME_INFO)
+        showFragment(if (isEmpty(Storage.userId)) TOS else GAME_INFO)
     }
 
     fun showFragment(@FragmentType type: Int) {
