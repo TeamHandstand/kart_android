@@ -3,7 +3,13 @@ package us.handstand.kartwheel.layout
 
 import android.app.Activity
 import android.content.Context
+import android.content.res.ColorStateList
+import android.content.res.Resources
+import android.support.annotation.ColorRes
 import android.support.annotation.IdRes
+import android.support.annotation.StringRes
+import android.support.v4.view.ViewCompat
+import android.support.v7.widget.AppCompatButton
 import android.text.TextUtils
 import android.util.TypedValue
 import android.view.View
@@ -26,5 +32,14 @@ object ViewUtil {
 
     fun dpToPx(context: Context, dp: Int): Int {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(), context.resources.displayMetrics).toInt()
+    }
+
+    fun setButtonState(resources: Resources, button: AppCompatButton?, @ColorRes color: Int, @StringRes textRes: Int, enabled: Boolean) {
+        if (button == null) {
+            return
+        }
+        ViewCompat.setBackgroundTintList(button, ColorStateList.valueOf(resources.getColor(color)))
+        button.setText(textRes)
+        button.isEnabled = enabled
     }
 }

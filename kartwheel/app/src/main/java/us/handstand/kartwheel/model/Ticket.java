@@ -15,7 +15,10 @@ import com.squareup.sqldelight.RowMapper;
 public abstract class Ticket implements TicketModel {
     public static final Factory<Ticket> FACTORY = new Factory<>(new Creator<Ticket>() {
         @Override
-        public Ticket create(@NonNull String id, @Nullable String code, @Nullable String claimedAt, @Nullable String eventId, @Nullable String forfeitedAt, @Nullable String paymentId, @Nullable String playerId, @Nullable String priceTierId, @Nullable String purchasedAt, @Nullable String purchaserId, @Nullable String teamId, @Nullable String updatedAt) {
+        public Ticket create(@NonNull String id, @Nullable String code, @Nullable String claimedAt,
+                             @Nullable String eventId, @Nullable String forfeitedAt, @Nullable String paymentId,
+                             @Nullable String playerId, @Nullable String priceTierId, @Nullable String purchasedAt,
+                             @Nullable String purchaserId, @Nullable String teamId, @Nullable String updatedAt) {
             return new AutoValue_Ticket(id, code, claimedAt, eventId, forfeitedAt, paymentId, playerId, priceTierId, purchasedAt, purchaserId, teamId, updatedAt);
         }
     });

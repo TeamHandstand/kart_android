@@ -10,6 +10,8 @@ import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.squareup.sqldelight.RowMapper;
 
+import static android.text.TextUtils.isEmpty;
+
 @AutoValue
 public abstract class User implements UserModel {
     public static final Factory<User> FACTORY = new Factory<>(new Creator<User>() {
@@ -46,6 +48,45 @@ public abstract class User implements UserModel {
         cv.put(UPDATEDAT, updatedAt());
 
         Database.Companion.get().insert(TABLE_NAME, cv);
+    }
+
+    public boolean hasCriticalInfo() {
+        return !isEmpty(charmanderOrSquirtle()) && !isEmpty(pancakeOrWaffle());
+    }
+
+    public boolean hasAllInformation() {
+        return hasCriticalInfo() && !isEmpty(birth()) && !isEmpty(cell()) && !isEmpty(email())
+                && !isEmpty(firstName()) && !isEmpty(lastName()) && !isEmpty(nickName());
+    }
+
+    public static User construct(String charmanderOrSquirtle, String pancakeOrWaffle) {
+        return FACTORY.creator.create(Storage.Companion.getUserId(), null, null, null, charmanderOrSquirtle, null, null, null, null, null, null, null, null, pancakeOrWaffle, null, null, null, null, null, null, null, null);
+    }
+
+    public static User construct(String birth, String cell, String charmanderOrSquirtle, String email, String firstName, String lastName, String nickname, String pancakeOrWaffle) {
+        return User.FACTORY.creator.create(Storage.Companion.getUserId(),
+                null, // authToken
+                birth,
+                cell,
+                charmanderOrSquirtle,
+                email,
+                Storage.Companion.getEventId(),
+                null, // facetime count
+                firstName,
+                null, // imageUrl
+                lastName,
+                null, // miniGameId
+                nickname,
+                pancakeOrWaffle,
+                null, // device token
+                null, // push enabled
+                null, // race id
+                null, // referral type
+                null, // team id
+                null, // total anti miles
+                null, // total distance miles
+                null // updated at
+        );
     }
 
     // Needed by Gson

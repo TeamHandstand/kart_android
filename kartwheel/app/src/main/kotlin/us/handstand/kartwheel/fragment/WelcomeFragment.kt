@@ -3,6 +3,7 @@ package us.handstand.kartwheel.fragment
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.AppCompatButton
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -12,7 +13,7 @@ import android.widget.EditText
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.TicketActivity
 import us.handstand.kartwheel.layout.ViewUtil
-import us.handstand.kartwheel.model.UserModel
+import us.handstand.kartwheel.model.User
 import us.handstand.kartwheel.util.DateFormatter
 
 class WelcomeFragment : Fragment(), TicketActivity.TicketFragment, TextWatcher {
@@ -23,6 +24,7 @@ class WelcomeFragment : Fragment(), TicketActivity.TicketFragment, TextWatcher {
     internal var firstName: EditText? = null
     internal var lastName: EditText? = null
     internal var nickname: EditText? = null
+    private var button: AppCompatButton? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val fragmentView = inflater!!.inflate(R.layout.fragment_welcome, container, false) as ViewGroup
@@ -41,25 +43,44 @@ class WelcomeFragment : Fragment(), TicketActivity.TicketFragment, TextWatcher {
         return fragmentView
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        button = ViewUtil.findView(activity, R.id.button)
+    }
+
+    override fun getTitleResId(): Int {
+        return R.string.welcome
+    }
+
+    override fun getAdvanceButtonTextResId(): Int {
+        return R.string.im_ready
+    }
+
+    override fun getAdvanceButtonColor(): Int {
+        return if (isAdvanceButtonEnabled()) R.color.blue else super.getAdvanceButtonColor()
+    }
+
+    override fun isAdvanceButtonEnabled(): Boolean {
+        return isValidInput
+    }
+
     private // TODO: better validation, birth and cell not required
     val isValidInput: Boolean
         get() = !ViewUtil.isEmpty(birth) && !ViewUtil.isEmpty(cell) && !ViewUtil.isEmpty(email) &&
                 !ViewUtil.isEmpty(firstName) && !ViewUtil.isEmpty(lastName) && !ViewUtil.isEmpty(nickname)
 
-    override fun onClick(v: View) {
-        if (isValidInput) {
-            activity.intent.putExtra(UserModel.BIRTH, DateFormatter.getString(DateFormatter.get(birth!!.text.toString())))
-            activity.intent.putExtra(UserModel.CELL, cell!!.text.toString())
-            activity.intent.putExtra(UserModel.EMAIL, email!!.text.toString())
-            activity.intent.putExtra(UserModel.FIRSTNAME, firstName!!.text.toString())
-            activity.intent.putExtra(UserModel.LASTNAME, lastName!!.text.toString())
-            activity.intent.putExtra(UserModel.NICKNAME, nickname!!.text.toString())
-        }
-    }
-
     override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-        val isValidInput = isValidInput
-        (activity as TicketActivity).setButtonState(if (isValidInput) R.color.blue else R.color.grey_button_disabled, R.string.im_ready, isValidInput)
+        if (isAdvanceButtonEnabled()) {
+            ticketController.user = User.construct(DateFormatter.getString(DateFormatter[birth!!.text.toString()]),
+                    cell!!.text.toString(),
+                    ticketController.user!!.charmanderOrSquirtle(),
+                    email!!.text.toString(),
+                    firstName!!.text.toString(),
+                    lastName!!.text.toString(),
+                    nickname!!.text.toString(),
+                    ticketController.user!!.pancakeOrWaffle())
+            ticketController.onTicketFragmentStateChanged()
+        }
     }
 
     override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}

@@ -9,7 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.TicketActivity
-import us.handstand.kartwheel.activity.TicketActivity.Companion.FORFEIT
+import us.handstand.kartwheel.controller.TicketController.Companion.FORFEIT
+import us.handstand.kartwheel.controller.TicketController.Companion.GAME_INFO
 import us.handstand.kartwheel.layout.GameInfoPlayerView
 import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.model.Database
@@ -21,7 +22,9 @@ class GameInfoFragment : Fragment(), TicketActivity.TicketFragment, GameInfoPlay
     private var playerOne: GameInfoPlayerView? = null
 
     private var playerTwo: GameInfoPlayerView? = null
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        // TODO: FAB Buttons
         val fragmentView = inflater!!.inflate(R.layout.fragment_game_info, container, false) as ViewGroup
         playerOne = ViewUtil.findView(fragmentView, R.id.playerOne)
         playerTwo = ViewUtil.findView(fragmentView, R.id.playerTwo)
@@ -31,6 +34,14 @@ class GameInfoFragment : Fragment(), TicketActivity.TicketFragment, GameInfoPlay
         Database.get().createQuery(User.TABLE_NAME, query.statement, *query.args)
                 .subscribe({ updateUsers(it.run()) }, { it.printStackTrace() })
         return fragmentView
+    }
+
+    override fun getTitleResId(): Int {
+        return R.string.app_name
+    }
+
+    override fun getAdvanceButtonTextResId(): Int {
+        return R.string.next
     }
 
     private fun updateUsers(cursor: Cursor?) {
@@ -48,12 +59,8 @@ class GameInfoFragment : Fragment(), TicketActivity.TicketFragment, GameInfoPlay
         }
     }
 
-    override fun onClick(v: View) {
-    }
-
     override fun onPlayerForfeitClick(ticket: Ticket) {
-        activity.intent.putExtra(Ticket.ID, ticket.id())
-        activity.intent.putExtra(Ticket.CODE, ticket.code())
-        (activity as TicketActivity).showFragment(FORFEIT)
+        ticketController.ticket = ticket
+        ticketController.transition(GAME_INFO, FORFEIT)
     }
 }
