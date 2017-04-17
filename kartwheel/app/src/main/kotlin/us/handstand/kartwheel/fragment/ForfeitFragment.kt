@@ -21,7 +21,6 @@ import us.handstand.kartwheel.model.Ticket
 class ForfeitFragment : Fragment(), TicketActivity.TicketFragment, View.OnClickListener {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        // TODO: Button that's only visible to fragment
         val fragmentView = inflater!!.inflate(R.layout.fragment_forfeit, container, false) as ViewGroup
         fragmentView.findViewById(R.id.additionalButton).setOnClickListener(this)
         val codeLink = ViewUtil.findView<TextView>(fragmentView, R.id.forfeit_code_link)

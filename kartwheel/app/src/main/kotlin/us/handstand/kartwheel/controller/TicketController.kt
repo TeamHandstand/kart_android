@@ -38,7 +38,7 @@ class TicketController(var listener: TicketStepCompletionListener) {
 
     fun transition(@FragmentType from: Int, @FragmentType to: Int) {
         if (from != NONE && from != ERROR) {
-            checkInvalidTransition(from, to)
+            validateTransition(from, to)
         }
         listener.showNextStep(from, to)
     }
@@ -100,15 +100,15 @@ class TicketController(var listener: TicketStepCompletionListener) {
         }
     }
 
-    private fun checkInvalidTransition(@FragmentType from: Int, @FragmentType to: Int) {
-        when (to) {
-            TOS -> return
-            CODE_ENTRY -> if (from == TOS || from == ALREADY_CLAIMED || from == FORFEIT) return
-            ALREADY_CLAIMED -> if (from == CODE_ENTRY) return
-            CRITICAL_INFO -> if (from == CODE_ENTRY) return
-            WELCOME -> if (from == CRITICAL_INFO) return
-            GAME_INFO -> if (from == WELCOME || from == CODE_ENTRY) return
-            FORFEIT -> if (from == GAME_INFO) return
+    private fun validateTransition(@FragmentType from: Int, @FragmentType to: Int) {
+        when (from) {
+            TOS -> if (to == CODE_ENTRY) return
+            CODE_ENTRY -> if (to == ALREADY_CLAIMED || to == GAME_INFO || to == CRITICAL_INFO) return
+            ALREADY_CLAIMED -> if (to == CODE_ENTRY) return
+            CRITICAL_INFO -> if (to == WELCOME) return
+            WELCOME -> if (to == GAME_INFO) return
+            GAME_INFO -> if (to == FORFEIT) return
+            FORFEIT -> if (to == CODE_ENTRY || to == GAME_INFO) return
         }
         throw IllegalStateException("Invalid transition from $from to $to")
     }
