@@ -6,8 +6,8 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.TextView
+import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
-import us.handstand.kartwheel.model.Database
 import us.handstand.kartwheel.model.Ticket
 import us.handstand.kartwheel.model.User
 
@@ -52,13 +52,18 @@ class GameInfoPlayerView : RelativeLayout, View.OnClickListener {
     fun setUser(user: User) {
         this.playerName!!.text = user.firstName() + " " + user.lastName()
         val query = Ticket.FACTORY.select_for_player(user.id())
-        Database.get().createQuery(Ticket.TABLE_NAME, query.statement, *query.args)
+        // TODO: Views should not have access to database.
+        KartWheel.db.createQuery(Ticket.TABLE_NAME, query.statement, *query.args)
                 .subscribe({ setTicket(it.run()) })
     }
 
     fun setClaimed(claimed: Boolean) {
         isClaimed = claimed
         playerNumber!!.setTextColor(if (isClaimed) resources.getColor(R.color.green) else resources.getColor(R.color.red))
+    }
+
+    fun isEmpty(): Boolean {
+        return ticket == null
     }
 
     private fun setTicket(cursor: Cursor?) {

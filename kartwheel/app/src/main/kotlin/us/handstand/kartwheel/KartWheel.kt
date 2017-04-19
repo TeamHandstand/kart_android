@@ -3,6 +3,7 @@ package us.handstand.kartwheel
 
 import android.app.Application
 import android.text.TextUtils
+import com.squareup.sqlbrite.BriteDatabase
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -15,11 +16,12 @@ import java.io.IOException
 class KartWheel : Application(), Interceptor {
     private val okHttpClient = OkHttpClient.Builder().addInterceptor(this).build()
 
+
     override fun onCreate() {
         super.onCreate()
         Storage.initialize(this)
         Database.initialize(this)
-        API.initialize(okHttpClient, BuildConfig.SERVER)
+        API.initialize(Database.get(), okHttpClient, BuildConfig.SERVER)
 
         if (!TextUtils.isEmpty(Storage.userId)) {
             val query = User.FACTORY.select_all(Storage.userId)
@@ -51,7 +53,12 @@ class KartWheel : Application(), Interceptor {
 
         fun logout() {
             Storage.clear()
-            Database.clear()
+            Database.clear(Database.get())
         }
+
+        val db: BriteDatabase
+            get() {
+                return Database.get()
+            }
     }
 }

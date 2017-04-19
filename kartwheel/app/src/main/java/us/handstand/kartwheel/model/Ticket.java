@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
+import com.squareup.sqlbrite.BriteDatabase;
 import com.squareup.sqldelight.RowMapper;
 
 @AutoValue
@@ -24,7 +25,7 @@ public abstract class Ticket implements TicketModel {
     });
     public static final RowMapper<Ticket> SELECT_ALL_MAPPER = FACTORY.select_allMapper();
 
-    public void insert() {
+    public void insert(@Nullable BriteDatabase db) {
         ContentValues cv = new ContentValues();
         cv.put(ID, id());
         cv.put(CLAIMEDAT, claimedAt());
@@ -39,7 +40,9 @@ public abstract class Ticket implements TicketModel {
         cv.put(TEAMID, teamId());
         cv.put(UPDATEDAT, updatedAt());
 
-        Database.Companion.get().insert(TABLE_NAME, cv);
+        if (db != null) {
+            db.insert(TABLE_NAME, cv);
+        }
     }
 
     public boolean isClaimed() {

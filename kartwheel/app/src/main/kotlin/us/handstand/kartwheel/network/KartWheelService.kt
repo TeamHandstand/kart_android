@@ -3,15 +3,15 @@ package us.handstand.kartwheel.network
 
 import com.google.gson.JsonObject
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
 
 internal interface KartWheelService {
 
     @POST("tickets/claim")
     fun claimTicket(@Body ticketCode: JsonObject): Call<JsonObject>
-
-    @GET("events/{eventId}/races")
-    fun getRaces(@Path("eventId") eventId: String): Call<JsonObject>
 
     @PUT("events/{eventId}/users/{userId}")
     fun updateUser(@Path("userId") userId: String, @Path("eventId") eventId: String, @Body user: JsonObject): Call<JsonObject>

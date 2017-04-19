@@ -19,10 +19,9 @@ class Database private constructor(context: Context) : SQLiteOpenHelper(context,
     }
 
     override fun onCreate(sqLiteDatabase: SQLiteDatabase) {
-        sqLiteDatabase.execSQL(Team.CREATE_TABLE)
-        sqLiteDatabase.execSQL(Ticket.CREATE_TABLE)
-        sqLiteDatabase.execSQL(User.CREATE_TABLE)
-        sqLiteDatabase.execSQL(Race.CREATE_TABLE)
+        for (createTableStatement in createTables) {
+            sqLiteDatabase.execSQL(createTableStatement)
+        }
     }
 
     override fun onUpgrade(sqLiteDatabase: SQLiteDatabase, i: Int, i1: Int) {
@@ -33,6 +32,7 @@ class Database private constructor(context: Context) : SQLiteOpenHelper(context,
         private var database: Database? = null
         private val DB_NAME = "kart_wheel"
         private val VERSION = 1
+        private val createTables = arrayOf(Team.CREATE_TABLE, Ticket.CREATE_TABLE, User.CREATE_TABLE, Race.CREATE_TABLE)
         private val tables = arrayOf(Team.TABLE_NAME, Ticket.TABLE_NAME, User.TABLE_NAME, Race.TABLE_NAME)
 
         fun initialize(context: Context) {
@@ -48,9 +48,12 @@ class Database private constructor(context: Context) : SQLiteOpenHelper(context,
             return database!!.db
         }
 
-        fun clear() {
+        fun clear(db: BriteDatabase?) {
+            if (db == null) {
+                return
+            }
             for (table in tables) {
-                get().writableDatabase.delete(table, null, null)
+                db.writableDatabase.delete(table, null, null)
             }
         }
     }

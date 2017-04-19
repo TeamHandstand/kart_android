@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
+import com.squareup.sqlbrite.BriteDatabase;
 import com.squareup.sqldelight.RowMapper;
 
 import static android.text.TextUtils.isEmpty;
@@ -22,7 +23,7 @@ public abstract class User implements UserModel {
     });
     public static final RowMapper<User> SELECT_ALL_MAPPER = FACTORY.select_allMapper();
 
-    public void insert() {
+    public void insert(BriteDatabase db) {
         ContentValues cv = new ContentValues();
         cv.put(ID, id());
         cv.put(AUTHTOKEN, authToken());
@@ -47,7 +48,9 @@ public abstract class User implements UserModel {
         cv.put(TOTALDISTANCEMILES, totalDistanceMiles());
         cv.put(UPDATEDAT, updatedAt());
 
-        Database.Companion.get().insert(TABLE_NAME, cv);
+        if (db != null) {
+            db.insert(TABLE_NAME, cv);
+        }
     }
 
     public boolean hasCriticalInfo() {

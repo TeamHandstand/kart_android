@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
+import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.TicketActivity.TicketFragment.Companion.INTENT_EXTRA_FRAGMENT_TYPE
 import us.handstand.kartwheel.controller.TicketController
@@ -25,6 +26,7 @@ import us.handstand.kartwheel.controller.TicketController.Companion.TOS
 import us.handstand.kartwheel.controller.TicketController.Companion.WELCOME
 import us.handstand.kartwheel.fragment.*
 import us.handstand.kartwheel.layout.ViewUtil
+import us.handstand.kartwheel.model.Database
 import us.handstand.kartwheel.model.Storage
 
 class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketController.Companion.TicketStepCompletionListener {
@@ -92,6 +94,11 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
     }
 
     override fun showNextStep(@FragmentType previous: Int, @FragmentType next: Int) {
+        // Make sure that we're starting with fresh data.
+        if (next == CODE_ENTRY) {
+            Storage.clear()
+            Database.clear(KartWheel.db)
+        }
         ticketFragment = TicketFragment.getFragment(next)
         title!!.text = resources.getString(ticketFragment!!.getTitleResId())
         onTicketFragmentStateChanged()

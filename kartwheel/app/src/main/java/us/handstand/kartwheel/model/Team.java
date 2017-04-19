@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
+import com.squareup.sqlbrite.BriteDatabase;
 import com.squareup.sqldelight.ColumnAdapter;
 import com.squareup.sqldelight.RowMapper;
 
@@ -28,7 +29,7 @@ public abstract class Team implements TeamModel {
     }, new <Ticket>ListTicketColumnAdapter(), new <User>ListTicketColumnAdapter());
     public static final RowMapper<Team> SELECT_ALL_MAPPER = FACTORY.select_allMapper();
 
-    public void insert() {
+    public void insert(BriteDatabase db) {
         ContentValues teamCV = new ContentValues();
         teamCV.put(Team.ID, id());
         teamCV.put(Team.BRONZECOUNT, bronzeCount());
@@ -41,7 +42,9 @@ public abstract class Team implements TeamModel {
         teamCV.put(Team.SLUG, slug());
         teamCV.put(Team.UPDATEDAT, updatedAt());
 
-        Database.Companion.get().insert(TABLE_NAME, teamCV);
+        if (db != null) {
+            db.insert(TABLE_NAME, teamCV);
+        }
     }
 
     // Required by Gson

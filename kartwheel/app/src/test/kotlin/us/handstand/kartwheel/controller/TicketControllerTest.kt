@@ -1,4 +1,4 @@
-package us.handstand.kartwheel
+package us.handstand.kartwheel.controller
 
 import org.hamcrest.CoreMatchers
 import org.junit.Assert.assertThat

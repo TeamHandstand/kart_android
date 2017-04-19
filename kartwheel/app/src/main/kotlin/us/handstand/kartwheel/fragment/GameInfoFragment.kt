@@ -6,14 +6,15 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
+import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.TicketActivity
 import us.handstand.kartwheel.controller.TicketController.Companion.FORFEIT
 import us.handstand.kartwheel.controller.TicketController.Companion.GAME_INFO
 import us.handstand.kartwheel.layout.GameInfoPlayerView
 import us.handstand.kartwheel.layout.ViewUtil
-import us.handstand.kartwheel.model.Database
 import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.model.Ticket
 import us.handstand.kartwheel.model.User
@@ -31,7 +32,7 @@ class GameInfoFragment : Fragment(), TicketActivity.TicketFragment, GameInfoPlay
         playerOne!!.setOnForfeitClickListener(this)
         playerTwo!!.setOnForfeitClickListener(this)
         val query = User.FACTORY.select_from_team(Storage.teamId)
-        Database.get().createQuery(User.TABLE_NAME, query.statement, *query.args)
+        KartWheel.db.createQuery(User.TABLE_NAME, query.statement, *query.args)
                 .subscribe({ updateUsers(it.run()) }, { it.printStackTrace() })
         return fragmentView
     }
@@ -56,6 +57,12 @@ class GameInfoFragment : Fragment(), TicketActivity.TicketFragment, GameInfoPlay
                     playerTwo!!.setUser(user)
                 }
             }
+        }
+        if (playerOne!!.isEmpty()) {
+            playerOne!!.visibility = GONE
+        }
+        if (playerTwo!!.isEmpty()) {
+            playerTwo!!.visibility = GONE
         }
     }
 
