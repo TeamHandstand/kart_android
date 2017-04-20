@@ -18,6 +18,7 @@ import us.handstand.kartwheel.controller.TicketController
 import us.handstand.kartwheel.controller.TicketController.Companion.ALREADY_CLAIMED
 import us.handstand.kartwheel.controller.TicketController.Companion.CODE_ENTRY
 import us.handstand.kartwheel.controller.TicketController.Companion.CRITICAL_INFO
+import us.handstand.kartwheel.controller.TicketController.Companion.ERROR
 import us.handstand.kartwheel.controller.TicketController.Companion.FORFEIT
 import us.handstand.kartwheel.controller.TicketController.Companion.FragmentType
 import us.handstand.kartwheel.controller.TicketController.Companion.GAME_INFO
@@ -90,6 +91,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
         title = ViewUtil.findView(this, R.id.title_text)
         button = ViewUtil.findView(this, R.id.button)
         button!!.setOnClickListener(this)
+        // TODO: Show critical info if stored user object is not filled out.
         ticketController.transition(NONE, if (isEmpty(Storage.userId)) TOS else GAME_INFO)
     }
 
@@ -99,16 +101,19 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
 
     override fun showNextStep(@FragmentType previous: Int, @FragmentType next: Int) {
         // Make sure that we're starting with fresh data.
-        if (next == CODE_ENTRY) {
+        if (next == ERROR || next == CODE_ENTRY) {
             Storage.clear()
             Database.clear(KartWheel.db)
         }
-        ticketFragment = TicketFragment.getFragment(next)
-        title!!.text = resources.getString(ticketFragment!!.getTitleResId())
-        onTicketFragmentStateChanged()
-        intent.putExtra(INTENT_EXTRA_FRAGMENT_TYPE, next)
-        if (!isFinishing && !supportFragmentManager.isDestroyed) {
-            supportFragmentManager.beginTransaction().replace(R.id.fragment, ticketFragment as Fragment?).commit()
+
+        if (next != ERROR) {
+            ticketFragment = TicketFragment.getFragment(next)
+            title!!.text = resources.getString(ticketFragment!!.getTitleResId())
+            onTicketFragmentStateChanged()
+            intent.putExtra(INTENT_EXTRA_FRAGMENT_TYPE, next)
+            if (!isFinishing && !supportFragmentManager.isDestroyed) {
+                supportFragmentManager.beginTransaction().replace(R.id.fragment, ticketFragment as Fragment?).commit()
+            }
         }
     }
 

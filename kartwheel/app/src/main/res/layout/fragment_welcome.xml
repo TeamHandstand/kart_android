@@ -81,7 +81,9 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:hint="@string/dob"
-            android:inputType="date" />
+            android:inputType="date"
+            android:nextFocusDown="@+id/nickname"
+            android:nextFocusRight="@+id/nickname" />
 
         <EditText
             android:id="@+id/nickname"

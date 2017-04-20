@@ -73,13 +73,11 @@ object API {
     }
 
     fun updateUser(user: User, apiCallback: APICallback<User>) {
-        val jsonObject = JsonObject()
-        jsonObject.addProperty("user", gson.toJson(user))
-        kartWheelService!!.updateUser(Storage.userId, Storage.eventId, jsonObject)
+        kartWheelService!!.updateUser(Storage.userId, Storage.eventId, gson.toJsonTree(user).asJsonObject)
                 .enqueue(SafeCallback(object : APICallback<JsonObject>() {
                     override fun onSuccess(response: JsonObject) {
                         val updatedUser = gson.fromJson(response.get("user"), User::class.java)
-                        updatedUser.insert(db)
+                        updatedUser.update(db)
                         apiCallback.onSuccess(updatedUser)
                     }
 

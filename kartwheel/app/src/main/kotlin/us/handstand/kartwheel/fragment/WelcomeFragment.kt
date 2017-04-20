@@ -13,7 +13,6 @@ import android.widget.EditText
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.TicketActivity
 import us.handstand.kartwheel.layout.ViewUtil
-import us.handstand.kartwheel.model.User
 import us.handstand.kartwheel.util.DateFormatter
 
 class WelcomeFragment : Fragment(), TicketActivity.TicketFragment, TextWatcher {
@@ -64,6 +63,16 @@ class WelcomeFragment : Fragment(), TicketActivity.TicketFragment, TextWatcher {
         return isValidInput
     }
 
+    override fun canAdvanceToNextStep(): Boolean {
+        ticketController.user = ticketController.user!!.construct(DateFormatter.getString(DateFormatter[birth!!.text.toString()]),
+                cell!!.text.toString(),
+                email!!.text.toString(),
+                firstName!!.text.toString(),
+                lastName!!.text.toString(),
+                nickname!!.text.toString())
+        return super.canAdvanceToNextStep()
+    }
+
     private // TODO: better validation, birth and cell not required
     val isValidInput: Boolean
         get() = !ViewUtil.isEmpty(birth) && !ViewUtil.isEmpty(cell) && !ViewUtil.isEmpty(email) &&
@@ -71,14 +80,6 @@ class WelcomeFragment : Fragment(), TicketActivity.TicketFragment, TextWatcher {
 
     override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
         if (isAdvanceButtonEnabled()) {
-            ticketController.user = User.construct(DateFormatter.getString(DateFormatter[birth!!.text.toString()]),
-                    cell!!.text.toString(),
-                    ticketController.user!!.charmanderOrSquirtle(),
-                    email!!.text.toString(),
-                    firstName!!.text.toString(),
-                    lastName!!.text.toString(),
-                    nickname!!.text.toString(),
-                    ticketController.user!!.pancakeOrWaffle())
             ticketController.onTicketFragmentStateChanged()
         }
     }

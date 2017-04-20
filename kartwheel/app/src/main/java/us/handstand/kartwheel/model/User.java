@@ -24,6 +24,18 @@ public abstract class User implements UserModel {
     public static final RowMapper<User> SELECT_ALL_MAPPER = FACTORY.select_allMapper();
 
     public void insert(BriteDatabase db) {
+        if (db != null) {
+            db.insert(TABLE_NAME, getContentValues());
+        }
+    }
+
+    public void update(BriteDatabase db) {
+        if (db != null) {
+            db.update(TABLE_NAME, getContentValues(), "id = ?", id());
+        }
+    }
+
+    private ContentValues getContentValues() {
         ContentValues cv = new ContentValues();
         cv.put(ID, id());
         cv.put(AUTHTOKEN, authToken());
@@ -47,10 +59,7 @@ public abstract class User implements UserModel {
         cv.put(TOTALANTIMILES, totalAntiMiles());
         cv.put(TOTALDISTANCEMILES, totalDistanceMiles());
         cv.put(UPDATEDAT, updatedAt());
-
-        if (db != null) {
-            db.insert(TABLE_NAME, cv);
-        }
+        return cv;
     }
 
     public boolean hasCriticalInfo() {
@@ -62,33 +71,55 @@ public abstract class User implements UserModel {
                 && !isEmpty(firstName()) && !isEmpty(lastName()) && !isEmpty(nickName());
     }
 
-    public static User construct(String charmanderOrSquirtle, String pancakeOrWaffle) {
-        return FACTORY.creator.create(Storage.Companion.getUserId(), null, null, null, charmanderOrSquirtle, null, null, null, null, null, null, null, null, pancakeOrWaffle, null, null, null, null, null, null, null, null);
+    public User construct(String charmanderOrSquirtle, String pancakeOrWaffle) {
+        return User.FACTORY.creator.create(id(),
+                authToken(), // authToken
+                birth(),
+                cell(),
+                charmanderOrSquirtle,
+                email(),
+                eventId(),
+                facetimeCount(), // facetime count
+                firstName(),
+                imageUrl(), // imageUrl
+                lastName(),
+                miniGameId(), // miniGameId
+                nickName(),
+                pancakeOrWaffle,
+                pushDeviceToken(), // device token
+                pushEnabled(), // push enabled
+                raceId(), // race id
+                referralType(), // referral type
+                teamId(), // team id
+                totalAntiMiles(), // total anti miles
+                totalDistanceMiles(), // total distance miles
+                updatedAt() // updated at
+        );
     }
 
-    public static User construct(String birth, String cell, String charmanderOrSquirtle, String email, String firstName, String lastName, String nickname, String pancakeOrWaffle) {
-        return User.FACTORY.creator.create(Storage.Companion.getUserId(),
-                null, // authToken
+    public User construct(String birth, String cell, String email, String firstName, String lastName, String nickname) {
+        return User.FACTORY.creator.create(id(),
+                authToken(), // authToken
                 birth,
                 cell,
-                charmanderOrSquirtle,
+                charmanderOrSquirtle(),
                 email,
-                Storage.Companion.getEventId(),
-                null, // facetime count
+                eventId(),
+                facetimeCount(), // facetime count
                 firstName,
-                null, // imageUrl
+                imageUrl(), // imageUrl
                 lastName,
-                null, // miniGameId
+                miniGameId(), // miniGameId
                 nickname,
-                pancakeOrWaffle,
-                null, // device token
-                null, // push enabled
-                null, // race id
-                null, // referral type
-                null, // team id
-                null, // total anti miles
-                null, // total distance miles
-                null // updated at
+                pancakeOrWaffle(),
+                pushDeviceToken(), // device token
+                pushEnabled(), // push enabled
+                raceId(), // race id
+                referralType(), // referral type
+                teamId(), // team id
+                totalAntiMiles(), // total anti miles
+                totalDistanceMiles(), // total distance miles
+                updatedAt() // updated at
         );
     }
 

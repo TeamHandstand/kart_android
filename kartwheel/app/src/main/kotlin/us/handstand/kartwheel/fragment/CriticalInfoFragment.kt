@@ -13,7 +13,6 @@ import android.widget.TextView
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.TicketActivity
 import us.handstand.kartwheel.layout.ViewUtil
-import us.handstand.kartwheel.model.User
 
 class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnClickListener {
     internal var critInfoText: TextView? = null
@@ -65,7 +64,7 @@ class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnC
             selectedAnswer = NONE
         } else if (currentQuestion == POKEMON) {
             currentQuestion = FINISHED
-            ticketController.user = User.construct(charmanderOrSquirtle, pancakeOrWaffle)
+            ticketController.user = ticketController.user!!.construct(charmanderOrSquirtle, pancakeOrWaffle)
         }
         critInfoText!!.setText(if (currentQuestion == FOOD) R.string.pancakes_waffles else R.string.charmander_squirtle)
         leftImage!!.setImageResource(if (currentQuestion == FOOD) R.mipmap.pancakes else R.mipmap.charmander)
