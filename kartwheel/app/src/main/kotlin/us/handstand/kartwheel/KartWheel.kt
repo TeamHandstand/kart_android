@@ -4,7 +4,9 @@ package us.handstand.kartwheel
 import android.app.Application
 import android.preference.PreferenceManager
 import android.text.TextUtils
+import com.crashlytics.android.Crashlytics
 import com.squareup.sqlbrite.BriteDatabase
+import io.fabric.sdk.android.Fabric
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -23,6 +25,7 @@ class KartWheel : Application(), Interceptor {
         Storage.initialize(PreferenceManager.getDefaultSharedPreferences(this))
         Database.initialize(this)
         API.initialize(Database.get(), okHttpClient, BuildConfig.SERVER)
+        Fabric.with(this, Crashlytics())
 
         if (!TextUtils.isEmpty(Storage.userId)) {
             val query = User.FACTORY.select_all(Storage.userId)
