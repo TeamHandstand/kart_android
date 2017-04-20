@@ -14,7 +14,6 @@ import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.TicketActivity
 import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.model.User
-import us.handstand.kartwheel.model.UserModel
 
 class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnClickListener {
     internal var critInfoText: TextView? = null
@@ -24,8 +23,8 @@ class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnC
     internal var button: AppCompatButton? = null
     private var pancakeOrWaffle: String? = null
     private var charmanderOrSquirtle: String? = null
-    @Question private var currentQuestion: Int = 0
-    @Answer private var selectedAnswer: Int = 0
+    @Question private var currentQuestion: Int = FOOD
+    @Answer private var selectedAnswer: Int = NONE
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(R.layout.fragment_crit_info, container, false) as ViewGroup
@@ -60,6 +59,24 @@ class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnC
         return selectedAnswer != NONE
     }
 
+    override fun canAdvanceToNextStep(): Boolean {
+        if (currentQuestion == FOOD) {
+            currentQuestion = POKEMON
+            selectedAnswer = NONE
+        } else if (currentQuestion == POKEMON) {
+            currentQuestion = FINISHED
+            ticketController.user = User.construct(charmanderOrSquirtle, pancakeOrWaffle)
+        }
+        critInfoText!!.setText(if (currentQuestion == FOOD) R.string.pancakes_waffles else R.string.charmander_squirtle)
+        leftImage!!.setImageResource(if (currentQuestion == FOOD) R.mipmap.pancakes else R.mipmap.charmander)
+        rightImage!!.setImageResource(if (currentQuestion == FOOD) R.mipmap.waffles else R.mipmap.squirtle)
+
+        leftImage!!.isSelected = selectedAnswer == LEFT
+        rightImage!!.isSelected = selectedAnswer == RIGHT
+        ticketController.onTicketFragmentStateChanged()
+        return currentQuestion == FINISHED
+    }
+
     override fun onClick(v: View) {
         if (v.id == R.id.left_image) {
             selectedAnswer = LEFT
@@ -75,25 +92,8 @@ class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnC
             } else if (currentQuestion == FOOD) {
                 pancakeOrWaffle = "waffle"
             }
-            activity.intent.putExtra(if (currentQuestion == FOOD) User.PANCAKEORWAFFLE else User.CHARMANDERORSQUIRTLE, selectedAnswer)
-        } else if (v.id == R.id.button) {
-            currentQuestion = if (activity.intent.hasExtra(UserModel.PANCAKEORWAFFLE)) POKEMON else FOOD
-            critInfoText!!.setText(if (currentQuestion == FOOD) R.string.pancakes_waffles else R.string.charmander_squirtle)
-            leftImage!!.setImageResource(if (currentQuestion == FOOD) R.mipmap.pancakes else R.mipmap.charmander)
-            rightImage!!.setImageResource(if (currentQuestion == FOOD) R.mipmap.waffles else R.mipmap.squirtle)
-
-            leftImage!!.isSelected = selectedAnswer == LEFT
-            rightImage!!.isSelected = selectedAnswer == RIGHT
-            return
         }
 
-        if (currentQuestion == FINISHED) {
-            ticketController.user = User.construct(charmanderOrSquirtle, pancakeOrWaffle)
-        }
-
-        activity.intent.putExtra(if (currentQuestion == FOOD) User.PANCAKEORWAFFLE else User.CHARMANDERORSQUIRTLE, selectedAnswer)
-        currentQuestion = if (currentQuestion == FOOD) POKEMON else FINISHED
-        selectedAnswer = NONE
         ticketController.onTicketFragmentStateChanged()
     }
 

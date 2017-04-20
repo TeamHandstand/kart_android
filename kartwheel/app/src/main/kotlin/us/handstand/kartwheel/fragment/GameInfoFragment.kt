@@ -39,14 +39,12 @@ class GameInfoFragment : Fragment(), TicketActivity.TicketFragment, GameInfoCont
     }
 
     override fun onPlayer1Info(user: User, ticket: Ticket) {
-        playerOne!!.setClaimed(true)
         playerOne!!.setUser(user)
         playerOne!!.setTicket(ticket)
         playerOne!!.visibility = VISIBLE
     }
 
     override fun onPlayer2Info(user: User, ticket: Ticket) {
-        playerTwo!!.setClaimed(true)
         playerTwo!!.setUser(user)
         playerTwo!!.setTicket(ticket)
         playerTwo!!.visibility = VISIBLE

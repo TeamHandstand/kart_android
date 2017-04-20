@@ -12,7 +12,7 @@ import org.junit.Test
 import us.handstand.kartwheel.mocks.MockDBContext
 import us.handstand.kartwheel.model.Database
 import us.handstand.kartwheel.model.Storage
-import us.handstand.kartwheel.model.Ticket
+import us.handstand.kartwheel.model.User
 import us.handstand.kartwheel.network.API.claimTicket
 
 class APITest {
@@ -37,8 +37,8 @@ class APITest {
     @Test
     fun claimTicket() {
         server.enqueue(MockResponse().setBody(teamResponse))
-        claimTicket("matt", object : API.APICallback<Ticket>() {
-            override fun onSuccess(response: Ticket) {
+        claimTicket("matt", object : API.APICallback<User>() {
+            override fun onSuccess(response: User) {
                 this@APITest.response = response
                 synchronized(lock, { lock.notifyAll() })
             }
@@ -54,8 +54,8 @@ class APITest {
         assertThat(Storage.code, CoreMatchers.`is`(code))
         assertThat(Storage.teamId, CoreMatchers.`is`(teamId))
         assertThat(Storage.eventId, CoreMatchers.`is`(eventId))
-        assertTrue(response is Ticket)
-        assertThat((response as Ticket).playerId(), CoreMatchers.`is`(Storage.userId))
-        assertThat((response as Ticket).code(), CoreMatchers.`is`("matt"))
+        assertTrue(response is User)
+        assertThat((response as User).id(), CoreMatchers.`is`(Storage.userId))
+        assertThat((response as User).teamId(), CoreMatchers.`is`(teamId))
     }
 }

@@ -36,7 +36,7 @@ object API {
     }
 
     // TODO: Show loading animation when claiming ticket
-    fun claimTicket(ticketCode: String, apiCallback: APICallback<Ticket>) {
+    fun claimTicket(ticketCode: String, apiCallback: APICallback<User>) {
         val jsonObject = JsonObject()
         jsonObject.addProperty("code", ticketCode)
         kartWheelService!!.claimTicket(jsonObject).enqueue(SafeCallback(object : APICallback<JsonObject>() {
@@ -47,21 +47,23 @@ object API {
                 Storage.teamId = team.id()
                 Storage.eventId = team.eventId()!!
 
-                val users = if (team.users() == null) emptyList<User>() else team.users()
-                for (user in users!!) {
-                    user.insert(db)
-                }
-
-                var userTicket: Ticket? = null
                 val tickets = if (team.tickets() == null) emptyList<Ticket>() else team.tickets()
                 for (ticket in tickets!!) {
                     if (ticketCode == ticket.code()) {
-                        userTicket = ticket
                         Storage.userId = ticket.playerId()!!
                     }
                     ticket.insert(db)
                 }
-                apiCallback.onSuccess(userTicket!!)
+
+                val users = if (team.users() == null) emptyList<User>() else team.users()
+                var loggedInUser: User? = null
+                for (user in users!!) {
+                    if (Storage.userId == user.id()) {
+                        loggedInUser = user
+                    }
+                    user.insert(db)
+                }
+                apiCallback.onSuccess(loggedInUser!!)
             }
 
             override fun onFailure(errorCode: Int, errorResponse: String) {

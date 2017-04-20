@@ -61,6 +61,7 @@ class GameInfoPlayerView : RelativeLayout, View.OnClickListener {
 
     fun setTicket(ticket: Ticket) {
         this.ticket = ticket
+        setClaimed(ticket.isClaimed)
     }
 
     fun setClaimed(claimed: Boolean) {

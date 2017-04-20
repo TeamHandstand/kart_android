@@ -35,7 +35,7 @@ class TicketController(var listener: TicketStepCompletionListener) {
     var user: User? = null
 
     fun transition(@FragmentType from: Int, @FragmentType to: Int) {
-        if (from != NONE && from != ERROR) {
+        if (from != NONE && to != ERROR) {
             validateTransition(from, to)
         }
         listener.showNextStep(from, to)
@@ -45,9 +45,10 @@ class TicketController(var listener: TicketStepCompletionListener) {
         when (type) {
             TOS -> transition(type, CODE_ENTRY)
 
-            CODE_ENTRY -> API.claimTicket(code!!, object : API.APICallback<Ticket>() {
-                override fun onSuccess(response: Ticket) {
-                    transition(type, if (response.isClaimed) GAME_INFO else CRITICAL_INFO)
+            CODE_ENTRY -> API.claimTicket(code!!, object : API.APICallback<User>() {
+                override fun onSuccess(response: User) {
+                    user = response
+                    transition(type, if (response.hasAllInformation()) GAME_INFO else CRITICAL_INFO)
                 }
 
                 override fun onFailure(errorCode: Int, errorResponse: String) {

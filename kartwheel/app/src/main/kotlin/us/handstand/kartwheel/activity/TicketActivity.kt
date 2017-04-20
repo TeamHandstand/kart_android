@@ -45,6 +45,10 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
             return false
         }
 
+        fun canAdvanceToNextStep(): Boolean {
+            return true
+        }
+
         fun getActivity(): Activity
 
         companion object {
@@ -119,7 +123,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
     }
 
     override fun onClick(v: View) {
-        if (v.isEnabled && v.id == R.id.button && ticketFragment!!.isAdvanceButtonEnabled()) {
+        if (v.isEnabled && v.id == R.id.button && ticketFragment!!.isAdvanceButtonEnabled() && ticketFragment!!.canAdvanceToNextStep()) {
             ticketController.onStepCompleted(currentFragmentType)
         }
     }
