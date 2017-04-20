@@ -55,6 +55,7 @@
         <us.handstand.kartwheel.layout.ItemView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             app:description="@string/event_banana"
             app:src="@mipmap/item_banana"
             app:title="@string/banana" />
@@ -62,6 +63,7 @@
         <us.handstand.kartwheel.layout.ItemView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             app:description="@string/event_acorn"
             app:src="@mipmap/red_turtle"
             app:title="@string/acorn" />

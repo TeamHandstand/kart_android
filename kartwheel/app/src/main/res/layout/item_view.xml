@@ -16,6 +16,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginBottom="8dp"
         android:layout_toRightOf="@+id/image"
+        android:textStyle="bold"
         tools:text="@string/acorn" />
 
     <TextView
