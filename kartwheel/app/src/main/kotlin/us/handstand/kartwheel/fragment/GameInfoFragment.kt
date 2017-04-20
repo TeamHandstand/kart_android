@@ -1,16 +1,17 @@
 package us.handstand.kartwheel.fragment
 
 
-import android.database.Cursor
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.TicketActivity
+import us.handstand.kartwheel.controller.GameInfoController
 import us.handstand.kartwheel.controller.TicketController.Companion.FORFEIT
 import us.handstand.kartwheel.controller.TicketController.Companion.GAME_INFO
 import us.handstand.kartwheel.layout.GameInfoPlayerView
@@ -19,10 +20,10 @@ import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.model.Ticket
 import us.handstand.kartwheel.model.User
 
-class GameInfoFragment : Fragment(), TicketActivity.TicketFragment, GameInfoPlayerView.Companion.OnForfeitClickListener {
+class GameInfoFragment : Fragment(), TicketActivity.TicketFragment, GameInfoController.Companion.GameInfoCompletionListener, GameInfoPlayerView.Companion.OnForfeitClickListener {
     private var playerOne: GameInfoPlayerView? = null
-
     private var playerTwo: GameInfoPlayerView? = null
+    private val controller = GameInfoController(KartWheel.db, Storage.teamId, Storage.userId)
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // TODO: FAB Buttons
@@ -31,10 +32,24 @@ class GameInfoFragment : Fragment(), TicketActivity.TicketFragment, GameInfoPlay
         playerTwo = ViewUtil.findView(fragmentView, R.id.playerTwo)
         playerOne!!.setOnForfeitClickListener(this)
         playerTwo!!.setOnForfeitClickListener(this)
-        val query = User.FACTORY.select_from_team(Storage.teamId)
-        KartWheel.db.createQuery(User.TABLE_NAME, query.statement, *query.args)
-                .subscribe({ updateUsers(it.run()) }, { it.printStackTrace() })
+        playerOne!!.visibility = GONE
+        playerTwo!!.visibility = GONE
+        controller.setGameInfoCompetionListener(this)
         return fragmentView
+    }
+
+    override fun onPlayer1Info(user: User, ticket: Ticket) {
+        playerOne!!.setClaimed(true)
+        playerOne!!.setUser(user)
+        playerOne!!.setTicket(ticket)
+        playerOne!!.visibility = VISIBLE
+    }
+
+    override fun onPlayer2Info(user: User, ticket: Ticket) {
+        playerTwo!!.setClaimed(true)
+        playerTwo!!.setUser(user)
+        playerTwo!!.setTicket(ticket)
+        playerTwo!!.visibility = VISIBLE
     }
 
     override fun getTitleResId(): Int {
@@ -43,27 +58,6 @@ class GameInfoFragment : Fragment(), TicketActivity.TicketFragment, GameInfoPlay
 
     override fun getAdvanceButtonTextResId(): Int {
         return R.string.next
-    }
-
-    private fun updateUsers(cursor: Cursor?) {
-        cursor.use { cursor ->
-            while (cursor!!.moveToNext()) {
-                val user = User.FACTORY.select_from_teamMapper().map(cursor)
-                if (user.id() == Storage.userId) {
-                    playerOne!!.setClaimed(true)
-                    playerOne!!.setUser(user)
-                } else {
-                    playerTwo!!.setClaimed(true)
-                    playerTwo!!.setUser(user)
-                }
-            }
-        }
-        if (playerOne!!.isEmpty()) {
-            playerOne!!.visibility = GONE
-        }
-        if (playerTwo!!.isEmpty()) {
-            playerTwo!!.visibility = GONE
-        }
     }
 
     override fun onPlayerForfeitClick(ticket: Ticket) {
