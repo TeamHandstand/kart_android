@@ -18,7 +18,7 @@ import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.model.Ticket
 import us.handstand.kartwheel.model.User
 
-class GameInfoFragment : Fragment(), TicketActivity.TicketFragment, GameInfoController.Companion.GameInfoCompletionListener, GameInfoPlayerView.Companion.OnForfeitClickListener {
+class GameInfoFragment : Fragment(), TicketActivity.TicketFragment, GameInfoController.Companion.GameInfoCompletionListener, GameInfoPlayerView.Companion.OnPlayerActionClickListener {
     private var playerOne: GameInfoPlayerView? = null
     private var playerTwo: GameInfoPlayerView? = null
     private var controller: GameInfoController? = null
@@ -59,5 +59,9 @@ class GameInfoFragment : Fragment(), TicketActivity.TicketFragment, GameInfoCont
     override fun onPlayerForfeitClick(ticket: Ticket) {
         ticketController.ticket = ticket
         ticketController.transition(GAME_INFO, FORFEIT)
+    }
+
+    override fun onPlayerShareClick(ticket: Ticket) {
+        // TODO: Share ticket code
     }
 }

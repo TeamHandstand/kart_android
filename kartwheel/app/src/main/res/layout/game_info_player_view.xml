@@ -19,13 +19,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_toLeftOf="@+id/forfeit"
+        android:layout_toLeftOf="@+id/forfeit_or_share"
         android:layout_toRightOf="@+id/player_number"
         android:textSize="18dp"
         tools:text="Matthew Ott" />
 
     <ImageView
-        android:id="@+id/forfeit"
+        android:id="@+id/forfeit_or_share"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
