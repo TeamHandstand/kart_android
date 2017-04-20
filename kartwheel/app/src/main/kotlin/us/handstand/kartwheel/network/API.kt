@@ -57,7 +57,7 @@ object API {
                 for (ticket in tickets!!) {
                     if (ticketCode == ticket.code()) {
                         userTicket = ticket
-                        Storage.userId = userTicket.playerId()!!
+                        Storage.userId = ticket.playerId()!!
                     }
                     ticket.insert(db)
                 }

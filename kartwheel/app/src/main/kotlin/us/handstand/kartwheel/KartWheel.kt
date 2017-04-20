@@ -2,6 +2,7 @@ package us.handstand.kartwheel
 
 
 import android.app.Application
+import android.preference.PreferenceManager
 import android.text.TextUtils
 import com.squareup.sqlbrite.BriteDatabase
 import okhttp3.Interceptor
@@ -19,7 +20,7 @@ class KartWheel : Application(), Interceptor {
 
     override fun onCreate() {
         super.onCreate()
-        Storage.initialize(this)
+        Storage.initialize(PreferenceManager.getDefaultSharedPreferences(this))
         Database.initialize(this)
         API.initialize(Database.get(), okHttpClient, BuildConfig.SERVER)
 

@@ -1,16 +1,10 @@
 package us.handstand.kartwheel.model
 
 
-import android.content.Context
 import android.content.SharedPreferences
-import android.preference.PreferenceManager
 import android.support.annotation.StringDef
 
-class Storage private constructor(context: Context) {
-    private val context: Context = context.applicationContext
-
-    private val prefs: SharedPreferences
-        get() = PreferenceManager.getDefaultSharedPreferences(context)
+class Storage private constructor(val prefs: SharedPreferences) {
 
     companion object {
         private const val USER_ID = "user_id"
@@ -23,9 +17,9 @@ class Storage private constructor(context: Context) {
 
         private var instance: Storage? = null
 
-        fun initialize(context: Context) {
+        fun initialize(prefs: SharedPreferences) {
             if (instance == null) {
-                instance = Storage(context)
+                instance = Storage(prefs)
             }
         }
 
