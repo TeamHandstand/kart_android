@@ -6,16 +6,20 @@ import android.support.v4.app.Fragment
 import android.support.v7.widget.AppCompatButton
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.KeyEvent
+import android.view.KeyEvent.ACTION_DOWN
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo.IME_ACTION_GO
 import android.widget.EditText
+import android.widget.TextView
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.TicketActivity
 import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.util.DateFormatter
 
-class WelcomeFragment : Fragment(), TicketActivity.TicketFragment, TextWatcher {
+class WelcomeFragment : Fragment(), TicketActivity.TicketFragment, TextWatcher, TextView.OnEditorActionListener {
 
     internal var birth: EditText? = null
     internal var cell: EditText? = null
@@ -39,6 +43,7 @@ class WelcomeFragment : Fragment(), TicketActivity.TicketFragment, TextWatcher {
         firstName!!.addTextChangedListener(this)
         lastName!!.addTextChangedListener(this)
         nickname!!.addTextChangedListener(this)
+        nickname?.setOnEditorActionListener(this)
         return fragmentView
     }
 
@@ -86,4 +91,12 @@ class WelcomeFragment : Fragment(), TicketActivity.TicketFragment, TextWatcher {
 
     override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
     override fun afterTextChanged(s: Editable) {}
+
+    override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
+        if (actionId == IME_ACTION_GO || event?.action == ACTION_DOWN) {
+            activity.findViewById(R.id.button).performClick()
+            return true
+        }
+        return false
+    }
 }

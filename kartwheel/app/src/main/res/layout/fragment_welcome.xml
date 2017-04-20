@@ -26,6 +26,7 @@
                 android:layout_marginRight="8dp"
                 android:layout_weight="1"
                 android:hint="@string/first_name"
+                android:imeOptions="actionNext"
                 android:nextFocusDown="@+id/last_name"
                 android:nextFocusRight="@+id/last_name" />
 
@@ -37,6 +38,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_weight="1"
                 android:hint="@string/last_name"
+                android:imeOptions="actionNext"
                 android:nextFocusDown="@+id/email"
                 android:nextFocusRight="@+id/email" />
         </LinearLayout>
@@ -55,6 +57,7 @@
                 android:layout_marginRight="16dp"
                 android:layout_weight="1"
                 android:hint="@string/email"
+                android:imeOptions="actionNext"
                 android:inputType="textEmailAddress"
                 android:nextFocusDown="@+id/cell"
                 android:nextFocusRight="@+id/cell" />
@@ -67,6 +70,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_weight="1"
                 android:hint="@string/cell"
+                android:imeOptions="actionNext"
                 android:inputType="phone"
                 android:nextFocusDown="@+id/birth"
                 android:nextFocusRight="@+id/birth" />
@@ -81,8 +85,10 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:hint="@string/dob"
+            android:imeOptions="actionNext"
             android:inputType="date"
             android:nextFocusDown="@+id/nickname"
+            android:nextFocusForward="@+id/nickname"
             android:nextFocusRight="@+id/nickname" />
 
         <EditText
@@ -92,7 +98,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:hint="@string/nickname" />
+            android:hint="@string/nickname"
+            android:imeOptions="actionGo" />
 
     </LinearLayout>
 </ScrollView>

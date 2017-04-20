@@ -2,6 +2,7 @@ package us.handstand.kartwheel.controller
 
 import android.database.Cursor
 import com.squareup.sqlbrite.BriteDatabase
+import rx.Subscription
 import us.handstand.kartwheel.model.Ticket
 import us.handstand.kartwheel.model.User
 
@@ -12,10 +13,13 @@ class GameInfoController constructor(val db: BriteDatabase, val teamId: String, 
     private var p2: User? = null
     private var t1: Ticket? = null
     private var t2: Ticket? = null
+    private var userSubscription: Subscription? = null
+    private var ticket1Subscription: Subscription? = null
+    private var ticket2Subscription: Subscription? = null
 
     init {
         val query = User.FACTORY.select_from_team(teamId)
-        db.createQuery(User.TABLE_NAME, query.statement, *query.args)
+        userSubscription = db.createQuery(User.TABLE_NAME, query.statement, *query.args)
                 .subscribe({ updateUsers(it.run()) }, { it.printStackTrace() })
     }
 
@@ -26,15 +30,18 @@ class GameInfoController constructor(val db: BriteDatabase, val teamId: String, 
         }
     }
 
+    fun unsubscribe() {
+        userSubscription?.unsubscribe()
+        ticket1Subscription?.unsubscribe()
+        ticket2Subscription?.unsubscribe()
+    }
+
     fun setGameInfoCompetionListener(listener: GameInfoCompletionListener) {
         this.listener = listener
         synchronized(this, {
             if (p1 != null && t1 != null) {
                 listener.onPlayer1Info(p1!!, t1!!)
             }
-        })
-
-        synchronized(this, {
             if (p2 != null && t2 != null) {
                 listener.onPlayer2Info(p2!!, t2!!)
             }
@@ -45,37 +52,38 @@ class GameInfoController constructor(val db: BriteDatabase, val teamId: String, 
         cursor.use { cursor ->
             while (cursor!!.moveToNext()) {
                 val user = User.FACTORY.select_from_teamMapper().map(cursor)
-                if (user.id() == userId) {
-                    synchronized(this, { p1 = user })
-                } else {
-                    synchronized(this, { p2 = user })
-                }
-                getTicketForUser(user)
+                synchronized(this, {
+                    if (user.id() == userId) {
+                        p1 = user
+                        ticket1Subscription = getTicketForUser(user.id())
+                    } else {
+                        p2 = user
+                        ticket2Subscription = getTicketForUser(user.id())
+                    }
+                })
             }
         }
     }
 
-    fun getTicketForUser(user: User) {
-        val query = Ticket.FACTORY.select_for_player(user.id())
-        db.createQuery(Ticket.TABLE_NAME, query.statement, *query.args)
+    fun getTicketForUser(userId: String): Subscription {
+        val query = Ticket.FACTORY.select_for_player(userId)
+        return db.createQuery(Ticket.TABLE_NAME, query.statement, *query.args)
                 .subscribe({
                     val cursor = it.run()
                     cursor.use {
                         if (cursor!!.moveToFirst()) {
                             val ticket = Ticket.FACTORY.select_for_playerMapper().map(cursor)
-                            if (p1 != null && ticket.playerId() == p1!!.id()) {
-                                synchronized(this, {
+                            synchronized(this, {
+                                if (p1 != null && ticket.playerId() == p1!!.id()) {
                                     t1 = ticket
                                     listener?.onPlayer1Info(p1!!, t1!!)
-                                })
-                            } else if (p2 != null && ticket.playerId() == p2!!.id()) {
-                                synchronized(this, {
+                                } else if (p2 != null && ticket.playerId() == p2!!.id()) {
                                     t2 = ticket
                                     listener?.onPlayer2Info(p2!!, t2!!)
-                                })
-                            } else {
-                                throw IllegalStateException("Invalid ticket with player id " + ticket.playerId()) as Throwable
-                            }
+                                } else {
+                                    throw IllegalStateException("Invalid ticket with player id " + ticket.playerId())
+                                }
+                            })
                         }
                     }
                 })

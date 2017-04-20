@@ -23,7 +23,7 @@ import us.handstand.kartwheel.model.User
 class GameInfoFragment : Fragment(), TicketActivity.TicketFragment, GameInfoController.Companion.GameInfoCompletionListener, GameInfoPlayerView.Companion.OnForfeitClickListener {
     private var playerOne: GameInfoPlayerView? = null
     private var playerTwo: GameInfoPlayerView? = null
-    private val controller = GameInfoController(KartWheel.db, Storage.teamId, Storage.userId)
+    private var controller: GameInfoController? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // TODO: FAB Buttons
@@ -34,8 +34,15 @@ class GameInfoFragment : Fragment(), TicketActivity.TicketFragment, GameInfoCont
         playerTwo!!.setOnForfeitClickListener(this)
         playerOne!!.visibility = GONE
         playerTwo!!.visibility = GONE
-        controller.setGameInfoCompetionListener(this)
+        controller = GameInfoController(KartWheel.db, Storage.teamId, Storage.userId)
+        controller?.setGameInfoCompetionListener(this)
         return fragmentView
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        controller?.unsubscribe()
+        controller = null
     }
 
     override fun onPlayer1Info(user: User, ticket: Ticket) {
