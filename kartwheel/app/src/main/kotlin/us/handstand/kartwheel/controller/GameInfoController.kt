@@ -7,8 +7,7 @@ import us.handstand.kartwheel.model.Ticket
 import us.handstand.kartwheel.model.User
 
 
-class GameInfoController constructor(val db: BriteDatabase, val teamId: String, val userId: String) {
-    private var listener: GameInfoCompletionListener? = null
+class GameInfoController constructor(val listener: GameInfoCompletionListener, val db: BriteDatabase, val teamId: String, val userId: String) {
     private var p1: User? = null
     private var p2: User? = null
     private var t1: Ticket? = null
@@ -34,18 +33,10 @@ class GameInfoController constructor(val db: BriteDatabase, val teamId: String, 
         userSubscription?.unsubscribe()
         ticket1Subscription?.unsubscribe()
         ticket2Subscription?.unsubscribe()
-    }
-
-    fun setGameInfoCompetionListener(listener: GameInfoCompletionListener) {
-        this.listener = listener
-        synchronized(this, {
-            if (p1 != null && t1 != null) {
-                listener.onPlayer1Info(p1!!, t1!!)
-            }
-            if (p2 != null && t2 != null) {
-                listener.onPlayer2Info(p2!!, t2!!)
-            }
-        })
+        p1 = null
+        p2 = null
+        t1 = null
+        t2 = null
     }
 
     fun updateUsers(cursor: Cursor?) {
@@ -76,10 +67,10 @@ class GameInfoController constructor(val db: BriteDatabase, val teamId: String, 
                             synchronized(this, {
                                 if (p1 != null && ticket.playerId() == p1!!.id()) {
                                     t1 = ticket
-                                    listener?.onPlayer1Info(p1!!, t1!!)
+                                    listener.onPlayer1Info(p1!!, ticket)
                                 } else if (p2 != null && ticket.playerId() == p2!!.id()) {
                                     t2 = ticket
-                                    listener?.onPlayer2Info(p2!!, t2!!)
+                                    listener.onPlayer2Info(p2!!, ticket)
                                 } else {
                                     throw IllegalStateException("Invalid ticket with player id " + ticket.playerId())
                                 }

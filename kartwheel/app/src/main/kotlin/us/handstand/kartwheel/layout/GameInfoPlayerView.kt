@@ -2,6 +2,7 @@ package us.handstand.kartwheel.layout
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -16,6 +17,8 @@ class GameInfoPlayerView : RelativeLayout, View.OnClickListener {
     private var playerName: TextView? = null
     private var ticket: Ticket? = null
     private var isClaimed: Boolean = false
+    private val pointerColorCode = 0x1F449
+    private val pointerCode = 0x1F3FF
 
     constructor(context: Context?) : super(context) {
         init(null)
@@ -55,18 +58,12 @@ class GameInfoPlayerView : RelativeLayout, View.OnClickListener {
         setPadding(p, p, p, p)
     }
 
-    fun setUser(user: User) {
-        this.playerName!!.text = user.firstName() + " " + user.lastName()
-    }
-
-    fun setTicket(ticket: Ticket) {
+    fun update(user: User, ticket: Ticket) {
         this.ticket = ticket
-        setClaimed(ticket.isClaimed)
-    }
-
-    fun setClaimed(claimed: Boolean) {
-        isClaimed = claimed
+        isClaimed = ticket.isClaimed || user.hasAllInformation()
         playerNumber!!.setTextColor(if (isClaimed) resources.getColor(R.color.green) else resources.getColor(R.color.red))
+        playerName!!.text = if (isClaimed) user.firstName() + " " + user.lastName() else resources.getString(R.string.unclaimed_ticket) + String(Character.toChars(pointerColorCode)) + String(Character.toChars(pointerCode))
+        visibility = View.VISIBLE
     }
 
     fun setOnForfeitClickListener(clickListener: OnForfeitClickListener) {

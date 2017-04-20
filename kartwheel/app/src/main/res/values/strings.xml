@@ -42,6 +42,7 @@
     <string name="forfeit_description">If you forfeit your ticket, you will be removed entirely from the game. You may
     give your ticket code to a friend!\n\nThey can download the app and use the code to get started. Lucky them&#8230;</string>
     <string name="copy_code">Copy your code: </string>
+    <string name="unclaimed_ticket">UNCLAIMED </string>
     <string name="forfeit_ticket">Forfeit ticket</string>
     <string name="forfeit_ticket_title">Forfeit ticket?</string>
     <string name="keep_ticket">Keep my ticket</string>

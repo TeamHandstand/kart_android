@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -21,18 +22,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
+            android:visibility="gone"
             app:isUser="true"
             app:playerName="Matthew Ott"
-            app:playerNumber="1" />
+            app:playerNumber="1"
+            tools:visibility="visible" />
 
         <us.handstand.kartwheel.layout.GameInfoPlayerView
             android:id="@+id/playerTwo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
+            android:visibility="gone"
             app:isUser="false"
             app:playerName="Gil Levy"
-            app:playerNumber="2" />
+            app:playerNumber="2"
+            tools:visibility="visible" />
 
         <TextView
             style="@style/GameInfoTitleStyle"

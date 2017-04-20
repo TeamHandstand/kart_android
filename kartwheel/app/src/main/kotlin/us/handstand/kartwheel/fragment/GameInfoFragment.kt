@@ -5,8 +5,6 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
@@ -32,10 +30,7 @@ class GameInfoFragment : Fragment(), TicketActivity.TicketFragment, GameInfoCont
         playerTwo = ViewUtil.findView(fragmentView, R.id.playerTwo)
         playerOne!!.setOnForfeitClickListener(this)
         playerTwo!!.setOnForfeitClickListener(this)
-        playerOne!!.visibility = GONE
-        playerTwo!!.visibility = GONE
-        controller = GameInfoController(KartWheel.db, Storage.teamId, Storage.userId)
-        controller?.setGameInfoCompetionListener(this)
+        controller = GameInfoController(this, KartWheel.db, Storage.teamId, Storage.userId)
         return fragmentView
     }
 
@@ -46,15 +41,11 @@ class GameInfoFragment : Fragment(), TicketActivity.TicketFragment, GameInfoCont
     }
 
     override fun onPlayer1Info(user: User, ticket: Ticket) {
-        playerOne!!.setUser(user)
-        playerOne!!.setTicket(ticket)
-        playerOne!!.visibility = VISIBLE
+        activity.runOnUiThread { playerOne!!.update(user, ticket) }
     }
 
     override fun onPlayer2Info(user: User, ticket: Ticket) {
-        playerTwo!!.setUser(user)
-        playerTwo!!.setTicket(ticket)
-        playerTwo!!.visibility = VISIBLE
+        activity.runOnUiThread { playerTwo!!.update(user, ticket) }
     }
 
     override fun getTitleResId(): Int {

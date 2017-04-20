@@ -47,9 +47,7 @@ class APITest {
                 synchronized(lock, { lock.notifyAll() })
             }
         })
-        synchronized(lock, {
-            lock.wait()
-        })
+        synchronized(lock, { lock.wait() })
 
         assertThat(Storage.code, CoreMatchers.`is`(code))
         assertThat(Storage.teamId, CoreMatchers.`is`(teamId))

@@ -4,13 +4,14 @@ package us.handstand.kartwheel.model;
 import android.content.ContentValues;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 
 import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.squareup.sqlbrite.BriteDatabase;
 import com.squareup.sqldelight.RowMapper;
+
+import static android.text.TextUtils.isEmpty;
 
 @AutoValue
 public abstract class Ticket implements TicketModel {
@@ -46,7 +47,7 @@ public abstract class Ticket implements TicketModel {
     }
 
     public boolean isClaimed() {
-        return !TextUtils.isEmpty(claimedAt());
+        return !isEmpty(claimedAt()) && !isEmpty(forfeitedAt());
     }
 
     // Required by Gson
