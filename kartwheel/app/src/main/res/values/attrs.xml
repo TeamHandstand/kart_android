@@ -8,5 +8,6 @@
     <declare-styleable name="GameInfoPlayerView">
         <attr name="playerName" format="string" />
         <attr name="playerNumber" format="string" />
+        <attr name="isUser" format="boolean" />
     </declare-styleable>
 </resources>

@@ -21,6 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
+            app:isUser="true"
             app:playerName="Matthew Ott"
             app:playerNumber="1" />
 
@@ -29,6 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
+            app:isUser="false"
             app:playerName="Gil Levy"
             app:playerNumber="2" />
 

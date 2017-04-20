@@ -33,13 +33,21 @@ class GameInfoPlayerView : RelativeLayout, View.OnClickListener {
         View.inflate(context, R.layout.game_info_player_view, this)
         playerNumber = findViewById(R.id.player_number) as TextView
         playerName = findViewById(R.id.player_name) as TextView
+        val forfeit = findViewById(R.id.forfeit)
+        var isUser = false
         val a = context.theme.obtainStyledAttributes(attrs, R.styleable.GameInfoPlayerView, 0, 0)
         try {
             playerNumber!!.text = "P" + a.getString(R.styleable.GameInfoPlayerView_playerNumber)
             playerName!!.text = a.getString(R.styleable.GameInfoPlayerView_playerName)
-            findViewById(R.id.forfeit).setOnClickListener(this)
+            isUser = a.getBoolean(R.styleable.GameInfoPlayerView_isUser, false)
         } finally {
             a.recycle()
+        }
+        if (isUser) {
+            forfeit.visibility = View.VISIBLE
+            forfeit.setOnClickListener(this)
+        } else {
+            forfeit.visibility = View.GONE
         }
         setBackgroundResource(R.drawable.game_info_player_background)
 
