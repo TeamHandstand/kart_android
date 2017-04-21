@@ -4,38 +4,43 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_gravity="center"
-        android:layout_margin="16dp"
-        android:background="@drawable/background_code_input"
-        android:elevation="5dp"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/additionalButton"
+        android:layout_centerInParent="true">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/forfeit_description" />
+            android:layout_gravity="center_horizontal|top"
+            android:layout_margin="16dp"
+            android:background="@drawable/background_code_input"
+            android:elevation="5dp"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-        <TextView
-            android:id="@+id/forfeit_code_link"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/copy_code"
-            android:textColor="@color/green" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/forfeit_description" />
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/forfeit_code_link"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/copy_code"
+                android:textColor="@color/green" />
+
+        </LinearLayout>
+    </ScrollView>
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/additionalButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:enabled="false"
         android:text="@string/keep_ticket"
         android:textAllCaps="true"
         android:textColor="@android:color/white"
