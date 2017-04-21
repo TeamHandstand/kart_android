@@ -3,6 +3,7 @@ package us.handstand.kartwheel.fragment
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.app.ShareCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -62,6 +63,11 @@ class GameInfoFragment : Fragment(), TicketActivity.TicketFragment, GameInfoCont
     }
 
     override fun onPlayerShareClick(ticket: Ticket) {
-        // TODO: Share ticket code
+        ShareCompat.IntentBuilder
+                .from(activity)
+                .setText(ticket.code())
+                .setType("text/plain")
+                .setChooserTitle(R.string.share_code)
+                .startChooser()
     }
 }
