@@ -14,6 +14,7 @@ import android.text.TextUtils
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 
 object ViewUtil {
@@ -32,6 +33,13 @@ object ViewUtil {
 
     fun dpToPx(context: Context, dp: Int): Int {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(), context.resources.displayMetrics).toInt()
+    }
+
+    fun hideKeyboard(context: Activity) {
+        if (context.currentFocus != null) {
+            val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(context.currentFocus.windowToken, 0)
+        }
     }
 
     fun setButtonState(resources: Resources, button: AppCompatButton?, @ColorRes color: Int, @StringRes textRes: Int, enabled: Boolean) {

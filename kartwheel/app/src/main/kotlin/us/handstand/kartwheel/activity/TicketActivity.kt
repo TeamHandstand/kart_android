@@ -105,6 +105,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
         }
 
         if (next != ERROR) {
+            ViewUtil.hideKeyboard(this)
             ticketFragment = TicketFragment.getFragment(next)
             title!!.text = resources.getString(ticketFragment!!.getTitleResId())
             onTicketFragmentStateChanged()
