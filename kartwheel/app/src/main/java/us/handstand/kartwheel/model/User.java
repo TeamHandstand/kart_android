@@ -9,7 +9,12 @@ import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.squareup.sqlbrite.BriteDatabase;
+import com.squareup.sqldelight.ColumnAdapter;
 import com.squareup.sqldelight.RowMapper;
+
+import java.util.Date;
+
+import us.handstand.kartwheel.util.DateFormatter;
 
 import static android.text.TextUtils.isEmpty;
 
@@ -17,8 +22,19 @@ import static android.text.TextUtils.isEmpty;
 public abstract class User implements UserModel {
     public static final Factory<User> FACTORY = new Factory<>(new Creator<User>() {
         @Override
-        public User create(@NonNull String id, @Nullable String authToken, @Nullable String birth, @Nullable String cell, @Nullable String charmanderOrSquirtle, @Nullable String email, @Nullable String eventId, @Nullable Long facetimeCount, @Nullable String firstName, @Nullable String imageUrl, @Nullable String lastName, @Nullable String miniGameId, @Nullable String nickName, @Nullable String pancakeOrWaffle, @Nullable String pushDeviceToken, @Nullable Boolean pushEnabled, @Nullable String raceId, @Nullable String referralType, @Nullable String teamId, @Nullable Double totalAntiMiles, @Nullable Double totalDistanceMiles, @Nullable String updatedAt) {
+        public User create(@NonNull String id, @Nullable String authToken, @Nullable Date birth, @Nullable String cell, @Nullable String charmanderOrSquirtle, @Nullable String email, @Nullable String eventId, @Nullable Long facetimeCount, @Nullable String firstName, @Nullable String imageUrl, @Nullable String lastName, @Nullable String miniGameId, @Nullable String nickName, @Nullable String pancakeOrWaffle, @Nullable String pushDeviceToken, @Nullable Boolean pushEnabled, @Nullable String raceId, @Nullable String referralType, @Nullable String teamId, @Nullable Double totalAntiMiles, @Nullable Double totalDistanceMiles, @Nullable String updatedAt) {
             return new AutoValue_User(id, authToken, birth, cell, charmanderOrSquirtle, email, eventId, facetimeCount, firstName, imageUrl, lastName, miniGameId, nickName, pancakeOrWaffle, pushDeviceToken, pushEnabled, raceId, referralType, teamId, totalAntiMiles, totalDistanceMiles, updatedAt);
+        }
+    }, new ColumnAdapter<Date, String>() {
+        @NonNull
+        @Override
+        public Date decode(String databaseValue) {
+            return DateFormatter.INSTANCE.get(databaseValue);
+        }
+
+        @Override
+        public String encode(@Nullable Date value) {
+            return value == null ? "" : DateFormatter.INSTANCE.getString(value);
         }
     });
     public static final RowMapper<User> SELECT_ALL_MAPPER = FACTORY.select_allMapper();
@@ -31,35 +47,44 @@ public abstract class User implements UserModel {
 
     public void update(BriteDatabase db) {
         if (db != null) {
-            db.update(TABLE_NAME, getContentValues(), "id = ?", id());
+            ContentValues cv = getContentValues();
+            cv.remove(ID);
+            db.update(TABLE_NAME, cv, ID + " = ?", id());
         }
     }
 
     private ContentValues getContentValues() {
         ContentValues cv = new ContentValues();
-        cv.put(ID, id());
-        cv.put(AUTHTOKEN, authToken());
-        cv.put(BIRTH, birth());
-        cv.put(CELL, cell());
-        cv.put(CHARMANDERORSQUIRTLE, charmanderOrSquirtle());
-        cv.put(EMAIL, email());
-        cv.put(EVENTID, eventId());
+        putIfNotEmpty(cv, ID, id());
+        putIfNotEmpty(cv, AUTHTOKEN, authToken());
+        Date birth = birth();
+        putIfNotEmpty(cv, BIRTH, birth == null ? "" : DateFormatter.INSTANCE.getString(birth));
+        putIfNotEmpty(cv, CELL, cell());
+        putIfNotEmpty(cv, CHARMANDERORSQUIRTLE, charmanderOrSquirtle());
+        putIfNotEmpty(cv, EMAIL, email());
+        putIfNotEmpty(cv, EVENTID, eventId());
         cv.put(FACETIMECOUNT, facetimeCount());
-        cv.put(FIRSTNAME, firstName());
-        cv.put(IMAGEURL, imageUrl());
-        cv.put(LASTNAME, lastName());
-        cv.put(MINIGAMEID, miniGameId());
-        cv.put(NICKNAME, nickName());
-        cv.put(PANCAKEORWAFFLE, pancakeOrWaffle());
-        cv.put(PUSHDEVICETOKEN, pushDeviceToken());
+        putIfNotEmpty(cv, FIRSTNAME, firstName());
+        putIfNotEmpty(cv, IMAGEURL, imageUrl());
+        putIfNotEmpty(cv, LASTNAME, lastName());
+        putIfNotEmpty(cv, MINIGAMEID, miniGameId());
+        putIfNotEmpty(cv, NICKNAME, nickName());
+        putIfNotEmpty(cv, PANCAKEORWAFFLE, pancakeOrWaffle());
+        putIfNotEmpty(cv, PUSHDEVICETOKEN, pushDeviceToken());
         cv.put(PUSHENABLED, pushEnabled());
-        cv.put(RACEID, raceId());
-        cv.put(REFERRALTYPE, referralType());
-        cv.put(TEAMID, teamId());
+        putIfNotEmpty(cv, RACEID, raceId());
+        putIfNotEmpty(cv, REFERRALTYPE, referralType());
+        putIfNotEmpty(cv, TEAMID, teamId());
         cv.put(TOTALANTIMILES, totalAntiMiles());
         cv.put(TOTALDISTANCEMILES, totalDistanceMiles());
-        cv.put(UPDATEDAT, updatedAt());
+        putIfNotEmpty(cv, UPDATEDAT, updatedAt());
         return cv;
+    }
+
+    private void putIfNotEmpty(ContentValues cv, String key, String value) {
+        if (!isEmpty(value)) {
+            cv.put(key, value);
+        }
     }
 
     public boolean hasCriticalInfo() {
@@ -67,7 +92,7 @@ public abstract class User implements UserModel {
     }
 
     public boolean hasAllInformation() {
-        return hasCriticalInfo() && !isEmpty(birth()) && !isEmpty(cell()) && !isEmpty(email())
+        return hasCriticalInfo() && !isEmpty(cell()) && !isEmpty(email())
                 && !isEmpty(firstName()) && !isEmpty(lastName()) && !isEmpty(nickName());
     }
 
@@ -100,7 +125,7 @@ public abstract class User implements UserModel {
     public User construct(String birth, String cell, String email, String firstName, String lastName, String nickname) {
         return User.FACTORY.creator.create(id(),
                 authToken(), // authToken
-                birth,
+                DateFormatter.INSTANCE.get(birth),
                 cell,
                 charmanderOrSquirtle(),
                 email,

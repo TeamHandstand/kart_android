@@ -1,9 +1,10 @@
 import java.lang.Boolean;
+import java.util.Date;
 
 CREATE TABLE user (
     id TEXT NOT NULL PRIMARY KEY,
     authToken TEXT,
-    birth TEXT,
+    birth TEXT AS Date,
     cell TEXT,
     charmanderOrSquirtle TEXT,
     email TEXT,

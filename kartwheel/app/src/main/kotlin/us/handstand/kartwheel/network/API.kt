@@ -1,6 +1,7 @@
 package us.handstand.kartwheel.network
 
 
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import com.squareup.sqlbrite.BriteDatabase
@@ -8,13 +9,21 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import us.handstand.kartwheel.model.*
+import us.handstand.kartwheel.util.DateFormatter
+import java.util.*
 
 object API {
     private val TAG = API::class.java.name
-    val gson = GsonBuilder()
-            .registerTypeAdapterFactory(GsonAdapterFactory.create())
-            .create()!!
+    val gson: Gson
     var db: BriteDatabase? = null
+
+    init {
+        gson = GsonBuilder()
+                .setDateFormat(DateFormatter.DATE_FORMAT_STRING)
+                .registerTypeAdapterFactory(GsonAdapterFactory.create())
+                .registerTypeAdapter(Date::class.java, DateTypeAdapter())
+                .create()!!
+    }
 
     abstract class APICallback<in T : Any> {
         abstract fun onSuccess(response: T)
@@ -73,7 +82,8 @@ object API {
     }
 
     fun updateUser(user: User, apiCallback: APICallback<User>) {
-        kartWheelService!!.updateUser(Storage.userId, Storage.eventId, gson.toJsonTree(user).asJsonObject)
+        val userJson = gson.toJsonTree(user).asJsonObject
+        kartWheelService!!.updateUser(Storage.userId, Storage.eventId, userJson)
                 .enqueue(SafeCallback(object : APICallback<JsonObject>() {
                     override fun onSuccess(response: JsonObject) {
                         val updatedUser = gson.fromJson(response.get("user"), User::class.java)
