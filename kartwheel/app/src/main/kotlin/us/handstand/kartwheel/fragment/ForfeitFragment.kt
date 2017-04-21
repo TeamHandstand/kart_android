@@ -48,6 +48,10 @@ class ForfeitFragment : Fragment(), TicketActivity.TicketFragment, View.OnClickL
         return R.string.forfeit_ticket
     }
 
+    override fun getAdvanceButtonColor(): Int {
+        return R.color.red
+    }
+
     override fun isAdvanceButtonEnabled(): Boolean {
         return true
     }
