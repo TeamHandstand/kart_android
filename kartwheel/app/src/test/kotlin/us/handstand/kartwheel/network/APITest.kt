@@ -41,7 +41,7 @@ class APITest {
     @Test
     fun claimTicket() {
         server.enqueue(MockResponse().setBody(teamResponse))
-        claimTicket("matt", object : API.APICallback<User>() {
+        claimTicket("matt", object : API.APICallback<User> {
             override fun onSuccess(response: User) {
                 this@APITest.response = response
                 synchronized(lock, { lock.notifyAll() })
@@ -65,7 +65,7 @@ class APITest {
     fun updateUser() {
         server.enqueue(MockResponse().setBody(userUpdateResponse))
         API.updateUser(User.FACTORY.creator.create("", "", Date(), "", "", "", "", 0L, "", "", "", "", "", "", "", false, "", "", "", 0.0, 0.0, ""),
-                object : API.APICallback<User>() {
+                object : API.APICallback<User> {
                     override fun onSuccess(response: User) {
                         this@APITest.response = response
                         synchronized(lock, { lock.notifyAll() })

@@ -45,7 +45,7 @@ class TicketController(var listener: TicketStepCompletionListener) {
         when (type) {
             TOS -> transition(type, CODE_ENTRY)
 
-            CODE_ENTRY -> API.claimTicket(code!!, object : API.APICallback<User>() {
+            CODE_ENTRY -> API.claimTicket(code!!, object : API.APICallback<User> {
                 override fun onSuccess(response: User) {
                     user = response
                     transition(type, if (response.hasAllInformation()) GAME_INFO else CRITICAL_INFO)
@@ -65,7 +65,7 @@ class TicketController(var listener: TicketStepCompletionListener) {
             CRITICAL_INFO -> if (user?.hasCriticalInfo() == true) transition(type, WELCOME)
 
             WELCOME -> if (user?.hasAllInformation() == true) {
-                API.updateUser(user!!, object : API.APICallback<User>() {
+                API.updateUser(user!!, object : API.APICallback<User> {
                     override fun onSuccess(response: User) {
                         transition(type, GAME_INFO)
                     }
@@ -77,7 +77,7 @@ class TicketController(var listener: TicketStepCompletionListener) {
                 })
             }
 
-            FORFEIT -> API.forfeitTicket(ticket!!.id(), object : API.APICallback<JsonObject>() {
+            FORFEIT -> API.forfeitTicket(ticket!!.id(), object : API.APICallback<JsonObject> {
                 override fun onSuccess(response: JsonObject) {
                     ticket = null
                     user = null

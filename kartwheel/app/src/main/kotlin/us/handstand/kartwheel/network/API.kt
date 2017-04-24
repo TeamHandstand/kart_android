@@ -25,10 +25,12 @@ object API {
                 .create()!!
     }
 
-    abstract class APICallback<in T : Any> {
-        abstract fun onSuccess(response: T)
+    interface APICallback<in T : Any> {
+        fun onSuccess(response: T)
 
-        abstract fun onFailure(errorCode: Int, errorResponse: String)
+        fun onFailure(errorCode: Int, errorResponse: String) {
+            // Optional
+        }
     }
 
     private var retrofit: Retrofit? = null
@@ -48,7 +50,7 @@ object API {
     fun claimTicket(ticketCode: String, apiCallback: APICallback<User>) {
         val jsonObject = JsonObject()
         jsonObject.addProperty("code", ticketCode)
-        kartWheelService!!.claimTicket(jsonObject).enqueue(SafeCallback(object : APICallback<JsonObject>() {
+        kartWheelService!!.claimTicket(jsonObject).enqueue(SafeCallback(object : APICallback<JsonObject> {
             override fun onSuccess(response: JsonObject) {
                 val team = gson.fromJson(response.get("team"), Team::class.java)
                 team.insert(db)
@@ -84,7 +86,7 @@ object API {
     fun updateUser(user: User, apiCallback: APICallback<User>) {
         val userJson = gson.toJsonTree(user).asJsonObject
         kartWheelService!!.updateUser(Storage.userId, Storage.eventId, userJson)
-                .enqueue(SafeCallback(object : APICallback<JsonObject>() {
+                .enqueue(SafeCallback(object : APICallback<JsonObject> {
                     override fun onSuccess(response: JsonObject) {
                         val updatedUser = gson.fromJson(response.get("user"), User::class.java)
                         updatedUser.update(db)
