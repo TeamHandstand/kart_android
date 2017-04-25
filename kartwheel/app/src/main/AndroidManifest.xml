@@ -15,14 +15,17 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="7205cd5b0cf9a4b0c7a6f0d185d18d9f7478da23" />
+
         <activity
             android:name=".activity.TicketActivity"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.RaceActivity"></activity>
     </application>
 
 </manifest>

@@ -102,4 +102,34 @@ object API {
     fun forfeitTicket(ticketId: String, apiCallback: APICallback<JsonObject>) {
         kartWheelService!!.forfeitTicket(Storage.eventId, ticketId).enqueue(SafeCallback(apiCallback))
     }
+
+    fun getCourses(eventId: String, apiCallback: APICallback<List<Course>>? = null) {
+        kartWheelService!!.getCourses(eventId)
+                .enqueue(SafeCallback(object : APICallback<JsonObject> {
+                    override fun onSuccess(response: JsonObject) {
+                        val courses = gson.fromJson(response.get("courses"), Array<Course>::class.java)
+                        for (course in courses) {
+                            course.insert(db)
+                        }
+                        apiCallback?.onSuccess(Arrays.asList(*courses))
+                    }
+                }))
+    }
+
+    fun getRaces(eventId: String, apiCallback: APICallback<List<Race>>? = null) {
+        kartWheelService!!.getRaces(eventId)
+                .enqueue(SafeCallback(object : APICallback<JsonObject> {
+                    override fun onSuccess(response: JsonObject) {
+                        val races = gson.fromJson(response.get("races"), Array<Race>::class.java)
+                        for (race in races) {
+                            race.insert(db)
+                        }
+                        apiCallback?.onSuccess(Arrays.asList(*races))
+                    }
+
+                    override fun onFailure(errorCode: Int, errorResponse: String) {
+                        apiCallback?.onFailure(errorCode, errorResponse)
+                    }
+                }))
+    }
 }

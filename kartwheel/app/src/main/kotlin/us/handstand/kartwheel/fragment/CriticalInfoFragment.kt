@@ -64,7 +64,7 @@ class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnC
             selectedAnswer = NONE
         } else if (currentQuestion == POKEMON) {
             currentQuestion = FINISHED
-            ticketController.user = ticketController.user!!.construct(charmanderOrSquirtle, pancakeOrWaffle)
+            ticketController.user = ticketController.user!!.construct(charmanderOrSquirtle!!, pancakeOrWaffle!!)
         }
         critInfoText!!.setText(if (currentQuestion == FOOD) R.string.pancakes_waffles else R.string.charmander_squirtle)
         leftImage!!.setImageResource(if (currentQuestion == FOOD) R.mipmap.pancakes else R.mipmap.charmander)

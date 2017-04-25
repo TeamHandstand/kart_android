@@ -32,8 +32,8 @@ class Database private constructor(context: Context) : SQLiteOpenHelper(context,
         private var database: Database? = null
         private val DB_NAME = "kart_wheel"
         private val VERSION = 1
-        private val createTables = arrayOf(Team.CREATE_TABLE, Ticket.CREATE_TABLE, User.CREATE_TABLE, Race.CREATE_TABLE)
-        private val tables = arrayOf(Team.TABLE_NAME, Ticket.TABLE_NAME, User.TABLE_NAME, Race.TABLE_NAME)
+        private val createTables = arrayOf(TeamModel.CREATE_TABLE, TicketModel.CREATE_TABLE, UserModel.CREATE_TABLE, RaceModel.CREATE_TABLE)
+        private val tables = arrayOf(TeamModel.TABLE_NAME, TicketModel.TABLE_NAME, UserModel.TABLE_NAME, RaceModel.TABLE_NAME)
 
         fun initialize(context: Context) {
             if (database == null) {

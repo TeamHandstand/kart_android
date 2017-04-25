@@ -15,7 +15,7 @@ import us.handstand.kartwheel.activity.TicketActivity
 import us.handstand.kartwheel.controller.TicketController.Companion.FORFEIT
 import us.handstand.kartwheel.controller.TicketController.Companion.GAME_INFO
 import us.handstand.kartwheel.layout.ViewUtil
-import us.handstand.kartwheel.model.Ticket
+import us.handstand.kartwheel.model.TicketModel
 
 
 class ForfeitFragment : Fragment(), TicketActivity.TicketFragment, View.OnClickListener {
@@ -33,7 +33,7 @@ class ForfeitFragment : Fragment(), TicketActivity.TicketFragment, View.OnClickL
         if (v.id == R.id.forfeit_code_link) {
             Toast.makeText(activity, "Code copied!", Toast.LENGTH_LONG).show()
             val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText("Code copied!", activity.intent.getStringExtra(Ticket.CODE))
+            val clip = ClipData.newPlainText("Code copied!", activity.intent.getStringExtra(TicketModel.CODE))
             clipboard.primaryClip = clip
         } else if (v.id == R.id.additionalButton) {
             ticketController.transition(FORFEIT, GAME_INFO)

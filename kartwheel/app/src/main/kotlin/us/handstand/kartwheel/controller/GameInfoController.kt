@@ -4,7 +4,9 @@ import android.database.Cursor
 import com.squareup.sqlbrite.BriteDatabase
 import rx.Subscription
 import us.handstand.kartwheel.model.Ticket
+import us.handstand.kartwheel.model.TicketModel
 import us.handstand.kartwheel.model.User
+import us.handstand.kartwheel.model.UserModel
 
 
 class GameInfoController constructor(val listener: GameInfoCompletionListener, val db: BriteDatabase, val teamId: String, val userId: String) {
@@ -18,7 +20,7 @@ class GameInfoController constructor(val listener: GameInfoCompletionListener, v
 
     init {
         val query = User.FACTORY.select_from_team(teamId)
-        userSubscription = db.createQuery(User.TABLE_NAME, query.statement, *query.args)
+        userSubscription = db.createQuery(UserModel.TABLE_NAME, query.statement, *query.args)
                 .subscribe({ updateUsers(it.run()) }, { it.printStackTrace() })
     }
 
@@ -58,7 +60,7 @@ class GameInfoController constructor(val listener: GameInfoCompletionListener, v
 
     fun getTicketForUser(userId: String): Subscription {
         val query = Ticket.FACTORY.select_for_player(userId)
-        return db.createQuery(Ticket.TABLE_NAME, query.statement, *query.args)
+        return db.createQuery(TicketModel.TABLE_NAME, query.statement, *query.args)
                 .subscribe({
                     val cursor = it.run()
                     cursor.use {
