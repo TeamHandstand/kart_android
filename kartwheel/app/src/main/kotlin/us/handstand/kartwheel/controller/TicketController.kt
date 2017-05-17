@@ -1,8 +1,8 @@
 package us.handstand.kartwheel.controller
 
 import android.support.annotation.IntDef
-import com.google.gson.JsonObject
-import us.handstand.kartwheel.model.Ticket
+import com.google.gson.JsonElement
+import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.model.User
 import us.handstand.kartwheel.network.API
 
@@ -30,7 +30,6 @@ class TicketController(var listener: TicketStepCompletionListener) {
         }
     }
 
-    var ticket: Ticket? = null
     var code: String? = null
     var user: User? = null
 
@@ -77,9 +76,8 @@ class TicketController(var listener: TicketStepCompletionListener) {
                 })
             }
 
-            FORFEIT -> API.forfeitTicket(ticket!!.id(), object : API.APICallback<JsonObject> {
-                override fun onSuccess(response: JsonObject) {
-                    ticket = null
+            FORFEIT -> API.forfeitTicket(Storage.ticketId, object : API.APICallback<JsonElement> {
+                override fun onSuccess(response: JsonElement) {
                     user = null
                     code = null
                     listener.showDialog("Ticket forfeited")

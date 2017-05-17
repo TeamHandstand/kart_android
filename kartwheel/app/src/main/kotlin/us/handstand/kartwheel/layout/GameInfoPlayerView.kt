@@ -16,11 +16,9 @@ class GameInfoPlayerView : RelativeLayout, View.OnClickListener {
     private var playerNumber: TextView? = null
     private var playerName: TextView? = null
     private var forfeitOrShare: ImageView? = null
-    private var ticket: Ticket? = null
     private var isClaimed: Boolean = false
     private var isUser: Boolean = false
-    private val pointerColorCode = 0x1F449
-    private val pointerCode = 0x1F3FF
+    private val pointerCode = 0x1F449
 
     constructor(context: Context?) : super(context) {
         init(null)
@@ -56,10 +54,9 @@ class GameInfoPlayerView : RelativeLayout, View.OnClickListener {
     }
 
     fun update(user: User, ticket: Ticket) {
-        this.ticket = ticket
         isClaimed = ticket.isClaimed || user.hasAllInformation()
         playerNumber!!.setTextColor(if (isClaimed) resources.getColor(R.color.green) else resources.getColor(R.color.red))
-        playerName!!.text = if (isClaimed) user.firstName() + " " + user.lastName() else resources.getString(R.string.unclaimed_ticket) + String(Character.toChars(pointerColorCode)) + String(Character.toChars(pointerCode))
+        playerName!!.text = if (isClaimed) user.firstName() + " " + user.lastName() else resources.getString(R.string.unclaimed_ticket) + String(Character.toChars(pointerCode))
         if (!isUser) {
             if (isClaimed) {
                 forfeitOrShare!!.visibility = GONE
@@ -75,19 +72,19 @@ class GameInfoPlayerView : RelativeLayout, View.OnClickListener {
     }
 
     override fun onClick(v: View) {
-        if (v.id == R.id.forfeit_or_share && playerActionClickListener != null && ticket != null) {
+        if (v.id == R.id.forfeit_or_share && playerActionClickListener != null) {
             if (isUser) {
-                playerActionClickListener!!.onPlayerForfeitClick(ticket!!)
+                playerActionClickListener!!.onPlayerForfeitClick()
             } else {
-                playerActionClickListener!!.onPlayerShareClick(ticket!!)
+                playerActionClickListener!!.onPlayerShareClick()
             }
         }
     }
 
     companion object {
         interface OnPlayerActionClickListener {
-            fun onPlayerForfeitClick(ticket: Ticket)
-            fun onPlayerShareClick(ticket: Ticket)
+            fun onPlayerForfeitClick()
+            fun onPlayerShareClick()
         }
     }
 

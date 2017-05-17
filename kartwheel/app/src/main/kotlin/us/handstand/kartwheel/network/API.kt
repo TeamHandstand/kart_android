@@ -3,6 +3,7 @@ package us.handstand.kartwheel.network
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.squareup.sqlbrite.BriteDatabase
 import okhttp3.OkHttpClient
@@ -13,7 +14,6 @@ import us.handstand.kartwheel.util.DateFormatter
 import java.util.*
 
 object API {
-    private val TAG = API::class.java.name
     val gson: Gson = GsonBuilder()
             .setDateFormat(DateFormatter.DATE_FORMAT_STRING)
             .registerTypeAdapterFactory(GsonAdapterFactory.create())
@@ -58,6 +58,7 @@ object API {
                 for (ticket in tickets!!) {
                     if (ticketCode == ticket.code()) {
                         Storage.userId = ticket.playerId()!!
+                        Storage.ticketId = ticket.id()
                     }
                     ticket.insert(db)
                 }
@@ -106,7 +107,7 @@ object API {
                 }))
     }
 
-    fun forfeitTicket(ticketId: String, apiCallback: APICallback<JsonObject>) {
+    fun forfeitTicket(ticketId: String, apiCallback: APICallback<JsonElement>? = null) {
         kartWheelService!!.forfeitTicket(Storage.eventId, ticketId).enqueue(SafeCallback(apiCallback))
     }
 

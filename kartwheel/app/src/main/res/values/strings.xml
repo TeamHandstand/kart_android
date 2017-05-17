@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">KartWheel</string>
+    <string name="logout_title">Logout?</string>
+    <string name="logout">Logout</string>
     <string name="support_email">support@handstandwith.us</string>
     <string name="already_claimed_title">Invalid ticket</string>
     <string name="contact_us_subject_line">KartWheel - Android</string>
@@ -39,6 +41,7 @@
     they\'ll need to open up their app and forfeit their ticket.\n\nSo you\'re sure this is your ticket?</string>
     <string name="already_claimed_touch_here">Log in by touching here!</string>
     <string name="try_different_code">Try different code</string>
+    <string name="logout_description">Make sure you remember, copy, or screen shot your code! It\'s your only way back in.</string>
     <string name="forfeit_description">If you forfeit your ticket, you will be removed entirely from the game. You may
     give your ticket code to a friend!\n\nThey can download the app and use the code to get started. Lucky them&#8230;</string>
     <string name="copy_code">Copy your code: </string>

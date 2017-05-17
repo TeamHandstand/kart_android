@@ -4,6 +4,7 @@ import android.support.annotation.IntDef
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import us.handstand.kartwheel.fragment.LogoutFragment
 import us.handstand.kartwheel.fragment.race.RaceListFragment
 
 
@@ -33,6 +34,7 @@ class LoggedInPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdap
         fun getFragmentFromType(type: Int): Fragment {
             when (type) {
                 RACE_LIST -> return RaceListFragment()
+                ME -> return LogoutFragment()
             }
             return Fragment()
         }
@@ -42,7 +44,7 @@ class LoggedInPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdap
                 RACE_LIST -> return "Races"
                 GAMES -> return "Games"
                 LEADERBOARD -> return "Leader board"
-                ME -> return "Me"
+                ME -> return "Logout"
             }
             return "Placeholder"
         }

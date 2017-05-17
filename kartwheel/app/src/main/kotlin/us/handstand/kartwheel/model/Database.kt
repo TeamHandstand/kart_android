@@ -55,7 +55,10 @@ class Database private constructor(context: Context) : SQLiteOpenHelper(context,
                 return
             }
             for (table in tables) {
-                db.writableDatabase.delete(table, null, null)
+                db.writableDatabase.execSQL("DROP TABLE IF EXISTS " + table)
+            }
+            for (createStatement in createTables) {
+                db.writableDatabase.execSQL(createStatement)
             }
         }
     }
