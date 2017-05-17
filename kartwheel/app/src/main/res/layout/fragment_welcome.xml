@@ -65,9 +65,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_weight="1"
+                android:digits="0123456789-"
                 android:hint="@string/cell"
                 android:imeOptions="actionNext"
-                android:inputType="phone"
+                android:inputType="number"
+                android:maxLength="12"
                 android:nextFocusDown="@+id/birth"
                 android:nextFocusRight="@+id/birth" />
         </LinearLayout>
@@ -82,7 +84,9 @@
             android:layout_marginRight="16dp"
             android:hint="@string/dob"
             android:imeOptions="actionNext"
-            android:inputType="date"
+            android:inputType="number"
+            android:maxLength="10"
+            android:digits="0123456789/"
             android:nextFocusDown="@+id/nickname"
             android:nextFocusForward="@+id/nickname"
             android:nextFocusRight="@+id/nickname" />

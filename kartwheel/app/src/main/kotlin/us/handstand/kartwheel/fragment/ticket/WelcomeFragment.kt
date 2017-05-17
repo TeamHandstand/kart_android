@@ -14,31 +14,34 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo.IME_ACTION_GO
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.TextView.OnEditorActionListener
 import us.handstand.kartwheel.R
-import us.handstand.kartwheel.activity.TicketActivity
-import us.handstand.kartwheel.layout.ViewUtil
+import us.handstand.kartwheel.R.*
+import us.handstand.kartwheel.activity.TicketActivity.TicketFragment
+import us.handstand.kartwheel.layout.ViewUtil.findView
+import us.handstand.kartwheel.layout.ViewUtil.isEmpty
 import us.handstand.kartwheel.util.DateFormatter
 
-class WelcomeFragment : android.support.v4.app.Fragment(), us.handstand.kartwheel.activity.TicketActivity.TicketFragment, android.text.TextWatcher, android.widget.TextView.OnEditorActionListener {
+class WelcomeFragment : Fragment(), TicketFragment, android.text.TextWatcher, OnEditorActionListener {
 
-    lateinit internal var birth: android.widget.EditText
-    lateinit internal var cell: android.widget.EditText
-    lateinit internal var email: android.widget.EditText
-    lateinit internal var firstName: android.widget.EditText
-    lateinit internal var lastName: android.widget.EditText
-    lateinit internal var nickname: android.widget.EditText
-    lateinit private var button: android.support.v7.widget.AppCompatButton
+    lateinit internal var birth: EditText
+    lateinit internal var cell: EditText
+    lateinit internal var email: EditText
+    lateinit internal var firstName: EditText
+    lateinit internal var lastName: EditText
+    lateinit internal var nickname: EditText
+    lateinit private var button: AppCompatButton
 
-    override fun onCreateView(inflater: android.view.LayoutInflater?, container: android.view.ViewGroup?, savedInstanceState: android.os.Bundle?): android.view.View? {
-        val fragmentView = inflater!!.inflate(us.handstand.kartwheel.R.layout.fragment_welcome, container, false) as android.view.ViewGroup
-        birth = us.handstand.kartwheel.layout.ViewUtil.findView(fragmentView, R.id.birth)
-        cell = us.handstand.kartwheel.layout.ViewUtil.findView(fragmentView, R.id.cell)
-        email = us.handstand.kartwheel.layout.ViewUtil.findView(fragmentView, R.id.email)
-        firstName = us.handstand.kartwheel.layout.ViewUtil.findView(fragmentView, R.id.first_name)
-        lastName = us.handstand.kartwheel.layout.ViewUtil.findView(fragmentView, R.id.last_name)
-        nickname = us.handstand.kartwheel.layout.ViewUtil.findView(fragmentView, R.id.nickname)
-        birth.addTextChangedListener(this)
-        cell.addTextChangedListener(this)
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val fragmentView = inflater!!.inflate(layout.fragment_welcome, container, false) as ViewGroup
+        birth = findView(fragmentView, R.id.birth)
+        cell = findView(fragmentView, R.id.cell)
+        email = findView(fragmentView, R.id.email)
+        firstName = findView(fragmentView, R.id.first_name)
+        lastName = findView(fragmentView, R.id.last_name)
+        nickname = findView(fragmentView, R.id.nickname)
+        birth.addTextChangedListener(FormatTextWatcher("/", 2))
+        cell.addTextChangedListener(FormatTextWatcher("-", 3))
         email.addTextChangedListener(this)
         firstName.addTextChangedListener(this)
         lastName.addTextChangedListener(this)
@@ -47,21 +50,21 @@ class WelcomeFragment : android.support.v4.app.Fragment(), us.handstand.kartwhee
         return fragmentView
     }
 
-    override fun onActivityCreated(savedInstanceState: android.os.Bundle?) {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        button = us.handstand.kartwheel.layout.ViewUtil.findView(activity, R.id.button)
+        button = findView(activity, R.id.button)
     }
 
     override fun getTitleResId(): Int {
-        return us.handstand.kartwheel.R.string.welcome
+        return string.welcome
     }
 
     override fun getAdvanceButtonTextResId(): Int {
-        return us.handstand.kartwheel.R.string.im_ready
+        return string.im_ready
     }
 
     override fun getAdvanceButtonColor(): Int {
-        return if (isAdvanceButtonEnabled()) us.handstand.kartwheel.R.color.blue else super.getAdvanceButtonColor()
+        return if (isAdvanceButtonEnabled()) color.blue else super.getAdvanceButtonColor()
     }
 
     override fun isAdvanceButtonEnabled(): Boolean {
@@ -69,7 +72,7 @@ class WelcomeFragment : android.support.v4.app.Fragment(), us.handstand.kartwhee
     }
 
     override fun canAdvanceToNextStep(): Boolean {
-        ticketController.user = ticketController.user!!.construct(us.handstand.kartwheel.util.DateFormatter.getFromUserInput(birth.text.toString()),
+        ticketController.user = ticketController.user!!.construct(DateFormatter.getFromUserInput(birth.text.toString()),
                 cell.text.toString(),
                 email.text.toString(),
                 firstName.text.toString(),
@@ -80,8 +83,8 @@ class WelcomeFragment : android.support.v4.app.Fragment(), us.handstand.kartwhee
 
     private // TODO: better validation, birth and cell not required
     val isValidInput: Boolean
-        get() = !us.handstand.kartwheel.layout.ViewUtil.isEmpty(birth) && !us.handstand.kartwheel.layout.ViewUtil.isEmpty(cell) && !us.handstand.kartwheel.layout.ViewUtil.isEmpty(email)
-                && !us.handstand.kartwheel.layout.ViewUtil.isEmpty(firstName) && !us.handstand.kartwheel.layout.ViewUtil.isEmpty(lastName) && !us.handstand.kartwheel.layout.ViewUtil.isEmpty(nickname)
+        get() = !isEmpty(birth) && !isEmpty(cell) && !isEmpty(email)
+                && !isEmpty(firstName) && !isEmpty(lastName) && !isEmpty(nickname)
 
 
     override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -91,13 +94,41 @@ class WelcomeFragment : android.support.v4.app.Fragment(), us.handstand.kartwhee
     }
 
     override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-    override fun afterTextChanged(s: android.text.Editable) {}
+    override fun afterTextChanged(s: Editable) {}
 
-    override fun onEditorAction(v: android.widget.TextView?, actionId: Int, event: android.view.KeyEvent?): Boolean {
+    override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
         if (actionId == IME_ACTION_GO || event?.action == ACTION_DOWN) {
-            activity.findViewById(us.handstand.kartwheel.R.id.button).performClick()
+            activity.findViewById(R.id.button).performClick()
             return true
         }
         return false
+    }
+
+    private class FormatTextWatcher(val delimiter: String, val chunkSize: Int) : TextWatcher {
+        override fun afterTextChanged(s: Editable) {
+            var noDelimiter = s.toString().replace(delimiter, "")
+            val formattedStringBuilder = StringBuilder()
+            if (noDelimiter.length > chunkSize) {
+                val chunk = noDelimiter.substring(0, chunkSize)
+                formattedStringBuilder.append(chunk).append(delimiter)
+                noDelimiter = noDelimiter.replaceFirst(chunk, "")
+            }
+            if (noDelimiter.length > chunkSize) {
+                val chunk = noDelimiter.substring(0, chunkSize)
+                formattedStringBuilder.append(chunk).append(delimiter)
+                noDelimiter = noDelimiter.replaceFirst(chunk, "")
+            }
+            formattedStringBuilder.append(noDelimiter)
+
+            if (s.toString() != formattedStringBuilder.toString()) {
+                s.replace(0, s.length, formattedStringBuilder.toString())
+            }
+        }
+
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+        }
     }
 }
