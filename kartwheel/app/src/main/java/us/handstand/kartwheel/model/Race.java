@@ -36,7 +36,7 @@ public abstract class Race implements RaceModel {
 
     public void insert(@Nullable BriteDatabase db) {
         if (db != null) {
-            db.insert(TABLE_NAME, getContentValues(), SQLiteDatabase.CONFLICT_REPLACE);
+            db.insert(TABLE_NAME, getContentValues(), SQLiteDatabase.CONFLICT_IGNORE);
         }
     }
 

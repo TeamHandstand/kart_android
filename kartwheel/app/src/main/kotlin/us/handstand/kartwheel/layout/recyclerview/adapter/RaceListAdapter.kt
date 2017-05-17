@@ -13,11 +13,13 @@ class RaceListAdapter : RecyclerView.Adapter<RaceSummaryVH>() {
     val handler = Handler(Looper.getMainLooper())
 
     fun setRaces(races: List<Race>) {
-        synchronized(RaceListAdapter@ this, {
-            this.races.clear()
-            this.races.addAll(races)
-            handler.post { notifyDataSetChanged() }
-        })
+        handler.post {
+            synchronized(RaceListAdapter@ this, {
+                this.races.clear()
+                this.races.addAll(races)
+                notifyDataSetChanged()
+            })
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RaceSummaryVH {

@@ -20,27 +20,27 @@ object DateFormatter {
         backupDateFormat.timeZone = utcTimeZone
     }
 
-    operator fun get(dateString: String): Date {
+    operator fun get(dateString: String): Date? {
         try {
             return dateFormat.parse(dateString)
-        } catch (e: ParseException) {
+        } catch (e: Exception) {
             try {
                 return backupDateFormat.parse(dateString)
-            } catch (e: ParseException) {
-                return Date()
+            } catch (e: Exception) {
+                return null
             }
         }
     }
 
-    operator fun get(dateLong: Long): Date {
+    operator fun get(dateLong: Long): Date? {
         val dateString = getString(Date(dateLong))
         try {
             return dateFormat.parse(dateString)
-        } catch (e: ParseException) {
+        } catch (e: Exception) {
             try {
                 return backupDateFormat.parse(dateString)
-            } catch (e: ParseException) {
-                return Date()
+            } catch (e: Exception) {
+                return null
             }
         }
     }
