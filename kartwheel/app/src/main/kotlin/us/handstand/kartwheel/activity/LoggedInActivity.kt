@@ -9,14 +9,11 @@ import us.handstand.kartwheel.layout.LoggedInPagerAdapter
 import us.handstand.kartwheel.layout.ViewUtil
 
 class LoggedInActivity : AppCompatActivity() {
-    lateinit var pager: ViewPager
-    lateinit var tabLayout: TabLayout
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_logged_in)
-        pager = ViewUtil.findView(this, R.id.pager)
-        tabLayout = ViewUtil.findView(this, R.id.tabLayout)
+        val pager = ViewUtil.findView<ViewPager>(this, R.id.pager)
+        val tabLayout = ViewUtil.findView<TabLayout>(this, R.id.tabLayout)
         tabLayout.setupWithViewPager(pager)
         pager.adapter = LoggedInPagerAdapter(supportFragmentManager)
         pager.setCurrentItem(0, false)
