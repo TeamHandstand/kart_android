@@ -21,4 +21,7 @@ internal interface KartWheelService {
 
     @GET("events/{eventId}/courses")
     fun getCourses(@Path("eventId") eventId: String): Call<JsonObject>
+
+    @GET("events/{eventId}")
+    fun getEvent(@Path("eventId") eventId: String): Call<JsonObject>
 }

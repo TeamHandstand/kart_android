@@ -1,5 +1,7 @@
 CREATE TABLE course (
     id TEXT NOT NULL PRIMARY KEY,
+    createdAt TEXT,
+    deletedAt TEXT,
     distance REAL DEFAULT 0,
     maxRegistrants INTEGER DEFAULT 0,
     name TEXT,
@@ -10,5 +12,8 @@ CREATE TABLE course (
 
 select_all:
 SELECT *
-FROM course
-WHERE id = ?;
+FROM course;
+
+insert_into:
+INSERT INTO course(id, createdAt, deletedAt, distance, maxRegistrants, name, startLat, startLong, updatedAt)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);

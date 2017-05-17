@@ -7,7 +7,6 @@ import android.support.v4.app.ShareCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.TicketActivity
 import us.handstand.kartwheel.controller.GameInfoController
@@ -15,6 +14,7 @@ import us.handstand.kartwheel.controller.TicketController.Companion.FORFEIT
 import us.handstand.kartwheel.controller.TicketController.Companion.GAME_INFO
 import us.handstand.kartwheel.layout.GameInfoPlayerView
 import us.handstand.kartwheel.layout.ViewUtil
+import us.handstand.kartwheel.model.Database
 import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.model.Ticket
 import us.handstand.kartwheel.model.User
@@ -31,7 +31,7 @@ class GameInfoFragment : Fragment(), TicketActivity.TicketFragment, GameInfoCont
         playerTwo = ViewUtil.findView(fragmentView, R.id.playerTwo)
         playerOne!!.setOnForfeitClickListener(this)
         playerTwo!!.setOnForfeitClickListener(this)
-        controller = GameInfoController(this, KartWheel.db, Storage.teamId, Storage.userId)
+        controller = GameInfoController(this, Database.get(), Storage.teamId, Storage.userId)
         return fragmentView
     }
 

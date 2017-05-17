@@ -1,16 +1,19 @@
+import java.util.Date;
+
 CREATE TABLE event (
     id TEXT NOT NULL PRIMARY KEY,
-    endTime INTEGER NOT NULL,
-    updatedAt TEXT NOT NULL,
+    endTime INTEGER as Date NOT NULL,
     name TEXT NOT NULL,
-    startTime INTEGER NOT NULL
+    startTime INTEGER as Date NOT NULL,
+    updatedAt TEXT NOT NULL,
+    usersCanSeeRaces INTEGER as Boolean DEFAULT 1
 );
 
 select_all:
 SELECT *
 FROM event
-WHERE id=?;
+WHERE id = ?;
 
 insert_row:
-INSERT INTO event(id, updatedAt, name, startTime, endTime)
-VALUES (?, ?, ?, ?, ?);
+INSERT INTO event(id, endTime, name, startTime, updatedAt, usersCanSeeRaces)
+VALUES (?, ?, ?, ?, ?, ?);

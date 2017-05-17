@@ -21,13 +21,13 @@ import us.handstand.kartwheel.util.DateFormatter
 
 class WelcomeFragment : Fragment(), TicketActivity.TicketFragment, TextWatcher, TextView.OnEditorActionListener {
 
-    internal var birth: EditText? = null
-    internal var cell: EditText? = null
-    internal var email: EditText? = null
-    internal var firstName: EditText? = null
-    internal var lastName: EditText? = null
-    internal var nickname: EditText? = null
-    private var button: AppCompatButton? = null
+    lateinit internal var birth: EditText
+    lateinit internal var cell: EditText
+    lateinit internal var email: EditText
+    lateinit internal var firstName: EditText
+    lateinit internal var lastName: EditText
+    lateinit internal var nickname: EditText
+    lateinit private var button: AppCompatButton
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val fragmentView = inflater!!.inflate(R.layout.fragment_welcome, container, false) as ViewGroup
@@ -37,13 +37,13 @@ class WelcomeFragment : Fragment(), TicketActivity.TicketFragment, TextWatcher, 
         firstName = ViewUtil.findView(fragmentView, R.id.first_name)
         lastName = ViewUtil.findView(fragmentView, R.id.last_name)
         nickname = ViewUtil.findView(fragmentView, R.id.nickname)
-        birth!!.addTextChangedListener(this)
-        cell!!.addTextChangedListener(this)
-        email!!.addTextChangedListener(this)
-        firstName!!.addTextChangedListener(this)
-        lastName!!.addTextChangedListener(this)
-        nickname!!.addTextChangedListener(this)
-        nickname?.setOnEditorActionListener(this)
+        birth.addTextChangedListener(this)
+        cell.addTextChangedListener(this)
+        email.addTextChangedListener(this)
+        firstName.addTextChangedListener(this)
+        lastName.addTextChangedListener(this)
+        nickname.addTextChangedListener(this)
+        nickname.setOnEditorActionListener(this)
         return fragmentView
     }
 
@@ -69,19 +69,20 @@ class WelcomeFragment : Fragment(), TicketActivity.TicketFragment, TextWatcher, 
     }
 
     override fun canAdvanceToNextStep(): Boolean {
-        ticketController.user = ticketController.user!!.construct(DateFormatter.getString(DateFormatter[birth!!.text.toString()]),
-                cell!!.text.toString(),
-                email!!.text.toString(),
-                firstName!!.text.toString(),
-                lastName!!.text.toString(),
-                nickname!!.text.toString())
+        ticketController.user = ticketController.user!!.construct(DateFormatter.getFromUserInput(birth.text.toString()),
+                cell.text.toString(),
+                email.text.toString(),
+                firstName.text.toString(),
+                lastName.text.toString(),
+                nickname.text.toString())
         return super.canAdvanceToNextStep()
     }
 
     private // TODO: better validation, birth and cell not required
     val isValidInput: Boolean
-        get() = !ViewUtil.isEmpty(birth) && !ViewUtil.isEmpty(cell) && !ViewUtil.isEmpty(email) &&
-                !ViewUtil.isEmpty(firstName) && !ViewUtil.isEmpty(lastName) && !ViewUtil.isEmpty(nickname)
+        get() = !ViewUtil.isEmpty(birth) && !ViewUtil.isEmpty(cell) && !ViewUtil.isEmpty(email)
+                && !ViewUtil.isEmpty(firstName) && !ViewUtil.isEmpty(lastName) && !ViewUtil.isEmpty(nickname)
+
 
     override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
         if (isAdvanceButtonEnabled()) {

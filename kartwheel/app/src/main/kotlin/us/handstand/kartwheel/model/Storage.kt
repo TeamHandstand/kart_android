@@ -11,8 +11,9 @@ class Storage private constructor(val prefs: SharedPreferences) {
         private const val TEAM_ID = "team_id"
         private const val EVENT_ID = "event_id"
         private const val EMOJI_CODE = "emoji_code"
+        private const val SHOW_RACES = "show_races"
 
-        @StringDef(USER_ID, EMOJI_CODE, EVENT_ID, TEAM_ID)
+        @StringDef(USER_ID, EMOJI_CODE, EVENT_ID, TEAM_ID, SHOW_RACES)
         private annotation class KEYS
 
         private var instance: Storage? = null
@@ -50,6 +51,13 @@ class Storage private constructor(val prefs: SharedPreferences) {
             }
             set(value) {
                 set(EMOJI_CODE, value)
+            }
+        var showRaces: Boolean
+            get() {
+                return instance!!.prefs.getBoolean(SHOW_RACES, false)
+            }
+            set(value) {
+                instance!!.prefs.edit().putBoolean(SHOW_RACES, value).apply()
             }
 
         private fun get(@KEYS key: String): String {

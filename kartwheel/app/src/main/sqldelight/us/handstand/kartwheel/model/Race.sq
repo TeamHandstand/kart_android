@@ -1,18 +1,38 @@
+import java.util.Date;
+import us.handstand.kartwheel.model.Course;
+
 CREATE TABLE race (
     id TEXT NOT NULL PRIMARY KEY,
-    endTime TEXT,
+    course BLOB as Course,
+    courseId TEXT,
+    deletedAt INTEGER as Date,
+    eventId TEXT,
+    endTime INTEGER as Date,
     funQuestion TEXT,
+    name TEXT,
     openSpots INTEGER DEFAULT 20,
     raceOrder INTEGER DEFAULT 0,
     replayUrl TEXT,
     shortAnswer1 TEXT,
     shortAnswer2 TEXT,
     slug TEXT,
-    startTime TEXT,
-    updatedAt TEXT,
+    startTime INTEGER as Date,
+    totalLaps INTEGER DEFAULT 0,
+    updatedAt INTEGER as Date,
     videoUrl TEXT
 );
 
 select_all:
 SELECT *
 FROM race;
+
+select_for_event_id:
+SELECT *
+FROM race
+WHERE eventId=?
+ORDER BY startTime ASC;
+
+insert_row:
+INSERT INTO race(id, course, courseId, deletedAt, eventId, endTime, funQuestion, name, openSpots,
+raceOrder, replayUrl, shortAnswer1, shortAnswer2, slug, startTime, totalLaps, updatedAt, videoUrl)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);

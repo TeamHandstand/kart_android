@@ -1,11 +1,10 @@
 package us.handstand.kartwheel
 
 
-import android.app.Application
 import android.preference.PreferenceManager
+import android.support.multidex.MultiDexApplication
 import android.text.TextUtils.isEmpty
 import com.crashlytics.android.Crashlytics
-import com.squareup.sqlbrite.BriteDatabase
 import io.fabric.sdk.android.Fabric
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -15,7 +14,7 @@ import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.network.API
 import java.io.IOException
 
-class KartWheel : Application(), Interceptor {
+class KartWheel : MultiDexApplication(), Interceptor {
     private val okHttpClient = OkHttpClient.Builder().addInterceptor(this).build()
 
     override fun onCreate() {
@@ -42,10 +41,5 @@ class KartWheel : Application(), Interceptor {
             Storage.clear()
             Database.clear(Database.get())
         }
-
-        val db: BriteDatabase
-            get() {
-                return Database.get()
-            }
     }
 }

@@ -4,7 +4,7 @@ import java.util.Date;
 CREATE TABLE user (
     id TEXT NOT NULL PRIMARY KEY,
     authToken TEXT,
-    birth TEXT AS Date,
+    birth INTEGER AS Date,
     cell TEXT,
     charmanderOrSquirtle TEXT,
     email TEXT,
@@ -23,7 +23,7 @@ CREATE TABLE user (
     teamId TEXT,
     totalAntiMiles REAL,
     totalDistanceMiles REAL,
-    updatedAt TEXT
+    updatedAt INTEGER as Date
 );
 
 select_all:

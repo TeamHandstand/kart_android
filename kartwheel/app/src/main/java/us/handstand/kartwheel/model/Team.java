@@ -2,6 +2,7 @@ package us.handstand.kartwheel.model;
 
 
 import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -27,23 +28,22 @@ public abstract class Team implements TeamModel {
             return new AutoValue_Team(id, bronzeCount, eventId, goldCount, name, ribbonCount, ranking, silverCount, slug, tickets, updatedAt, users);
         }
     }, new <Ticket>ListTicketColumnAdapter(), new <User>ListTicketColumnAdapter());
-    public static final RowMapper<Team> SELECT_ALL_MAPPER = FACTORY.select_allMapper();
 
     public void insert(BriteDatabase db) {
-        ContentValues teamCV = new ContentValues();
-        teamCV.put(Team.ID, id());
-        teamCV.put(Team.BRONZECOUNT, bronzeCount());
-        teamCV.put(Team.EVENTID, eventId());
-        teamCV.put(Team.GOLDCOUNT, goldCount());
-        teamCV.put(Team.NAME, name());
-        teamCV.put(Team.RANKING, ranking());
-        teamCV.put(Team.RIBBONCOUNT, ribbonCount());
-        teamCV.put(Team.SILVERCOUNT, silverCount());
-        teamCV.put(Team.SLUG, slug());
-        teamCV.put(Team.UPDATEDAT, updatedAt());
-
         if (db != null) {
-            db.insert(TABLE_NAME, teamCV);
+            ContentValues teamCV = new ContentValues();
+            teamCV.put(Team.ID, id());
+            teamCV.put(Team.BRONZECOUNT, bronzeCount());
+            teamCV.put(Team.EVENTID, eventId());
+            teamCV.put(Team.GOLDCOUNT, goldCount());
+            teamCV.put(Team.NAME, name());
+            teamCV.put(Team.RANKING, ranking());
+            teamCV.put(Team.RIBBONCOUNT, ribbonCount());
+            teamCV.put(Team.SILVERCOUNT, silverCount());
+            teamCV.put(Team.SLUG, slug());
+            teamCV.put(Team.UPDATEDAT, updatedAt());
+
+            db.insert(TABLE_NAME, teamCV, SQLiteDatabase.CONFLICT_REPLACE);
         }
     }
 

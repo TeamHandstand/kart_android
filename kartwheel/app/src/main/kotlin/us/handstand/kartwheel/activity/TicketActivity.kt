@@ -2,6 +2,7 @@ package us.handstand.kartwheel.activity
 
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
@@ -108,21 +109,28 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
             ViewUtil.hideKeyboard(this)
             ticketFragment = TicketFragment.getFragment(next)
             title!!.text = resources.getString(ticketFragment!!.getTitleResId())
-            onTicketFragmentStateChanged()
             intent.putExtra(INTENT_EXTRA_FRAGMENT_TYPE, next)
-            if (!isFinishing && !supportFragmentManager.isDestroyed) {
+            if (next == WELCOME && Storage.showRaces) {
+                startActivity(Intent(this, LoggedInActivity::class.java))
+                finish()
+            } else if (!isFinishing && !supportFragmentManager.isDestroyed) {
                 supportFragmentManager.beginTransaction().replace(R.id.fragment, ticketFragment as Fragment?).commit()
             }
+            onTicketFragmentStateChanged()
         }
     }
 
     override fun onTicketFragmentStateChanged() {
         if (ticketFragment != null) {
-            ViewUtil.setButtonState(resources, button,
-                    ticketFragment!!.getAdvanceButtonColor(),
-                    ticketFragment!!.getAdvanceButtonTextResId(),
-                    ticketFragment!!.isAdvanceButtonEnabled()
-            )
+            try {
+                ViewUtil.setButtonState(resources, button,
+                        ticketFragment!!.getAdvanceButtonColor(),
+                        ticketFragment!!.getAdvanceButtonTextResId(),
+                        ticketFragment!!.isAdvanceButtonEnabled()
+                )
+            } catch (e: UninitializedPropertyAccessException) {
+                ViewUtil.setButtonState(resources, button, R.color.grey_button_disabled, R.string.next, false)
+            }
         }
     }
 

@@ -14,16 +14,12 @@ import java.util.*
 
 object API {
     private val TAG = API::class.java.name
-    val gson: Gson
+    val gson: Gson = GsonBuilder()
+            .setDateFormat(DateFormatter.DATE_FORMAT_STRING)
+            .registerTypeAdapterFactory(GsonAdapterFactory.create())
+            .registerTypeAdapter(Date::class.java, DateTypeAdapter())
+            .create()!!
     var db: BriteDatabase? = null
-
-    init {
-        gson = GsonBuilder()
-                .setDateFormat(DateFormatter.DATE_FORMAT_STRING)
-                .registerTypeAdapterFactory(GsonAdapterFactory.create())
-                .registerTypeAdapter(Date::class.java, DateTypeAdapter())
-                .create()!!
-    }
 
     interface APICallback<in T : Any> {
         fun onSuccess(response: T)
@@ -74,7 +70,18 @@ object API {
                     }
                     user.insert(db)
                 }
-                apiCallback.onSuccess(loggedInUser!!)
+                kartWheelService!!.getEvent(team.eventId()!!).enqueue(SafeCallback(object : APICallback<JsonObject> {
+                    override fun onSuccess(response: JsonObject) {
+                        val event = gson.fromJson(response.get("event"), Event::class.java)
+                        event.insert(db)
+                        Storage.showRaces = event.usersCanSeeRaces() == true
+                        apiCallback.onSuccess(loggedInUser!!)
+                    }
+
+                    override fun onFailure(errorCode: Int, errorResponse: String) {
+                        apiCallback.onFailure(errorCode, errorResponse)
+                    }
+                }))
             }
 
             override fun onFailure(errorCode: Int, errorResponse: String) {
@@ -103,20 +110,22 @@ object API {
         kartWheelService!!.forfeitTicket(Storage.eventId, ticketId).enqueue(SafeCallback(apiCallback))
     }
 
-    fun getCourses(eventId: String, apiCallback: APICallback<List<Course>>? = null) {
+    private fun getCourses(eventId: String, apiCallback: APICallback<Map<String, Course>>? = null) {
         kartWheelService!!.getCourses(eventId)
                 .enqueue(SafeCallback(object : APICallback<JsonObject> {
                     override fun onSuccess(response: JsonObject) {
                         val courses = gson.fromJson(response.get("courses"), Array<Course>::class.java)
+                        val courseMap = mutableMapOf<String, Course>()
                         for (course in courses) {
                             course.insert(db)
+                            courseMap.put(course.id(), course)
                         }
-                        apiCallback?.onSuccess(Arrays.asList(*courses))
+                        apiCallback?.onSuccess(courseMap)
                     }
                 }))
     }
 
-    fun getRaces(eventId: String, apiCallback: APICallback<List<Race>>? = null) {
+    private fun getRaces(eventId: String, apiCallback: APICallback<List<Race>>? = null) {
         kartWheelService!!.getRaces(eventId)
                 .enqueue(SafeCallback(object : APICallback<JsonObject> {
                     override fun onSuccess(response: JsonObject) {
@@ -131,5 +140,23 @@ object API {
                         apiCallback?.onFailure(errorCode, errorResponse)
                     }
                 }))
+    }
+
+    fun getRacesWithCourses(eventId: String) {
+        getCourses(eventId, object : API.APICallback<Map<String, Course>> {
+            override fun onSuccess(courseResponse: Map<String, Course>) {
+                // Subscribe to API response
+                getRaces(eventId, object : API.APICallback<List<Race>> {
+                    override fun onSuccess(response: List<Race>) {
+                        for (race in response) {
+                            val course = courseResponse[race.courseId()]
+                            if (course != null) {
+                                race.update(db, course)
+                            }
+                        }
+                    }
+                })
+            }
+        })
     }
 }
