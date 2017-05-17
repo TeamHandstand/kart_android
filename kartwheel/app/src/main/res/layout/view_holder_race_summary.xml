@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:elevation="5dp"
     tools:parentTag="RelativeLayout">
 
     <TextView
@@ -16,6 +15,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="8dp"
         android:background="@drawable/background_race_list_time"
+        android:elevation="5dp"
         android:gravity="center"
         android:padding="16dp"
         android:textColor="@android:color/white"
@@ -32,6 +32,7 @@
         android:layout_marginTop="8dp"
         android:layout_toRightOf="@+id/startTime"
         android:background="@drawable/background_race_list_content"
+        android:elevation="5dp"
         android:orientation="vertical"
         android:padding="16dp">
 
@@ -53,10 +54,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:textAllCaps="true"
             android:textColor="@color/textDarkGrey"
             android:textSize="16dp"
             android:textStyle="bold"
-            android:textAllCaps="true"
             tools:text="15 spots left" />
     </LinearLayout>
 </merge>
