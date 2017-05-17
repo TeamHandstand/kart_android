@@ -3,8 +3,10 @@ package us.handstand.kartwheel.layout
 
 import android.app.Activity
 import android.content.Context
+import android.content.res.AssetManager
 import android.content.res.ColorStateList
 import android.content.res.Resources
+import android.graphics.Typeface
 import android.support.annotation.ColorRes
 import android.support.annotation.IdRes
 import android.support.annotation.StringRes
@@ -16,6 +18,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.TextView
+
 
 object ViewUtil {
 
@@ -49,5 +53,10 @@ object ViewUtil {
         ViewCompat.setBackgroundTintList(button, ColorStateList.valueOf(resources.getColor(color)))
         button.setText(textRes)
         button.isEnabled = enabled
+    }
+
+    fun setTypeface(assets: AssetManager, textView: TextView) {
+        val font = Typeface.createFromAsset(assets, "Chantelli_Antiqua.ttf")
+        textView.typeface = font
     }
 }
