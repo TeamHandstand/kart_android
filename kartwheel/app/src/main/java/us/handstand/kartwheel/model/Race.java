@@ -26,15 +26,12 @@ public abstract class Race implements RaceModel {
         }
     }, ColumnAdapters.COURSE_BLOB, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG);
 
-    public Race update(@Nullable BriteDatabase db, @NonNull Course course) {
+    public void update(@Nullable BriteDatabase db, @NonNull Course course) {
         if (db != null) {
             ContentValues cv = new ContentValues();
             cv.put(COURSE, ColumnAdapters.courseToBlob(course));
             db.update(TABLE_NAME, cv, "id=?", id());
         }
-        return FACTORY.creator.create(id(), course, courseId(), deletedAt(), eventId(), endTime(),
-                funQuestion(), name(), openSpots(), raceOrder(), replayUrl(), shortAnswer1(), shortAnswer2(),
-                slug(), startTime(), totalLaps(), updatedAt(), videoUrl());
     }
 
     public void insert(@Nullable BriteDatabase db) {

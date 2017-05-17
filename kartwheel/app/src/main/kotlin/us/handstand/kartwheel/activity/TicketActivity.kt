@@ -26,7 +26,7 @@ import us.handstand.kartwheel.controller.TicketController.Companion.GAME_INFO
 import us.handstand.kartwheel.controller.TicketController.Companion.NONE
 import us.handstand.kartwheel.controller.TicketController.Companion.TOS
 import us.handstand.kartwheel.controller.TicketController.Companion.WELCOME
-import us.handstand.kartwheel.fragment.*
+import us.handstand.kartwheel.fragment.ticket.*
 import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.model.Storage
 
@@ -110,13 +110,13 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
             ticketFragment = TicketFragment.getFragment(next)
             title!!.text = resources.getString(ticketFragment!!.getTitleResId())
             intent.putExtra(INTENT_EXTRA_FRAGMENT_TYPE, next)
-            if (next == WELCOME && Storage.showRaces) {
+            onTicketFragmentStateChanged()
+            if (next == GAME_INFO && Storage.showRaces) {
                 startActivity(Intent(this, LoggedInActivity::class.java))
                 finish()
             } else if (!isFinishing && !supportFragmentManager.isDestroyed) {
                 supportFragmentManager.beginTransaction().replace(R.id.fragment, ticketFragment as Fragment?).commit()
             }
-            onTicketFragmentStateChanged()
         }
     }
 

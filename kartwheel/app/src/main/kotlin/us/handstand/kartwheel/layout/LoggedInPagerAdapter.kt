@@ -4,7 +4,7 @@ import android.support.annotation.IntDef
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import us.handstand.kartwheel.fragment.RaceListFragment
+import us.handstand.kartwheel.fragment.race.RaceListFragment
 
 
 class LoggedInPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {

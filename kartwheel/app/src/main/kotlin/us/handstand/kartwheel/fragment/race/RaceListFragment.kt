@@ -1,4 +1,4 @@
-package us.handstand.kartwheel.fragment
+package us.handstand.kartwheel.fragment.race
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
