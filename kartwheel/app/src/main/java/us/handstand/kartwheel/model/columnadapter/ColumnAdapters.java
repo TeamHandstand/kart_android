@@ -40,12 +40,14 @@ public class ColumnAdapters {
         @NonNull
         @Override
         public Date decode(Long databaseValue) {
-            return longToDate(databaseValue);
+            Date result = longToDate(databaseValue);
+            return result == null ? new Date() : result;
         }
 
         @Override
         public Long encode(@NonNull Date value) {
-            return dateToLong(value);
+            Long result = dateToLong(value);
+            return result == null ? 0L : result;
         }
     };
 
