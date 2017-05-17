@@ -20,6 +20,7 @@
     <style name="TicketInputStyle">
         <item name="android:background">@drawable/background_code_input</item>
         <item name="android:padding">16dp</item>
+        <item name="android:layout_margin">8dp</item>
         <item name="android:elevation">5dp</item>
         <item name="android:maxLines">1</item>
         <item name="android:singleLine">true</item>
