@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils.isEmpty
+import rx.Subscription
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.model.Database
 import us.handstand.kartwheel.model.Event
@@ -13,6 +14,8 @@ import us.handstand.kartwheel.model.Storage
 
 
 class LaunchActivity : AppCompatActivity() {
+    var subscription: Subscription? = null
+
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
         setContentView(R.layout.activity_launch)
@@ -25,7 +28,7 @@ class LaunchActivity : AppCompatActivity() {
             finish()
         } else {
             val eventQuery = Event.FACTORY.select_all(Storage.eventId)
-            Database.get().createQuery(EventModel.TABLE_NAME, eventQuery.statement, *eventQuery.args)
+            subscription = Database.get().createQuery(EventModel.TABLE_NAME, eventQuery.statement, *eventQuery.args)
                     .mapToOne { it.use { Event.FACTORY.select_allMapper().map(it) } }
                     .subscribe {
                         if (it.usersCanSeeRaces() == true) {
@@ -36,5 +39,10 @@ class LaunchActivity : AppCompatActivity() {
                         finish()
                     }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        subscription?.unsubscribe()
     }
 }
