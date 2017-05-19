@@ -35,6 +35,7 @@ public abstract class Race implements RaceModel, Comparable<Race> {
     public static final int REGISTRATION_CLOSED = 2;
     public static final int RACE_IS_FULL = 3;
     public static final int HAS_OPEN_SPOTS = 4;
+    public static final String DEFAULT_RACE_NAME = "Racey McRacerson";
 
     @Override
     public int compareTo(@NonNull Race o) {
@@ -82,9 +83,12 @@ public abstract class Race implements RaceModel, Comparable<Race> {
         }
     }
 
-    public long getTimeUntilRace() {
+    @NonNull
+    public Long getTimeUntilRace() {
         final Date startTime = startTime();
-        return (startTime == null ? 0 : startTime.getTime()) - System.currentTimeMillis();
+        final long startTimeMs = startTime == null ? 0L : startTime.getTime();
+        final long currentTimeMs = System.currentTimeMillis();
+        return startTimeMs - currentTimeMs;
     }
 
     public boolean hasLowRegistrantCount() {
@@ -102,7 +106,7 @@ public abstract class Race implements RaceModel, Comparable<Race> {
 
     public void insert(@Nullable BriteDatabase db, Course course) {
         if (db != null) {
-            ContentValues cv = new ContentValues();
+            ContentValues cv = getContentValues();
             cv.put(COURSE, ColumnAdapters.courseToBlob(course));
             db.insert(TABLE_NAME, cv, SQLiteDatabase.CONFLICT_REPLACE);
         }

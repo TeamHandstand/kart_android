@@ -34,6 +34,12 @@ FROM race
 WHERE eventId=?
 ORDER BY raceOrder ASC;
 
+select_for_id:
+SELECT *
+FROM race
+WHERE id=?
+LIMIT 1;
+
 insert_row:
 INSERT INTO race(id, course, courseId, deletedAt, eventId, endTime, funQuestion, name, openSpots,
 raceOrder, registrantIds, replayUrl, shortAnswer1, shortAnswer2, slug, startTime, totalLaps, updatedAt, videoUrl)

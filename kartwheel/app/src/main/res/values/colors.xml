@@ -9,7 +9,9 @@
     <color name="red">#FF4200</color>
     <color name="green">#3ECF8E</color>
     <color name="yellow">#FFC000</color>
+    <color name="yellow_40">#28FFC000</color>
     <color name="textLightGrey">#E1E1E1</color>
+    <color name="textLightGrey_40">#28E1E1E1</color>
     <color name="textDarkGrey">#8C8C8C</color>
     <color name="textDarkestGrey">#4A4A4A</color>
 </resources>

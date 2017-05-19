@@ -36,6 +36,11 @@ SELECT *
 from user
 WHERE teamId = ?;
 
+select_for_race_id:
+SELECT *
+from user
+WHERE raceId = ?;
+
 insert_row:
 INSERT INTO user(id, authToken, birth, cell, charmanderOrSquirtle, email, eventId, facetimeCount,
 firstName, imageUrl, lastName, miniGameId, nickName, pancakeOrWaffle, raceId, referralType, teamId,

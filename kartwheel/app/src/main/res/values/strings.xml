@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">KartWheel</string>
+    <string name="players_title">Players:</string>
+    <string name="race_count_down_title">Race starts in:</string>
+    <string name="top_course_times_title">Top course times:</string>
     <string name="logout_title">Logout?</string>
     <string name="logout">Logout</string>
     <string name="support_email">support@handstandwith.us</string>

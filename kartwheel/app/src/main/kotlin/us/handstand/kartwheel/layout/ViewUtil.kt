@@ -59,4 +59,6 @@ object ViewUtil {
         val font = Typeface.createFromAsset(assets, "Chantelli_Antiqua.ttf")
         textView.typeface = font
     }
+
+
 }

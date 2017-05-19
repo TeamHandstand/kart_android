@@ -27,6 +27,7 @@
             android:name=".activity.TicketActivity"
             android:windowSoftInputMode="adjustPan" />
         <activity android:name=".activity.LoggedInActivity" />
+        <activity android:name=".activity.RaceSignUpActivity" />
     </application>
 
 </manifest>

@@ -10,4 +10,7 @@
         <attr name="playerNumber" format="string" />
         <attr name="isUser" format="boolean" />
     </declare-styleable>
+    <declare-styleable name="TopCourseTimeView">
+        <attr name="rank" format="integer" />
+    </declare-styleable>
 </resources>

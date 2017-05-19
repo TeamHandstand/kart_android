@@ -32,7 +32,7 @@ class RaceSummaryView : RelativeLayout {
 
     fun setRace(race: Race) {
         startTime.text = DateFormatter.getTimeOfDay(race.startTime()!!).replace(' ', '\n')
-        courseName.text = "#" + race.raceOrder().toString() + " - " + (race.name() ?: "Racey McRacers")
+        courseName.text = "#" + race.raceOrder().toString() + " - " + (race.name() ?: Race.DEFAULT_RACE_NAME)
         val miles = (race.course()?.distance() ?: 0.0) * (race.totalLaps() ?: 0L)
         distance.text = race.totalLaps().toString() + " laps | " + miles.toString().substring(0, 3) + " miles"
 

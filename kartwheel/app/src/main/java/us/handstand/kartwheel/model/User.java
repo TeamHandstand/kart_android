@@ -130,6 +130,10 @@ public abstract class User implements UserModel {
         );
     }
 
+    public static User emptyUser() {
+        return User.FACTORY.creator.create("", "", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+    }
+
     // Needed by Gson
     @SuppressWarnings("unused")
     public static TypeAdapter<User> typeAdapter(Gson gson) {
