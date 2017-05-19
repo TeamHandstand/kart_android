@@ -1,4 +1,5 @@
 import java.util.Date;
+import java.util.List;
 import us.handstand.kartwheel.model.Course;
 
 CREATE TABLE race (
@@ -12,6 +13,7 @@ CREATE TABLE race (
     name TEXT,
     openSpots INTEGER DEFAULT 20,
     raceOrder INTEGER DEFAULT 0,
+    registrantIds BLOB as List<String>,
     replayUrl TEXT,
     shortAnswer1 TEXT,
     shortAnswer2 TEXT,
@@ -30,9 +32,9 @@ select_for_event_id:
 SELECT *
 FROM race
 WHERE eventId=?
-ORDER BY startTime ASC;
+ORDER BY raceOrder ASC;
 
 insert_row:
 INSERT INTO race(id, course, courseId, deletedAt, eventId, endTime, funQuestion, name, openSpots,
-raceOrder, replayUrl, shortAnswer1, shortAnswer2, slug, startTime, totalLaps, updatedAt, videoUrl)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+raceOrder, registrantIds, replayUrl, shortAnswer1, shortAnswer2, slug, startTime, totalLaps, updatedAt, videoUrl)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);

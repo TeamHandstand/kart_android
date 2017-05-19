@@ -126,13 +126,15 @@ object API {
                 }))
     }
 
-    private fun getRaces(eventId: String, apiCallback: APICallback<List<Race>>? = null) {
+    private fun getRaces(eventId: String, save: Boolean, apiCallback: APICallback<List<Race>>? = null) {
         kartWheelService!!.getRaces(eventId)
                 .enqueue(SafeCallback(object : APICallback<JsonObject> {
                     override fun onSuccess(response: JsonObject) {
                         val races = gson.fromJson(response.get("races"), Array<Race>::class.java)
-                        for (race in races) {
-                            race.insert(db)
+                        if (save) {
+                            for (race in races) {
+                                race.insert(db)
+                            }
                         }
                         apiCallback?.onSuccess(Arrays.asList(*races))
                     }
@@ -147,13 +149,10 @@ object API {
         getCourses(eventId, object : API.APICallback<Map<String, Course>> {
             override fun onSuccess(courseResponse: Map<String, Course>) {
                 // Subscribe to API response
-                getRaces(eventId, object : API.APICallback<List<Race>> {
+                getRaces(eventId, false, object : API.APICallback<List<Race>> {
                     override fun onSuccess(response: List<Race>) {
                         for (race in response) {
-                            val course = courseResponse[race.courseId()]
-                            if (course != null) {
-                                race.update(db, course)
-                            }
+                            race.insert(db, courseResponse[race.courseId()])
                         }
                     }
                 })

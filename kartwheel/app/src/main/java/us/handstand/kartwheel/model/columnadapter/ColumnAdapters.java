@@ -4,9 +4,13 @@ package us.handstand.kartwheel.model.columnadapter;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.gson.reflect.TypeToken;
 import com.squareup.sqldelight.ColumnAdapter;
 
+import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import us.handstand.kartwheel.model.Course;
 import us.handstand.kartwheel.network.API;
@@ -26,14 +30,22 @@ public class ColumnAdapters {
         }
     };
 
-    @Nullable
+    @NonNull
     public static byte[] courseToBlob(Course course) {
-        return course == null ? null : API.INSTANCE.getGson().toJson(course).getBytes();
+        if (course == null) {
+            return new byte[0];
+        } else {
+            return API.INSTANCE.getGson().toJson(course).getBytes();
+        }
     }
 
-    @Nullable
+    @NonNull
     public static Course blobToCourse(byte[] blob) {
-        return blob == null ? null : API.INSTANCE.getGson().fromJson(new String(blob), Course.class);
+        if (blob == null || blob.length == 0) {
+            return Course.EMPTY_COURSE;
+        } else {
+            return API.INSTANCE.getGson().fromJson(new String(blob), Course.class);
+        }
     }
 
     public static final ColumnAdapter<Date, Long> DATE_LONG = new ColumnAdapter<Date, Long>() {
@@ -59,5 +71,39 @@ public class ColumnAdapters {
     @Nullable
     public static Long dateToLong(Date date) {
         return date == null ? null : date.getTime();
+    }
+
+    public static final ColumnAdapter<List<String>, byte[]> LIST_BLOB = new ColumnAdapter<List<String>, byte[]>() {
+        @NonNull
+        @Override
+        public List<String> decode(byte[] databaseValue) {
+            return blobToList(databaseValue);
+        }
+
+        @Override
+        public byte[] encode(@NonNull List<String> value) {
+            return listToBlob(value);
+        }
+    };
+
+    private static final Type type = new TypeToken<List<String>>() {
+    }.getType();
+
+    @NonNull
+    public static List<String> blobToList(byte[] blob) {
+        if (blob == null || blob.length == 0) {
+            return Collections.emptyList();
+        } else {
+            return API.INSTANCE.getGson().fromJson(new String(blob), type);
+        }
+    }
+
+    @NonNull
+    public static byte[] listToBlob(List<String> list) {
+        if (list == null) {
+            return new byte[0];
+        } else {
+            return API.INSTANCE.getGson().toJson(list).getBytes();
+        }
     }
 }

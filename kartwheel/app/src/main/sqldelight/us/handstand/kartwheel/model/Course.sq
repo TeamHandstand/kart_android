@@ -2,7 +2,7 @@ CREATE TABLE course (
     id TEXT NOT NULL PRIMARY KEY,
     createdAt TEXT,
     deletedAt TEXT,
-    distance REAL DEFAULT 0,
+    distance REAL NOT NULL DEFAULT 0,
     maxRegistrants INTEGER DEFAULT 0,
     name TEXT,
     startLat REAL DEFAULT 0,

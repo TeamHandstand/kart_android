@@ -18,10 +18,12 @@ public abstract class Course implements CourseModel {
 
     public static final CourseModel.Factory<Course> FACTORY = new CourseModel.Factory<>(new Creator<Course>() {
         @Override
-        public Course create(@NonNull String id, @Nullable String createdAt, @Nullable String deletedAt, @Nullable Double distance, @Nullable Long maxRegistrants, @Nullable String name, @Nullable Double startLat, @Nullable Double startLong, @Nullable String updatedAt) {
+        public Course create(@NonNull String id, @Nullable String createdAt, @Nullable String deletedAt, double distance, @Nullable Long maxRegistrants, @Nullable String name, @Nullable Double startLat, @Nullable Double startLong, @Nullable String updatedAt) {
             return new AutoValue_Course(id, createdAt, deletedAt, distance, maxRegistrants, name, startLat, startLong, updatedAt);
         }
     });
+
+    public static final Course EMPTY_COURSE = new AutoValue_Course("", "", "", 0.0, 0L, "", 0.0, 0.0, "");
 
     public void insert(@Nullable BriteDatabase db) {
         if (db != null) {
