@@ -34,6 +34,14 @@ public abstract class User implements UserModel {
         }
     }
 
+    public void insertWithRaceId(BriteDatabase db, String raceId) {
+        if (db != null) {
+            ContentValues cv = new ContentValues();
+            cv.put(RACEID, raceId);
+            db.insert(TABLE_NAME, getContentValues(), SQLiteDatabase.CONFLICT_REPLACE);
+        }
+    }
+
     public void update(BriteDatabase db) {
         if (db != null) {
             ContentValues cv = getContentValues();

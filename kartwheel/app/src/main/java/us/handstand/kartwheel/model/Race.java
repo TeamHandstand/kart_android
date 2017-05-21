@@ -23,10 +23,10 @@ import static us.handstand.kartwheel.model.Util.putIfNotAbsent;
 public abstract class Race implements RaceModel, Comparable<Race> {
     public static final RaceModel.Factory<Race> FACTORY = new RaceModel.Factory<>(new Creator<Race>() {
         @Override
-        public Race create(@NonNull String id, @NonNull Course course, @Nullable String courseId, @Nullable Date deletedAt, @Nullable String eventId, @Nullable Date endTime, @Nullable String funQuestion, @Nullable String name, @Nullable Long openSpots, @Nullable Long raceOrder, @NonNull List<String> registrantIds, @Nullable String replayUrl, @Nullable String shortAnswer1, @Nullable String shortAnswer2, @Nullable String slug, @Nullable Date startTime, @Nullable Long totalLaps, @Nullable Date updatedAt, @Nullable String videoUrl) {
-            return new AutoValue_Race(id, course, courseId, deletedAt, eventId, endTime, funQuestion, name, openSpots, raceOrder, registrantIds, replayUrl, shortAnswer1, shortAnswer2, slug, startTime, totalLaps, updatedAt, videoUrl);
+        public Race create(@NonNull String id, @Nullable Course course, @Nullable String courseId, @Nullable Date deletedAt, @Nullable String eventId, @Nullable Date endTime, @Nullable String funQuestion, @Nullable String name, @Nullable Long openSpots, @Nullable Long raceOrder, @Nullable List<String> registrantIds, @Nullable List<String> registrantImageUrls, @Nullable String replayUrl, @Nullable String shortAnswer1, @Nullable String shortAnswer2, @Nullable String slug, @Nullable Date startTime, @Nullable Long totalLaps, @Nullable Date updatedAt, @Nullable String videoUrl) {
+            return new AutoValue_Race(id, course, courseId, deletedAt, eventId, endTime, funQuestion, name, openSpots, raceOrder, registrantIds, registrantImageUrls, replayUrl, shortAnswer1, shortAnswer2, slug, startTime, totalLaps, updatedAt, videoUrl);
         }
-    }, ColumnAdapters.COURSE_BLOB, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG, ColumnAdapters.LIST_BLOB, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG);
+    }, ColumnAdapters.COURSE_BLOB, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG, ColumnAdapters.LIST_BLOB, ColumnAdapters.LIST_BLOB, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG);
 
     public static final int ALLOWABLE_SECONDS_BEFORE_START_TIME_TO_REGISTER = 5;
     public static final int LOW_REGISTRANTS_NUMBER = 5;
@@ -96,14 +96,6 @@ public abstract class Race implements RaceModel, Comparable<Race> {
         return (openSpots == null ? 0L : openSpots) > LOW_REGISTRANTS_NUMBER;
     }
 
-    public void update(@Nullable BriteDatabase db, @NonNull Course course) {
-        if (db != null) {
-            ContentValues cv = new ContentValues();
-            cv.put(COURSE, ColumnAdapters.courseToBlob(course));
-            db.update(TABLE_NAME, cv, "id=?", id());
-        }
-    }
-
     public void insert(@Nullable BriteDatabase db, Course course) {
         if (db != null) {
             ContentValues cv = getContentValues();
@@ -130,6 +122,7 @@ public abstract class Race implements RaceModel, Comparable<Race> {
         putIfNotAbsent(cv, NAME, name());
         putIfNotAbsent(cv, OPENSPOTS, openSpots());
         putIfNotAbsent(cv, RACEORDER, raceOrder());
+        putIfNotAbsent(cv, REGISTRANTIDS, ColumnAdapters.listToBlob(registrantIds()));
         putIfNotAbsent(cv, REPLAYURL, replayUrl());
         putIfNotAbsent(cv, SHORTANSWER1, shortAnswer1());
         putIfNotAbsent(cv, SHORTANSWER2, shortAnswer2());

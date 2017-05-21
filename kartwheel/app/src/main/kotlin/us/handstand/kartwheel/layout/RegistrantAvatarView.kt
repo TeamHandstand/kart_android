@@ -8,7 +8,6 @@ import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import us.handstand.kartwheel.R
-import us.handstand.kartwheel.model.User
 
 
 class RegistrantAvatarView : ImageView {
@@ -20,12 +19,12 @@ class RegistrantAvatarView : ImageView {
         setImageResource(R.drawable.placeholder_registrant_avatar_grey)
     }
 
-    fun setRegistrant(registrant: User) {
-        if (registrant.id() == "") {
+    fun setRegistrantImageUrl(imageUrl: String) {
+        if (imageUrl == "") {
             setImageResource(R.drawable.placeholder_registrant_avatar)
         } else {
             Glide.with(context)
-                    .load(registrant.imageUrl())
+                    .load(imageUrl)
                     .asBitmap()
                     .centerCrop()
                     .placeholder(R.drawable.placeholder_registrant_avatar)

@@ -18,6 +18,7 @@ CREATE TABLE user_race_info (
     totalAntiMiles REAL DEFAULT 0,
     totalMileage REAL DEFAULT 0,
     totalTime REAL DEFAULT 0,
+    userId TEXT,
     updatedAt TEXT
 );
 
@@ -25,3 +26,9 @@ select_all:
 SELECT *
 FROM user_race_info
 WHERE id=?;
+
+select_for_race_and_user:
+SELECT *
+FROM user_race_info
+WHERE raceId = ? AND userId = ?
+LIMIT 1;

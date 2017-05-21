@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.layout.RegistrantAvatarView
-import us.handstand.kartwheel.model.User
 
 
 class RegistrantAvatarVH private constructor(val avatarView: RegistrantAvatarView) : RecyclerView.ViewHolder(avatarView) {
@@ -15,7 +14,7 @@ class RegistrantAvatarVH private constructor(val avatarView: RegistrantAvatarVie
         }
     }
 
-    fun bind(registrant: User) {
-        avatarView.setRegistrant(registrant)
+    fun bind(imageUrl: String) {
+        avatarView.setRegistrantImageUrl(imageUrl)
     }
 }

@@ -15,18 +15,32 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
             <View
+                android:id="@+id/mapViewOverlay"
                 android:layout_width="match_parent"
-                android:layout_height="200dp" />
+                android:layout_height="200dp"
+                android:layout_alignParentTop="true" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/signUpButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/mapViewOverlay"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="-28dp"
+                android:layout_marginRight="16dp"
+                android:src="@drawable/flag"
+                app:fabSize="normal" />
 
             <LinearLayout
+                android:id="@+id/contentPanel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/mapViewOverlay"
                 android:background="@android:color/white"
                 android:orientation="vertical">
 
@@ -140,6 +154,6 @@
                     android:layout_marginRight="24dp"
                     app:rank="3" />
             </LinearLayout>
-        </LinearLayout>
+        </RelativeLayout>
     </ScrollView>
 </FrameLayout>

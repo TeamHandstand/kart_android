@@ -8,13 +8,14 @@ class Storage private constructor(val prefs: SharedPreferences) {
 
     companion object {
         private const val USER_ID = "user_id"
+        private const val USER_IMAGE_URL = "user_image_url"
         private const val TEAM_ID = "team_id"
         private const val EVENT_ID = "event_id"
         private const val TICKET_ID = "ticket_id"
         private const val EMOJI_CODE = "emoji_code"
         private const val SHOW_RACES = "show_races"
 
-        @StringDef(USER_ID, EMOJI_CODE, EVENT_ID, TEAM_ID, TICKET_ID, SHOW_RACES)
+        @StringDef(USER_ID, EMOJI_CODE, EVENT_ID, TEAM_ID, TICKET_ID, SHOW_RACES, USER_IMAGE_URL)
         private annotation class KEYS
 
         private var instance: Storage? = null
@@ -59,6 +60,13 @@ class Storage private constructor(val prefs: SharedPreferences) {
             }
             set(value) {
                 set(TICKET_ID, value)
+            }
+        var userImageUrl: String
+            get() {
+                return get(USER_IMAGE_URL)
+            }
+            set(value) {
+                set(USER_IMAGE_URL, value)
             }
         var showRaces: Boolean
             get() {

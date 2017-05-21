@@ -25,4 +25,13 @@ internal interface KartWheelService {
 
     @GET("events/{eventId}")
     fun getEvent(@Path("eventId") eventId: String): Call<JsonElement>
+
+    @GET("events/{eventId}/races/{raceId}/users")
+    fun getRaceParticipants(@Path("eventId") eventId: String, @Path("raceId") raceId: String): Call<JsonElement>
+
+    @POST("events/{eventId}/races/{raceId}/join")
+    fun joinRace(@Path("eventId") eventId: String, @Path("raceId") raceId: String): Call<JsonElement>
+
+    @POST("events/{eventId}/races/{raceId}/leave")
+    fun leaveRace(@Path("eventId") eventId: String, @Path("raceId") raceId: String): Call<JsonElement>
 }

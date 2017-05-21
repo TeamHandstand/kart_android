@@ -22,6 +22,7 @@
         android:textStyle="bold"
         tools:text="1:02\npm" />
 
+
     <LinearLayout
         android:id="@+id/content"
         android:layout_width="wrap_content"
@@ -60,4 +61,15 @@
             android:textStyle="bold"
             tools:text="15 spots left" />
     </LinearLayout>
+
+    <us.handstand.kartwheel.layout.RegistrantAvatarView
+        android:id="@+id/avatar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignBottom="@+id/content"
+        android:layout_alignRight="@+id/content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="8dp"
+        android:elevation="5dp" />
+
 </merge>

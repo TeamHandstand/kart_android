@@ -8,6 +8,7 @@ import android.widget.TextView
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.model.Race
 import us.handstand.kartwheel.model.Race.*
+import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.util.DateFormatter
 
 
@@ -20,7 +21,8 @@ class RaceSummaryView : RelativeLayout {
     var courseName: TextView
     var distance: TextView
     var spotsLeft: TextView
-    val runnerEmojiCode = ""
+    var avatar: RegistrantAvatarView
+    val runnerEmojiCode = 0x1F3C3
 
     init {
         View.inflate(context, R.layout.view_holder_race_summary, this)
@@ -28,6 +30,7 @@ class RaceSummaryView : RelativeLayout {
         courseName = ViewUtil.findView(this, R.id.courseName)
         distance = ViewUtil.findView(this, R.id.distance)
         spotsLeft = ViewUtil.findView(this, R.id.spotsLeft)
+        avatar = ViewUtil.findView(this, R.id.avatar)
     }
 
     fun setRace(race: Race) {
@@ -38,13 +41,16 @@ class RaceSummaryView : RelativeLayout {
 
         alpha = 1f
         var spotsLeftTextColorRes = R.color.textDarkGrey
+        avatar.visibility = View.GONE
         when (race.raceStatus) {
             FINISHED -> {
                 alpha = 0.75f
                 spotsLeft.text = "Finished"
             }
             REGISTERED -> {
-                spotsLeft.text = "Registered " + runnerEmojiCode
+                spotsLeft.text = "Registered " + String(Character.toChars(runnerEmojiCode))
+                avatar.visibility = View.VISIBLE
+                avatar.setRegistrantImageUrl(Storage.userImageUrl)
             }
             REGISTRATION_CLOSED -> {
                 spotsLeft.text = "Registration is closed"

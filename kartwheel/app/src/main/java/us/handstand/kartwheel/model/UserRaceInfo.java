@@ -17,14 +17,20 @@ import static us.handstand.kartwheel.model.Util.putIfNotAbsent;
 public abstract class UserRaceInfo implements UserRaceInfoModel {
     public static final Factory<UserRaceInfo> FACTORY = new Factory<>(new Creator<UserRaceInfo>() {
         @Override
-        public UserRaceInfo create(@NonNull String id, @Nullable String challengeId, @Nullable Double completionPercent, @Nullable String courseId, @Nullable Long currentLap, @Nullable String endTime, @Nullable String funAnswerDisplayText, @Nullable String itemId, @Nullable Double latitude, @Nullable Double longitude, @Nullable String raceId, @Nullable Long ranking, @Nullable String removedAt, @Nullable String state, @Nullable Long targeted, @Nullable String targetedBy, @Nullable Double totalAntiMiles, @Nullable Double totalMileage, @Nullable Double totalTime, @Nullable String updatedAt) {
-            return null;
+        public UserRaceInfo create(@NonNull String id, @Nullable String challengeId, @Nullable Double completionPercent, @Nullable String courseId, @Nullable Long currentLap, @Nullable String endTime, @Nullable String funAnswerDisplayText, @Nullable String itemId, @Nullable Double latitude, @Nullable Double longitude, @Nullable String raceId, @Nullable Long ranking, @Nullable String removedAt, @Nullable String state, @Nullable Long targeted, @Nullable String targetedBy, @Nullable Double totalAntiMiles, @Nullable Double totalMileage, @Nullable Double totalTime, @Nullable String userId, @Nullable String updatedAt) {
+            return new AutoValue_UserRaceInfo(id, challengeId, completionPercent, courseId, currentLap, endTime, funAnswerDisplayText, itemId, latitude, longitude, raceId, ranking, removedAt, state, targeted, targetedBy, totalAntiMiles, totalMileage, totalTime, userId, updatedAt);
         }
     });
 
     public void insert(BriteDatabase db) {
         if (db != null) {
             db.insert(TABLE_NAME, getContentValues(), SQLiteDatabase.CONFLICT_REPLACE);
+        }
+    }
+
+    public void delete(BriteDatabase db) {
+        if (db != null) {
+            db.delete(TABLE_NAME, ID + "=?", id());
         }
     }
 
@@ -47,6 +53,7 @@ public abstract class UserRaceInfo implements UserRaceInfoModel {
         putIfNotAbsent(cv, TOTALANTIMILES, totalAntiMiles());
         putIfNotAbsent(cv, TOTALMILEAGE, totalMileage());
         putIfNotAbsent(cv, TOTALTIME, totalTime());
+        putIfNotAbsent(cv, USERID, userId());
         putIfNotAbsent(cv, UPDATEDAT, updatedAt());
         return cv;
     }

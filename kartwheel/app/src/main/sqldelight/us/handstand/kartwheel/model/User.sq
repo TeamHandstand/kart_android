@@ -41,6 +41,11 @@ SELECT *
 from user
 WHERE raceId = ?;
 
+insert_race_id:
+UPDATE user
+SET raceId=?
+WHERE id=?;
+
 insert_row:
 INSERT INTO user(id, authToken, birth, cell, charmanderOrSquirtle, email, eventId, facetimeCount,
 firstName, imageUrl, lastName, miniGameId, nickName, pancakeOrWaffle, raceId, referralType, teamId,

@@ -14,6 +14,7 @@ CREATE TABLE race (
     openSpots INTEGER DEFAULT 20,
     raceOrder INTEGER DEFAULT 0,
     registrantIds BLOB as List<String>,
+    registrantImageUrls BLOB as List<String>,
     replayUrl TEXT,
     shortAnswer1 TEXT,
     shortAnswer2 TEXT,
@@ -40,7 +41,12 @@ FROM race
 WHERE id=?
 LIMIT 1;
 
+insert_participants:
+UPDATE race
+SET registrantIds=?, registrantImageUrls=?
+WHERE id=?;
+
 insert_row:
 INSERT INTO race(id, course, courseId, deletedAt, eventId, endTime, funQuestion, name, openSpots,
-raceOrder, registrantIds, replayUrl, shortAnswer1, shortAnswer2, slug, startTime, totalLaps, updatedAt, videoUrl)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+raceOrder, registrantIds, registrantImageUrls, replayUrl, shortAnswer1, shortAnswer2, slug, startTime, totalLaps, updatedAt, videoUrl)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
