@@ -15,6 +15,7 @@ import android.widget.TextView
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import us.handstand.kartwheel.R
+import us.handstand.kartwheel.layout.BatteryWarningView
 import us.handstand.kartwheel.layout.TopCourseTimeView
 import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.layout.recyclerview.adapter.RegistrantAvatarAdapter
@@ -39,6 +40,7 @@ class RaceSignUpFragment : Fragment(), View.OnClickListener {
     lateinit var secondTopTime: TopCourseTimeView
     lateinit var thirdTopTime: TopCourseTimeView
     lateinit var registrantRecyclerView: RecyclerView
+    lateinit var batteryWarning: BatteryWarningView
     var raceSubscription: Subscription? = null
     var participantSubscription: Subscription? = null
     val registrantAvatarAdapter = RegistrantAvatarAdapter()
@@ -49,6 +51,7 @@ class RaceSignUpFragment : Fragment(), View.OnClickListener {
         val fragmentView = inflater.inflate(R.layout.fragment_race_sign_up, container, false) as ViewGroup
         signUpButton = ViewUtil.findView(fragmentView, R.id.signUpButton)
         signUpButton.setOnClickListener(this)
+        batteryWarning = ViewUtil.findView(fragmentView, R.id.batteryWarning)
         raceName = ViewUtil.findView(fragmentView, R.id.raceName)
         raceDescription = ViewUtil.findView(fragmentView, R.id.raceDescription)
         raceCountdown = ViewUtil.findView(fragmentView, R.id.raceCountdown)
@@ -83,13 +86,6 @@ class RaceSignUpFragment : Fragment(), View.OnClickListener {
                 .mapToOne { Race.FACTORY.select_for_idMapper().map(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { onRaceUpdated(it) }
-//        val participantQuery = User.FACTORY.select_for_race_id(raceId)
-//        participantSubscription = Database.get().createQuery(User.TABLE_NAME, participantQuery.statement, *participantQuery.args)
-//                .mapToList({ User.FACTORY.select_for_race_idMapper().map(it) })
-//                .subscribe {
-//                    Race.update(Database.get(), it, raceId)
-//                    registrantAvatarAdapter.setRegistrants(it)
-//                }
     }
 
     override fun onPause() {

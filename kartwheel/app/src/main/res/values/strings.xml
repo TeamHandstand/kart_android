@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">KartWheel</string>
     <string name="players_title">Players:</string>
+    <string name="battery_life_text">Charge up! You need 20% to run a race!</string>
     <string name="race_count_down_title">Race starts in:</string>
     <string name="top_course_times_title">Top course times:</string>
     <string name="logout_title">Logout?</string>
