@@ -26,7 +26,7 @@ public abstract class Race implements RaceModel, Comparable<Race> {
         public Race create(@NonNull String id, @Nullable Course course, @Nullable String courseId, @Nullable Date deletedAt, @Nullable String eventId, @Nullable Date endTime, @Nullable String funQuestion, @Nullable String name, @Nullable Long openSpots, @Nullable Long raceOrder, @Nullable List<String> registrantIds, @Nullable List<String> registrantImageUrls, @Nullable String replayUrl, @Nullable String shortAnswer1, @Nullable String shortAnswer2, @Nullable String slug, @Nullable Date startTime, @Nullable Long totalLaps, @Nullable Date updatedAt, @Nullable String videoUrl) {
             return new AutoValue_Race(id, course, courseId, deletedAt, eventId, endTime, funQuestion, name, openSpots, raceOrder, registrantIds, registrantImageUrls, replayUrl, shortAnswer1, shortAnswer2, slug, startTime, totalLaps, updatedAt, videoUrl);
         }
-    }, ColumnAdapters.COURSE_BLOB, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG, ColumnAdapters.LIST_BLOB, ColumnAdapters.LIST_BLOB, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG);
+    }, ColumnAdapters.COURSE_BLOB, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG, ColumnAdapters.LIST_STRING_BLOB, ColumnAdapters.LIST_STRING_BLOB, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG);
 
     public static final int ALLOWABLE_SECONDS_BEFORE_START_TIME_TO_REGISTER = 5;
     public static final int LOW_REGISTRANTS_NUMBER = 5;
@@ -122,7 +122,7 @@ public abstract class Race implements RaceModel, Comparable<Race> {
         putIfNotAbsent(cv, NAME, name());
         putIfNotAbsent(cv, OPENSPOTS, openSpots());
         putIfNotAbsent(cv, RACEORDER, raceOrder());
-        putIfNotAbsent(cv, REGISTRANTIDS, ColumnAdapters.listToBlob(registrantIds()));
+        putIfNotAbsent(cv, REGISTRANTIDS, ColumnAdapters.listStringToBlob(registrantIds()));
         putIfNotAbsent(cv, REPLAYURL, replayUrl());
         putIfNotAbsent(cv, SHORTANSWER1, shortAnswer1());
         putIfNotAbsent(cv, SHORTANSWER2, shortAnswer2());

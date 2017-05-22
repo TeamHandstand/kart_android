@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 import us.handstand.kartwheel.model.Course;
+import us.handstand.kartwheel.model.Point;
 import us.handstand.kartwheel.network.API;
 import us.handstand.kartwheel.util.DateFormatter;
 
@@ -73,33 +74,67 @@ public class ColumnAdapters {
         return date == null ? null : date.getTime();
     }
 
-    public static final ColumnAdapter<List<String>, byte[]> LIST_BLOB = new ColumnAdapter<List<String>, byte[]>() {
+    public static final ColumnAdapter<List<String>, byte[]> LIST_STRING_BLOB = new ColumnAdapter<List<String>, byte[]>() {
         @NonNull
         @Override
         public List<String> decode(byte[] databaseValue) {
-            return blobToList(databaseValue);
+            return blobToListString(databaseValue);
         }
 
         @Override
         public byte[] encode(@NonNull List<String> value) {
-            return listToBlob(value);
+            return listStringToBlob(value);
         }
     };
 
-    private static final Type type = new TypeToken<List<String>>() {
+    private static final Type listStringType = new TypeToken<List<String>>() {
     }.getType();
 
     @NonNull
-    public static List<String> blobToList(byte[] blob) {
+    public static List<String> blobToListString(byte[] blob) {
         if (blob == null || blob.length == 0) {
             return Collections.emptyList();
         } else {
-            return API.INSTANCE.getGson().fromJson(new String(blob), type);
+            return API.INSTANCE.getGson().fromJson(new String(blob), listStringType);
         }
     }
 
     @NonNull
-    public static byte[] listToBlob(List<String> list) {
+    public static byte[] listStringToBlob(List<String> list) {
+        if (list == null) {
+            return new byte[0];
+        } else {
+            return API.INSTANCE.getGson().toJson(list).getBytes();
+        }
+    }
+
+    public static final ColumnAdapter<List<Point>, byte[]> LIST_POINT_BLOB = new ColumnAdapter<List<Point>, byte[]>() {
+        @NonNull
+        @Override
+        public List<Point> decode(byte[] databaseValue) {
+            return blobToListPoint(databaseValue);
+        }
+
+        @Override
+        public byte[] encode(@NonNull List<Point> value) {
+            return listPointToBlob(value);
+        }
+    };
+
+    private static final Type listPointType = new TypeToken<List<Point>>() {
+    }.getType();
+
+    @NonNull
+    public static List<Point> blobToListPoint(byte[] blob) {
+        if (blob == null || blob.length == 0) {
+            return Collections.emptyList();
+        } else {
+            return API.INSTANCE.getGson().fromJson(new String(blob), listPointType);
+        }
+    }
+
+    @NonNull
+    public static byte[] listPointToBlob(List<Point> list) {
         if (list == null) {
             return new byte[0];
         } else {

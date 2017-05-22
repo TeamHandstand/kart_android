@@ -79,7 +79,6 @@ android {
 
 dependencies {
     androidTestCompile "com.android.support:support-annotations:$android_support_version"
-    androidTestCompile 'com.android.support.test:runner:0.5'
     androidTestCompile "com.android.support.test.espresso:espresso-core:$espresso_version"
     androidTestCompile "com.android.support.test.espresso:espresso-intents:$espresso_version"
 
@@ -104,5 +103,8 @@ dependencies {
     kapt "com.ryanharter.auto.value:auto-value-gson:$autovalue_gson_version"
     provided "com.google.auto.value:auto-value:$autovalue_version"
     provided "com.ryanharter.auto.value:auto-value-gson:$autovalue_gson_version"
+    compile 'com.google.android.gms:play-services-maps:10.2.6'
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    androidTestCompile 'com.android.support.test:runner:0.5'
 }
 

@@ -1,3 +1,6 @@
+import java.util.List;
+import us.handstand.kartwheel.model.Point;
+
 CREATE TABLE course (
     id TEXT NOT NULL PRIMARY KEY,
     createdAt TEXT,
@@ -7,7 +10,8 @@ CREATE TABLE course (
     name TEXT,
     startLat REAL DEFAULT 0,
     startLong REAL DEFAULT 0,
-    updatedAt TEXT
+    updatedAt TEXT,
+    vertices BLOB as List<Point>
 );
 
 select_all:
@@ -15,5 +19,5 @@ SELECT *
 FROM course;
 
 insert_into:
-INSERT INTO course(id, createdAt, deletedAt, distance, maxRegistrants, name, startLat, startLong, updatedAt)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+INSERT INTO course(id, createdAt, deletedAt, distance, maxRegistrants, name, startLat, startLong, updatedAt, vertices)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);

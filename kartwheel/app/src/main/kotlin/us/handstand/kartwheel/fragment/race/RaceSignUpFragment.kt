@@ -80,12 +80,12 @@ class RaceSignUpFragment : Fragment(), View.OnClickListener {
         super.onResume()
         val raceId = activity.intent.getStringExtra(Race.ID)
         // Get Race and the participants from the network and from the Database
-        API.getRaceParticipants(Storage.eventId, raceId)
         val raceQuery = Race.FACTORY.select_for_id(raceId)
         raceSubscription = Database.get().createQuery(Race.TABLE_NAME, raceQuery.statement, *raceQuery.args)
                 .mapToOne { Race.FACTORY.select_for_idMapper().map(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { onRaceUpdated(it) }
+        API.getRaceParticipants(Storage.eventId, raceId)
     }
 
     override fun onPause() {
