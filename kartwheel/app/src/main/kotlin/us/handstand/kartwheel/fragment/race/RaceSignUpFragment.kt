@@ -34,6 +34,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 
+// TODO: Add error callbacks when trying to join/leave a race
 class RaceSignUpFragment : Fragment(), View.OnClickListener {
     lateinit var signUpButton: FloatingActionButton
     lateinit var raceName: TextView
