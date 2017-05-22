@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import rx.Subscription
 import us.handstand.kartwheel.R
+import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.layout.recyclerview.adapter.MiniGameTypeAdapter
 import us.handstand.kartwheel.model.Database
 import us.handstand.kartwheel.model.MiniGameType
@@ -19,10 +20,11 @@ class MiniGameTypeFragment : Fragment() {
     var subscription: Subscription? = null
     lateinit var adapter: MiniGameTypeAdapter
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val fragmentView = inflater.inflate(R.layout.fragment_mini_game_type, container, false) as RecyclerView
-        fragmentView.layoutManager = LinearLayoutManager(context, VERTICAL, false)
+        val fragmentView = inflater.inflate(R.layout.fragment_mini_game_type, container, false) as ViewGroup
+        val recyclerView = ViewUtil.findView<RecyclerView>(fragmentView, R.id.miniGameTypeRecyclerView)
         adapter = MiniGameTypeAdapter()
-        fragmentView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(context, VERTICAL, false)
+        recyclerView.adapter = adapter
         return fragmentView
     }
 
