@@ -1,6 +1,11 @@
 package us.handstand.kartwheel.fragment.race
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.ColorStateList
+import android.os.BatteryManager
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
@@ -46,6 +51,11 @@ class RaceSignUpFragment : Fragment(), View.OnClickListener {
     val registrantAvatarAdapter = RegistrantAvatarAdapter()
     val countdownScheduler = Executors.newSingleThreadScheduledExecutor()!!
     var race: Race? = null
+    val batteryInfoReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            batteryWarning.setBatteryPercentage(intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0))
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val fragmentView = inflater.inflate(R.layout.fragment_race_sign_up, container, false) as ViewGroup
@@ -86,12 +96,14 @@ class RaceSignUpFragment : Fragment(), View.OnClickListener {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { onRaceUpdated(it) }
         API.getRaceParticipants(Storage.eventId, raceId)
+        activity.registerReceiver(batteryInfoReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
     }
 
     override fun onPause() {
         super.onPause()
         raceSubscription?.unsubscribe()
         participantSubscription?.unsubscribe()
+        activity.unregisterReceiver(batteryInfoReceiver)
     }
 
     override fun onDestroy() {
