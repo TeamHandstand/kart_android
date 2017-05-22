@@ -14,7 +14,7 @@ class RegistrantAvatarAdapter : RecyclerView.Adapter<RegistrantAvatarVH>() {
 
     fun setRegistrants(races: List<String>) {
         handler.post {
-            synchronized(RaceListAdapter@ this, {
+            synchronized(RegistrantAvatarAdapter@ this, {
                 this.registrants.clear()
                 this.registrants.addAll(races)
                 val openSpots = maxRegistrants - registrants.size
@@ -31,13 +31,13 @@ class RegistrantAvatarAdapter : RecyclerView.Adapter<RegistrantAvatarVH>() {
     }
 
     override fun onBindViewHolder(holder: RegistrantAvatarVH, position: Int) {
-        synchronized(RaceListAdapter@ this, {
+        synchronized(RegistrantAvatarAdapter@ this, {
             holder.bind(registrants[position])
         })
     }
 
     override fun getItemCount(): Int {
-        synchronized(RaceListAdapter@ this, {
+        synchronized(RegistrantAvatarAdapter@ this, {
             return registrants.size
         })
     }
