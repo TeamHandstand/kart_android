@@ -34,4 +34,7 @@ internal interface KartWheelService {
 
     @POST("events/{eventId}/races/{raceId}/leave")
     fun leaveRace(@Path("eventId") eventId: String, @Path("raceId") raceId: String): Call<JsonElement>
+
+    @GET("mini_game_types")
+    fun getMiniGameTypes(): Call<JsonElement>
 }

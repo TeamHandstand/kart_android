@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import us.handstand.kartwheel.fragment.LogoutFragment
+import us.handstand.kartwheel.fragment.MiniGameTypeFragment
 import us.handstand.kartwheel.fragment.race.RaceListFragment
 
 
@@ -34,6 +35,7 @@ class LoggedInPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdap
         fun getFragmentFromType(type: Int): Fragment {
             when (type) {
                 RACE_LIST -> return RaceListFragment()
+                GAMES -> return MiniGameTypeFragment()
                 ME -> return LogoutFragment()
             }
             return Fragment()

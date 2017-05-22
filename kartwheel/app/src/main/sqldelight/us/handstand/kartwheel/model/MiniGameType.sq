@@ -1,0 +1,17 @@
+import java.lang.Boolean;
+
+CREATE TABLE mini_game_type(
+    id TEXT NOT NULL PRIMARY KEY,
+    allowedActive INTEGER as Boolean,
+    allowedInactive INTEGER as Boolean,
+    imageUrl TEXT NOT NULL,
+    meetupInstructions TEXT NOT NULL,
+    minimumPlayers INTEGER DEFAULT 0,
+    name TEXT NOT NULL,
+    timeEstimate TEXT NOT NULL
+);
+
+select_all:
+SELECT *
+FROM mini_game_type
+ORDER BY name ASC;

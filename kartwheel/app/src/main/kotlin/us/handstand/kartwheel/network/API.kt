@@ -219,4 +219,18 @@ object API {
             }
         }))
     }
+
+    fun getMiniGameTypes() {
+        kartWheelService!!.getMiniGameTypes().enqueue(SafeCallback(object : APICallback<JsonObject> {
+            override fun onSuccess(response: JsonObject) {
+                val miniGameTypes = gson.fromJson(response.get("miniGameTypes"), Array<MiniGameType>::class.java)
+                val transaction = db?.newTransaction()
+                for (miniGameType in miniGameTypes) {
+                    miniGameType.insert(db)
+                }
+                transaction?.markSuccessful()
+                transaction?.end()
+            }
+        }))
+    }
 }

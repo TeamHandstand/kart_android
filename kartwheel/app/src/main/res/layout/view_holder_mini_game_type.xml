@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:parentTag="RelativeLayout">
+
+    <RelativeLayout
+        android:id="@+id/miniGameImageContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="8dp"
+        android:background="@drawable/background_game_description_image"
+        android:elevation="5dp"
+        android:gravity="center"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/miniGameImage"
+            android:layout_width="47dp"
+            android:layout_height="47dp"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:id="@+id/content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="4dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_toRightOf="@+id/miniGameImageContent"
+        android:background="@drawable/background_race_list_content"
+        android:elevation="5dp"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/miniGameName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            tools:text="Mini Game Name" />
+
+        <TextView
+            android:id="@+id/miniGameTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="10-15 minutes" />
+
+        <TextView
+            android:id="@+id/miniGameMeetupInstructions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/textDarkGrey"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            tools:text="Meet somewhere over the rainbow" />
+    </LinearLayout>
+</merge>
