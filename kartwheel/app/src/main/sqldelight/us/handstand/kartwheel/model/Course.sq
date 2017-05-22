@@ -8,8 +8,8 @@ CREATE TABLE course (
     distance REAL NOT NULL DEFAULT 0,
     maxRegistrants INTEGER DEFAULT 0,
     name TEXT,
-    startLat REAL DEFAULT 0,
-    startLong REAL DEFAULT 0,
+    startLat REAL NOT NULL DEFAULT 0,
+    startLong REAL NOT NULL DEFAULT 0,
     updatedAt TEXT,
     vertices BLOB as List<Point>
 );

@@ -23,7 +23,7 @@ public abstract class Course implements CourseModel {
 
     public static final CourseModel.Factory<Course> FACTORY = new CourseModel.Factory<>(new Creator<Course>() {
         @Override
-        public Course create(@NonNull String id, @Nullable String createdAt, @Nullable String deletedAt, double distance, @Nullable Long maxRegistrants, @Nullable String name, @Nullable Double startLat, @Nullable Double startLong, @Nullable String updatedAt, @Nullable List<Point> vertices) {
+        public Course create(@NonNull String id, @Nullable String createdAt, @Nullable String deletedAt, double distance, @Nullable Long maxRegistrants, @Nullable String name, double startLat, double startLong, @Nullable String updatedAt, @Nullable List<Point> vertices) {
             return new AutoValue_Course(id, createdAt, deletedAt, distance, maxRegistrants, name, startLat, startLong, updatedAt, vertices);
         }
     }, ColumnAdapters.LIST_POINT_BLOB);

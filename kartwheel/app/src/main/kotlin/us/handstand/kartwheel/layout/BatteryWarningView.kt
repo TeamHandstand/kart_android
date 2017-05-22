@@ -27,7 +27,7 @@ class BatteryWarningView : LinearLayout {
         setBatteryPercentage(bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY))
     }
 
-    public fun setBatteryPercentage(level: Int) {
+    fun setBatteryPercentage(level: Int) {
         if (level < 20) {
             batteryDescription.text = String(Character.toChars(0x1F6A8)) + "Charge up! You need 20% to run a race!"
         } else if (level < 50) {

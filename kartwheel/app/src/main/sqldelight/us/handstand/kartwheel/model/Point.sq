@@ -3,8 +3,8 @@ import java.lang.Boolean;
 CREATE TABLE point (
     id TEXT NOT NULL PRIMARY KEY,
     isVertex INTEGER as Boolean DEFAULT 1,
-    latitude REAL DEFAULT 0,
-    longitude REAL DEFAULT 0,
+    latitude REAL NOT NULL DEFAULT 0,
+    longitude REAL NOT NULL DEFAULT 0,
     stepOrder INTEGER DEFAULT 0,
     updatedAt TEXT
 );

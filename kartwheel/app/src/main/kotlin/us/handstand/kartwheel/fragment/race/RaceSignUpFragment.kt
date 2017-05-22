@@ -129,7 +129,7 @@ class RaceSignUpFragment : Fragment(), View.OnClickListener {
         this.race = race
     }
 
-    override fun onClick(v: View?) {
+    override fun onClick(v: View) {
         val raceId = activity.intent.getStringExtra(Race.ID)
         if (race?.registrantIds()?.contains(Storage.userId) == true) {
             API.leaveRace(Storage.eventId, raceId, object : API.APICallback<Boolean> {
