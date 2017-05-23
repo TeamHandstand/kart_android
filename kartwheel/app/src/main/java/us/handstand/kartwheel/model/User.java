@@ -23,8 +23,8 @@ import static us.handstand.kartwheel.model.Util.putIfNotAbsent;
 public abstract class User implements UserModel {
     public static final Factory<User> FACTORY = new Factory<>(new Creator<User>() {
         @Override
-        public User create(@NonNull String id, @Nullable String authToken, @Nullable Date birth, @Nullable String cell, @Nullable String charmanderOrSquirtle, @Nullable String email, @Nullable String eventId, @Nullable Long facetimeCount, @Nullable String firstName, @Nullable String imageUrl, @Nullable String lastName, @Nullable String miniGameId, @Nullable String nickName, @Nullable String pancakeOrWaffle, @Nullable String pushDeviceToken, @Nullable Boolean pushEnabled, @Nullable String raceId, @Nullable String referralType, @Nullable String teamId, @Nullable Double totalAntiMiles, @Nullable Double totalDistanceMiles, @Nullable Date updatedAt) {
-            return new AutoValue_User(id, authToken, birth, cell, charmanderOrSquirtle, email, eventId, facetimeCount, firstName, imageUrl, lastName, miniGameId, nickName, pancakeOrWaffle, pushDeviceToken, pushEnabled, raceId, referralType, teamId, totalAntiMiles, totalDistanceMiles, updatedAt);
+        public User create(@NonNull String id, @Nullable String authToken, @Nullable Date birth, @Nullable String buddyUrl, @Nullable String cell, @Nullable String charmanderOrSquirtle, @Nullable String email, @Nullable String eventId, @Nullable Long facetimeCount, @Nullable String firstName, @Nullable String imageUrl, @Nullable String lastName, @Nullable String miniGameId, @Nullable String nickName, @Nullable String pancakeOrWaffle, @Nullable String pushDeviceToken, @Nullable Boolean pushEnabled, @Nullable String raceId, @Nullable String referralType, @Nullable String teamId, @Nullable Double totalAntiMiles, @Nullable Double totalDistanceMiles, @Nullable Date updatedAt) {
+            return new AutoValue_User(id, authToken, birth, buddyUrl, cell, charmanderOrSquirtle, email, eventId, facetimeCount, firstName, imageUrl, lastName, miniGameId, nickName, pancakeOrWaffle, pushDeviceToken, pushEnabled, raceId, referralType, teamId, totalAntiMiles, totalDistanceMiles, updatedAt);
         }
     }, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG);
 
@@ -55,6 +55,7 @@ public abstract class User implements UserModel {
         putIfNotAbsent(cv, ID, id());
         putIfNotAbsent(cv, AUTHTOKEN, authToken());
         putIfNotAbsent(cv, BIRTH, ColumnAdapters.dateToLong(birth()));
+        putIfNotAbsent(cv, BUDDYURL, buddyUrl());
         putIfNotAbsent(cv, CELL, cell());
         putIfNotAbsent(cv, CHARMANDERORSQUIRTLE, charmanderOrSquirtle());
         putIfNotAbsent(cv, EMAIL, email());
@@ -90,6 +91,7 @@ public abstract class User implements UserModel {
         return User.FACTORY.creator.create(id(),
                 authToken(), // authToken
                 birth(),
+                null,
                 cell(),
                 charmanderOrSquirtle,
                 email(),
@@ -116,6 +118,7 @@ public abstract class User implements UserModel {
         return User.FACTORY.creator.create(id(),
                 authToken(), // authToken
                 DateFormatter.INSTANCE.get(birth),
+                null,
                 cell,
                 charmanderOrSquirtle(),
                 email,
@@ -139,7 +142,7 @@ public abstract class User implements UserModel {
     }
 
     public static User emptyUser() {
-        return User.FACTORY.creator.create("", "", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        return User.FACTORY.creator.create("", "", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     // Needed by Gson

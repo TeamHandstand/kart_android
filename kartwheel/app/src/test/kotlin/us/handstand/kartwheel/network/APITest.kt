@@ -15,7 +15,6 @@ import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.model.User
 import us.handstand.kartwheel.network.API.claimTicket
 import us.handstand.kartwheel.util.DateFormatter
-import java.util.*
 
 class APITest {
     private val okHttpClient = OkHttpClient.Builder().build()
@@ -68,17 +67,16 @@ class APITest {
     @Test
     fun updateUser() {
         server.enqueue(MockResponse().setBody(userUpdateResponse))
-        API.updateUser(User.FACTORY.creator.create("", "", Date(), "", "", "", "", 0L, "", "", "", "", "", "", "", false, "", "", "", 0.0, 0.0, Date()),
-                object : API.APICallback<User> {
-                    override fun onSuccess(response: User) {
-                        this@APITest.response = response
-                        synchronized(lock, { lock.notifyAll() })
-                    }
+        API.updateUser(User.emptyUser(), object : API.APICallback<User> {
+            override fun onSuccess(response: User) {
+                this@APITest.response = response
+                synchronized(lock, { lock.notifyAll() })
+            }
 
-                    override fun onFailure(errorCode: Int, errorResponse: String) {
-                        synchronized(lock, { lock.notifyAll() })
-                    }
-                })
+            override fun onFailure(errorCode: Int, errorResponse: String) {
+                synchronized(lock, { lock.notifyAll() })
+            }
+        })
         synchronized(lock, { lock.wait() })
 
         assertTrue(response is User)

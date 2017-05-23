@@ -5,6 +5,7 @@ CREATE TABLE user (
     id TEXT NOT NULL PRIMARY KEY,
     authToken TEXT,
     birth INTEGER AS Date,
+    buddyUrl TEXT,
     cell TEXT,
     charmanderOrSquirtle TEXT,
     email TEXT,
