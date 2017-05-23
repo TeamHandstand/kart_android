@@ -18,9 +18,12 @@ class TicketController(var listener: TicketStepCompletionListener) {
         const val ALREADY_CLAIMED = 4
         const val FORFEIT = 5
         const val GAME_INFO = 6
+        const val ONBOARDING = 7
+        const val RACE_LIST = 8
 
         @IntDef(TOS.toLong(), CODE_ENTRY.toLong(), CRITICAL_INFO.toLong(), WELCOME.toLong(),
-                ALREADY_CLAIMED.toLong(), FORFEIT.toLong(), GAME_INFO.toLong(), ERROR.toLong(), NONE.toLong())
+                ALREADY_CLAIMED.toLong(), FORFEIT.toLong(), GAME_INFO.toLong(), ONBOARDING.toLong(),
+                RACE_LIST.toLong(), ERROR.toLong(), NONE.toLong())
         annotation class FragmentType
 
         interface TicketStepCompletionListener {
@@ -47,7 +50,19 @@ class TicketController(var listener: TicketStepCompletionListener) {
             CODE_ENTRY -> API.claimTicket(code!!, object : API.APICallback<User> {
                 override fun onSuccess(response: User) {
                     user = response
-                    transition(type, if (response.hasAllInformation()) GAME_INFO else CRITICAL_INFO)
+                    var nextTransition: Int = CRITICAL_INFO
+                    if (response.hasAllInformation()) {
+                        if (response.wasOnboarded()) {
+                            if (Storage.showRaces) {
+                                nextTransition = RACE_LIST
+                            } else {
+                                nextTransition = GAME_INFO
+                            }
+                        } else {
+                            nextTransition = ONBOARDING
+                        }
+                    }
+                    transition(type, nextTransition)
                 }
 
                 override fun onFailure(errorCode: Int, errorResponse: String) {
@@ -66,7 +81,11 @@ class TicketController(var listener: TicketStepCompletionListener) {
             WELCOME -> if (user?.hasAllInformation() == true) {
                 API.updateUser(user!!, object : API.APICallback<User> {
                     override fun onSuccess(response: User) {
-                        transition(type, GAME_INFO)
+                        if (response.wasOnboarded()) {
+                            transition(type, if (Storage.showRaces) RACE_LIST else GAME_INFO)
+                        } else {
+                            transition(type, ONBOARDING)
+                        }
                     }
 
                     override fun onFailure(errorCode: Int, errorResponse: String) {
@@ -95,10 +114,10 @@ class TicketController(var listener: TicketStepCompletionListener) {
     private fun validateTransition(@FragmentType from: Int, @FragmentType to: Int) {
         when (from) {
             TOS -> if (to == CODE_ENTRY) return
-            CODE_ENTRY -> if (to == ALREADY_CLAIMED || to == GAME_INFO || to == CRITICAL_INFO) return
+            CODE_ENTRY -> if (to == ALREADY_CLAIMED || to == GAME_INFO || to == CRITICAL_INFO || to == ONBOARDING || to == RACE_LIST) return
             ALREADY_CLAIMED -> if (to == CODE_ENTRY) return
             CRITICAL_INFO -> if (to == WELCOME) return
-            WELCOME -> if (to == GAME_INFO) return
+            WELCOME -> if (to == GAME_INFO || to == ONBOARDING || to == RACE_LIST) return
             GAME_INFO -> if (to == FORFEIT) return
             FORFEIT -> if (to == CODE_ENTRY || to == GAME_INFO) return
         }

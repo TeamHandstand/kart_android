@@ -24,6 +24,8 @@ import us.handstand.kartwheel.controller.TicketController.Companion.FORFEIT
 import us.handstand.kartwheel.controller.TicketController.Companion.FragmentType
 import us.handstand.kartwheel.controller.TicketController.Companion.GAME_INFO
 import us.handstand.kartwheel.controller.TicketController.Companion.NONE
+import us.handstand.kartwheel.controller.TicketController.Companion.ONBOARDING
+import us.handstand.kartwheel.controller.TicketController.Companion.RACE_LIST
 import us.handstand.kartwheel.controller.TicketController.Companion.TOS
 import us.handstand.kartwheel.controller.TicketController.Companion.WELCOME
 import us.handstand.kartwheel.fragment.ticket.*
@@ -111,8 +113,11 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
             title!!.text = resources.getString(ticketFragment!!.getTitleResId())
             intent.putExtra(INTENT_EXTRA_FRAGMENT_TYPE, next)
             onTicketFragmentStateChanged()
-            if (next == GAME_INFO && Storage.showRaces) {
+            if (next == RACE_LIST) {
                 startActivity(Intent(this, LoggedInActivity::class.java))
+                finish()
+            } else if (next == ONBOARDING) {
+                startActivity(Intent(this, OnboardingActivity::class.java))
                 finish()
             } else if (!isFinishing && !supportFragmentManager.isDestroyed) {
                 supportFragmentManager.beginTransaction().replace(R.id.fragment, ticketFragment as Fragment?).commit()

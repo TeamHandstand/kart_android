@@ -87,6 +87,10 @@ public abstract class User implements UserModel {
                 && !isEmpty(firstName()) && !isEmpty(lastName()) && !isEmpty(nickName());
     }
 
+    public boolean wasOnboarded() {
+        return !isEmpty(buddyUrl()) && !isEmpty(imageUrl());
+    }
+
     public User construct(String charmanderOrSquirtle, String pancakeOrWaffle) {
         return User.FACTORY.creator.create(id(),
                 authToken(), // authToken

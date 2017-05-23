@@ -4,13 +4,14 @@ import org.hamcrest.CoreMatchers
 import org.junit.Assert.assertThat
 import org.junit.Assert.fail
 import org.junit.Test
-import us.handstand.kartwheel.controller.TicketController
 import us.handstand.kartwheel.controller.TicketController.Companion.ALREADY_CLAIMED
 import us.handstand.kartwheel.controller.TicketController.Companion.CODE_ENTRY
 import us.handstand.kartwheel.controller.TicketController.Companion.CRITICAL_INFO
 import us.handstand.kartwheel.controller.TicketController.Companion.FORFEIT
 import us.handstand.kartwheel.controller.TicketController.Companion.GAME_INFO
 import us.handstand.kartwheel.controller.TicketController.Companion.NONE
+import us.handstand.kartwheel.controller.TicketController.Companion.ONBOARDING
+import us.handstand.kartwheel.controller.TicketController.Companion.RACE_LIST
 import us.handstand.kartwheel.controller.TicketController.Companion.TOS
 import us.handstand.kartwheel.controller.TicketController.Companion.WELCOME
 
@@ -19,7 +20,7 @@ class TicketControllerTest : TicketController.Companion.TicketStepCompletionList
 
     var nextStep: Int = NONE
 
-    val items = listOf(TOS, CODE_ENTRY, CRITICAL_INFO, WELCOME, ALREADY_CLAIMED, FORFEIT, GAME_INFO)
+    val items = listOf(TOS, CODE_ENTRY, CRITICAL_INFO, WELCOME, ALREADY_CLAIMED, FORFEIT, GAME_INFO, ONBOARDING, RACE_LIST)
 
     @Test
     fun tosTransitions() {
@@ -28,7 +29,7 @@ class TicketControllerTest : TicketController.Companion.TicketStepCompletionList
 
     @Test
     fun codeEntryTransitions() {
-        testTransitions(CODE_ENTRY, { it == CRITICAL_INFO || it == GAME_INFO || it == ALREADY_CLAIMED })
+        testTransitions(CODE_ENTRY, { it == CRITICAL_INFO || it == GAME_INFO || it == ALREADY_CLAIMED || it == RACE_LIST || it == ONBOARDING })
     }
 
     @Test
@@ -38,7 +39,7 @@ class TicketControllerTest : TicketController.Companion.TicketStepCompletionList
 
     @Test
     fun welcomeTransitions() {
-        testTransitions(WELCOME, { it == GAME_INFO })
+        testTransitions(WELCOME, { it == GAME_INFO || it == ONBOARDING || it == RACE_LIST })
     }
 
     @Test
