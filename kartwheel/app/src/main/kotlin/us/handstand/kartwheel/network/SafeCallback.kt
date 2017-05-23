@@ -7,6 +7,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import us.handstand.kartwheel.BuildConfig
+import us.handstand.kartwheel.KartWheel
 
 class SafeCallback(private val relay: API.APICallback<JsonObject>?) : Callback<JsonElement> {
 
@@ -19,6 +20,9 @@ class SafeCallback(private val relay: API.APICallback<JsonObject>?) : Callback<J
                     relay?.onSuccess(JsonObject())
                 }
             } else {
+                if (response?.code() == 419) {
+                    KartWheel.logout()
+                }
                 val errorString = (response?.body()?.asString ?: response?.errorBody()?.string())
                 val errorJson: JsonObject? = parser.parse(errorString).asJsonObject
                 relay?.onFailure(response?.code() ?: 400, errorJson?.get("error")?.asString ?: defaultError)
