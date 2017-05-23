@@ -1,8 +1,6 @@
 package us.handstand.kartwheel.layout
 
 import android.content.Context
-import android.content.Context.BATTERY_SERVICE
-import android.os.BatteryManager
 import android.util.AttributeSet
 import android.view.View
 import android.widget.LinearLayout
@@ -23,8 +21,9 @@ class BatteryWarningView : LinearLayout {
         batteryPercentage = ViewUtil.findView(this, R.id.batteryPercentage)
         batteryDescription = ViewUtil.findView(this, R.id.batteryDescription)
         setBackgroundResource(R.drawable.background_white_transparent)
-        val bm = context.getSystemService(BATTERY_SERVICE) as BatteryManager
-        setBatteryPercentage(bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY))
+        if (isInEditMode) {
+            setBatteryPercentage(50)
+        }
     }
 
     fun setBatteryPercentage(level: Int) {

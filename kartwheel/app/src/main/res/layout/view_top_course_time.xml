@@ -12,6 +12,7 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:layout_gravity="center_vertical"
+        android:minWidth="32dp"
         android:textSize="16dp"
         tools:text="1st" />
 

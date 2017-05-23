@@ -7,8 +7,10 @@ import android.content.IntentFilter
 import android.content.res.ColorStateList
 import android.os.BatteryManager
 import android.os.Bundle
+import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
+import android.support.v4.widget.NestedScrollView
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.LinearLayoutManager.HORIZONTAL
 import android.support.v7.widget.RecyclerView
@@ -16,18 +18,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.layout.BatteryWarningView
 import us.handstand.kartwheel.layout.TopCourseTimeView
 import us.handstand.kartwheel.layout.ViewUtil
+import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior
 import us.handstand.kartwheel.layout.recyclerview.adapter.RegistrantAvatarAdapter
-import us.handstand.kartwheel.model.Database
-import us.handstand.kartwheel.model.Race
-import us.handstand.kartwheel.model.Storage
-import us.handstand.kartwheel.model.UserRaceInfo
+import us.handstand.kartwheel.model.*
 import us.handstand.kartwheel.network.API
 import us.handstand.kartwheel.util.StringUtil
 import java.util.concurrent.Executors
@@ -35,7 +44,7 @@ import java.util.concurrent.TimeUnit
 
 
 // TODO: Add error callbacks when trying to join/leave a race
-class RaceSignUpFragment : Fragment(), View.OnClickListener {
+class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
     lateinit var signUpButton: FloatingActionButton
     lateinit var raceName: TextView
     lateinit var raceDescription: TextView
@@ -47,6 +56,11 @@ class RaceSignUpFragment : Fragment(), View.OnClickListener {
     lateinit var thirdTopTime: TopCourseTimeView
     lateinit var registrantRecyclerView: RecyclerView
     lateinit var batteryWarning: BatteryWarningView
+    lateinit var mapView: MapView
+    lateinit var toolbar: View
+    lateinit var behavior: AnchoredBottomSheetBehavior<NestedScrollView>
+    var map: GoogleMap? = null
+    var subscription: Subscription? = null
     var raceSubscription: Subscription? = null
     var participantSubscription: Subscription? = null
     val registrantAvatarAdapter = RegistrantAvatarAdapter()
@@ -63,6 +77,7 @@ class RaceSignUpFragment : Fragment(), View.OnClickListener {
         signUpButton = ViewUtil.findView(fragmentView, R.id.signUpButton)
         signUpButton.setOnClickListener(this)
         batteryWarning = ViewUtil.findView(fragmentView, R.id.batteryWarning)
+        batteryWarning.setOnClickListener(this)
         raceName = ViewUtil.findView(fragmentView, R.id.raceName)
         raceDescription = ViewUtil.findView(fragmentView, R.id.raceDescription)
         raceCountdown = ViewUtil.findView(fragmentView, R.id.raceCountdown)
@@ -74,6 +89,10 @@ class RaceSignUpFragment : Fragment(), View.OnClickListener {
         firstTopTime = ViewUtil.findView(fragmentView, R.id.firstTopTime)
         secondTopTime = ViewUtil.findView(fragmentView, R.id.secondTopTime)
         thirdTopTime = ViewUtil.findView(fragmentView, R.id.thirdTopTime)
+        toolbar = ViewUtil.findView(fragmentView, R.id.toolbar)
+        mapView = ViewUtil.findView(fragmentView, R.id.map)
+        mapView.onCreate(savedInstanceState)
+        mapView.getMapAsync(this)
         countdownScheduler.scheduleWithFixedDelay({
             raceCountdown.post {
                 if (race?.alreadyStarted() == true) {
@@ -84,11 +103,22 @@ class RaceSignUpFragment : Fragment(), View.OnClickListener {
                 }
             }
         }, 0, 1L, TimeUnit.SECONDS)
+
+        behavior = AnchoredBottomSheetBehavior.from(ViewUtil.findView(fragmentView, R.id.bottomSheet))
+        behavior.addBottomSheetCallback(object : AnchoredBottomSheetBehavior.BottomSheetCallback() {
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            }
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+            }
+        })
+
         return fragmentView
     }
 
     override fun onResume() {
         super.onResume()
+        mapView.onResume()
         val raceId = activity.intent.getStringExtra(Race.ID)
         // Get Race and the participants from the network and from the Database
         val raceQuery = Race.FACTORY.select_for_id(raceId)
@@ -102,15 +132,32 @@ class RaceSignUpFragment : Fragment(), View.OnClickListener {
 
     override fun onPause() {
         super.onPause()
+        mapView.onPause()
         raceSubscription?.unsubscribe()
         participantSubscription?.unsubscribe()
         activity.unregisterReceiver(batteryInfoReceiver)
     }
 
     override fun onDestroy() {
+        mapView.onDestroy()
         raceSubscription?.unsubscribe()
         participantSubscription?.unsubscribe()
         super.onDestroy()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mapView.onStart()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        mapView.onSaveInstanceState(outState)
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView.onLowMemory()
     }
 
     fun onRaceUpdated(race: Race?) {
@@ -131,6 +178,14 @@ class RaceSignUpFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onClick(v: View) {
+        if (v.id == R.id.batteryWarning) {
+            if (behavior.state == BottomSheetBehavior.STATE_COLLAPSED) {
+                behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            } else if (behavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                behavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            }
+            return
+        }
         val raceId = activity.intent.getStringExtra(Race.ID)
         if (race?.registrantIds()?.contains(Storage.userId) == true) {
             API.leaveRace(Storage.eventId, raceId, object : API.APICallback<Boolean> {
@@ -145,5 +200,37 @@ class RaceSignUpFragment : Fragment(), View.OnClickListener {
                 }
             })
         }
+    }
+
+    override fun onMapReady(map: GoogleMap) {
+        this.map = map
+        val raceQuery = Race.FACTORY.select_for_id(activity.intent.getStringExtra(Race.ID))
+        subscription = Database.get().createQuery(Race.TABLE_NAME, raceQuery.statement, *raceQuery.args)
+                .mapToOne { Race.FACTORY.select_for_idMapper().map(it) }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { drawCourse(it.course(), this.map!!) }
+    }
+
+    private fun drawCourse(course: Course?, map: GoogleMap) {
+        subscription?.unsubscribe()
+        if (course != null) {
+            val courseBounds = course.findCorners()
+            val courseLatLng = LatLng(courseBounds.centerLat, courseBounds.centerLong)
+            map.moveCamera(CameraUpdateFactory.newLatLng(courseLatLng))
+            map.setMinZoomPreference(15f)
+            val coursePolyline = PolylineOptions()
+            for (point in course.vertices()!!) {
+                coursePolyline.add(LatLng(point.latitude(), point.longitude()))
+            }
+            coursePolyline.color(resources.getColor(R.color.blue))
+            map.addPolyline(coursePolyline)
+            val flag = MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_flag))
+                    .position(LatLng(course.startLat(), course.startLong()))
+                    .anchor(.5f, .5f)
+                    .zIndex(10f)
+            map.addMarker(flag)
+        }
+
     }
 }

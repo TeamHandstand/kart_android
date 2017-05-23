@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:padding="8dp"
     tools:orientation="horizontal"
+    android:gravity="center_horizontal"
     tools:parentTag="LinearLayout">
 
     <TextView

@@ -1,173 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/signUpButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_margin="16dp"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="60dp"
+        android:layout_marginRight="16dp"
         android:src="@drawable/flag"
         app:fabSize="normal" />
 
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/bottomSheet"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:anchorPoint="200dp"
+        app:behavior_peekHeight="?actionBarSize"
+        app:layout_behavior="us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            android:orientation="vertical">
 
-            <View
-                android:id="@+id/mapViewOverlay"
+            <LinearLayout
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_alignParentTop="true" />
+                android:layout_height="?actionBarSize"
+                android:background="@color/blue"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/raceName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:textAllCaps="true"
+                    android:textColor="@android:color/white"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    tools:text="Racey McPlaceholder" />
+
+                <TextView
+                    android:id="@+id/raceDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:textColor="@android:color/white"
+                    tools:text="2 laps | 1.14 miles" />
+            </LinearLayout>
 
             <us.handstand.kartwheel.layout.BatteryWarningView
                 android:id="@+id/batteryWarning"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/contentPanel"
-                android:layout_margin="16dp" />
+                android:gravity="center_horizontal" />
 
-            <LinearLayout
-                android:id="@+id/contentPanel"
+            <TextView
+                android:id="@+id/raceCountdownTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/mapViewOverlay"
-                android:background="@android:color/white"
-                android:orientation="vertical">
+                android:layout_marginBottom="24dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:text="@string/race_count_down_title"
+                android:textAllCaps="true"
+                android:textSize="24dp"
+                android:textStyle="bold" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:background="@color/blue"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical"
-                    android:padding="8dp">
+            <TextView
+                android:id="@+id/raceCountdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:gravity="center_horizontal"
+                android:textColor="@color/green"
+                android:textSize="61dp"
+                android:textStyle="bold"
+                tools:text="1:54:49" />
 
-                    <TextView
-                        android:id="@+id/raceName"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:textAllCaps="true"
-                        android:textColor="@android:color/white"
-                        android:textSize="16dp"
-                        android:textStyle="bold"
-                        tools:text="Racey McPlaceholder" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:text="@string/players_title"
+                android:textAllCaps="true"
+                android:textSize="24dp"
+                android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/raceDescription"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:textColor="@android:color/white"
-                        tools:text="2 laps | 1.14 miles" />
-                </LinearLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/registrantRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal"
+                app:layoutManager="LinearLayoutManager"
+                tools:listitem="@layout/recycler_view_item_registrant_avatar" />
 
-                <TextView
-                    android:id="@+id/raceCountdownTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginRight="24dp"
-                    android:text="@string/race_count_down_title"
-                    android:textAllCaps="true"
-                    android:textSize="24dp"
-                    android:textStyle="bold" />
+            <TextView
+                android:id="@+id/spotsLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:textSize="16dp"
+                tools:text="+5 Spots Available" />
 
-                <TextView
-                    android:id="@+id/raceCountdown"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
-                    android:gravity="center_horizontal"
-                    android:textColor="@color/green"
-                    android:textSize="61dp"
-                    android:textStyle="bold"
-                    tools:text="1:54:49" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:text="@string/top_course_times_title"
+                android:textAllCaps="true"
+                android:textSize="24dp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginRight="24dp"
-                    android:text="@string/players_title"
-                    android:textAllCaps="true"
-                    android:textSize="24dp"
-                    android:textStyle="bold" />
+            <us.handstand.kartwheel.layout.TopCourseTimeView
+                android:id="@+id/firstTopTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                app:rank="1" />
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/registrantRecyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:orientation="horizontal"
-                    app:layoutManager="LinearLayoutManager"
-                    tools:listitem="@layout/recycler_view_item_registrant_avatar" />
+            <us.handstand.kartwheel.layout.TopCourseTimeView
+                android:id="@+id/secondTopTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                app:rank="2" />
 
-                <TextView
-                    android:id="@+id/spotsLeft"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginRight="24dp"
-                    android:textSize="16dp"
-                    tools:text="+5 Spots Available" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginRight="24dp"
-                    android:text="@string/top_course_times_title"
-                    android:textAllCaps="true"
-                    android:textSize="24dp"
-                    android:textStyle="bold" />
-
-                <us.handstand.kartwheel.layout.TopCourseTimeView
-                    android:id="@+id/firstTopTime"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginRight="24dp"
-                    app:rank="1" />
-
-                <us.handstand.kartwheel.layout.TopCourseTimeView
-                    android:id="@+id/secondTopTime"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginRight="24dp"
-                    app:rank="2" />
-
-                <us.handstand.kartwheel.layout.TopCourseTimeView
-                    android:id="@+id/thirdTopTime"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginRight="24dp"
-                    app:rank="3" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="72dp" />
-            </LinearLayout>
-        </RelativeLayout>
-    </ScrollView>
-</RelativeLayout>
+            <us.handstand.kartwheel.layout.TopCourseTimeView
+                android:id="@+id/thirdTopTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                app:rank="3" />
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</android.support.design.widget.CoordinatorLayout>

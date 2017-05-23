@@ -13,4 +13,8 @@
     <declare-styleable name="TopCourseTimeView">
         <attr name="rank" format="integer" />
     </declare-styleable>
+
+    <declare-styleable name="AnchoredBottomSheetBehavior">
+        <attr name="anchorPoint" format="dimension" />
+    </declare-styleable>
 </resources>
