@@ -1,5 +1,6 @@
 buildscript {
     ext.android_support_version = '25.3.1'
+    ext.android_test_runner_version = '0.5'
     ext.autovalue_version = '1.4.1'
     ext.autovalue_gson_version = '0.4.6'
     ext.crashlytics_version = '2.6.7'
@@ -7,6 +8,7 @@ buildscript {
     ext.glide_version = '3.8.0'
     ext.glide_okhttp3_integration_version = '1.5.0@aar'
     ext.gson_version = '2.8.0'
+    ext.google_maps_version = '10.2.6'
     ext.junit_version = '4.12'
     ext.kotlin_version = '1.1.2-3'
     ext.okhttp3_version = '3.8.0'
@@ -78,33 +80,33 @@ android {
 }
 
 dependencies {
+    compile "com.android.support:appcompat-v7:$android_support_version"
+    compile "com.android.support:design:$android_support_version"
+    compile("com.crashlytics.sdk.android:crashlytics:$crashlytics_version@aar") { transitive = true; }
+    compile "com.github.bumptech.glide:glide:$glide_version"
+    compile "com.github.bumptech.glide:okhttp3-integration:$glide_okhttp3_integration_version"
+    compile "com.google.android.gms:play-services-maps:$google_maps_version"
+    compile "com.google.code.gson:gson:$gson_version"
+    compile "com.squareup.okhttp3:okhttp:$okhttp3_version"
+    compile "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    compile "com.squareup.retrofit2:retrofit:$retrofit_version"
+    compile "com.squareup.sqlbrite:sqlbrite:$sqlbrite_version"
+    compile "io.reactivex:rxandroid:$rxandroid_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    kapt "com.google.auto.value:auto-value:$autovalue_version"
+    kapt "com.ryanharter.auto.value:auto-value-gson:$autovalue_gson_version"
+
+    provided "com.google.auto.value:auto-value:$autovalue_version"
+    provided "com.ryanharter.auto.value:auto-value-gson:$autovalue_gson_version"
+
     androidTestCompile "com.android.support:support-annotations:$android_support_version"
     androidTestCompile "com.android.support.test.espresso:espresso-core:$espresso_version"
     androidTestCompile "com.android.support.test.espresso:espresso-intents:$espresso_version"
+    androidTestCompile "com.android.support.test:runner:$android_test_runner_version"
 
-    compile("com.crashlytics.sdk.android:crashlytics:$crashlytics_version@aar") {
-        transitive = true;
-    }
-    compile "com.android.support:appcompat-v7:$android_support_version"
-    compile "com.android.support:design:$android_support_version"
-    compile "com.squareup.retrofit2:retrofit:$retrofit_version"
-    compile "com.squareup.retrofit2:converter-gson:$retrofit_version"
-    compile "com.squareup.sqlbrite:sqlbrite:$sqlbrite_version"
-    compile "com.squareup.okhttp3:okhttp:$okhttp3_version"
-    compile "com.google.code.gson:gson:$gson_version"
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "com.github.bumptech.glide:glide:$glide_version"
-    compile "com.github.bumptech.glide:okhttp3-integration:$glide_okhttp3_integration_version"
-    compile "io.reactivex:rxandroid:$rxandroid_version"
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
     testCompile "junit:junit:$junit_version"
     testCompile "com.squareup.okhttp3:mockwebserver:$okhttp3_version"
-    kapt "com.google.auto.value:auto-value:$autovalue_version"
-    kapt "com.ryanharter.auto.value:auto-value-gson:$autovalue_gson_version"
-    provided "com.google.auto.value:auto-value:$autovalue_version"
-    provided "com.ryanharter.auto.value:auto-value-gson:$autovalue_gson_version"
-    compile 'com.google.android.gms:play-services-maps:10.2.6'
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    androidTestCompile 'com.android.support.test:runner:0.5'
 }
 
