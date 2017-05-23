@@ -7,14 +7,12 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatButton
-import android.text.TextUtils.isEmpty
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
 import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
-import us.handstand.kartwheel.activity.TicketActivity.TicketFragment.Companion.INTENT_EXTRA_FRAGMENT_TYPE
 import us.handstand.kartwheel.controller.TicketController
 import us.handstand.kartwheel.controller.TicketController.Companion.ALREADY_CLAIMED
 import us.handstand.kartwheel.controller.TicketController.Companion.CODE_ENTRY
@@ -56,7 +54,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
 
         companion object {
             const val INTENT_EXTRA_FRAGMENT_TYPE = "fragment_type"
-            fun getFragment(@FragmentType fragmentType: Int): TicketFragment {
+            fun getFragment(@FragmentType fragmentType: Long): TicketFragment {
                 when (fragmentType) {
                     TOS -> return TOSFragment()
                     CODE_ENTRY -> return CodeEntryFragment()
@@ -80,12 +78,6 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
     private var ticketFragment: TicketFragment? = null
     internal var title: TextView? = null
     internal var button: AppCompatButton? = null
-    private val currentFragmentType: Int
-        @FragmentType
-        get() {
-            @FragmentType val currentFragmentType = intent.getIntExtra(INTENT_EXTRA_FRAGMENT_TYPE, TOS)
-            return currentFragmentType
-        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,15 +85,14 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
         title = ViewUtil.findView(this, R.id.title_text)
         button = ViewUtil.findView(this, R.id.button)
         button!!.setOnClickListener(this)
-        // TODO: Show critical info if stored user object is not filled out.
-        ticketController.transition(NONE, if (isEmpty(Storage.userId)) TOS else GAME_INFO)
+        ticketController.transition(NONE, Storage.lastTicketState)
     }
 
     override fun showDialog(message: String) {
         Toast.makeText(this, message, LENGTH_LONG).show()
     }
 
-    override fun showNextStep(@FragmentType previous: Int, @FragmentType next: Int) {
+    override fun showNextStep(@FragmentType previous: Long, @FragmentType next: Long) {
         // Make sure that we're starting with fresh data.
         if (next == ERROR || next == CODE_ENTRY) {
             KartWheel.logout()
@@ -111,7 +102,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
             ViewUtil.hideKeyboard(this)
             ticketFragment = TicketFragment.getFragment(next)
             title!!.text = resources.getString(ticketFragment!!.getTitleResId())
-            intent.putExtra(INTENT_EXTRA_FRAGMENT_TYPE, next)
+            Storage.lastTicketState = next
             onTicketFragmentStateChanged()
             if (next == RACE_LIST) {
                 startActivity(Intent(this, LoggedInActivity::class.java))
@@ -141,7 +132,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
 
     override fun onClick(v: View) {
         if (v.isEnabled && v.id == R.id.button && ticketFragment!!.isAdvanceButtonEnabled() && ticketFragment!!.canAdvanceToNextStep()) {
-            ticketController.onStepCompleted(currentFragmentType)
+            ticketController.onStepCompleted(Storage.lastTicketState)
         }
     }
 }

@@ -9,25 +9,24 @@ import us.handstand.kartwheel.network.API
 
 class TicketController(var listener: TicketStepCompletionListener) {
     companion object {
-        const val ERROR = -2
-        const val NONE = -1
-        const val TOS = 0
-        const val CODE_ENTRY = 1
-        const val CRITICAL_INFO = 2
-        const val WELCOME = 3
-        const val ALREADY_CLAIMED = 4
-        const val FORFEIT = 5
-        const val GAME_INFO = 6
-        const val ONBOARDING = 7
-        const val RACE_LIST = 8
+        const val ERROR = -2L
+        const val NONE = -1L
+        const val TOS = 0L
+        const val CODE_ENTRY = 1L
+        const val CRITICAL_INFO = 2L
+        const val WELCOME = 3L
+        const val ALREADY_CLAIMED = 4L
+        const val FORFEIT = 5L
+        const val GAME_INFO = 6L
+        const val ONBOARDING = 7L
+        const val RACE_LIST = 8L
 
-        @IntDef(TOS.toLong(), CODE_ENTRY.toLong(), CRITICAL_INFO.toLong(), WELCOME.toLong(),
-                ALREADY_CLAIMED.toLong(), FORFEIT.toLong(), GAME_INFO.toLong(), ONBOARDING.toLong(),
-                RACE_LIST.toLong(), ERROR.toLong(), NONE.toLong())
+        @IntDef(TOS, CODE_ENTRY, CRITICAL_INFO, WELCOME, ALREADY_CLAIMED, FORFEIT, GAME_INFO, ONBOARDING,
+                RACE_LIST, ERROR, NONE)
         annotation class FragmentType
 
         interface TicketStepCompletionListener {
-            fun showNextStep(@FragmentType previous: Int, @FragmentType next: Int)
+            fun showNextStep(@FragmentType previous: Long, @FragmentType next: Long)
             fun showDialog(message: String)
             fun onTicketFragmentStateChanged()
         }
@@ -36,21 +35,21 @@ class TicketController(var listener: TicketStepCompletionListener) {
     var code: String? = null
     var user: User? = null
 
-    fun transition(@FragmentType from: Int, @FragmentType to: Int) {
+    fun transition(@FragmentType from: Long, @FragmentType to: Long) {
         if (from != NONE && to != ERROR) {
             validateTransition(from, to)
         }
         listener.showNextStep(from, to)
     }
 
-    fun onStepCompleted(@FragmentType type: Int) {
+    fun onStepCompleted(@FragmentType type: Long) {
         when (type) {
             TOS -> transition(type, CODE_ENTRY)
 
             CODE_ENTRY -> API.claimTicket(code!!, object : API.APICallback<User> {
                 override fun onSuccess(response: User) {
                     user = response
-                    var nextTransition: Int = CRITICAL_INFO
+                    var nextTransition = CRITICAL_INFO
                     if (response.hasAllInformation()) {
                         if (response.wasOnboarded()) {
                             if (Storage.showRaces) {
@@ -111,7 +110,7 @@ class TicketController(var listener: TicketStepCompletionListener) {
         }
     }
 
-    private fun validateTransition(@FragmentType from: Int, @FragmentType to: Int) {
+    private fun validateTransition(@FragmentType from: Long, @FragmentType to: Long) {
         when (from) {
             TOS -> if (to == CODE_ENTRY) return
             CODE_ENTRY -> if (to == ALREADY_CLAIMED || to == GAME_INFO || to == CRITICAL_INFO || to == ONBOARDING || to == RACE_LIST) return

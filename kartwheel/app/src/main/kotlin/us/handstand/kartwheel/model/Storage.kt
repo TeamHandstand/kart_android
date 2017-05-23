@@ -3,6 +3,8 @@ package us.handstand.kartwheel.model
 
 import android.content.SharedPreferences
 import android.support.annotation.StringDef
+import us.handstand.kartwheel.controller.OnboardingController
+import us.handstand.kartwheel.controller.TicketController
 
 class Storage private constructor(val prefs: SharedPreferences) {
 
@@ -14,16 +16,16 @@ class Storage private constructor(val prefs: SharedPreferences) {
         private const val TICKET_ID = "ticket_id"
         private const val EMOJI_CODE = "emoji_code"
         private const val SHOW_RACES = "show_races"
+        private const val LAST_TICKET_STEP = "last_ticket_step"
+        private const val LAST_ONBOARDING_STEP = "last_onboarding_step"
 
-        @StringDef(USER_ID, EMOJI_CODE, EVENT_ID, TEAM_ID, TICKET_ID, SHOW_RACES, USER_IMAGE_URL)
+        @StringDef(USER_ID, EMOJI_CODE, EVENT_ID, TEAM_ID, TICKET_ID, SHOW_RACES, USER_IMAGE_URL, LAST_TICKET_STEP)
         private annotation class KEYS
 
-        private var instance: Storage? = null
+        private lateinit var instance: Storage
 
         fun initialize(prefs: SharedPreferences) {
-            if (instance == null) {
-                instance = Storage(prefs)
-            }
+            instance = Storage(prefs)
         }
 
         var userId: String
@@ -70,18 +72,32 @@ class Storage private constructor(val prefs: SharedPreferences) {
             }
         var showRaces: Boolean
             get() {
-                return instance!!.prefs.getBoolean(SHOW_RACES, false)
+                return instance.prefs.getBoolean(SHOW_RACES, false)
             }
             set(value) {
-                instance!!.prefs.edit().putBoolean(SHOW_RACES, value).apply()
+                instance.prefs.edit().putBoolean(SHOW_RACES, value).apply()
+            }
+        var lastTicketState: Long
+            get() {
+                return instance.prefs.getLong(LAST_TICKET_STEP, TicketController.Companion.TOS)
+            }
+            set(value) {
+                instance.prefs.edit().putLong(LAST_TICKET_STEP, value).apply()
+            }
+        var lastOnboardingState: Long
+            get() {
+                return instance.prefs.getLong(LAST_ONBOARDING_STEP, OnboardingController.Companion.STARTED)
+            }
+            set(value) {
+                instance.prefs.edit().putLong(LAST_ONBOARDING_STEP, value).apply()
             }
 
         private fun get(@KEYS key: String): String {
-            return instance!!.prefs.getString(key, "")
+            return instance.prefs.getString(key, "")
         }
 
         private operator fun set(@KEYS key: String, value: String) {
-            instance!!.prefs.edit().putString(key, value).apply()
+            instance.prefs.edit().putString(key, value).apply()
         }
 
         fun clear() {
@@ -91,6 +107,9 @@ class Storage private constructor(val prefs: SharedPreferences) {
             showRaces = false
             eventId = ""
             code = ""
+            userImageUrl = ""
+            lastTicketState = TicketController.Companion.TOS
+            lastOnboardingState = OnboardingController.Companion.STARTED
         }
     }
 }

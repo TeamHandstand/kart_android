@@ -2,6 +2,41 @@
     <string name="app_name">KartWheel</string>
     <string name="players_title">Players:</string>
     <string name="mini_game_title">Play mini games for more points &amp; more fun!</string>
+
+    <!-- Onboarding -->
+    <!-- + Start -->
+    <string name="onboarding_started_title">Welcome to KartWheel!</string>
+    <string name="onboarding_started_description">Fire shells from your phone while racing friends.</string>
+    <string name="onboarding_started_button">Get started</string>
+    <!-- + Selfie -->
+    <string name="onboarding_selfie_title">Take a selfie</string>
+    <string name="onboarding_selfie_description">Brush your hair and smile big. This is the photo
+        everyone will see while you\'re racing with Kartwheel!</string>
+    <string name="onboarding_selfie_button">I look great</string>
+    <string name="onboarding_selfie_tap_to_change">Tap to change</string>
+    <!-- + Pick a buddy -->
+    <string name="onboarding_pick_buddy_title">Pick a buddy!</string>
+    <string name="onboarding_pick_buddy_description">If he\'s not moving on the map, you\'re not moving
+    in the game! Know that he\'ll be racing alongside you as you\'re kicking ass and taking names.</string>
+    <string name="onboarding_pick_buddy_button">I love \'em</string>
+    <!-- + Buddy explanation -->
+    <string name="onboarding_buddy_explanation_title">Buddies are really important</string>
+    <string name="onboarding_buddy_explanation_description">You made a great choice, but there\'s more.
+    If you ever drop your buddy, you *must* go back and pick them up! If you get hit by a shell, we
+    may knock your buddy back - go and get \'em!</string>
+    <string name="onboarding_buddy_explanation_button">I get it</string>
+    <!-- + Medals and Ribbons -->
+    <string name="onboarding_points_title">Race to earn medals &amp; ribbons</string>
+    <string name="onboarding_points_description">Once you get into the race list, find the races you
+    want to run in, and click \'Join\'! Make sure you\'re at the start line at gun-time - computers
+    don\'t wait for anybody&#8230;</string>
+    <string name="onboarding_points_button">Next</string>
+    <string name="onboarding_make_it_rain">(Tap fast to make it rain more &#8230;)</string>
+    <!-- + Video -->
+    <string name="onboarding_video_title">Everything you need to know</string>
+    <string name="onboarding_video_description">In a short, awesome video.</string>
+    <string name="onboarding_video_button">Let\'s go!</string>
+
     <string name="battery_life_text">Charge up! You need 20% to run a race!</string>
     <string name="race_count_down_title">Race starts in:</string>
     <string name="top_course_times_title">Top course times:</string>
@@ -25,7 +60,7 @@
     <string name="welcome">Welcome</string>
     <string name="im_ready">I\'m ready</string>
     <string name="contact_us">Contact us</string>
-    <string name="lets_go">Let\'s go</string>
+    <string name="lets_go">Let\'s go!</string>
     <string name="tos">Terms &amp; Conditions</string>
     <string name="enter_code">Enter your ticket code</string>
     <string name="your_team">Your team</string>

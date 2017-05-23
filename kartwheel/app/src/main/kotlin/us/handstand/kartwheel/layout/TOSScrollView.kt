@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.widget.ScrollView
 
 class TOSScrollView : ScrollView {
-    private var scrolledToBottomListen: (() -> Unit)? = null
+    var listener: (() -> Unit)? = null
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
@@ -15,12 +15,8 @@ class TOSScrollView : ScrollView {
         super.onScrollChanged(l, t, oldl, oldt)
         val child = getChildAt(childCount - 1)
         if (child.bottom - (height + scrollY) == 0) {
-            scrolledToBottomListen?.invoke()
+            listener?.invoke()
         }
-    }
-
-    fun setScrolledToBottomListener(listener: () -> Unit) {
-        scrolledToBottomListen = listener
     }
 }
 

@@ -12,41 +12,42 @@ import us.handstand.kartwheel.activity.TicketActivity
 import us.handstand.kartwheel.layout.TOSScrollView
 import us.handstand.kartwheel.layout.ViewUtil
 
-class TOSFragment : android.support.v4.app.Fragment(), us.handstand.kartwheel.activity.TicketActivity.TicketFragment {
-    internal var scrollView: us.handstand.kartwheel.layout.TOSScrollView? = null
-    private var button: android.support.v7.widget.AppCompatButton? = null
+class TOSFragment : Fragment(), TicketActivity.TicketFragment {
+    internal lateinit var scrollView: TOSScrollView
+    private lateinit var button: AppCompatButton
     private var scrolledToBottom: Boolean = false
 
-    override fun onCreateView(inflater: android.view.LayoutInflater?, container: android.view.ViewGroup?, savedInstanceState: android.os.Bundle?): android.view.View? {
-        val fragmentView = inflater!!.inflate(us.handstand.kartwheel.R.layout.fragment_tos, container, false) as android.view.ViewGroup
-        scrollView = us.handstand.kartwheel.layout.ViewUtil.findView(fragmentView, R.id.tos_scroll_view)
-        scrollView?.setScrolledToBottomListener {
-            scrolledToBottom = true
-            ticketController.onTicketFragmentStateChanged()
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val fragmentView = inflater.inflate(R.layout.fragment_tos, container, false) as ViewGroup
+        scrollView = ViewUtil.findView(fragmentView, R.id.tos_scroll_view)
+        scrollView.listener = {
+            activity.runOnUiThread {
+                scrolledToBottom = true
+                ticketController.onTicketFragmentStateChanged()
+            }
         }
         return fragmentView
     }
 
-    override fun onActivityCreated(savedInstanceState: android.os.Bundle?) {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        button = us.handstand.kartwheel.layout.ViewUtil.findView(activity, R.id.button)
-        us.handstand.kartwheel.layout.ViewUtil.setButtonState(resources, button, R.color.grey_button_disabled, R.string.scroll_down, false)
+        button = ViewUtil.findView(activity, R.id.button)
+        ViewUtil.setButtonState(resources, button, getAdvanceButtonColor(), getAdvanceButtonTextResId(), isAdvanceButtonEnabled())
     }
 
     override fun getTitleResId(): Int {
-        return us.handstand.kartwheel.R.string.app_name
+        return R.string.app_name
     }
 
     override fun getAdvanceButtonTextResId(): Int {
-        return if (scrolledToBottom) us.handstand.kartwheel.R.string.lets_go else us.handstand.kartwheel.R.string.scroll_down
+        return if (isAdvanceButtonEnabled()) R.string.lets_go else R.string.scroll_down
     }
 
     override fun getAdvanceButtonColor(): Int {
-        return if (scrolledToBottom) us.handstand.kartwheel.R.color.blue else super.getAdvanceButtonColor()
+        return if (isAdvanceButtonEnabled()) R.color.blue else super.getAdvanceButtonColor()
     }
 
     override fun isAdvanceButtonEnabled(): Boolean {
         return scrolledToBottom
     }
-
 }

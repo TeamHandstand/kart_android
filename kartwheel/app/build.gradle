@@ -75,6 +75,8 @@ android {
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
         test.java.srcDirs += 'src/test/kotlin'
+        test.java.srcDirs += 'src/commonTest/kotlin'
+        androidTest.java.srcDirs += 'src/commonTest/kotlin'
     }
     testOptions {
         unitTests.returnDefaultValues = true
@@ -84,7 +86,9 @@ android {
 dependencies {
     compile "com.android.support:appcompat-v7:$android_support_version"
     compile "com.android.support:design:$android_support_version"
-    compile("com.crashlytics.sdk.android:crashlytics:$crashlytics_version@aar") { transitive = true; }
+    compile("com.crashlytics.sdk.android:crashlytics:$crashlytics_version@aar") {
+        transitive = true;
+    }
     compile "com.github.bumptech.glide:glide:$glide_version"
     compile "com.github.bumptech.glide:okhttp3-integration:$glide_okhttp3_integration_version"
     compile "com.google.android.gms:play-services-maps:$google_maps_version"
@@ -106,6 +110,7 @@ dependencies {
     androidTestCompile "com.android.support.test.espresso:espresso-core:$espresso_version"
     androidTestCompile "com.android.support.test.espresso:espresso-intents:$espresso_version"
     androidTestCompile "com.android.support.test:runner:$android_test_runner_version"
+    androidTestCompile "com.squareup.okhttp3:mockwebserver:$okhttp3_version"
 
     testCompile "com.squareup.okhttp3:mockwebserver:$okhttp3_version"
     testCompile "org.mockito:mockito-core:$mockito_version"

@@ -7,22 +7,21 @@ import us.handstand.kartwheel.model.User
 
 class OnboardingController(var listener: OnboardingStepCompletionListener) {
     companion object {
-        const val ERROR = -2
-        const val NONE = -1
-        const val STARTED = 0
-        const val SELFIE = 1
-        const val PICK_BUDDY = 2
-        const val BUDDY_EXPLANATION = 3
-        const val POINT_SYSTEM = 4
-        const val VIDEO = 5
-        const val FINISHED = 6
+        const val ERROR = -2L
+        const val NONE = -1L
+        const val STARTED = 0L
+        const val SELFIE = 1L
+        const val PICK_BUDDY = 2L
+        const val BUDDY_EXPLANATION = 3L
+        const val POINT_SYSTEM = 4L
+        const val VIDEO = 5L
+        const val FINISHED = 6L
 
-        @IntDef(STARTED.toLong(), SELFIE.toLong(), PICK_BUDDY.toLong(), BUDDY_EXPLANATION.toLong(),
-                POINT_SYSTEM.toLong(), VIDEO.toLong(), FINISHED.toLong(), ERROR.toLong(), NONE.toLong())
+        @IntDef(STARTED, SELFIE, PICK_BUDDY, BUDDY_EXPLANATION, POINT_SYSTEM, VIDEO, FINISHED, ERROR, NONE)
         annotation class FragmentType
 
         interface OnboardingStepCompletionListener {
-            fun showNextStep(@FragmentType previous: Int, @FragmentType next: Int)
+            fun showNextStep(@FragmentType previous: Long, @FragmentType next: Long)
             fun showDialog(message: String)
             fun onOnboardingFragmentStateChanged()
         }
@@ -31,14 +30,14 @@ class OnboardingController(var listener: OnboardingStepCompletionListener) {
     var code: String? = null
     var user: User? = null
 
-    fun transition(@FragmentType from: Int, @FragmentType to: Int) {
+    fun transition(@FragmentType from: Long, @FragmentType to: Long) {
         if (from != NONE && to != ERROR) {
             validateTransition(from, to)
         }
         listener.showNextStep(from, to)
     }
 
-    fun onStepCompleted(@FragmentType type: Int) {
+    fun onStepCompleted(@FragmentType type: Long) {
         when (type) {
             STARTED -> transition(type, SELFIE)
 
@@ -54,7 +53,7 @@ class OnboardingController(var listener: OnboardingStepCompletionListener) {
         }
     }
 
-    private fun validateTransition(@FragmentType from: Int, @FragmentType to: Int) {
+    private fun validateTransition(@FragmentType from: Long, @FragmentType to: Long) {
         when (from) {
             STARTED -> if (to == SELFIE) return
             SELFIE -> if (to == PICK_BUDDY) return

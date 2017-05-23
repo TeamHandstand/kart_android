@@ -1,9 +1,8 @@
-package us.handstand.kartwheel.mocks
+package us.handstand.kartwheel.mock
 
 import android.text.TextUtils
 import org.mockito.Mockito
 import org.powermock.api.mockito.PowerMockito
-
 
 object MockTextUtils {
     // TODO: Need to annotate test class with @RunWith(PowerMockRunner.class) and @PrepareForTest(TextUtils.class)

@@ -18,7 +18,7 @@ import us.handstand.kartwheel.controller.TicketController.Companion.WELCOME
 class TicketControllerTest : TicketController.Companion.TicketStepCompletionListener {
     val ticketController = TicketController(this)
 
-    var nextStep: Int = NONE
+    var nextStep = NONE
 
     val items = listOf(TOS, CODE_ENTRY, CRITICAL_INFO, WELCOME, ALREADY_CLAIMED, FORFEIT, GAME_INFO, ONBOARDING, RACE_LIST)
 
@@ -52,7 +52,7 @@ class TicketControllerTest : TicketController.Companion.TicketStepCompletionList
         testTransitions(FORFEIT, { it == CODE_ENTRY || it == GAME_INFO })
     }
 
-    private fun testTransitions(from: Int, checkItemForAllowableTransition: (Int) -> Boolean) {
+    private fun testTransitions(from: Long, checkItemForAllowableTransition: (Long) -> Boolean) {
         for (item in items) {
             if (checkItemForAllowableTransition(item)) {
                 ticketController.transition(from, item)
@@ -70,7 +70,7 @@ class TicketControllerTest : TicketController.Companion.TicketStepCompletionList
         }
     }
 
-    override fun showNextStep(previous: Int, next: Int) {
+    override fun showNextStep(previous: Long, next: Long) {
         nextStep = next
     }
 

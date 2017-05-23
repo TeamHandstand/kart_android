@@ -6,17 +6,17 @@ import org.junit.Assert.fail
 import org.junit.Test
 import us.handstand.kartwheel.controller.OnboardingController.Companion.BUDDY_EXPLANATION
 import us.handstand.kartwheel.controller.OnboardingController.Companion.FINISHED
+import us.handstand.kartwheel.controller.OnboardingController.Companion.NONE
 import us.handstand.kartwheel.controller.OnboardingController.Companion.PICK_BUDDY
 import us.handstand.kartwheel.controller.OnboardingController.Companion.POINT_SYSTEM
 import us.handstand.kartwheel.controller.OnboardingController.Companion.SELFIE
 import us.handstand.kartwheel.controller.OnboardingController.Companion.STARTED
 import us.handstand.kartwheel.controller.OnboardingController.Companion.VIDEO
-import us.handstand.kartwheel.controller.TicketController.Companion.NONE
 
 class OnboardingControllerTest : OnboardingController.Companion.OnboardingStepCompletionListener {
     val onboardingController = OnboardingController(this)
 
-    var nextStep: Int = NONE
+    var nextStep: Long = NONE
 
     val items = listOf(STARTED, SELFIE, PICK_BUDDY, BUDDY_EXPLANATION, POINT_SYSTEM, VIDEO, FINISHED)
 
@@ -50,7 +50,7 @@ class OnboardingControllerTest : OnboardingController.Companion.OnboardingStepCo
         testTransitions(VIDEO, { it == FINISHED })
     }
 
-    private fun testTransitions(from: Int, checkItemForAllowableTransition: (Int) -> Boolean) {
+    private fun testTransitions(from: Long, checkItemForAllowableTransition: (Long) -> Boolean) {
         for (item in items) {
             if (checkItemForAllowableTransition(item)) {
                 onboardingController.transition(from, item)
@@ -68,7 +68,7 @@ class OnboardingControllerTest : OnboardingController.Companion.OnboardingStepCo
         }
     }
 
-    override fun showNextStep(previous: Int, next: Int) {
+    override fun showNextStep(previous: Long, next: Long) {
         nextStep = next
     }
 
