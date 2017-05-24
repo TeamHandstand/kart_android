@@ -10,7 +10,7 @@
         android:layout_centerInParent="true"
         android:layout_marginRight="16dp"
         android:textColor="@color/green"
-        android:textSize="24dp"
+        android:textSize="34dp"
         android:textStyle="bold"
         tools:text="P1" />
 
@@ -21,7 +21,7 @@
         android:layout_centerInParent="true"
         android:layout_toLeftOf="@+id/forfeit_or_share"
         android:layout_toRightOf="@+id/player_number"
-        android:textSize="18dp"
+        android:textSize="16dp"
         tools:text="Matthew Ott" />
 
     <ImageView

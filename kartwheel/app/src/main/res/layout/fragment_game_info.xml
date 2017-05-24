@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,7 +8,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
 
         <TextView
             style="@style/GameInfoTitleStyle"
@@ -22,34 +20,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:visibility="gone"
             app:isUser="true"
-            app:playerName="Matthew Ott"
-            app:playerNumber="1"
-            tools:visibility="visible" />
+            app:playerName="Michael Phelps"
+            app:playerNumber="1" />
 
         <us.handstand.kartwheel.layout.GameInfoPlayerView
             android:id="@+id/playerTwo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:visibility="gone"
             app:isUser="false"
-            app:playerName="Gil Levy"
-            app:playerNumber="2"
-            tools:visibility="visible" />
-
-        <TextView
-            style="@style/GameInfoTitleStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/where_when" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="@string/event_when_where" />
+            app:playerName="UNCLAIMED"
+            app:playerNumber="2" />
 
         <TextView
             style="@style/GameInfoTitleStyle"

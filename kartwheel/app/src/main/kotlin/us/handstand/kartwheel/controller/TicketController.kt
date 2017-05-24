@@ -49,19 +49,15 @@ class TicketController(var listener: TicketStepCompletionListener) {
             CODE_ENTRY -> API.claimTicket(code!!, object : API.APICallback<User> {
                 override fun onSuccess(response: User) {
                     user = response
-                    var nextTransition = CRITICAL_INFO
                     if (response.hasAllInformation()) {
                         if (response.wasOnboarded()) {
-                            if (Storage.showRaces) {
-                                nextTransition = RACE_LIST
-                            } else {
-                                nextTransition = GAME_INFO
-                            }
+                            transition(type, if (Storage.showRaces) RACE_LIST else GAME_INFO)
                         } else {
-                            nextTransition = ONBOARDING
+                            transition(type, ONBOARDING)
                         }
+                    } else {
+                        transition(type, CRITICAL_INFO)
                     }
-                    transition(type, nextTransition)
                 }
 
                 override fun onFailure(errorCode: Int, errorResponse: String) {
@@ -92,6 +88,8 @@ class TicketController(var listener: TicketStepCompletionListener) {
                         transition(type, ERROR)
                     }
                 })
+            } else {
+                listener.showDialog("Not all of your information was supplied!")
             }
 
             FORFEIT -> API.forfeitTicket(Storage.ticketId, object : API.APICallback<JsonElement> {

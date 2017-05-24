@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="grey_button_disabled">@android:color/darker_gray</color>
+    <color name="game_info_player_background">#F8F8F8</color>
+    <color name="light_grey">#AAAAAA</color>
     <color name="blue">#00D5FF</color>
     <color name="blue_background">#7E00d5ff</color>
     <color name="red">#FF4200</color>

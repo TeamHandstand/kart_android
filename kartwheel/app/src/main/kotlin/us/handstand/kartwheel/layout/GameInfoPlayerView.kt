@@ -13,12 +13,11 @@ import us.handstand.kartwheel.model.User
 class GameInfoPlayerView : RelativeLayout, View.OnClickListener {
 
     var playerActionClickListener: OnPlayerActionClickListener? = null
-    private var playerNumber: TextView? = null
-    private var playerName: TextView? = null
-    private var forfeitOrShare: ImageView? = null
-    private var isClaimed: Boolean = false
-    private var isUser: Boolean = false
-    private val pointerCode = 0x1F449
+    lateinit private var playerNumber: TextView
+    lateinit private var playerName: TextView
+    lateinit private var forfeitOrShare: ImageView
+    private var isClaimed = false
+    private var isUser = false
 
     constructor(context: Context?) : super(context) {
         init(null)
@@ -38,37 +37,34 @@ class GameInfoPlayerView : RelativeLayout, View.OnClickListener {
         playerName = findViewById(R.id.player_name) as TextView
         forfeitOrShare = findViewById(R.id.forfeit_or_share) as ImageView
         val a = context.theme.obtainStyledAttributes(attrs, R.styleable.GameInfoPlayerView, 0, 0)
+        val number: Int
         try {
-            playerNumber!!.text = "P" + a.getString(R.styleable.GameInfoPlayerView_playerNumber)
-            playerName!!.text = a.getString(R.styleable.GameInfoPlayerView_playerName)
+            number = a.getInt(R.styleable.GameInfoPlayerView_playerNumber, 1)
+            playerNumber.text = "P" + number.toString()
+            playerName.text = a.getString(R.styleable.GameInfoPlayerView_playerName)
             isUser = a.getBoolean(R.styleable.GameInfoPlayerView_isUser, false)
         } finally {
             a.recycle()
         }
-
-        forfeitOrShare!!.setOnClickListener(this)
+        playerNumber.setTextColor(if (number == 1) resources.getColor(android.R.color.black) else resources.getColor(R.color.red))
+        forfeitOrShare.setOnClickListener(this)
         setBackgroundResource(R.drawable.game_info_player_background)
 
         val p = ViewUtil.dpToPx(context, 16)
         setPadding(p, p, p, p)
     }
 
+    // TODO: Prevent forfeitting the User that isn't logged in
     fun update(user: User, ticket: Ticket) {
         isClaimed = ticket.isClaimed || user.hasAllInformation()
-        playerNumber!!.setTextColor(if (isClaimed) resources.getColor(R.color.green) else resources.getColor(R.color.red))
-        playerName!!.text = if (isClaimed) user.firstName() + " " + user.lastName() else resources.getString(R.string.unclaimed_ticket) + String(Character.toChars(pointerCode))
+        playerName.text = if (isClaimed) user.firstName() + " " + user.lastName() else resources.getString(R.string.unclaimed_ticket) + String(Character.toChars(pointerCode))
         if (!isUser) {
             if (isClaimed) {
-                forfeitOrShare!!.visibility = GONE
+                forfeitOrShare.visibility = GONE
             } else {
-                forfeitOrShare!!.setImageResource(R.mipmap.share_button)
+                forfeitOrShare.setImageResource(R.mipmap.share_button)
             }
         }
-        visibility = VISIBLE
-    }
-
-    fun setOnForfeitClickListener(clickListener: OnPlayerActionClickListener) {
-        playerActionClickListener = clickListener
     }
 
     override fun onClick(v: View) {
@@ -82,10 +78,10 @@ class GameInfoPlayerView : RelativeLayout, View.OnClickListener {
     }
 
     companion object {
+        private const val pointerCode = 0x1F449
         interface OnPlayerActionClickListener {
             fun onPlayerForfeitClick()
             fun onPlayerShareClick()
         }
     }
-
 }

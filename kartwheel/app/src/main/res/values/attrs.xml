@@ -7,7 +7,7 @@
     </declare-styleable>
     <declare-styleable name="GameInfoPlayerView">
         <attr name="playerName" format="string" />
-        <attr name="playerNumber" format="string" />
+        <attr name="playerNumber" format="integer" />
         <attr name="isUser" format="boolean" />
     </declare-styleable>
     <declare-styleable name="TopCourseTimeView">
