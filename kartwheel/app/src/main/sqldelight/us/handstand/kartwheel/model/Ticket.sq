@@ -21,4 +21,5 @@ WHERE code=?;
 select_for_player:
 SELECT *
 FROM ticket
-WHERE playerId=?;
+WHERE playerId=?
+LIMIT 1;

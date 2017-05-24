@@ -35,6 +35,7 @@ buildscript {
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'com.squareup.sqldelight'
 apply plugin: 'io.fabric'
 
@@ -73,10 +74,9 @@ android {
         exclude 'META-INF/rxjava.properties'
     }
     sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-        test.java.srcDirs += 'src/test/kotlin'
-        test.java.srcDirs += 'src/commonTest/kotlin'
-        androidTest.java.srcDirs += 'src/commonTest/kotlin'
+        main.java.srcDirs = ['src/main/kotlin']
+        test.java.srcDirs = ['src/main/kotlin', 'src/test/kotlin', 'src/commonTest/kotlin']
+        androidTest.java.srcDirs = ['src/main/kotlin', 'src/androidTest/kotlin', 'src/commonTest/kotlin']
     }
     testOptions {
         unitTests.returnDefaultValues = true
@@ -111,6 +111,7 @@ dependencies {
     androidTestCompile "com.android.support.test.espresso:espresso-intents:$espresso_version"
     androidTestCompile "com.android.support.test:runner:$android_test_runner_version"
     androidTestCompile "com.squareup.okhttp3:mockwebserver:$okhttp3_version"
+    androidTestCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
 
     testCompile "com.squareup.okhttp3:mockwebserver:$okhttp3_version"
     testCompile "org.mockito:mockito-core:$mockito_version"
@@ -120,3 +121,4 @@ dependencies {
     testCompile "junit:junit:$junit_version"
 }
 
+kapt{generateStubs = true}

@@ -7,7 +7,11 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.model.Race
-import us.handstand.kartwheel.model.Race.*
+import us.handstand.kartwheel.model.Race.Companion.FINISHED
+import us.handstand.kartwheel.model.Race.Companion.HAS_OPEN_SPOTS
+import us.handstand.kartwheel.model.Race.Companion.RACE_IS_FULL
+import us.handstand.kartwheel.model.Race.Companion.REGISTERED
+import us.handstand.kartwheel.model.Race.Companion.REGISTRATION_CLOSED
 import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.util.DateFormatter
 
@@ -63,6 +67,7 @@ class RaceSummaryView : RelativeLayout {
                 spotsLeft.text = race.openSpots().toString() + " spots left"
             }
         }
+        @Suppress("DEPRECATION")
         spotsLeft.setTextColor(resources.getColor(spotsLeftTextColorRes))
         startTime.setBackgroundResource(backgroundFromStartTime(race))
     }

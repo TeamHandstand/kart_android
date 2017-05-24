@@ -10,7 +10,6 @@ CREATE TABLE user (
     charmanderOrSquirtle TEXT,
     email TEXT,
     eventId TEXT,
-    facetimeCount INTEGER,
     firstName TEXT,
     imageUrl TEXT,
     lastName TEXT,
@@ -34,12 +33,12 @@ WHERE id = ?;
 
 select_from_team:
 SELECT *
-from user
+FROM user
 WHERE teamId = ?;
 
 select_for_race_id:
 SELECT *
-from user
+FROM user
 WHERE raceId = ?;
 
 insert_race_id:
@@ -48,7 +47,7 @@ SET raceId=?
 WHERE id=?;
 
 insert_row:
-INSERT INTO user(id, authToken, birth, cell, charmanderOrSquirtle, email, eventId, facetimeCount,
+INSERT INTO user(id, authToken, birth, cell, charmanderOrSquirtle, email, eventId,
 firstName, imageUrl, lastName, miniGameId, nickName, pancakeOrWaffle, raceId, referralType, teamId,
 totalAntiMiles, totalDistanceMiles, updatedAt)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);

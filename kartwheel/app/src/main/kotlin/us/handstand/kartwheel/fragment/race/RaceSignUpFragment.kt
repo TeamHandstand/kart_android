@@ -18,7 +18,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -119,10 +118,10 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener 
     override fun onResume() {
         super.onResume()
         mapView.onResume()
-        val raceId = activity.intent.getStringExtra(Race.ID)
+        val raceId = activity.intent.getStringExtra(RaceModel.ID)
         // Get Race and the participants from the network and from the Database
         val raceQuery = Race.FACTORY.select_for_id(raceId)
-        raceSubscription = Database.get().createQuery(Race.TABLE_NAME, raceQuery.statement, *raceQuery.args)
+        raceSubscription = Database.get().createQuery(RaceModel.TABLE_NAME, raceQuery.statement, *raceQuery.args)
                 .mapToOne { Race.FACTORY.select_for_idMapper().map(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { onRaceUpdated(it) }
@@ -167,11 +166,13 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener 
         spotsLeft.text = "+" + ((race?.course()?.maxRegistrants() ?: 0) - (race?.registrantIds()?.size ?: 0)).toString() + " Spots Available"
         registrantAvatarAdapter.maxRegistrants = (race?.course()?.maxRegistrants() ?: 0L)
         registrantAvatarAdapter.setRegistrants(race?.registrantImageUrls()!!)
-        if (race?.registrantIds()?.contains(Storage.userId) == true) {
+        if (race.registrantIds()?.contains(Storage.userId) == true) {
             signUpButton.setImageResource(R.drawable.ic_clear_white_24dp)
+            @Suppress("DEPRECATION")
             signUpButton.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.red))
         } else {
             signUpButton.setImageResource(R.drawable.flag)
+            @Suppress("DEPRECATION")
             signUpButton.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.blue))
         }
         this.race = race
@@ -186,7 +187,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener 
             }
             return
         }
-        val raceId = activity.intent.getStringExtra(Race.ID)
+        val raceId = activity.intent.getStringExtra(RaceModel.ID)
         if (race?.registrantIds()?.contains(Storage.userId) == true) {
             API.leaveRace(Storage.eventId, raceId, object : API.APICallback<Boolean> {
                 override fun onSuccess(response: Boolean) {
@@ -204,8 +205,8 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener 
 
     override fun onMapReady(map: GoogleMap) {
         this.map = map
-        val raceQuery = Race.FACTORY.select_for_id(activity.intent.getStringExtra(Race.ID))
-        subscription = Database.get().createQuery(Race.TABLE_NAME, raceQuery.statement, *raceQuery.args)
+        val raceQuery = Race.FACTORY.select_for_id(activity.intent.getStringExtra(RaceModel.ID))
+        subscription = Database.get().createQuery(RaceModel.TABLE_NAME, raceQuery.statement, *raceQuery.args)
                 .mapToOne { Race.FACTORY.select_for_idMapper().map(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { drawCourse(it.course(), this.map!!) }
@@ -222,6 +223,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener 
             for (point in course.vertices()!!) {
                 coursePolyline.add(LatLng(point.latitude(), point.longitude()))
             }
+            @Suppress("DEPRECATION")
             coursePolyline.color(resources.getColor(R.color.blue))
             map.addPolyline(coursePolyline)
             val flag = MarkerOptions()

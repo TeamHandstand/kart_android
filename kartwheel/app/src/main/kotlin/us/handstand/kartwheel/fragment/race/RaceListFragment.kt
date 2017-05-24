@@ -14,9 +14,7 @@ import us.handstand.kartwheel.activity.RaceSignUpActivity
 import us.handstand.kartwheel.controller.RaceListController
 import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.layout.recyclerview.adapter.RaceListAdapter
-import us.handstand.kartwheel.model.Database
-import us.handstand.kartwheel.model.Race
-import us.handstand.kartwheel.model.Storage
+import us.handstand.kartwheel.model.*
 import us.handstand.kartwheel.network.API
 
 
@@ -41,7 +39,7 @@ class RaceListFragment : Fragment(), RaceListController.Companion.StartFragmentI
         raceListController.fragmentInterface = this
         API.getRacesWithCourses(Storage.eventId)
         val raceQuery = Race.FACTORY.select_for_event_id(Storage.eventId)
-        raceSubscription = Database.get().createQuery(Race.TABLE_NAME, raceQuery.statement, *raceQuery.args)
+        raceSubscription = Database.get().createQuery(RaceModel.TABLE_NAME, raceQuery.statement, *raceQuery.args)
                 .mapToList { Race.FACTORY.select_for_event_idMapper().map(it) }
                 .subscribe { raceAdapter.setRaces(it) }
     }
@@ -54,7 +52,7 @@ class RaceListFragment : Fragment(), RaceListController.Companion.StartFragmentI
 
     override fun showRaceSignUp(raceId: String) {
         val intent = Intent(activity, RaceSignUpActivity::class.java)
-        intent.putExtra(Race.ID, raceId)
+        intent.putExtra(RaceModel.ID, raceId)
         activity.startActivity(intent)
     }
 }

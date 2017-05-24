@@ -14,6 +14,7 @@ import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.layout.recyclerview.adapter.MiniGameTypeAdapter
 import us.handstand.kartwheel.model.Database
 import us.handstand.kartwheel.model.MiniGameType
+import us.handstand.kartwheel.model.MiniGameTypeModel
 import us.handstand.kartwheel.network.API
 
 class MiniGameTypeFragment : Fragment() {
@@ -32,7 +33,7 @@ class MiniGameTypeFragment : Fragment() {
         super.onResume()
         API.getMiniGameTypes()
         val query = MiniGameType.FACTORY.select_all()
-        subscription = Database.get().createQuery(MiniGameType.TABLE_NAME, query.statement, *query.args)
+        subscription = Database.get().createQuery(MiniGameTypeModel.TABLE_NAME, query.statement, *query.args)
                 .mapToList { MiniGameType.FACTORY.select_allMapper().map(it) }
                 .subscribe { adapter.setMiniGameTypes(it) }
     }

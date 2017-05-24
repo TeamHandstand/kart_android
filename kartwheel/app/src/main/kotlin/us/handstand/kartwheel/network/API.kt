@@ -76,7 +76,7 @@ object API {
                     override fun onSuccess(response: JsonObject) {
                         val event = gson.fromJson(response.get("event"), Event::class.java)
                         event.insert(db)
-                        Storage.showRaces = event.usersCanSeeRaces() == true
+                        Storage.showRaces = event.usersCanSeeRaces() ?: false
                         apiCallback.onSuccess(loggedInUser!!)
                     }
 
@@ -212,7 +212,7 @@ object API {
                 val successfullyLeftRace = response.get("success").asBoolean
                 // Delete the UserRaceInfo for this race
                 val userRaceInfoQuery = UserRaceInfo.FACTORY.select_for_race_and_user(raceId, Storage.userId)
-                db?.createQuery(UserRaceInfo.TABLE_NAME, userRaceInfoQuery.statement, *userRaceInfoQuery.args)
+                db?.createQuery(UserRaceInfoModel.TABLE_NAME, userRaceInfoQuery.statement, *userRaceInfoQuery.args)
                         ?.mapToOne { UserRaceInfo.FACTORY.select_for_race_and_userMapper().map(it) }
                         ?.doOnNext { it.delete(db) }
                 apiCallback?.onSuccess(successfullyLeftRace)
