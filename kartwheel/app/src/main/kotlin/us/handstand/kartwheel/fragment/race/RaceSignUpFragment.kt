@@ -7,7 +7,6 @@ import android.content.IntentFilter
 import android.content.res.ColorStateList
 import android.os.BatteryManager
 import android.os.Bundle
-import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.support.v4.widget.NestedScrollView
@@ -108,7 +107,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
             }
 
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
+            override fun onStateChanged(bottomSheet: View, newState: Long) {
             }
         })
 
@@ -180,10 +179,10 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener 
 
     override fun onClick(v: View) {
         if (v.id == R.id.batteryWarning) {
-            if (behavior.state == BottomSheetBehavior.STATE_COLLAPSED) {
-                behavior.state = BottomSheetBehavior.STATE_EXPANDED
-            } else if (behavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-                behavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            if (behavior.state == AnchoredBottomSheetBehavior.STATE_COLLAPSED) {
+                behavior.state = AnchoredBottomSheetBehavior.STATE_EXPANDED
+            } else if (behavior.state == AnchoredBottomSheetBehavior.STATE_EXPANDED) {
+                behavior.state = AnchoredBottomSheetBehavior.STATE_COLLAPSED
             }
             return
         }

@@ -33,7 +33,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
          * *                    [STATE_SETTLING], [STATE_ANCHOR_POINT],
          * *                    [STATE_EXPANDED], [STATE_COLLAPSED], or [STATE_HIDDEN].
          */
-        abstract fun onStateChanged(bottomSheet: View, @State newState: Int)
+        abstract fun onStateChanged(bottomSheet: View, @State newState: Long)
 
         /**
          * Called when the bottom sheet is being dragged.
@@ -46,11 +46,13 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
         abstract fun onSlide(bottomSheet: View, slideOffset: Float)
     }
 
-    @IntDef(STATE_EXPANDED.toLong(), STATE_COLLAPSED.toLong(), STATE_DRAGGING.toLong(),
-            STATE_ANCHOR_POINT.toLong(), STATE_SETTLING.toLong(), STATE_HIDDEN.toLong())
+    @IntDef(STATE_EXPANDED, STATE_COLLAPSED, STATE_DRAGGING,
+            STATE_ANCHOR_POINT, STATE_SETTLING, STATE_HIDDEN)
     @Retention(AnnotationRetention.SOURCE)
     annotation class State
 
+    private val anchorPoint: Int
+    private val minimumVelocity: Float
     /**
      * Gets/sets the height of the bottom sheet when it is collapsed in pixels.
      *
@@ -73,7 +75,6 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
     private var maxOffset: Int = 0
     @State private var mState = STATE_ANCHOR_POINT
     @State private var lastStableState = STATE_ANCHOR_POINT
-    private val anchorPoint: Int
     private var viewDragHelper: ViewDragHelper? = null
     private var ignoreEvents: Boolean = false
     private var nestedScrolled: Boolean = false
@@ -84,8 +85,6 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
     private var activePointerId: Int = 0
     private var initialY: Int = 0
     private var touchingScrollingChild: Boolean = false
-
-    private val minimumVelocity: Float
 
     @Suppress("unused")
     constructor(context: Context) : super() {
@@ -334,7 +333,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
             return
         }
         val top: Int
-        val targetState: Int
+        val targetState: Long
 
         // Are we flinging up?
         val scrollVelocity = scrollVelocityTracker.scrollVelocity
@@ -418,7 +417,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
      * to STATE_EXPANDED, STATE_ANCHOR_POINT, STATE_COLLAPSED,
      * STATE_DRAGGING, and STATE_SETTLING
      */
-    var state: Int
+    var state: Long
         @State
         get() = mState
         set(@State state) {
@@ -451,7 +450,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
             }
         }
 
-    private fun setStateInternal(@State state: Int) {
+    private fun setStateInternal(@State state: Long) {
         if (mState == state) {
             return
         }
@@ -463,7 +462,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
         }
     }
 
-    private fun notifyStateChangedToListeners(bottomSheet: View, @State newState: Int) {
+    private fun notifyStateChangedToListeners(bottomSheet: View, @State newState: Long) {
         for (bottomSheetCallback in bottomSheetCallbacks!!) {
             bottomSheetCallback.onStateChanged(bottomSheet, newState)
         }
@@ -538,7 +537,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
 
         override fun onViewReleased(releasedChild: View, xvel: Float, yvel: Float) {
             val top: Int
-            @State val targetState: Int
+            @State val targetState: Long
             if (yvel < 0) { // Moving up
                 top = minOffset
                 targetState = STATE_EXPANDED
@@ -599,7 +598,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
         }
     }
 
-    private inner class SettleRunnable internal constructor(private val mView: View, @param:State private val mTargetState: Int) : Runnable {
+    private inner class SettleRunnable internal constructor(private val mView: View, @param:State private val mTargetState: Long) : Runnable {
         override fun run() {
             if (viewDragHelper != null && viewDragHelper!!.continueSettling(true)) {
                 ViewCompat.postOnAnimation(mView, this)
@@ -612,20 +611,19 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
     private class SavedState : View.BaseSavedState {
 
         @State
-        internal val state: Int
+        internal val state: Long
 
         constructor(source: Parcel) : super(source) {
-
-            state = source.readInt()
+            state = source.readLong()
         }
 
-        constructor(superState: Parcelable, @State state: Int) : super(superState) {
+        constructor(superState: Parcelable, @State state: Long) : super(superState) {
             this.state = state
         }
 
         override fun writeToParcel(out: Parcel, flags: Int) {
             super.writeToParcel(out, flags)
-            out.writeInt(state)
+            out.writeLong(state)
         }
 
         companion object {
@@ -647,32 +645,32 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
         /**
          * The bottom sheet is dragging.
          */
-        const val STATE_DRAGGING = 1
+        const val STATE_DRAGGING = 1L
 
         /**
          * The bottom sheet is settling.
          */
-        const val STATE_SETTLING = 2
+        const val STATE_SETTLING = 2L
 
         /**
          * The bottom sheet is expanded to the anchor point
          */
-        const val STATE_ANCHOR_POINT = 3
+        const val STATE_ANCHOR_POINT = 3L
 
         /**
          * The bottom sheet is expanded.
          */
-        const val STATE_EXPANDED = 4
+        const val STATE_EXPANDED = 4L
 
         /**
          * The bottom sheet is collapsed.
          */
-        const val STATE_COLLAPSED = 5
+        const val STATE_COLLAPSED = 5L
 
         /**
          * The bottom sheet is hidden.
          */
-        const val STATE_HIDDEN = 6
+        const val STATE_HIDDEN = 6L
 
         private val HIDE_THRESHOLD = 0.5f
 
