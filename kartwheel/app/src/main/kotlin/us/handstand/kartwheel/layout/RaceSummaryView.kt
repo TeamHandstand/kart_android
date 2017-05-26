@@ -22,8 +22,8 @@ class RaceSummaryView : RelativeLayout {
     constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle)
 
     var startTime: TextView
-    var courseName: TextView
-    var distance: TextView
+    var raceName: TextView
+    var details: TextView
     var spotsLeft: TextView
     var avatar: RegistrantAvatarView
     val runnerEmojiCode = 0x1F3C3
@@ -31,17 +31,17 @@ class RaceSummaryView : RelativeLayout {
     init {
         View.inflate(context, R.layout.view_holder_race_summary, this)
         startTime = ViewUtil.findView(this, R.id.startTime)
-        courseName = ViewUtil.findView(this, R.id.courseName)
-        distance = ViewUtil.findView(this, R.id.distance)
+        raceName = ViewUtil.findView(this, R.id.raceName)
+        details = ViewUtil.findView(this, R.id.raceDetails)
         spotsLeft = ViewUtil.findView(this, R.id.spotsLeft)
         avatar = ViewUtil.findView(this, R.id.avatar)
     }
 
     fun setRace(race: Race) {
-        startTime.text = DateFormatter.getTimeOfDay(race.startTime()!!).replace(' ', '\n')
-        courseName.text = "#" + race.raceOrder().toString() + " - " + (race.name() ?: Race.DEFAULT_RACE_NAME)
-        val miles = (race.course()?.distance() ?: 0.0) * (race.totalLaps() ?: 0L)
-        distance.text = race.totalLaps().toString() + " laps | " + miles.toString().substring(0, 3) + " miles"
+        startTime.text = DateFormatter.getTimeOfDay(race.startTime()).replace(' ', '\n')
+        raceName.text = resources.getString(R.string.race_name, race.raceOrder(), race.name() ?: Race.DEFAULT_RACE_NAME)
+        val distance = (race.course()?.distance() ?: 0.0) * (race.totalLaps() ?: 0L)
+        details.text = resources.getString(R.string.race_details, race.totalLaps(), distance)
 
         alpha = 1f
         var spotsLeftTextColorRes = R.color.textDarkGrey
@@ -49,22 +49,22 @@ class RaceSummaryView : RelativeLayout {
         when (race.raceStatus) {
             FINISHED -> {
                 alpha = 0.75f
-                spotsLeft.text = "Finished"
+                spotsLeft.setText(R.string.finished)
             }
             REGISTERED -> {
-                spotsLeft.text = "Registered " + String(Character.toChars(runnerEmojiCode))
+                spotsLeft.text = resources.getString(R.string.registered, String(Character.toChars(runnerEmojiCode)))
                 avatar.visibility = View.VISIBLE
                 avatar.setRegistrantImageUrl(Storage.userImageUrl)
             }
             REGISTRATION_CLOSED -> {
-                spotsLeft.text = "Registration is closed"
+                spotsLeft.setText(R.string.registration_closed)
             }
             RACE_IS_FULL -> {
-                spotsLeft.text = "Race is full!"
+                spotsLeft.setText(R.string.race_full)
             }
             HAS_OPEN_SPOTS -> {
                 spotsLeftTextColorRes = if (race.hasLowRegistrantCount()) R.color.green else R.color.yellow
-                spotsLeft.text = race.openSpots().toString() + " spots left"
+                spotsLeft.text = resources.getString(R.string.spots_left, race.openSpots())
             }
         }
         @Suppress("DEPRECATION")

@@ -203,9 +203,9 @@ class TicketActivityTest {
         onView(withId(R.id.button)).perform(click())
 
         // Check that there are three races queued
-        onView(allOf(withId(R.id.courseName), withText("#1 - Race race-1"))).check(matches(isDisplayed()))
-        onView(allOf(withId(R.id.courseName), withText("#2 - Race race-2"))).check(matches(isDisplayed()))
-        onView(allOf(withId(R.id.courseName), withText("#3 - Race race-3"))).check(matches(isDisplayed()))
+        onView(allOf(withId(R.id.raceName), withText("#1 - Race race-1"))).check(matches(isDisplayed()))
+        onView(allOf(withId(R.id.raceName), withText("#2 - Race race-2"))).check(matches(isDisplayed()))
+        onView(allOf(withId(R.id.raceName), withText("#3 - Race race-3"))).check(matches(isDisplayed()))
     }
 }
 

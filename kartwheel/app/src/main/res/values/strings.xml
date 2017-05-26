@@ -37,6 +37,15 @@
     <string name="onboarding_video_description">In a short, awesome video.</string>
     <string name="onboarding_video_button">Let\'s go!</string>
 
+    <!-- RaceSummaryView -->
+    <string name="finished">Finished</string>
+    <string name="registered">Registered $1%s</string>
+    <string name="registration_closed">Registration is closed</string>
+    <string name="race_full">Race is full!</string>
+    <string name="spots_left">%1$d spots left</string>
+    <string name="race_name">#%1$d - %2$s</string>
+    <string name="race_details">%1$d laps | %2$.3f miles</string>
+
     <string name="battery_life_text">Charge up! You need 20% to run a race!</string>
     <string name="race_count_down_title">Race starts in:</string>
     <string name="top_course_times_title">Top course times:</string>

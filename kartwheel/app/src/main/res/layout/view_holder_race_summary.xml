@@ -38,14 +38,14 @@
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/courseName"
+            android:id="@+id/raceName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16dp"
             tools:text="#1 - Final race!" />
 
         <TextView
-            android:id="@+id/distance"
+            android:id="@+id/raceDetails"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="1 lap | 0.5 miles" />
