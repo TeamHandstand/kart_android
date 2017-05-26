@@ -12,13 +12,13 @@ import us.handstand.kartwheel.model.User
 import us.handstand.kartwheel.network.API.claimTicket
 
 class APITest {
-    private val mockApi = MockAPI()
+    private val mockApi = MockAPI(null)
     private val lock = Object()
     private var response: Any? = null
 
     @Test
     fun claimTicket() {
-        mockApi.server.enqueue(MockResponse().setBody(MockAPI.team.toJson()))
+        mockApi.server.enqueue(MockResponse().setBody(MockAPI.getTeam().toJson()))
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getEvent(false).toJson()))
         claimTicket(MockAPI.code1, object : API.APICallback<User> {
             override fun onSuccess(response: User) {
@@ -43,7 +43,7 @@ class APITest {
 
     @Test
     fun updateUser() {
-        mockApi.server.enqueue(MockResponse().setBody(MockAPI.getUser(1, false).toJson()))
+        mockApi.server.enqueue(MockResponse().setBody(MockAPI.getUser(1, true, false).toJson()))
         API.updateUser(User.emptyUser(), object : API.APICallback<User> {
             override fun onSuccess(response: User) {
                 this@APITest.response = response
@@ -63,7 +63,7 @@ class APITest {
 
     @Test
     fun updateUserWithOnboarding() {
-        mockApi.server.enqueue(MockResponse().setBody(MockAPI.getUser(1, true).toJson()))
+        mockApi.server.enqueue(MockResponse().setBody(MockAPI.getUser(1, true, true).toJson()))
         API.updateUser(User.emptyUser(), object : API.APICallback<User> {
             override fun onSuccess(response: User) {
                 this@APITest.response = response
