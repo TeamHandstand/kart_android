@@ -11,6 +11,7 @@ import com.squareup.sqlbrite.BriteDatabase
 import us.handstand.kartwheel.model.RaceModel.Creator
 import us.handstand.kartwheel.model.Util.putIfNotAbsent
 import us.handstand.kartwheel.model.columnadapter.ColumnAdapters
+import us.handstand.kartwheel.util.DateFormatter
 
 @AutoValue
 abstract class Race : RaceModel, Comparable<Race> {
@@ -43,7 +44,7 @@ abstract class Race : RaceModel, Comparable<Race> {
         @RaceStatus
         get() {
             val openSpots = openSpots()
-            if (endTime() != null) {
+            if (endTime().before(DateFormatter[System.currentTimeMillis()])) {
                 return FINISHED
             } else if (registrantIds() != null && registrantIds()!!.contains(Storage.userId)) {
                 return REGISTERED
@@ -57,12 +58,8 @@ abstract class Race : RaceModel, Comparable<Race> {
         }
 
     val timeUntilRace: Long
-        get() {
-            val startTime = startTime()
-            val startTimeMs = startTime?.time ?: 0L
-            val currentTimeMs = System.currentTimeMillis()
-            return startTimeMs - currentTimeMs
-        }
+        get() = startTime().time - System.currentTimeMillis()
+
 
     fun hasLowRegistrantCount(): Boolean {
         val openSpots = openSpots()

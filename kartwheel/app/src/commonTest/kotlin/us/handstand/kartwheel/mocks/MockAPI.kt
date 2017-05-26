@@ -81,7 +81,6 @@ class MockAPI(val db: BriteDatabase?) {
         const val userId1 = "934bd187-44a1-42b6-8412-74346e92470d"
         const val userId2 = "5d07e1f3-a1ee-40bb-a0f5-0d3361f3b394"
         val firstRaceStartTime = DateFormatter[System.currentTimeMillis()]!!
-        val firstRaceEndTime = DateFormatter[System.currentTimeMillis() + (DateFormatter.millisecondsPerMinute * 5)]!!
         val eventEndTime = DateFormatter["2017-05-19 03:07:43.537977"]!!
         val eventStartTime = DateFormatter["2017-05-17 03:07:43.537428"]!!
         val eventUpdatedAt = DateFormatter["2017-05-17 03:07:43.559896"]
@@ -111,7 +110,7 @@ class MockAPI(val db: BriteDatabase?) {
         }
 
         fun getRace(order: Long, id: String, course: Course): Race {
-            val startTime = DateFormatter[firstRaceEndTime.time + (order * (DateFormatter.millisecondsPerMinute * 5))]!!
+            val startTime = DateFormatter[firstRaceStartTime.time + (order * (DateFormatter.millisecondsPerMinute * 5))]!!
             val endTime = DateFormatter[startTime.time + (order * (DateFormatter.millisecondsPerMinute * 5))]!!
             return Race.create(id, course, course.id(), null, eventId, endTime, null, "Race " + id, (Math.random() * course.maxRegistrants()!!.toDouble()).toLong(), order, null, null, null, null, null, null, startTime, (Math.random() * 3).toLong() + 1, null, null)
         }
