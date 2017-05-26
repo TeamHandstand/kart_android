@@ -34,7 +34,7 @@ abstract class Ticket : TicketModel {
     }
 
     val isClaimed: Boolean
-        get() = !isEmpty(claimedAt()) && !isEmpty(forfeitedAt())
+        get() = !isEmpty(claimedAt()) && isEmpty(forfeitedAt())
 
     companion object : Creator<Ticket> by Creator(::AutoValue_Ticket) {
         val FACTORY = TicketModel.Factory<Ticket>(Creator<Ticket> { id, code, claimedAt, eventId, forfeitedAt, paymentId, playerId, priceTierId, purchasedAt, purchaserId, teamId, updatedAt -> create(id, code, claimedAt, eventId, forfeitedAt, paymentId, playerId, priceTierId, purchasedAt, purchaserId, teamId, updatedAt) })

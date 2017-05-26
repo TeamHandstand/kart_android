@@ -1,6 +1,7 @@
 package us.handstand.kartwheel.mocks
 
 import android.content.Context
+import com.squareup.sqlbrite.BriteDatabase
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockWebServer
 import us.handstand.kartwheel.model.*
@@ -19,7 +20,7 @@ fun User.toJson(): String {
     return "{\"user\":${API.gson.toJson(this)}}"
 }
 
-class MockAPI {
+class MockAPI(val db: BriteDatabase?) {
     val server = MockWebServer()
     val context = MockDBContext()
 
@@ -28,7 +29,7 @@ class MockAPI {
         Storage.initialize(context.getSharedPreferences("", Context.MODE_PRIVATE))
         Database.initialize(context)
         Storage.clear()
-        API.initialize(null, okHttpClient, server.url("/").uri().toString())
+        API.initialize(db, okHttpClient, server.url("/").uri().toString())
     }
 
     companion object {
@@ -42,8 +43,8 @@ class MockAPI {
         const val buddyUrl2 = "https://assets.handstandwith.us/web/team/zip.jpg"
         const val cell1 = "408-306-4285"
         const val cell2 = "555-555-5555"
-        const val claimedAt1 = "2017-04-17T08:48:40.778Z"
-        const val claimedAt2 = "2017-04-17T08:50:00.000Z"
+        const val claimedAt1 = "2017-04-17 08:48:40.7787"
+        const val claimedAt2 = "2017-04-17 08:50:00.0007"
         const val code1 = "matt"
         const val code2 = "bob"
         const val email1 = "matthew@ott.com"

@@ -9,12 +9,15 @@ import io.fabric.sdk.android.Fabric
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
+import us.handstand.kartwheel.inject.DaggerInjector
+import us.handstand.kartwheel.inject.Injector
+import us.handstand.kartwheel.inject.provider.GameInfoProvider
 import us.handstand.kartwheel.model.Database
 import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.network.API
 import java.io.IOException
 
-class KartWheel : Application(), Interceptor {
+open class KartWheel : Application(), Interceptor {
     private val okHttpClient = OkHttpClient.Builder().addInterceptor(this).build()
 
     override fun onCreate() {
@@ -23,6 +26,7 @@ class KartWheel : Application(), Interceptor {
         Database.initialize(this)
         API.initialize(Database.get(), okHttpClient, BuildConfig.SERVER)
         Fabric.with(this, Crashlytics())
+        injector = DaggerInjector.builder().gameInfoProvider(GameInfoProvider()).build()
     }
 
     @Throws(IOException::class)
@@ -37,6 +41,7 @@ class KartWheel : Application(), Interceptor {
     }
 
     companion object {
+        lateinit var injector: Injector
         fun logout() {
             Storage.clear()
             Database.clear(Database.get())

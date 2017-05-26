@@ -1,4 +1,4 @@
-package us.handstand.kartwheel.activity
+package us.handstand.kartwheel.test.activity
 
 
 import android.support.test.espresso.Espresso.onView
@@ -9,25 +9,33 @@ import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import okhttp3.mockwebserver.MockResponse
-import org.junit.After
-import org.junit.Ignore
-import org.junit.Rule
-import org.junit.Test
+import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.startsWith
+import org.junit.*
 import org.junit.runner.RunWith
 import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
+import us.handstand.kartwheel.activity.TicketActivity
 import us.handstand.kartwheel.layout.TOSScrollView
 import us.handstand.kartwheel.mocks.MockAPI
 import us.handstand.kartwheel.mocks.toJson
+import us.handstand.kartwheel.model.Database
+import us.handstand.kartwheel.test.inject.provider.TestingGameInfoProvider
 
 @RunWith(AndroidJUnit4::class)
 class TicketActivityTest {
     @Rule @JvmField
     val testRule = ActivityTestRule(TicketActivity::class.java)
 
+    @Before
+    fun setUp() {
+        TestingGameInfoProvider.registerIdlingResources()
+    }
+
     @After
     fun tearDown() {
         KartWheel.logout()
+        TestingGameInfoProvider.unregisterIdlingResources()
     }
 
     @Test
@@ -41,7 +49,7 @@ class TicketActivityTest {
     @Test
     fun show_criticalInfo_whenEnteredCode() {
         // Setup mock server
-        val mockApi = MockAPI()
+        val mockApi = MockAPI(Database.get())
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.team.toJson()))
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getEvent(false).toJson()))
 
@@ -78,7 +86,7 @@ class TicketActivityTest {
     @Test
     fun show_alreadyClaimed_whenEnteredCode() {
         // Setup mock server to return "already claimed" response
-        val mockApi = MockAPI()
+        val mockApi = MockAPI(Database.get())
         mockApi.server.enqueue(MockResponse().setResponseCode(409).setBody("{}"))
 
         // Scroll TOS
@@ -106,7 +114,7 @@ class TicketActivityTest {
     @Test
     fun showGameInfo_ifOnboarded_andEverythingFilledOut_onPreGameday() {
         // Setup mock server
-        val mockApi = MockAPI()
+        val mockApi = MockAPI(Database.get())
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.team.toJson()))
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getEvent(false).toJson()))
 
@@ -128,24 +136,22 @@ class TicketActivityTest {
 
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getUser(1, true).toJson()))
         // Enter information
-        onView(withId(R.id.first_name)).perform(replaceText("Matthew"))
-        onView(withId(R.id.last_name)).perform(replaceText("Ott"))
-        onView(withId(R.id.email)).perform(replaceText("matthew.w.ott@gmail.com"))
+        onView(withId(R.id.first_name)).perform(replaceText(MockAPI.firstName1))
+        onView(withId(R.id.last_name)).perform(replaceText(MockAPI.lastName1))
+        onView(withId(R.id.email)).perform(replaceText(MockAPI.email1))
         onView(withId(R.id.cell)).perform(replaceText("4083064285"))
         onView(withId(R.id.birth)).perform(replaceText("07251989"))
-        onView(withId(R.id.nickname)).perform(replaceText("Matty Otter"))
+        onView(withId(R.id.nickname)).perform(replaceText("Matty"))
         onView(withId(R.id.button)).perform(click())
 
-        // TODO: Register idling resources on the GameInfoController
-        // TODO: Check the actual names on player 1 and player 2
-        onView(withId(R.id.playerOne)).check(matches(isDisplayed()))
-        onView(withId(R.id.playerTwo)).check(matches(isDisplayed()))
+        onView(allOf(withParent(withId(R.id.playerOne)), withId(R.id.player_name))).check(matches(withText(MockAPI.firstName1 + " " + MockAPI.lastName1)))
+        onView(allOf(withParent(withId(R.id.playerTwo)), withId(R.id.player_name))).check(matches(withText(startsWith("UNCLAIMED"))))
     }
 
     @Test
     fun showRaceList_ifOnboarded_andEverythingFilledOut_onGameday() {
         // Setup mock server
-        val mockApi = MockAPI()
+        val mockApi = MockAPI(Database.get())
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.team.toJson()))
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getEvent(true).toJson()))
 
