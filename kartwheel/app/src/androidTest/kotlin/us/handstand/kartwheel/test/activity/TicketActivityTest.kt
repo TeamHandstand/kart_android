@@ -126,7 +126,7 @@ class TicketActivityTest {
         onView(withId(R.id.email)).perform(replaceText("matthew.w.ott@gmail.com"))
         onView(withId(R.id.button)).perform(click())
 
-        onView(withId(R.id.cell)).perform(replaceText("4083064285"))
+        onView(withId(R.id.cell)).perform(replaceText("40830642"))
         onView(withId(R.id.button)).perform(click())
 
         onView(withId(R.id.birth)).perform(replaceText("7725"))
@@ -137,6 +137,11 @@ class TicketActivityTest {
 
         // We should have to re-enter the birth date since it was invalid
         onView(withId(R.id.birth)).perform(replaceText("07251989"))
+        onView(withId(R.id.button)).perform(click())
+
+
+        // Also validate phone number
+        onView(withId(R.id.cell)).perform(replaceText("4083064285"))
         onView(withId(R.id.button)).perform(click())
 
         onView(withId(R.id.title)).check(matches(withText(R.string.onboarding_started_title)))

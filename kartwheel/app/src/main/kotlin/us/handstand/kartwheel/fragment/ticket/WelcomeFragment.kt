@@ -15,6 +15,7 @@ import android.view.inputmethod.EditorInfo.IME_ACTION_GO
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.TextView.OnEditorActionListener
+import com.google.i18n.phonenumbers.PhoneNumberUtil
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.R.*
 import us.handstand.kartwheel.activity.TicketActivity.TicketFragment
@@ -81,10 +82,13 @@ class WelcomeFragment : Fragment(), TicketFragment, android.text.TextWatcher, On
         return super.canAdvanceToNextStep()
     }
 
-    private // TODO: better validation, birth and cell not required
-    val isValidInput: Boolean
-        get() = DateFormatter.isValid(birth.text.toString()) && !isEmpty(cell) && !isEmpty(email)
-                && !isEmpty(firstName) && !isEmpty(lastName) && !isEmpty(nickname)
+    private val isValidInput: Boolean
+        get() {
+            // TODO: Validate phone number based on location or user supplied input
+            val validCellNumber = PhoneNumberUtil.getInstance().isPossibleNumber(cell.text.toString(), "US")
+            return DateFormatter.isValid(birth.text.toString()) && validCellNumber && !isEmpty(email)
+                    && !isEmpty(firstName) && !isEmpty(lastName) && !isEmpty(nickname)
+        }
 
 
     override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
