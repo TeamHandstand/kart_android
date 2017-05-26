@@ -22,7 +22,6 @@ fun User.toJson(): String {
     return "{\"user\":${API.gson.toJson(this)}}"
 }
 
-// TODO: Currently only works for races, courses and users
 fun <T> List<T>.toJson(jsonClassName: String): String {
     return "{\"${jsonClassName}\":${API.gson.toJson(this)}}"
 }
