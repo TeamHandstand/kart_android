@@ -18,6 +18,7 @@ class GameInfoPlayerView : RelativeLayout, View.OnClickListener {
     lateinit private var forfeitOrShare: ImageView
     private var isClaimed = false
     private var isUser = false
+    private var code: String? = null
 
     constructor(context: Context?) : super(context) {
         init(null)
@@ -58,6 +59,7 @@ class GameInfoPlayerView : RelativeLayout, View.OnClickListener {
     fun update(user: User, ticket: Ticket) {
         isClaimed = ticket.isClaimed || user.hasAllInformation()
         playerName.text = if (isClaimed) user.firstName() + " " + user.lastName() else resources.getString(R.string.unclaimed_ticket) + String(Character.toChars(pointerCode))
+        code = ticket.code()
         if (!isUser) {
             if (isClaimed) {
                 forfeitOrShare.visibility = GONE
@@ -72,16 +74,17 @@ class GameInfoPlayerView : RelativeLayout, View.OnClickListener {
             if (isUser) {
                 playerActionClickListener!!.onPlayerForfeitClick()
             } else {
-                playerActionClickListener!!.onPlayerShareClick()
+                playerActionClickListener!!.onPlayerShareClick(code!!)
             }
         }
     }
 
     companion object {
         private const val pointerCode = 0x1F449
+
         interface OnPlayerActionClickListener {
             fun onPlayerForfeitClick()
-            fun onPlayerShareClick()
+            fun onPlayerShareClick(code: String)
         }
     }
 }

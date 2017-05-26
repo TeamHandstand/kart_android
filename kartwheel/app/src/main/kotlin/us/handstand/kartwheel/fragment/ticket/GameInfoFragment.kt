@@ -69,10 +69,10 @@ class GameInfoFragment : Fragment(), TicketActivity.TicketFragment, GameInfoCont
         ticketController.transition(GAME_INFO, FORFEIT)
     }
 
-    override fun onPlayerShareClick() {
+    override fun onPlayerShareClick(code: String) {
         ShareCompat.IntentBuilder
                 .from(activity)
-                .setText(Storage.code)
+                .setText(code)
                 .setType("text/plain")
                 .setChooserTitle(string.share_code)
                 .startChooser()

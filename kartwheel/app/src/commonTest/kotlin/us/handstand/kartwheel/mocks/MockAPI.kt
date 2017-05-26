@@ -8,7 +8,6 @@ import us.handstand.kartwheel.model.*
 import us.handstand.kartwheel.network.API
 import us.handstand.kartwheel.util.DateFormatter
 import java.util.regex.Pattern
-import kotlin.reflect.KClass
 
 fun Team.toJson(): String {
     return "{\"team\":${API.gson.toJson(this)}}"
@@ -83,16 +82,19 @@ class MockAPI(val db: BriteDatabase?) {
         val eventEndTime = DateFormatter["2017-05-19 03:07:43.537977"]!!
         val eventStartTime = DateFormatter["2017-05-17 03:07:43.537428"]!!
         val eventUpdatedAt = DateFormatter["2017-05-17 03:07:43.559896"]
-        val team = Team.create(teamId, 0, eventId, 0, teamName, 0, 0, 0, null, mutableListOf(getTicket(1, true), getTicket(2, false)), null, mutableListOf(getUser(1, false), getUser(2, false)))
         val hellmanCourse = getHellmanCourse("course-hellman")
         val courses = listOf(hellmanCourse)
         val races = listOf(getRace(1, "race-1", hellmanCourse), getRace(2, "race-2", hellmanCourse), getRace(3, "race-3", hellmanCourse))
 
-        fun getUser(which: Int, onboarded: Boolean): User {
+        fun getTeam(claimedTicket1: Boolean = false, claimedTicket2: Boolean = false, signUpUser1: Boolean = false, signUpUser2: Boolean = false, onboardedUser1: Boolean = false, onboardedUser2: Boolean = false): Team {
+            return Team.create(teamId, 0, eventId, 0, teamName, 0, 0, 0, null, mutableListOf(getTicket(1, claimedTicket1), getTicket(2, claimedTicket2)), null, mutableListOf(getUser(1, signUpUser1, onboardedUser1), getUser(2, signUpUser2, onboardedUser2)))
+        }
+
+        fun getUser(which: Int, signedUp: Boolean = true, onboarded: Boolean): User {
             if (which == 1) {
-                return User.create(userId1, null, birth1, if (onboarded) buddyUrl1 else null, cell1, null, email1, eventId, firstName1, if (onboarded) imageUrl1 else null, lastName1, null, nickname1, null, null, false, null, null, teamId, null, null, null)
+                return User.create(userId1, null, birth1, if (onboarded) buddyUrl1 else null, cell1, "charmander", if (signedUp) email1 else null, eventId, firstName1, if (onboarded) imageUrl1 else null, lastName1, null, nickname1, "waffle", null, false, null, null, teamId, null, null, null)
             } else {
-                return User.create(userId2, null, birth2, if (onboarded) buddyUrl2 else null, cell2, null, email2, eventId, firstName2, if (onboarded) imageUrl2 else null, lastName2, null, nickname2, null, null, false, null, null, teamId, null, null, null)
+                return User.create(userId2, null, birth2, if (onboarded) buddyUrl2 else null, cell2, "squirtle", if (signedUp) email2 else null, eventId, firstName2, if (onboarded) imageUrl2 else null, lastName2, null, nickname2, null, null, false, null, null, teamId, null, null, null)
             }
         }
 
