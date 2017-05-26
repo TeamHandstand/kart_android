@@ -83,7 +83,7 @@ class WelcomeFragment : Fragment(), TicketFragment, android.text.TextWatcher, On
 
     private // TODO: better validation, birth and cell not required
     val isValidInput: Boolean
-        get() = !isEmpty(birth) && !isEmpty(cell) && !isEmpty(email)
+        get() = DateFormatter.isValid(birth.text.toString()) && !isEmpty(cell) && !isEmpty(email)
                 && !isEmpty(firstName) && !isEmpty(lastName) && !isEmpty(nickname)
 
 
@@ -104,7 +104,7 @@ class WelcomeFragment : Fragment(), TicketFragment, android.text.TextWatcher, On
         return false
     }
 
-    private class FormatTextWatcher(val delimiter: String, val chunkSize: Int) : TextWatcher {
+    inner class FormatTextWatcher(val delimiter: String, val chunkSize: Int) : TextWatcher {
         override fun afterTextChanged(s: Editable) {
             var noDelimiter = s.toString().replace(delimiter, "")
             val formattedStringBuilder = StringBuilder()
@@ -122,6 +122,9 @@ class WelcomeFragment : Fragment(), TicketFragment, android.text.TextWatcher, On
 
             if (s.toString() != formattedStringBuilder.toString()) {
                 s.replace(0, s.length, formattedStringBuilder.toString())
+                if (isAdvanceButtonEnabled()) {
+                    ticketController.onTicketFragmentStateChanged()
+                }
             }
         }
 

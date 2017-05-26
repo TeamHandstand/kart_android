@@ -1,7 +1,7 @@
 package us.handstand.kartwheel.util
 
 
-import java.text.ParseException
+import android.text.TextUtils.isEmpty
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -56,6 +56,15 @@ object DateFormatter {
 
     fun getFromUserInput(input: String): String {
         return dateFormat.format(inputFormat.parse(input))
+    }
+
+    fun isValid(input: String): Boolean {
+        try {
+            val date = inputFormat.parse(input)
+            return !isEmpty(input) && date != null
+        } catch (e: Exception) {
+            return false
+        }
     }
 
 }
