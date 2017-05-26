@@ -87,9 +87,9 @@ abstract class Race : RaceModel, Comparable<Race> {
             putIfNotAbsent(cv, RaceModel.ID, id())
             putIfNotAbsent(cv, RaceModel.COURSE, ColumnAdapters.courseToBlob(course()))
             putIfNotAbsent(cv, RaceModel.COURSEID, courseId())
-            putIfNotAbsent(cv, RaceModel.DELETEDAT, ColumnAdapters.dateToLong(deletedAt()))
+            putIfNotAbsent(cv, RaceModel.DELETEDAT, deletedAt()?.time)
             putIfNotAbsent(cv, RaceModel.EVENTID, eventId())
-            putIfNotAbsent(cv, RaceModel.ENDTIME, ColumnAdapters.dateToLong(endTime()))
+            putIfNotAbsent(cv, RaceModel.ENDTIME, endTime().time)
             putIfNotAbsent(cv, RaceModel.FUNQUESTION, funQuestion())
             putIfNotAbsent(cv, RaceModel.NAME, name())
             putIfNotAbsent(cv, RaceModel.OPENSPOTS, openSpots())
@@ -99,9 +99,9 @@ abstract class Race : RaceModel, Comparable<Race> {
             putIfNotAbsent(cv, RaceModel.SHORTANSWER1, shortAnswer1())
             putIfNotAbsent(cv, RaceModel.SHORTANSWER2, shortAnswer2())
             putIfNotAbsent(cv, RaceModel.SLUG, slug())
-            putIfNotAbsent(cv, RaceModel.STARTTIME, ColumnAdapters.dateToLong(startTime()))
+            putIfNotAbsent(cv, RaceModel.STARTTIME, startTime().time)
             putIfNotAbsent(cv, RaceModel.TOTALLAPS, totalLaps())
-            putIfNotAbsent(cv, RaceModel.UPDATEDAT, ColumnAdapters.dateToLong(updatedAt()))
+            putIfNotAbsent(cv, RaceModel.UPDATEDAT, updatedAt()?.time)
             putIfNotAbsent(cv, RaceModel.VIDEOURL, videoUrl())
             return cv
         }

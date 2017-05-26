@@ -11,7 +11,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import us.handstand.kartwheel.inject.DaggerInjector
 import us.handstand.kartwheel.inject.Injector
-import us.handstand.kartwheel.inject.provider.GameInfoProvider
+import us.handstand.kartwheel.inject.provider.ControllerProvider
 import us.handstand.kartwheel.model.Database
 import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.network.API
@@ -26,7 +26,8 @@ open class KartWheel : Application(), Interceptor {
         Database.initialize(this)
         API.initialize(Database.get(), okHttpClient, BuildConfig.SERVER)
         Fabric.with(this, Crashlytics())
-        injector = DaggerInjector.builder().gameInfoProvider(GameInfoProvider()).build()
+        val provider = ControllerProvider()
+        injector = DaggerInjector.builder().controllerProvider(provider).build()
     }
 
     @Throws(IOException::class)

@@ -42,22 +42,12 @@ object ColumnAdapters {
 
     val DATE_LONG: ColumnAdapter<Date, Long> = object : ColumnAdapter<Date, Long> {
         override fun decode(databaseValue: Long?): Date {
-            val result = longToDate(databaseValue)
-            return result ?: Date()
+            return if (databaseValue != null) DateFormatter[databaseValue] ?: Date() else Date()
         }
 
         override fun encode(value: Date): Long {
-            val result = dateToLong(value)
-            return result ?: 0L
+            return value?.time ?: 0L
         }
-    }
-
-    fun longToDate(value: Long?): Date? {
-        return if (value == null) null else DateFormatter[value]
-    }
-
-    fun dateToLong(date: Date?): Long? {
-        return date?.time
     }
 
     val LIST_STRING_BLOB: ColumnAdapter<List<String>, ByteArray> = object : ColumnAdapter<List<String>, ByteArray> {

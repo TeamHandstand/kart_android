@@ -12,6 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import us.handstand.kartwheel.model.*
 import us.handstand.kartwheel.util.DateFormatter
 import java.util.*
+import java.util.concurrent.CountDownLatch
 
 object API {
     val gson: Gson = GsonBuilder()
@@ -26,6 +27,26 @@ object API {
 
         fun onFailure(errorCode: Int, errorResponse: String) {
             // Optional
+        }
+    }
+
+    class APITransactionCallback<in T : Any>(val transaction: BriteDatabase.Transaction?, val latch: CountDownLatch, val succeedOnAny: Boolean) : APICallback<T> {
+        override fun onSuccess(response: T) {
+            latch.countDown()
+            if (latch.count == 0L) {
+                transaction?.markSuccessful()
+                transaction?.end()
+            }
+        }
+
+        override fun onFailure(errorCode: Int, errorResponse: String) {
+            latch.countDown()
+            if (latch.count == 0L) {
+                if (succeedOnAny) {
+                    transaction?.markSuccessful()
+                }
+                transaction?.end()
+            }
         }
     }
 
@@ -155,18 +176,14 @@ object API {
     fun getRacesWithCourses(eventId: String) {
         getCourses(eventId, object : API.APICallback<Map<String, Course>> {
             override fun onSuccess(courseResponse: Map<String, Course>) {
-                // Subscribe to API response
+                // Don't save this time
                 getRaces(eventId, false, object : API.APICallback<List<Race>> {
                     override fun onSuccess(response: List<Race>) {
+                        val transaction = db?.newTransaction()
+                        val latch = CountDownLatch(response.size)
                         for (race in response) {
-                            val transaction = db?.newTransaction()
                             race.insert(db, courseResponse[race.courseId()])
-                            getRaceParticipants(eventId, race.id(), object : APICallback<Array<User>> {
-                                override fun onSuccess(response: Array<User>) {
-                                    transaction?.markSuccessful()
-                                    transaction?.end()
-                                }
-                            })
+                            getRaceParticipants(eventId, race.id(),  APITransactionCallback(transaction, latch, true))
                         }
                     }
                 })
@@ -174,7 +191,7 @@ object API {
         })
     }
 
-    fun getRaceParticipants(eventId: String, raceId: String, apiCallback: APICallback<Array<User>>? = null) {
+    fun getRaceParticipants(eventId: String, raceId: String,  apiCallback: APICallback<Array<User>>? = null) {
         kartWheelService!!.getRaceParticipants(eventId, raceId).enqueue(SafeCallback(object : APICallback<JsonObject> {
             override fun onSuccess(response: JsonObject) {
                 val participants = gson.fromJson(response.get("users"), Array<User>::class.java)
@@ -189,9 +206,13 @@ object API {
                 val update = RaceModel.Insert_participants(db?.writableDatabase, Race.FACTORY)
                 update.bind(participantIds, participantImageUrls, raceId)
                 db?.executeUpdateDelete(update.table, update.program)
-                apiCallback?.onSuccess(participants)
                 transaction?.markSuccessful()
                 transaction?.end()
+                apiCallback?.onSuccess(participants)
+            }
+
+            override fun onFailure(errorCode: Int, errorResponse: String) {
+                apiCallback?.onFailure(errorCode, errorResponse)
             }
         }))
     }
@@ -224,6 +245,9 @@ object API {
         kartWheelService!!.getMiniGameTypes().enqueue(SafeCallback(object : APICallback<JsonObject> {
             override fun onSuccess(response: JsonObject) {
                 val miniGameTypes = gson.fromJson(response.get("miniGameTypes"), Array<MiniGameType>::class.java)
+                if (miniGameTypes == null || miniGameTypes.isEmpty()) {
+                    return
+                }
                 val transaction = db?.newTransaction()
                 for (miniGameType in miniGameTypes) {
                     miniGameType.insert(db)

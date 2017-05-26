@@ -9,10 +9,9 @@ import us.handstand.kartwheel.layout.recyclerview.viewholder.RaceSummaryVH
 import us.handstand.kartwheel.model.Race
 
 
-class RaceListAdapter : RecyclerView.Adapter<RaceSummaryVH>() {
+class RaceListAdapter(val controller: RaceListController) : RecyclerView.Adapter<RaceSummaryVH>() {
     val races = ArrayList<Race>()
     val handler = Handler(Looper.getMainLooper())
-    var controller: RaceListController? = null
 
     fun setRaces(races: List<Race>) {
         handler.post {

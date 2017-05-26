@@ -1,16 +1,18 @@
+import java.util.Date;
+
 CREATE TABLE ticket (
     id TEXT NOT NULL PRIMARY KEY,
     code TEXT,
-    claimedAt TEXT,
+    claimedAt INTEGER as Date,
     eventId TEXT,
-    forfeitedAt TEXT,
+    forfeitedAt INTEGER as Date,
     paymentId TEXT,
     playerId TEXT,
     priceTierId TEXT,
-    purchasedAt TEXT,
+    purchasedAt INTEGER as Date,
     purchaserId TEXT,
     teamId TEXT,
-    updatedAt TEXT
+    updatedAt INTEGER as Date
 );
 
 select_all:

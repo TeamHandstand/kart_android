@@ -1,16 +1,17 @@
+import java.util.Date;
 import java.util.List;
 import us.handstand.kartwheel.model.Point;
 
 CREATE TABLE course (
     id TEXT NOT NULL PRIMARY KEY,
-    createdAt TEXT,
-    deletedAt TEXT,
+    createdAt INTEGER as Date,
+    deletedAt INTEGER as Date,
     distance REAL NOT NULL DEFAULT 0,
     maxRegistrants INTEGER DEFAULT 0,
     name TEXT,
     startLat REAL NOT NULL DEFAULT 0,
     startLong REAL NOT NULL DEFAULT 0,
-    updatedAt TEXT,
+    updatedAt INTEGER as Date,
     vertices BLOB as List<Point>
 );
 

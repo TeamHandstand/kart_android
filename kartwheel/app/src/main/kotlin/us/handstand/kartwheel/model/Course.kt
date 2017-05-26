@@ -56,22 +56,22 @@ abstract class Course : CourseModel {
         if (db != null) {
             val cv = ContentValues()
             putIfNotAbsent(cv, CourseModel.ID, id())
-            putIfNotAbsent(cv, CourseModel.CREATEDAT, createdAt())
-            putIfNotAbsent(cv, CourseModel.DELETEDAT, deletedAt())
+            putIfNotAbsent(cv, CourseModel.CREATEDAT, createdAt()?.time)
+            putIfNotAbsent(cv, CourseModel.DELETEDAT, deletedAt()?.time)
             putIfNotAbsent(cv, CourseModel.DISTANCE, distance())
             putIfNotAbsent(cv, CourseModel.MAXREGISTRANTS, maxRegistrants())
             putIfNotAbsent(cv, CourseModel.NAME, name())
             putIfNotAbsent(cv, CourseModel.STARTLAT, startLat())
             putIfNotAbsent(cv, CourseModel.STARTLONG, startLong())
-            putIfNotAbsent(cv, CourseModel.UPDATEDAT, updatedAt())
+            putIfNotAbsent(cv, CourseModel.UPDATEDAT, updatedAt()?.time)
             db.insert(CourseModel.TABLE_NAME, cv, SQLiteDatabase.CONFLICT_REPLACE)
         }
     }
 
     companion object : Creator<Course> by Creator(::AutoValue_Course) {
-        val EMPTY_COURSE: Course = AutoValue_Course("", "", "", 0.0, 0L, "", 0.0, 0.0, "", null)
+        val EMPTY_COURSE: Course = AutoValue_Course("", null, null, 0.0, 0L, "", 0.0, 0.0, null, null)
 
-        val FACTORY = CourseModel.Factory<Course>(CourseModel.Creator<Course> { id, createdAt, deletedAt, distance, maxRegistrants, name, startLat, startLong, updatedAt, vertices -> create(id, createdAt, deletedAt, distance, maxRegistrants, name, startLat, startLong, updatedAt, vertices) }, ColumnAdapters.LIST_POINT_BLOB)
+        val FACTORY = CourseModel.Factory<Course>(CourseModel.Creator<Course> { id, createdAt, deletedAt, distance, maxRegistrants, name, startLat, startLong, updatedAt, vertices -> create(id, createdAt, deletedAt, distance, maxRegistrants, name, startLat, startLong, updatedAt, vertices) }, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG, ColumnAdapters.LIST_POINT_BLOB)
 
         // Required by Gson
         @JvmStatic

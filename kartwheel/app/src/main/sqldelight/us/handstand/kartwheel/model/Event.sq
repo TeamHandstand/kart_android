@@ -5,7 +5,7 @@ CREATE TABLE event (
     endTime INTEGER as Date NOT NULL,
     name TEXT NOT NULL,
     startTime INTEGER as Date NOT NULL,
-    updatedAt INTEGER as Date NOT NULL,
+    updatedAt INTEGER as Date,
     usersCanSeeRaces INTEGER as Boolean DEFAULT 1
 );
 

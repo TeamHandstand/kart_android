@@ -41,7 +41,7 @@ abstract class User : UserModel {
             val cv = ContentValues()
             putIfNotAbsent(cv, UserModel.ID, id())
             putIfNotAbsent(cv, UserModel.AUTHTOKEN, authToken())
-            putIfNotAbsent(cv, UserModel.BIRTH, ColumnAdapters.dateToLong(birth()))
+            putIfNotAbsent(cv, UserModel.BIRTH, birth()?.time)
             putIfNotAbsent(cv, UserModel.BUDDYURL, buddyUrl())
             putIfNotAbsent(cv, UserModel.CELL, cell())
             putIfNotAbsent(cv, UserModel.CHARMANDERORSQUIRTLE, charmanderOrSquirtle())
@@ -60,7 +60,7 @@ abstract class User : UserModel {
             putIfNotAbsent(cv, UserModel.TEAMID, teamId())
             putIfNotAbsent(cv, UserModel.TOTALANTIMILES, totalAntiMiles())
             putIfNotAbsent(cv, UserModel.TOTALDISTANCEMILES, totalDistanceMiles())
-            putIfNotAbsent(cv, UserModel.UPDATEDAT, ColumnAdapters.dateToLong(updatedAt()))
+            putIfNotAbsent(cv, UserModel.UPDATEDAT, updatedAt()?.time)
             return cv
         }
 

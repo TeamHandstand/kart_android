@@ -8,7 +8,10 @@ import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
+import android.util.Log
+import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.RecordedRequest
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.startsWith
 import org.junit.*
@@ -18,9 +21,10 @@ import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.TicketActivity
 import us.handstand.kartwheel.layout.TOSScrollView
 import us.handstand.kartwheel.mocks.MockAPI
+import us.handstand.kartwheel.mocks.matches
 import us.handstand.kartwheel.mocks.toJson
 import us.handstand.kartwheel.model.Database
-import us.handstand.kartwheel.test.inject.provider.TestingGameInfoProvider
+import us.handstand.kartwheel.test.inject.provider.ControllerProviderWithIdlingResources
 
 @RunWith(AndroidJUnit4::class)
 class TicketActivityTest {
@@ -29,13 +33,13 @@ class TicketActivityTest {
 
     @Before
     fun setUp() {
-        TestingGameInfoProvider.registerIdlingResources()
+        ControllerProviderWithIdlingResources.registerIdlingResources()
     }
 
     @After
     fun tearDown() {
         KartWheel.logout()
-        TestingGameInfoProvider.unregisterIdlingResources()
+        ControllerProviderWithIdlingResources.unregisterIdlingResources()
     }
 
     @Test
@@ -152,8 +156,26 @@ class TicketActivityTest {
     fun showRaceList_ifOnboarded_andEverythingFilledOut_onGameday() {
         // Setup mock server
         val mockApi = MockAPI(Database.get())
-        mockApi.server.enqueue(MockResponse().setBody(MockAPI.team.toJson()))
-        mockApi.server.enqueue(MockResponse().setBody(MockAPI.getEvent(true).toJson()))
+        mockApi.server.setDispatcher(object : Dispatcher() {
+            override fun dispatch(request: RecordedRequest): MockResponse {
+                if (request.path.matches(MockAPI.coursesPattern)) {
+                    return MockResponse().setBody(MockAPI.courses.toJson("courses"))
+                } else if (request.path.matches(MockAPI.racesPattern)) {
+                    return MockResponse().setBody(MockAPI.races.toJson("races"))
+                } else if (request.path.matches(MockAPI.raceParticipantsPattern)) {
+                    return MockResponse().setBody(MockAPI.getRaceParticipants().toJson("users"))
+                } else if (request.path.matches(MockAPI.userPattern)) {
+                    return MockResponse().setBody(MockAPI.getUser(1, true).toJson())
+                } else if (request.path.matches(MockAPI.teamPattern)) {
+                    return MockResponse().setBody(MockAPI.team.toJson())
+                } else if (request.path.matches(MockAPI.eventPattern)) {
+                    return MockResponse().setBody(MockAPI.getEvent(true).toJson())
+                } else {
+                    Log.e("Unknown path", request.path)
+                }
+                return MockResponse().setHttp2ErrorCode(404)
+            }
+        })
 
         // Scroll TOS
         (testRule.activity.findViewById(R.id.tos_scroll_view) as TOSScrollView).listener!!.invoke()
@@ -171,7 +193,6 @@ class TicketActivityTest {
         onView(withId(R.id.left_image)).perform(click())
         onView(withId(R.id.button)).perform(click())
 
-        mockApi.server.enqueue(MockResponse().setBody(MockAPI.getUser(1, true).toJson()))
         // Enter information
         onView(withId(R.id.first_name)).perform(replaceText("Matthew"))
         onView(withId(R.id.last_name)).perform(replaceText("Ott"))
@@ -181,8 +202,10 @@ class TicketActivityTest {
         onView(withId(R.id.nickname)).perform(replaceText("Matty Otter"))
         onView(withId(R.id.button)).perform(click())
 
-        // TODO: Register idling resources on the RaceListController
-        onView(withId(R.id.playerOne)).check(matches(isDisplayed()))
+        // Check that there are three races queued
+        onView(allOf(withId(R.id.courseName), withText("#1 - Race race-1"))).check(matches(isDisplayed()))
+        onView(allOf(withId(R.id.courseName), withText("#2 - Race race-2"))).check(matches(isDisplayed()))
+        onView(allOf(withId(R.id.courseName), withText("#3 - Race race-3"))).check(matches(isDisplayed()))
     }
 }
 

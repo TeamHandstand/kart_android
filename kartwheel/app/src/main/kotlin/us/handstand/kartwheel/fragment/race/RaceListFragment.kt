@@ -8,51 +8,49 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import rx.Subscription
+import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.RaceSignUpActivity
 import us.handstand.kartwheel.controller.RaceListController
 import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.layout.recyclerview.adapter.RaceListAdapter
-import us.handstand.kartwheel.model.*
-import us.handstand.kartwheel.network.API
+import us.handstand.kartwheel.model.Race
+import us.handstand.kartwheel.model.RaceModel
+import javax.inject.Inject
 
 
-class RaceListFragment : Fragment(), RaceListController.Companion.StartFragmentInterface {
-    lateinit var raceRecyclerView: RecyclerView
-
-    val raceAdapter = RaceListAdapter()
-    val raceListController = RaceListController()
-    var raceSubscription: Subscription? = null
+class RaceListFragment : Fragment(), RaceListController.RaceListListener {
+    @Inject lateinit var controller: RaceListController
+    private lateinit var raceRecyclerView: RecyclerView
+    private lateinit var raceAdapter: RaceListAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        KartWheel.injector.inject(this)
         val raceList = inflater.inflate(R.layout.fragment_race_list, container, false) as ViewGroup
         raceRecyclerView = ViewUtil.findView(raceList, R.id.raceListRecyclerView)
         raceRecyclerView.layoutManager = LinearLayoutManager(inflater.context)
+        raceAdapter = RaceListAdapter(controller)
         raceRecyclerView.adapter = raceAdapter
-        raceAdapter.controller = raceListController
         return raceList
     }
 
     override fun onResume() {
         super.onResume()
-        raceListController.fragmentInterface = this
-        API.getRacesWithCourses(Storage.eventId)
-        val raceQuery = Race.FACTORY.select_for_event_id(Storage.eventId)
-        raceSubscription = Database.get().createQuery(RaceModel.TABLE_NAME, raceQuery.statement, *raceQuery.args)
-                .mapToList { Race.FACTORY.select_for_event_idMapper().map(it) }
-                .subscribe { raceAdapter.setRaces(it) }
+        controller.subscribe(this)
     }
 
     override fun onPause() {
         super.onPause()
-        raceListController.fragmentInterface = null
-        raceSubscription?.unsubscribe()
+        controller.unsubscribe()
     }
 
-    override fun showRaceSignUp(raceId: String) {
+    override fun onRaceItemClicked(raceId: String) {
         val intent = Intent(activity, RaceSignUpActivity::class.java)
         intent.putExtra(RaceModel.ID, raceId)
         activity.startActivity(intent)
+    }
+
+    override fun onRacesUpdated(races: List<Race>) {
+        raceAdapter.setRaces(races)
     }
 }

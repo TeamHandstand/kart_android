@@ -21,7 +21,7 @@ abstract class Event : EventModel {
             putIfNotAbsent(cv, EventModel.ENDTIME, endTime().time)
             putIfNotAbsent(cv, EventModel.NAME, name())
             putIfNotAbsent(cv, EventModel.STARTTIME, startTime().time)
-            putIfNotAbsent(cv, EventModel.UPDATEDAT, updatedAt().time)
+            putIfNotAbsent(cv, EventModel.UPDATEDAT, updatedAt()?.time)
             putIfNotAbsent(cv, EventModel.USERSCANSEERACES, usersCanSeeRaces())
             db.insert(EventModel.TABLE_NAME, cv, SQLiteDatabase.CONFLICT_REPLACE)
         }
