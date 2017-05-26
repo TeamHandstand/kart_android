@@ -39,7 +39,7 @@
 
     <!-- RaceSummaryView -->
     <string name="finished">Finished</string>
-    <string name="registered">Registered $1%s</string>
+    <string name="registered">Registered %1$s</string>
     <string name="registration_closed">Registration is closed</string>
     <string name="race_full">Race is full!</string>
     <string name="spots_left">%1$d spots left</string>
