@@ -13,7 +13,6 @@ import android.provider.MediaStore.EXTRA_OUTPUT
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.View
 import android.view.View.*
 import android.widget.Button
@@ -21,6 +20,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
+import com.crashlytics.android.Crashlytics
 import us.handstand.kartwheel.BuildConfig
 import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
@@ -142,10 +142,10 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
                 takePictureIntent.putExtra(EXTRA_OUTPUT, photoURI)
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
             } catch (e: Exception) {
-                Log.e("Onboarding", e.message)
-                showDialog(e.message!!)
+                Crashlytics.logException(e)
             }
         } else {
+            // TODO: Set default image if they don't have camera permissions.
             showDialog("Unable to access your camera!")
         }
     }
