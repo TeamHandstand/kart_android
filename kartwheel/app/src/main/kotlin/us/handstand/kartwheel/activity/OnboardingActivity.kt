@@ -32,7 +32,6 @@ import us.handstand.kartwheel.controller.OnboardingController.Companion.SELFIE
 import us.handstand.kartwheel.controller.OnboardingController.Companion.STARTED
 import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.model.Storage
-import us.handstand.kartwheel.util.DateFormatter
 import java.io.File
 import java.io.IOException
 
@@ -155,14 +154,15 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
             val uri = Storage.selfieUri
             revokeUriPermission(Uri.parse(uri), requestPermissions)
             image.setImageBitmap(BitmapFactory.decodeFile(currentPhotoPath))
+            // TODO: Upload image to AWS (display progress), then update user object via API request.
         }
     }
 
     @Throws(IOException::class)
     private fun createTempImageFile(): File {
         val image = File.createTempFile(
-                "JPEG_" + DateFormatter[System.currentTimeMillis()].toString().replace(" ", "_") + "_",
-                ".jpg",
+                "${System.currentTimeMillis()}-${Storage.userId}-user-profile-photo",
+                ".jpeg",
                 getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         )
         currentPhotoPath = image.absolutePath
