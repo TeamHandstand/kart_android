@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="us.handstand.kartwheel">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -22,6 +26,16 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="7205cd5b0cf9a4b0c7a6f0d185d18d9f7478da23" />
+        <!-- Photo provider -->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="us.handstand.kartwheel.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"></meta-data>
+        </provider>
 
         <activity android:name=".activity.LaunchActivity">
             <intent-filter>

@@ -20,6 +20,7 @@ buildscript {
     ext.rxandroid_version = '1.2.1'
     ext.sqlbrite_version = '1.1.1'
     ext.sqldelight_version = '0.6.1'
+    ext.uiautomator_version = "2.1.2"
 
     repositories {
         jcenter()
@@ -117,6 +118,7 @@ dependencies {
     androidTestCompile "com.android.support.test.espresso:espresso-core:$espresso_version"
     androidTestCompile "com.android.support.test.espresso:espresso-intents:$espresso_version"
     androidTestCompile "com.android.support.test:runner:$android_test_runner_version"
+    androidTestCompile "com.android.support.test.uiautomator:uiautomator-v18:$uiautomator_version"
     androidTestCompile "com.squareup.okhttp3:mockwebserver:$okhttp3_version"
     androidTestCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
 

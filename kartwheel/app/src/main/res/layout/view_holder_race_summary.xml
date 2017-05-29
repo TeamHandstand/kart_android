@@ -62,7 +62,7 @@
             tools:text="15 spots left" />
     </LinearLayout>
 
-    <us.handstand.kartwheel.layout.RegistrantAvatarView
+    <us.handstand.kartwheel.layout.CircularImageView
         android:id="@+id/avatar"
         android:layout_width="40dp"
         android:layout_height="40dp"

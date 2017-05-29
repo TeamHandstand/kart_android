@@ -18,8 +18,9 @@ class Storage private constructor(val prefs: SharedPreferences) {
         private const val SHOW_RACES = "show_races"
         private const val LAST_TICKET_STEP = "last_ticket_step"
         private const val LAST_ONBOARDING_STEP = "last_onboarding_step"
+        private const val SELFIE_URI = "selfi_uri"
 
-        @StringDef(USER_ID, EMOJI_CODE, EVENT_ID, TEAM_ID, TICKET_ID, SHOW_RACES, USER_IMAGE_URL, LAST_TICKET_STEP)
+        @StringDef(USER_ID, EMOJI_CODE, EVENT_ID, TEAM_ID, TICKET_ID, SHOW_RACES, USER_IMAGE_URL, LAST_TICKET_STEP, SELFIE_URI)
         private annotation class KEYS
 
         private lateinit var instance: Storage
@@ -91,6 +92,13 @@ class Storage private constructor(val prefs: SharedPreferences) {
             set(value) {
                 instance.prefs.edit().putLong(LAST_ONBOARDING_STEP, value).apply()
             }
+        var selfieUri: String
+            get() {
+                return get(SELFIE_URI)
+            }
+            set(value) {
+                return set(SELFIE_URI, value)
+            }
 
         private fun get(@KEYS key: String): String {
             return instance.prefs.getString(key, "")
@@ -108,6 +116,7 @@ class Storage private constructor(val prefs: SharedPreferences) {
             eventId = ""
             code = ""
             userImageUrl = ""
+            selfieUri = ""
             lastTicketState = TicketController.Companion.TOS
             lastOnboardingState = OnboardingController.Companion.STARTED
         }

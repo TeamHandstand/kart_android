@@ -13,7 +13,7 @@ import us.handstand.kartwheel.util.StringUtil
 class TopCourseTimeView : RelativeLayout {
     lateinit var name: TextView
     lateinit var time: TextView
-    lateinit var avatar: RegistrantAvatarView
+    lateinit var avatar: CircularImageView
 
     constructor(context: Context?) : super(context) {
         init(null)

@@ -12,7 +12,7 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget
 import us.handstand.kartwheel.R
 
 
-class RegistrantAvatarView : ImageView {
+class CircularImageView : ImageView {
     constructor(context: Context) : super(context)
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
@@ -21,21 +21,12 @@ class RegistrantAvatarView : ImageView {
         setImageResource(R.drawable.placeholder_registrant_avatar_grey)
     }
 
-    override fun setImageBitmap(bm: Bitmap?) {
+    override fun setImageBitmap(bm: Bitmap) {
         if (measuredHeight == 0) {
             waitForMeasuredHeight { setImageBitmap(bm) }
         } else {
-            val ratio = measuredWidth / measuredHeight.toFloat()
-            Glide.with(context)
-                    .load(bm)
-                    .asBitmap()
-                    .fitCenter()
-                    .placeholder(R.drawable.background_white_circle)
-                    .into(object : BitmapImageViewTarget(this) {
-                        override fun setResource(resource: Bitmap) {
-                            setImageDrawable(getScaledCircularBitmap(ratio, resource))
-                        }
-                    })
+            background = null
+            setImageDrawable(getScaledCircularBitmap(original = bm))
         }
     }
 
@@ -62,17 +53,17 @@ class RegistrantAvatarView : ImageView {
         }
     }
 
-    fun setRegistrantImageUrl(imageUrl: String) {
+    fun setImageUrl(imageUrl: String) {
         if (imageUrl == "") {
             setImageResource(R.drawable.placeholder_registrant_avatar)
         } else {
             if (measuredHeight == 0) {
-                waitForMeasuredHeight { setRegistrantImageUrl(imageUrl) }
+                waitForMeasuredHeight { setImageUrl(imageUrl) }
             } else {
                 Glide.with(context)
                         .load(imageUrl)
                         .asBitmap()
-                        .centerCrop()
+                        .fitCenter()
                         .placeholder(R.drawable.placeholder_registrant_avatar)
                         .into(object : BitmapImageViewTarget(this) {
                             override fun setResource(resource: Bitmap) {
@@ -83,14 +74,14 @@ class RegistrantAvatarView : ImageView {
         }
     }
 
-    fun getScaledCircularBitmap(ratio: Float = 1f, original: Bitmap): RoundedBitmapDrawable {
+    private fun getScaledCircularBitmap(ratio: Float = 1f, original: Bitmap): RoundedBitmapDrawable {
         val scaledBitmap = Bitmap.createScaledBitmap(original, (original.width * ratio).toInt(), (original.height * ratio).toInt(), true)
         val circularBitmapDrawable = RoundedBitmapDrawableFactory.create(context.resources, scaledBitmap)
         circularBitmapDrawable.isCircular = true
         return circularBitmapDrawable
     }
 
-    fun waitForMeasuredHeight(futureUnit: () -> Unit) {
+    private fun waitForMeasuredHeight(futureUnit: () -> Unit) {
         viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
             override fun onPreDraw(): Boolean {
                 viewTreeObserver.removeOnPreDrawListener(this)

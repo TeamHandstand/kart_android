@@ -25,7 +25,7 @@ class RaceSummaryView : RelativeLayout {
     var raceName: TextView
     var details: TextView
     var spotsLeft: TextView
-    var avatar: RegistrantAvatarView
+    var avatar: CircularImageView
     val runnerEmojiCode = 0x1F3C3
 
     init {
@@ -54,7 +54,7 @@ class RaceSummaryView : RelativeLayout {
             REGISTERED -> {
                 spotsLeft.text = resources.getString(R.string.registered, String(Character.toChars(runnerEmojiCode)))
                 avatar.visibility = View.VISIBLE
-                avatar.setRegistrantImageUrl(Storage.userImageUrl)
+                avatar.setImageUrl(Storage.userImageUrl)
             }
             REGISTRATION_CLOSED -> {
                 spotsLeft.setText(R.string.registration_closed)
