@@ -11,14 +11,11 @@ import android.widget.TextView
 import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.controller.OnboardingController
-import us.handstand.kartwheel.controller.OnboardingController.Companion.BUDDY_EXPLANATION
 import us.handstand.kartwheel.controller.OnboardingController.Companion.ERROR
 import us.handstand.kartwheel.controller.OnboardingController.Companion.NONE
-import us.handstand.kartwheel.controller.OnboardingController.Companion.PICK_BUDDY
 import us.handstand.kartwheel.controller.OnboardingController.Companion.POINT_SYSTEM
 import us.handstand.kartwheel.controller.OnboardingController.Companion.SELFIE
 import us.handstand.kartwheel.controller.OnboardingController.Companion.STARTED
-import us.handstand.kartwheel.controller.OnboardingController.Companion.VIDEO
 import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.model.Storage
 
@@ -60,7 +57,6 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
         if (next == ERROR) {
             KartWheel.logout()
         }
-        pageNumber.text = next.toString() + " of 5"
         var pageNumberVisibility = VISIBLE
         var emojiRecyclerViewVisibility = GONE
         var makeItRainVisibility = INVISIBLE
@@ -68,51 +64,28 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
         var imageTextVisibility = GONE
         when (next) {
             STARTED -> {
-                title.text = resources.getString(R.string.onboarding_started_title)
-                description.text = resources.getString(R.string.onboarding_started_description)
-                button.text = resources.getString(R.string.onboarding_started_button)
                 emojiRecyclerViewVisibility = VISIBLE
                 pageNumberVisibility = INVISIBLE
                 imageContainerVisibility = GONE
             }
-
-            SELFIE -> {
-                title.text = resources.getString(R.string.onboarding_selfie_title)
-                description.text = resources.getString(R.string.onboarding_selfie_description)
-                button.text = resources.getString(R.string.onboarding_selfie_button)
-                imageTextVisibility = VISIBLE
-            }
-
-            PICK_BUDDY -> {
-                title.text = resources.getString(R.string.onboarding_pick_buddy_title)
-                description.text = resources.getString(R.string.onboarding_pick_buddy_description)
-                button.text = resources.getString(R.string.onboarding_pick_buddy_button)
-            }
-
-            BUDDY_EXPLANATION -> {
-                title.text = resources.getString(R.string.onboarding_buddy_explanation_title)
-                description.text = resources.getString(R.string.onboarding_buddy_explanation_description)
-                button.text = resources.getString(R.string.onboarding_buddy_explanation_button)
-            }
-
-            POINT_SYSTEM -> {
-                title.text = resources.getString(R.string.onboarding_points_title)
-                description.text = resources.getString(R.string.onboarding_points_description)
-                button.text = resources.getString(R.string.onboarding_points_button)
-                makeItRainVisibility = VISIBLE
-            }
-
-            VIDEO -> {
-                title.text = resources.getString(R.string.onboarding_video_title)
-                description.text = resources.getString(R.string.onboarding_video_description)
-                button.text = resources.getString(R.string.onboarding_video_button)
-            }
+            SELFIE -> imageTextVisibility = VISIBLE
+            POINT_SYSTEM -> makeItRainVisibility = VISIBLE
         }
+        title.text = resources.getString(OnboardingController.getTitleStringResIdForStep(next))
+        description.text = resources.getString(OnboardingController.getDescriptionStringResIdForStep(next))
+        button.text = resources.getString(OnboardingController.getButtonStringResIdForStep(next))
+        pageNumber.text = next.toString() + " of 5"
+        pageNumber.visibility = pageNumberVisibility
         emojiRecyclerView.visibility = emojiRecyclerViewVisibility
         makeItRainText.visibility = makeItRainVisibility
-        imageContainer.visibility = imageContainerVisibility
+        val imageResId = OnboardingController.getImageResIdForStep(next)
+        if (imageResId == -1) {
+            imageContainer.visibility = INVISIBLE
+        } else {
+            imageContainer.visibility = VISIBLE
+            image.setImageResource(imageResId)
+        }
         imageDescription.visibility = imageTextVisibility
-        pageNumber.visibility = pageNumberVisibility
 
         Storage.lastOnboardingState = next
     }
