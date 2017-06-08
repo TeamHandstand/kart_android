@@ -19,6 +19,7 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.R.*
 import us.handstand.kartwheel.activity.TicketActivity.TicketFragment
+import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.layout.ViewUtil.findView
 import us.handstand.kartwheel.layout.ViewUtil.isEmpty
 import us.handstand.kartwheel.util.DateFormatter
@@ -48,6 +49,16 @@ class WelcomeFragment : Fragment(), TicketFragment, android.text.TextWatcher, On
         lastName.addTextChangedListener(this)
         nickname.addTextChangedListener(this)
         nickname.setOnEditorActionListener(this)
+
+        // Pre-populate the cells that the user has already filled out
+        val user = ticketController.user
+        ViewUtil.setIfNotEmpty(birth, if (user?.birth() == null) null else DateFormatter.getString(user.birth()!!))
+        ViewUtil.setIfNotEmpty(cell, user?.cell())
+        ViewUtil.setIfNotEmpty(email, user?.email())
+        ViewUtil.setIfNotEmpty(firstName, user?.firstName())
+        ViewUtil.setIfNotEmpty(lastName, user?.lastName())
+        ViewUtil.setIfNotEmpty(nickname, user?.nickName())
+
         return fragmentView
     }
 

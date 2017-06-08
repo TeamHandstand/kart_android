@@ -315,5 +315,41 @@ class TicketActivityTest {
         onView(allOf(withId(R.id.raceName), withText("#2 - Race race-2"))).check(matches(isDisplayed()))
         onView(allOf(withId(R.id.raceName), withText("#3 - Race race-3"))).check(matches(isDisplayed()))
     }
+
+    @Test
+    fun prePopulateFields_thatUserHas() {
+        // Setup mock server
+        val mockApi = MockAPI(Database.get())
+        mockApi.server.enqueue(MockResponse().setBody(MockAPI.getTeam().toJson()))
+        mockApi.server.enqueue(MockResponse().setBody(MockAPI.getEvent(false).toJson()))
+
+        // Scroll TOS
+        (testRule.activity.findViewById(R.id.tos_scroll_view) as TOSScrollView).listener!!.invoke()
+        onView(withId(R.id.button)).perform(click())
+
+        // Enter the code
+        onView(withId(R.id.code_edit_text)).perform(replaceText(MockAPI.code1))
+        onView(withId(R.id.button)).perform(click())
+
+        // Click on waffles
+        onView(withId(R.id.left_image)).perform(click())
+        onView(withId(R.id.button)).perform(click())
+
+        // Click on squirtle
+        onView(withId(R.id.right_image)).perform(click())
+        onView(withId(R.id.button)).perform(click())
+
+        mockApi.server.enqueue(MockResponse().setBody(MockAPI.getUser(1, false, false).toJson()))
+        // Enter information
+        onView(withId(R.id.first_name)).perform(replaceText("Matthew"))
+        onView(withId(R.id.last_name)).perform(replaceText("Ott"))
+        onView(withId(R.id.email)).perform(replaceText("matthew.w.ott@gmail.com"))
+        onView(withId(R.id.cell)).perform(replaceText("4083064285"))
+        onView(withId(R.id.birth)).perform(replaceText("07251989"))
+        onView(withId(R.id.nickname)).perform(replaceText("Matty Otter"))
+        onView(withId(R.id.button)).perform(click())
+
+        onView(withId(R.id.title)).check(matches(withText(R.string.onboarding_started_title)))
+    }
 }
 

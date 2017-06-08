@@ -60,5 +60,9 @@ object ViewUtil {
         textView.typeface = font
     }
 
-
+    fun setIfNotEmpty(editText: EditText, value: String?) {
+        if (!TextUtils.isEmpty(value)) {
+            editText.setText(value)
+        }
+    }
 }
