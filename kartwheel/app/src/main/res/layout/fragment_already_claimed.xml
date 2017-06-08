@@ -20,15 +20,6 @@
             android:layout_height="wrap_content"
             android:text="@string/already_claimed_explanation" />
 
-        <TextView
-            android:id="@+id/alreadyClaimedLink"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:autoLink="web"
-            android:gravity="center_horizontal"
-            android:text="@string/already_claimed_touch_here"
-            android:textColor="@color/red" />
-
     </LinearLayout>
 
     <android.support.v7.widget.AppCompatButton
@@ -36,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:enabled="false"
+        android:enabled="true"
         android:text="@string/contact_us"
         android:textAllCaps="true"
         android:textColor="@android:color/white"
