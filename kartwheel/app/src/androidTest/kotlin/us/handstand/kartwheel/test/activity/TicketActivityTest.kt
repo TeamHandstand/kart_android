@@ -1,12 +1,14 @@
 package us.handstand.kartwheel.test.activity
 
 
+import android.app.Instrumentation
 import android.content.Intent
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.action.ViewActions.replaceText
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.intent.Intents.intended
+import android.support.test.espresso.intent.Intents.intending
 import android.support.test.espresso.intent.matcher.IntentMatchers.hasAction
 import android.support.test.espresso.intent.matcher.IntentMatchers.hasExtra
 import android.support.test.espresso.intent.rule.IntentsTestRule
@@ -147,9 +149,9 @@ class TicketActivityTest {
         onView(withId(R.id.title)).check(matches(withText(R.string.onboarding_started_title)))
     }
 
-    // Show Already Claimed
     @Test
-    fun alreadyClaimed_whenEnteredCode() {
+    fun open_emailApp_whenAlreadyClaimed_contactUsButtonClicked() {
+        intending(hasAction(Intent.ACTION_CHOOSER)).respondWith(Instrumentation.ActivityResult(0, Intent()))
         // Setup mock server to return "already claimed" response
         val mockApi = MockAPI(Database.get())
         mockApi.server.enqueue(MockResponse().setResponseCode(409).setBody("{}"))
@@ -162,16 +164,18 @@ class TicketActivityTest {
         onView(withId(R.id.code_edit_text)).perform(replaceText(MockAPI.code2))
         onView(withId(R.id.button)).perform(click())
 
-        // Already claimed is shown
-        onView(withId(R.id.alreadyClaimedLink)).check(matches(isDisplayed()))
-
-        // Return to code entry
-        onView(withId(R.id.button)).perform(click())
-        onView(withId(R.id.code_edit_text)).check(matches(isDisplayed()))
+        // Email support
+        onView(withId(R.id.additionalButton)).perform(click())
+        intended(allOf(hasAction(Intent.ACTION_CHOOSER),
+                hasExtra(`is`(Intent.EXTRA_INTENT),
+                        allOf(hasAction(Intent.ACTION_SENDTO),
+                                hasExtra(Intent.EXTRA_EMAIL, arrayOf(testRule.activity.resources.getString(R.string.support_email))),
+                                hasExtra(Intent.EXTRA_SUBJECT, testRule.activity.resources.getString(R.string.contact_us_subject_line)),
+                                hasExtra(Intent.EXTRA_TEXT, testRule.activity.resources.getString(R.string.contact_us_body, MockAPI.code2))))))
     }
 
     @Test
-    fun open_emailApp_whenAlreadyClaimed_contactUsButtonClicked() {
+    fun shareNonClaimedUserTicket() {
         // Setup mock server
         val mockApi = MockAPI(Database.get())
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getTeam(signUpUser1 = true, onboardedUser1 = true).toJson()))
@@ -197,8 +201,20 @@ class TicketActivityTest {
     fun showGameInfo_ifOnboarded_andEverythingFilledOut_onPreGameday() {
         // Setup mock server
         val mockApi = MockAPI(Database.get())
-        mockApi.server.enqueue(MockResponse().setBody(MockAPI.getTeam(signUpUser1 = true, onboardedUser1 = true).toJson()))
-        mockApi.server.enqueue(MockResponse().setBody(MockAPI.getEvent(false).toJson()))
+        mockApi.server.setDispatcher(object : Dispatcher() {
+            override fun dispatch(request: RecordedRequest): MockResponse {
+                if (request.path.matches(MockAPI.userPattern)) {
+                    return MockResponse().setBody(MockAPI.getUser(1, true, false).toJson())
+                } else if (request.path.matches(MockAPI.teamPattern)) {
+                    return MockResponse().setBody(MockAPI.getTeam(signUpUser1 = true, onboardedUser1 = true).toJson())
+                } else if (request.path.matches(MockAPI.eventPattern)) {
+                    return MockResponse().setBody(MockAPI.getEvent(false).toJson())
+                } else {
+                    Log.e("Unknown path", request.path)
+                }
+                return MockResponse().setHttp2ErrorCode(404)
+            }
+        })
 
         // Scroll TOS
         (testRule.activity.findViewById(R.id.tos_scroll_view) as TOSScrollView).listener!!.invoke()
