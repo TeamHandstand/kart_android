@@ -5,6 +5,11 @@ import android.text.TextUtils
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.model.User
 
+interface OnboardingStepCompletionListener {
+    fun showNextStep(@OnboardingController.Companion.OnboardingStep previous: Long, @OnboardingController.Companion.OnboardingStep next: Long)
+    fun showDialog(message: String)
+    fun onOnboardingFragmentStateChanged()
+}
 
 class OnboardingController(var listener: OnboardingStepCompletionListener) {
     companion object {
@@ -64,12 +69,6 @@ class OnboardingController(var listener: OnboardingStepCompletionListener) {
                 VIDEO -> return R.drawable.onboarding_play_button
             }
             return -1
-        }
-
-        interface OnboardingStepCompletionListener {
-            fun showNextStep(@OnboardingStep previous: Long, @OnboardingStep next: Long)
-            fun showDialog(message: String)
-            fun onOnboardingFragmentStateChanged()
         }
     }
 

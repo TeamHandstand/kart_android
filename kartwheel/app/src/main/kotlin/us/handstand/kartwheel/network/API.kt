@@ -1,6 +1,8 @@
 package us.handstand.kartwheel.network
 
 
+import android.content.Context
+import android.net.Uri
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
@@ -9,10 +11,14 @@ import com.squareup.sqlbrite.BriteDatabase
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.model.*
+import us.handstand.kartwheel.network.storage.StorageProvider
+import us.handstand.kartwheel.network.storage.TransferObserver
 import us.handstand.kartwheel.util.DateFormatter
 import java.util.*
 import java.util.concurrent.CountDownLatch
+import javax.inject.Inject
 
 object API {
     val gson: Gson = GsonBuilder()
@@ -21,6 +27,7 @@ object API {
             .registerTypeAdapter(Date::class.java, DateTypeAdapter())
             .create()!!
     var db: BriteDatabase? = null
+    @Inject lateinit var storageProvider: StorageProvider
 
     interface APICallback<in T : Any> {
         fun onSuccess(response: T)
@@ -54,6 +61,7 @@ object API {
     private var kartWheelService: KartWheelService? = null
 
     fun initialize(db: BriteDatabase?, okHttpClient: OkHttpClient, url: String) {
+        KartWheel.injector.inject(this)
         this.db = db
         retrofit = Retrofit.Builder()
                 .baseUrl(url)
@@ -115,16 +123,20 @@ object API {
 
     fun updateUser(user: User, apiCallback: APICallback<User>) {
         val userJson = gson.toJsonTree(user).asJsonObject
-        kartWheelService!!.updateUser(Storage.userId, Storage.eventId, userJson)
+        updateUser(userJson, apiCallback)
+    }
+
+    fun updateUser(json: JsonObject, apiCallback: APICallback<User>? = null) {
+        kartWheelService!!.updateUser(Storage.userId, Storage.eventId, json)
                 .enqueue(SafeCallback(object : APICallback<JsonObject> {
                     override fun onSuccess(response: JsonObject) {
                         val updatedUser = gson.fromJson(response.get("user"), User::class.java)
                         updatedUser.update(db)
-                        apiCallback.onSuccess(updatedUser)
+                        apiCallback?.onSuccess(updatedUser)
                     }
 
                     override fun onFailure(errorCode: Int, errorResponse: String) {
-                        apiCallback.onFailure(errorCode, errorResponse)
+                        apiCallback?.onFailure(errorCode, errorResponse)
                     }
                 }))
     }
@@ -183,7 +195,7 @@ object API {
                         val latch = CountDownLatch(response.size)
                         for (race in response) {
                             race.insert(db, courseResponse[race.courseId()])
-                            getRaceParticipants(eventId, race.id(),  APITransactionCallback(transaction, latch, true))
+                            getRaceParticipants(eventId, race.id(), APITransactionCallback(transaction, latch, true))
                         }
                     }
                 })
@@ -191,7 +203,7 @@ object API {
         })
     }
 
-    fun getRaceParticipants(eventId: String, raceId: String,  apiCallback: APICallback<Array<User>>? = null) {
+    fun getRaceParticipants(eventId: String, raceId: String, apiCallback: APICallback<Array<User>>? = null) {
         kartWheelService!!.getRaceParticipants(eventId, raceId).enqueue(SafeCallback(object : APICallback<JsonObject> {
             override fun onSuccess(response: JsonObject) {
                 val participants = gson.fromJson(response.get("users"), Array<User>::class.java)
@@ -256,5 +268,13 @@ object API {
                 transaction?.end()
             }
         }))
+    }
+
+    /**
+     * @return the TransferObserver used to update progress UI
+     * // TODO: Mock TransferObserver
+     */
+    fun uploadPhoto(photoUri: Uri, context: Context): TransferObserver {
+        return storageProvider.upload(photoUri, context)
     }
 }

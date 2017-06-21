@@ -11,6 +11,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import us.handstand.kartwheel.inject.DaggerInjector
 import us.handstand.kartwheel.inject.Injector
+import us.handstand.kartwheel.inject.provider.CloudStorageProvider
 import us.handstand.kartwheel.inject.provider.ControllerProvider
 import us.handstand.kartwheel.model.Database
 import us.handstand.kartwheel.model.Storage
@@ -26,8 +27,10 @@ open class KartWheel : Application(), Interceptor {
         Database.initialize(this)
         API.initialize(Database.get(), okHttpClient, BuildConfig.SERVER)
         Fabric.with(this, Crashlytics())
-        val provider = ControllerProvider()
-        injector = DaggerInjector.builder().controllerProvider(provider).build()
+        injector = DaggerInjector.builder()
+                .controllerProvider(ControllerProvider())
+                .cloudStorageProvider(CloudStorageProvider())
+                .build()
     }
 
     @Throws(IOException::class)

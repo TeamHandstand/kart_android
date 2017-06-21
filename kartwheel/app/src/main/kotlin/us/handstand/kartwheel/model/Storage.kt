@@ -11,6 +11,7 @@ class Storage private constructor(val prefs: SharedPreferences) {
     companion object {
         private const val USER_ID = "user_id"
         private const val USER_IMAGE_URL = "user_image_url"
+        private const val USER_BUDDY_URL = "user_buddy_url"
         private const val TEAM_ID = "team_id"
         private const val EVENT_ID = "event_id"
         private const val TICKET_ID = "ticket_id"
@@ -18,9 +19,10 @@ class Storage private constructor(val prefs: SharedPreferences) {
         private const val SHOW_RACES = "show_races"
         private const val LAST_TICKET_STEP = "last_ticket_step"
         private const val LAST_ONBOARDING_STEP = "last_onboarding_step"
-        private const val SELFIE_URI = "selfi_uri"
+        private const val SELFIE_URI = "selfie_uri"
+        private const val SELFIE_TRANSFER_ID = "selfie_transfer_id"
 
-        @StringDef(USER_ID, EMOJI_CODE, EVENT_ID, TEAM_ID, TICKET_ID, SHOW_RACES, USER_IMAGE_URL, LAST_TICKET_STEP, SELFIE_URI)
+        @StringDef(USER_ID, EMOJI_CODE, EVENT_ID, TEAM_ID, TICKET_ID, SHOW_RACES, USER_IMAGE_URL, USER_BUDDY_URL, LAST_TICKET_STEP, SELFIE_URI, SELFIE_TRANSFER_ID)
         private annotation class KEYS
 
         private lateinit var instance: Storage
@@ -31,81 +33,119 @@ class Storage private constructor(val prefs: SharedPreferences) {
 
         var userId: String
             get() {
-                return get(USER_ID)
+                return getString(USER_ID)
             }
             set(value) {
                 set(USER_ID, value)
             }
         var teamId: String
             get() {
-                return get(TEAM_ID)
+                return getString(TEAM_ID)
             }
             set(value) {
                 set(TEAM_ID, value)
             }
         var eventId: String
             get() {
-                return get(EVENT_ID)
+                return getString(EVENT_ID)
             }
             set(value) {
                 set(EVENT_ID, value)
             }
         var code: String
             get() {
-                return get(EMOJI_CODE)
+                return getString(EMOJI_CODE)
             }
             set(value) {
                 set(EMOJI_CODE, value)
             }
         var ticketId: String
             get() {
-                return get(TICKET_ID)
+                return getString(TICKET_ID)
             }
             set(value) {
                 set(TICKET_ID, value)
             }
         var userImageUrl: String
             get() {
-                return get(USER_IMAGE_URL)
+                return getString(USER_IMAGE_URL)
             }
             set(value) {
                 set(USER_IMAGE_URL, value)
             }
-        var showRaces: Boolean
+        var userBuddyUrl: String
             get() {
-                return instance.prefs.getBoolean(SHOW_RACES, false)
+                return getString(USER_BUDDY_URL)
             }
             set(value) {
-                instance.prefs.edit().putBoolean(SHOW_RACES, value).apply()
+                set(USER_BUDDY_URL, value)
+            }
+        var showRaces: Boolean
+            get() {
+                return getBoolean(SHOW_RACES)
+            }
+            set(value) {
+                set(SHOW_RACES, value)
             }
         var lastTicketState: Long
             get() {
-                return instance.prefs.getLong(LAST_TICKET_STEP, TicketController.Companion.TOS)
+                return getLong(LAST_TICKET_STEP, TicketController.TOS)
             }
             set(value) {
-                instance.prefs.edit().putLong(LAST_TICKET_STEP, value).apply()
+                set(LAST_TICKET_STEP, value)
             }
         var lastOnboardingState: Long
             get() {
-                return instance.prefs.getLong(LAST_ONBOARDING_STEP, OnboardingController.Companion.STARTED)
+                return getLong(LAST_ONBOARDING_STEP, OnboardingController.STARTED)
             }
             set(value) {
-                instance.prefs.edit().putLong(LAST_ONBOARDING_STEP, value).apply()
+                set(LAST_ONBOARDING_STEP, value)
             }
         var selfieUri: String
             get() {
-                return get(SELFIE_URI)
+                return getString(SELFIE_URI)
             }
             set(value) {
                 return set(SELFIE_URI, value)
             }
+        var selfieTransferId: Int
+            get() {
+                return getInt(SELFIE_TRANSFER_ID)
+            }
+            set(value) {
+                return set(SELFIE_TRANSFER_ID, value)
+            }
 
-        private fun get(@KEYS key: String): String {
-            return instance.prefs.getString(key, "")
+        private fun getString(@KEYS key: String, default: String = ""): String {
+            return instance.prefs.getString(key, default)
+        }
+
+        private fun getLong(@KEYS key: String, default: Long): Long {
+            return instance.prefs.getLong(key, default)
+        }
+
+        private fun getInt(@KEYS key: String, default: Int = -1): Int {
+            return instance.prefs.getInt(key, default)
+        }
+
+        private fun getBoolean(@KEYS key: String, default: Boolean = false): Boolean {
+            return instance.prefs.getBoolean(key, default)
         }
 
         private operator fun set(@KEYS key: String, value: String) {
             instance.prefs.edit().putString(key, value).apply()
+        }
+
+        private operator fun set(@KEYS key: String, value: Int) {
+            instance.prefs.edit().putInt(key, value).apply()
+        }
+
+        private operator fun set(@KEYS key: String, value: Long) {
+            instance.prefs.edit().putLong(key, value).apply()
+        }
+
+        private operator fun set(@KEYS key: String, value: Boolean) {
+            instance.prefs.edit().putBoolean(key, value).apply()
         }
 
         fun clear() {
@@ -116,7 +156,9 @@ class Storage private constructor(val prefs: SharedPreferences) {
             eventId = ""
             code = ""
             userImageUrl = ""
+            userBuddyUrl = ""
             selfieUri = ""
+            selfieTransferId = -1
             lastTicketState = TicketController.Companion.TOS
             lastOnboardingState = OnboardingController.Companion.STARTED
         }

@@ -1,26 +1,31 @@
 buildscript {
-    ext.android_support_version = '25.3.1'
-    ext.android_test_runner_version = '0.5'
-    ext.autovalue_version = '1.4.1'
-    ext.autovalue_gson_version = '0.4.6'
-    ext.crashlytics_version = '2.6.7'
-    ext.dagger_version = '2.11'
-    ext.espresso_version = '2.2.2'
-    ext.glide_version = '3.8.0'
-    ext.glide_okhttp3_integration_version = '1.5.0@aar'
-    ext.gson_version = '2.8.0'
-    ext.google_maps_version = '10.2.6'
-    ext.google_phonenumber_version = '8.5.0'
-    ext.junit_version = '4.12'
-    ext.kotlin_version = '1.1.2-3'
-    ext.mockito_version = '2.8.9'
-    ext.okhttp3_version = '3.8.0'
-    ext.powermock_version = '1.7.0RC4'
-    ext.retrofit_version = '2.3.0'
-    ext.rxandroid_version = '1.2.1'
-    ext.sqlbrite_version = '1.1.1'
-    ext.sqldelight_version = '0.6.1'
-    ext.uiautomator_version = "2.1.2"
+    ext {
+        android_support_version = '25.3.1'
+        android_test_runner_version = '0.5'
+        aws_version = '2.4.4'
+        autovalue_version = '1.4.1'
+        autovalue_gson_version = '0.4.6'
+        crashlytics_version = '2.6.7'
+        dagger_version = '2.11'
+        espresso_version = '2.2.2'
+        glide_version = '3.8.0'
+        glide_okhttp3_integration_version = '1.5.0@aar'
+        gson_version = '2.8.0'
+        google_maps_version = '11.0.1'
+        google_phonenumber_version = '8.5.0'
+        junit_version = '4.12'
+        kotlin_version = '1.1.2-5'
+        mockito_version = '2.8.9'
+        okhttp3_version = '3.8.0'
+        powermock_version = '1.7.0RC4'
+        pubnub_version = '4.6.3'
+        retrofit_version = '2.3.0'
+        rxandroid_version = '1.2.1'
+        s3mock_version = '0.2.2'
+        sqlbrite_version = '1.1.1'
+        sqldelight_version = '0.6.1'
+        uiautomator_version = "2.1.2"
+    }
 
     repositories {
         jcenter()
@@ -47,8 +52,30 @@ repositories {
 }
 
 android {
-    compileSdkVersion 25
     buildToolsVersion "25.0.3"
+    buildTypes {
+        debug {
+            // 10.0.2.2 is the address that the android emulator uses to access the host machine
+            buildConfigField "String", "SERVER", "\"http://10.0.2.2:3000\""
+            buildConfigField "String", "AWS_COGNITO_POOL_ID", "\"us-east-1:ddfe8d69-56d1-41c7-aabd-6623ce3ddf43\""
+            buildConfigField "String", "AWS_BUCKET_NAME", "\"https://kartwheel-staging.s3.amazonaws.com\""
+            buildConfigField "String", "PUBNUB_SUBSCRIPTION_KEY", "\"sub-c-10a277a8-0f99-11e7-bd0e-0619f8945a4f\""
+            buildConfigField "String", "PLAYER_NO_IMAGE_URL", "\"https://kartwheel-app.s3.amazonaws.com/shared/empty-profile.jpg\""
+            buildConfigField "String", "DEFAULT_BUDDY_URL", "\"https://s3.amazonaws.com/kartwheel-production/buddies/buddy-unicorn.png\""
+        }
+
+        release {
+            buildConfigField "String", "SERVER", "\"https://www.handstandwith.us/kartwheel\""
+            buildConfigField "String", "AWS_COGNITO_POOL_ID", "\"us-east-1:ddfe8d69-56d1-41c7-aabd-6623ce3ddf43\""
+            buildConfigField "String", "AWS_BUCKET_NAME", "\"https://kartwheel-production.s3.amazonaws.com\""
+            buildConfigField "String", "PUBNUB_SUBSCRIPTION_KEY", "\"sub-c-9700ed8c-be38-11e6-8036-0619f8945a4f\""
+            buildConfigField "String", "PLAYER_NO_IMAGE_URL", "\"https://kartwheel-app.s3.amazonaws.com/shared/empty-profile.jpg\""
+            buildConfigField "String", "DEFAULT_BUDDY_URL", "\"https://s3.amazonaws.com/kartwheel-production/buddies/buddy-unicorn.png\""
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileSdkVersion 25
     defaultConfig {
         applicationId "us.handstand.kartwheel"
         minSdkVersion 19
@@ -57,18 +84,6 @@ android {
         versionName "1.0"
         testInstrumentationRunner "us.handstand.kartwheel.test.KartWheelTestRunner"
         testFunctionalTest true
-    }
-    buildTypes {
-        debug {
-            // 10.0.2.2 is the address that the android emulator uses to access the host machine
-            buildConfigField "String", "SERVER", "\"http://10.0.2.2:3000\""
-        }
-
-        release {
-            buildConfigField "String", "SERVER", "\"https://www.handstandwith.us/kartwheel\""
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
     }
     lintOptions {
         abortOnError false
@@ -86,9 +101,15 @@ android {
     }
 }
 
-configurations.all { resolutionStrategy.force("com.google.code.findbugs:jsr305:3.0.1") }
+configurations.all {
+    resolutionStrategy {
+        force("com.google.code.findbugs:jsr305:3.0.1", "org.slf4j:slf4j-api:1.7.22")
+    }
+}
 
 dependencies {
+
+    compile "com.amazonaws:aws-android-sdk-s3:$aws_version"
     compile "com.android.support:appcompat-v7:$android_support_version"
     compile "com.android.support:design:$android_support_version"
     compile("com.crashlytics.sdk.android:crashlytics:$crashlytics_version@aar") {
@@ -100,11 +121,11 @@ dependencies {
     compile "com.google.code.gson:gson:$gson_version"
     compile "com.google.dagger:dagger:$dagger_version"
     compile "com.googlecode.libphonenumber:libphonenumber:$google_phonenumber_version"
+    compile "com.pubnub:pubnub-gson:$pubnub_version"
     compile "com.squareup.okhttp3:okhttp:$okhttp3_version"
     compile "com.squareup.retrofit2:converter-gson:$retrofit_version"
     compile "com.squareup.retrofit2:retrofit:$retrofit_version"
     compile "com.squareup.sqlbrite:sqlbrite:$sqlbrite_version"
-    compile "io.reactivex:rxandroid:$rxandroid_version"
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     kapt "com.google.auto.value:auto-value:$autovalue_version"

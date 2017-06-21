@@ -48,46 +48,11 @@
     </LinearLayout>
 
     <FrameLayout
+        android:id="@+id/fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/button"
-        android:layout_below="@+id/titleContainer">
-
-        <LinearLayout
-            android:id="@+id/imageContainer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <us.handstand.kartwheel.layout.CircularImageView
-                android:id="@+id/image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/onboarding_camera"
-                android:background="@drawable/background_white_circle"
-                android:maxHeight="200dp"
-                android:maxWidth="200dp"
-                android:minHeight="175dp"
-                android:minWidth="175dp" />
-
-            <TextView
-                android:id="@+id/imageText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="11dp"
-                android:gravity="center_horizontal"
-                android:text="@string/onboarding_selfie_tap_to_change" />
-        </LinearLayout>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/emojiRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            app:layoutManager="LinearLayoutManager"
-            tools:listitem="@layout/recycler_view_item_registrant_avatar" />
-    </FrameLayout>
+        android:layout_below="@+id/titleContainer" />
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/button"

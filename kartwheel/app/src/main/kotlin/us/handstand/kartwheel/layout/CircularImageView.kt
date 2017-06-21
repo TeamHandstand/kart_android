@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
+import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.ViewTreeObserver
 import android.widget.ImageView
@@ -53,9 +54,13 @@ class CircularImageView : ImageView {
         }
     }
 
-    fun setImageUrl(imageUrl: String) {
-        if (imageUrl == "") {
-            setImageResource(R.drawable.placeholder_registrant_avatar)
+    fun setImageUrl(imageUrl: String?, default: String = "") {
+        if (TextUtils.isEmpty(imageUrl)) {
+            if (TextUtils.isEmpty(default)) {
+                setImageResource(R.drawable.placeholder_registrant_avatar)
+            } else {
+                setImageUrl(default)
+            }
         } else {
             if (measuredHeight == 0) {
                 waitForMeasuredHeight { setImageUrl(imageUrl) }

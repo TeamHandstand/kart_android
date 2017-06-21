@@ -72,8 +72,9 @@ class OnboardingActivityTest {
         onView(withId(R.id.button)).perform(click())
         checkOnboardingState(SELFIE)
         onView(withId(R.id.image)).perform(click())
-//        intended(allOf(hasAction(ACTION_IMAGE_CAPTURE), hasExtra(EXTRA_OUTPUT, "Bleh")))
         takePhotoWithNativeCamera()
+        onView(withId(R.id.button)).perform(click())
+        checkOnboardingState(PICK_BUDDY)
     }
 
     fun takePhotoWithNativeCamera() {

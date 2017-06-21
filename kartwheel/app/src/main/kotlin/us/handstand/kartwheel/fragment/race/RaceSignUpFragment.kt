@@ -27,7 +27,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.layout.BatteryWarningView
 import us.handstand.kartwheel.layout.TopCourseTimeView
@@ -122,8 +121,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener 
         val raceQuery = Race.FACTORY.select_for_id(raceId)
         raceSubscription = Database.get().createQuery(RaceModel.TABLE_NAME, raceQuery.statement, *raceQuery.args)
                 .mapToOne { Race.FACTORY.select_for_idMapper().map(it) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { onRaceUpdated(it) }
+                .subscribe { activity.runOnUiThread { onRaceUpdated(it) } }
         API.getRaceParticipants(Storage.eventId, raceId)
         activity.registerReceiver(batteryInfoReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
     }
@@ -207,8 +205,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener 
         val raceQuery = Race.FACTORY.select_for_id(activity.intent.getStringExtra(RaceModel.ID))
         subscription = Database.get().createQuery(RaceModel.TABLE_NAME, raceQuery.statement, *raceQuery.args)
                 .mapToOne { Race.FACTORY.select_for_idMapper().map(it) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { drawCourse(it.course(), this.map!!) }
+                .subscribe { activity.runOnUiThread { drawCourse(it.course(), this.map!!) } }
     }
 
     private fun drawCourse(course: Course?, map: GoogleMap) {

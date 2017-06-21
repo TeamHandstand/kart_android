@@ -40,7 +40,6 @@ class MockAPI(val db: BriteDatabase?) {
         Database.initialize(context)
         Storage.clear()
         API.initialize(db, okHttpClient, server.url("/").uri().toString())
-
     }
 
     companion object {
