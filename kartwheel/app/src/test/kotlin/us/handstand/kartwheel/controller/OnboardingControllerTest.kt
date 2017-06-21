@@ -13,7 +13,7 @@ import us.handstand.kartwheel.controller.OnboardingController.Companion.SELFIE
 import us.handstand.kartwheel.controller.OnboardingController.Companion.STARTED
 import us.handstand.kartwheel.controller.OnboardingController.Companion.VIDEO
 
-class OnboardingControllerTest : OnboardingController.Companion.OnboardingStepCompletionListener {
+class OnboardingControllerTest : OnboardingStepCompletionListener {
     val onboardingController = OnboardingController(this)
 
     var nextStep: Long = NONE

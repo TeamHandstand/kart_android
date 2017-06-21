@@ -11,7 +11,6 @@ import com.squareup.sqlbrite.BriteDatabase
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.model.*
 import us.handstand.kartwheel.network.storage.StorageProvider
 import us.handstand.kartwheel.network.storage.TransferObserver
@@ -27,7 +26,7 @@ object API {
             .registerTypeAdapter(Date::class.java, DateTypeAdapter())
             .create()!!
     var db: BriteDatabase? = null
-    @Inject lateinit var storageProvider: StorageProvider
+    lateinit var storageProvider: StorageProvider
 
     interface APICallback<in T : Any> {
         fun onSuccess(response: T)
@@ -60,9 +59,10 @@ object API {
     private var retrofit: Retrofit? = null
     private var kartWheelService: KartWheelService? = null
 
-    fun initialize(db: BriteDatabase?, okHttpClient: OkHttpClient, url: String) {
-        KartWheel.injector.inject(this)
-        this.db = db
+    @Suppress("unused")
+    @Inject
+    fun initialize(okHttpClient: OkHttpClient, url: String, storageProvider: StorageProvider) {
+        this.storageProvider = storageProvider
         retrofit = Retrofit.Builder()
                 .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create(gson))

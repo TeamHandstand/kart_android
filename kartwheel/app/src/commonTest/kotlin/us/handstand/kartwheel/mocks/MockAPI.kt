@@ -2,7 +2,6 @@ package us.handstand.kartwheel.mocks
 
 import android.content.Context
 import com.squareup.sqlbrite.BriteDatabase
-import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockWebServer
 import us.handstand.kartwheel.model.*
 import us.handstand.kartwheel.network.API
@@ -31,15 +30,14 @@ fun String.matches(pattern: Pattern): Boolean {
 }
 
 class MockAPI(val db: BriteDatabase?) {
-    val server = MockWebServer()
     val context = MockDBContext()
+    val server = MockWebServer()
 
     init {
-        val okHttpClient = OkHttpClient.Builder().build()
         Storage.initialize(context.getSharedPreferences("", Context.MODE_PRIVATE))
         Database.initialize(context)
         Storage.clear()
-        API.initialize(db, okHttpClient, server.url("/").uri().toString())
+        API.db = db
     }
 
     companion object {

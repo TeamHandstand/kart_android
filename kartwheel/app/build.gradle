@@ -151,4 +151,4 @@ dependencies {
     testCompile "junit:junit:$junit_version"
 }
 
-kapt { generateStubs = true }
+//kapt { generateStubs = true }

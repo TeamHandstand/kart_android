@@ -4,7 +4,10 @@ import okhttp3.mockwebserver.MockResponse
 import org.hamcrest.CoreMatchers
 import org.junit.Assert.assertThat
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
+import us.handstand.kartwheel.inject.DaggerInjector
+import us.handstand.kartwheel.inject.provider.ApiProvider
 import us.handstand.kartwheel.mocks.MockAPI
 import us.handstand.kartwheel.mocks.toJson
 import us.handstand.kartwheel.model.Storage
@@ -15,6 +18,14 @@ class APITest {
     private val mockApi = MockAPI(null)
     private val lock = Object()
     private var response: Any? = null
+
+    @Before
+    fun setUp() {
+        val injector = DaggerInjector.builder()
+                .apiProvider(ApiProvider(mockApi.server.url("/").uri().toString()))
+                .build()
+        injector.inject(API)
+    }
 
     @Test
     fun claimTicket() {
