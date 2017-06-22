@@ -20,6 +20,7 @@ open class KartWheel : Application() {
         super.onCreate()
         Storage.initialize(PreferenceManager.getDefaultSharedPreferences(this))
         Database.initialize(this)
+        API.db = Database.get()
         Fabric.with(this, Crashlytics())
         injector = DaggerInjector.builder()
                 .controllerProvider(ControllerProvider())
