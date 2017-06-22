@@ -93,9 +93,7 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
 
         Storage.lastOnboardingState = next
         val nextFragment = getFragmentForStep(next)
-        if (previous == SELFIE) {
-            button.isEnabled = true
-        }
+        button.isEnabled = true
         if (nextFragment == null) {
             if (fragment != null) {
                 supportFragmentManager.beginTransaction().remove(fragment as Fragment).commit()
@@ -116,7 +114,7 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
                     button.isEnabled = !(fragment as SelfieFragment).startUpload()
                 } else if (fragment is EmojiFragment && isEmpty(Storage.userBuddyUrl)) {
                     button.isEnabled = !(fragment as EmojiFragment).uploadBuddyEmoji()
-                } else if (fragment?.readyForNextStep() == true) {
+                } else if (fragment?.readyForNextStep() == true || fragment == null) {
                     controller.onStepCompleted(Storage.lastOnboardingState)
                 }
             }

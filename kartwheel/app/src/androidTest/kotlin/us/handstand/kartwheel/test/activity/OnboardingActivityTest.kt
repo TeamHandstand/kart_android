@@ -16,7 +16,10 @@ import android.support.test.uiautomator.Until
 import okhttp3.mockwebserver.MockResponse
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.not
-import org.junit.*
+import org.junit.After
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 import org.junit.runner.RunWith
 import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
@@ -54,27 +57,6 @@ class OnboardingActivityTest {
     fun tearDown() {
         KartWheel.logout()
         MockStorageProvider.transferObserver.bytesTransferred = 0L
-    }
-
-    @Ignore
-    @Test
-    fun traverseOnboarding() {
-        checkOnboardingState(STARTED)
-
-        onView(withId(R.id.button)).perform(click())
-        checkOnboardingState(SELFIE)
-
-        onView(withId(R.id.button)).perform(click())
-        checkOnboardingState(PICK_BUDDY)
-
-        onView(withId(R.id.button)).perform(click())
-        checkOnboardingState(BUDDY_EXPLANATION)
-
-        onView(withId(R.id.button)).perform(click())
-        checkOnboardingState(POINT_SYSTEM)
-
-        onView(withId(R.id.button)).perform(click())
-        checkOnboardingState(VIDEO)
     }
 
     @Test
@@ -183,7 +165,7 @@ class OnboardingActivityTest {
         checkOnboardingState(POINT_SYSTEM)
 
         // Should advance to the video since there's no action for the user to perform on the explanation
-        onView(withId(R.id.image)).perform(click())
+        onView(withId(R.id.button)).perform(click())
         checkOnboardingState(VIDEO)
 
     }

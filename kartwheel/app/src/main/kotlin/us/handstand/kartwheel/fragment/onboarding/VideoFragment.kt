@@ -16,8 +16,9 @@ class VideoFragment : Fragment(), OnboardingActivity.OnboardingFragment, View.On
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val fragment = inflater.inflate(R.layout.fragment_onboarding_circle_image, container, false) as ViewGroup
         video = ViewUtil.findView(fragment, R.id.image)
+        video.setImageResource(R.drawable.onboarding_play_button)
         video.setOnClickListener(this)
-        return super.onCreateView(inflater, container, savedInstanceState)
+        return fragment
     }
 
     override fun onClick(v: View?) {
