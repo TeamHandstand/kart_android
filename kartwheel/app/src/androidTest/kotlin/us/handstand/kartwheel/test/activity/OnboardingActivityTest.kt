@@ -160,7 +160,7 @@ class OnboardingActivityTest {
     }
 
     @Test
-    fun skipBuddyUpload_ifUserAlreadyHasBuddyUrl() {
+    fun showVideo_whenClicked() {
         // User already has image and buddy
         Storage.userImageUrl = "https://www.skipimageuploading.com"
         Storage.userBuddyUrl = "https://www.skipbuddyuploading.com"
@@ -176,6 +176,16 @@ class OnboardingActivityTest {
         // Should advance to the buddy explanation screen, since we already have one
         onView(withId(R.id.button)).perform(click())
         checkOnboardingState(BUDDY_EXPLANATION)
+
+
+        // Show how points are earned
+        onView(withId(R.id.button)).perform(click())
+        checkOnboardingState(POINT_SYSTEM)
+
+        // Should advance to the video since there's no action for the user to perform on the explanation
+        onView(withId(R.id.image)).perform(click())
+        checkOnboardingState(VIDEO)
+
     }
 
     fun takePhotoWithNativeCamera() {
@@ -189,5 +199,6 @@ class OnboardingActivityTest {
         onView(withId(R.id.pageNumber)).check(matches(withText("${step} of 5")))
         onView(withId(R.id.description)).check(matches(withText(OnboardingController.getDescriptionStringResIdForStep(step))))
         onView(withId(R.id.button)).check(matches(withText(OnboardingController.getButtonStringResIdForStep(step))))
+        onView(withId(R.id.makeItRainDescription)).check(matches(withEffectiveVisibility(if (step == POINT_SYSTEM) VISIBLE else INVISIBLE)))
     }
 }

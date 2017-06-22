@@ -1,5 +1,9 @@
 package us.handstand.kartwheel.activity
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.app.Activity
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
@@ -10,9 +14,7 @@ import android.text.TextUtils.isEmpty
 import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import android.widget.Toast.LENGTH_LONG
 import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
@@ -40,6 +42,7 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
     private lateinit var button: Button
     private lateinit var makeItRainText: TextView
     private lateinit var recyclerView: RecyclerView
+    private lateinit var background: RelativeLayout
     private lateinit var behavior: BottomSheetBehavior<RecyclerView>
 
     private val controller = OnboardingController(this)
@@ -54,12 +57,13 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
         button = ViewUtil.findView(this, R.id.button)
         makeItRainText = ViewUtil.findView(this, R.id.makeItRainDescription)
         recyclerView = ViewUtil.findView(this, R.id.bottomSheet)
+        background = ViewUtil.findView(this, R.id.onboardingBackground)
 
         behavior = BottomSheetBehavior.from(recyclerView)
 
         button.setOnClickListener(this)
 
-        controller.transition(NONE, Storage.lastOnboardingState)
+        controller.transition(NONE, POINT_SYSTEM);//Storage.lastOnboardingState)
     }
 
     override fun showNextStep(previous: Long, next: Long) {
@@ -96,7 +100,6 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
     }
 
     override fun onClick(v: View) {
-        // TODO: Enable/Disable button based on state of selfie/buddy upload
         when (v.id) {
             R.id.button -> {
                 if (fragment is SelfieFragment && (isEmpty(Storage.userImageUrl) || !isEmpty(Storage.selfieUri))) {
@@ -107,7 +110,41 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
                     controller.onStepCompleted(Storage.lastOnboardingState)
                 }
             }
+            R.id.onboardingBackground -> {
+                if (Storage.lastOnboardingState == POINT_SYSTEM) {
+                    val emojiImageView = getRandomEmojiImageView()
+                    val xAnimator = ObjectAnimator.ofFloat(emojiImageView, "x", getRandomXValue())
+                    val yAnimator = ObjectAnimator.ofFloat(emojiImageView, "y", background.measuredHeight.toFloat() + emojiImageView.measuredHeight)
+                    val animatorSet = AnimatorSet()
+                    animatorSet.duration = (100 + (Math.random() * (600) + 1)).toLong()
+                    animatorSet.addListener(object : AnimatorListenerAdapter() {
+                        override fun onAnimationStart(animation: Animator?) {
+                            background.addView(emojiImageView)
+                        }
+
+                        override fun onAnimationEnd(animation: Animator?) {
+                            background.removeView(emojiImageView)
+                        }
+                    })
+                    animatorSet.playTogether(xAnimator, yAnimator)
+                }
+            }
         }
+    }
+
+    fun getRandomEmojiImageView(): ImageView {
+        val randomEmoji = ImageView(this)
+        val emojiDrawableResource = pointSystemEmojis[((Math.random() * 10) % pointSystemEmojis.size).toInt()]
+        val size = pointSystemSizes[((Math.random() * 10) % pointSystemSizes.size).toInt()]
+        randomEmoji.setImageResource(emojiDrawableResource)
+        randomEmoji.layoutParams = RelativeLayout.LayoutParams(size, size)
+        randomEmoji.x = getRandomXValue()
+        return randomEmoji
+    }
+
+    fun getRandomXValue(): Float {
+        val random = (Math.random() / Int.MAX_VALUE).toFloat() * background.measuredWidth
+        return if (random < 20) 20f else if (random > background.measuredHeight - 50f) random - 50f else random
     }
 
     override fun showDialog(message: String) {
@@ -145,4 +182,8 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
         return null
     }
 
+    companion object {
+        val pointSystemEmojis = listOf<Int>(R.drawable.leaderboard_third_place, R.drawable.leaderboard_third_place, R.drawable.leaderboard_third_place, R.drawable.leaderboard_third_place, R.drawable.leaderboard_third_place)
+        val pointSystemSizes = listOf<Int>(50, 60, 70, 80, 90)
+    }
 }
