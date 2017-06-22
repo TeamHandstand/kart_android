@@ -17,6 +17,7 @@ import android.support.test.runner.AndroidJUnit4
 import android.util.Log
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.QueueDispatcher
 import okhttp3.mockwebserver.RecordedRequest
 import org.hamcrest.Matchers.*
 import org.junit.After
@@ -31,17 +32,20 @@ import us.handstand.kartwheel.layout.TOSScrollView
 import us.handstand.kartwheel.mocks.MockAPI
 import us.handstand.kartwheel.mocks.matches
 import us.handstand.kartwheel.mocks.toJson
-import us.handstand.kartwheel.model.Database
+import us.handstand.kartwheel.test.AndroidTestKartWheel
 import us.handstand.kartwheel.test.inject.provider.ControllerProviderWithIdlingResources
 
 @RunWith(AndroidJUnit4::class)
 class TicketActivityTest {
     @Rule @JvmField
     val testRule = IntentsTestRule(TicketActivity::class.java)
+    lateinit var mockApi: MockAPI
 
     @Before
     fun setUp() {
         ControllerProviderWithIdlingResources.registerIdlingResources()
+        mockApi = AndroidTestKartWheel.api
+        mockApi.server.setDispatcher(QueueDispatcher())
     }
 
     @After
@@ -61,7 +65,6 @@ class TicketActivityTest {
     @Test
     fun fillOutUserInfo_whenEnteredCode() {
         // Setup mock server
-        val mockApi = MockAPI(Database.get())
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getTeam().toJson()))
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getEvent(false).toJson()))
 
@@ -97,7 +100,6 @@ class TicketActivityTest {
     @Test
     fun doNotAdvance_whenIncorrectSignUpEntered() {
         // Setup mock server
-        val mockApi = MockAPI(Database.get())
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getTeam().toJson()))
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getEvent(false).toJson()))
 
@@ -153,7 +155,6 @@ class TicketActivityTest {
     fun open_emailApp_whenAlreadyClaimed_contactUsButtonClicked() {
         intending(hasAction(Intent.ACTION_CHOOSER)).respondWith(Instrumentation.ActivityResult(0, Intent()))
         // Setup mock server to return "already claimed" response
-        val mockApi = MockAPI(Database.get())
         mockApi.server.enqueue(MockResponse().setResponseCode(409).setBody("{}"))
 
         // Scroll TOS
@@ -177,7 +178,6 @@ class TicketActivityTest {
     @Test
     fun shareNonClaimedUserTicket() {
         // Setup mock server
-        val mockApi = MockAPI(Database.get())
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getTeam(signUpUser1 = true, onboardedUser1 = true).toJson()))
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getEvent(false).toJson()))
 
@@ -200,7 +200,6 @@ class TicketActivityTest {
     @Test
     fun showGameInfo_ifOnboarded_andEverythingFilledOut_onPreGameday() {
         // Setup mock server
-        val mockApi = MockAPI(Database.get())
         mockApi.server.setDispatcher(object : Dispatcher() {
             override fun dispatch(request: RecordedRequest): MockResponse {
                 if (request.path.matches(MockAPI.userPattern)) {
@@ -231,7 +230,6 @@ class TicketActivityTest {
     @Test
     fun forfeitUser_thenNevermind() {
         // Setup mock server
-        val mockApi = MockAPI(Database.get())
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getTeam(signUpUser1 = true, onboardedUser1 = true).toJson()))
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getEvent(false).toJson()))
 
@@ -252,7 +250,6 @@ class TicketActivityTest {
     @Test
     fun actuallyForfeitUser_butDoNotSave() {
         // Setup mock server
-        val mockApi = MockAPI(Database.get())
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getTeam(signUpUser1 = true, onboardedUser1 = true).toJson()))
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getEvent(false).toJson()))
         mockApi.server.enqueue(MockResponse().setBody("{}"))
@@ -280,7 +277,6 @@ class TicketActivityTest {
     @Test
     fun showRaceList_ifOnboarded_andEverythingFilledOut_onGameday() {
         // Setup mock server
-        val mockApi = MockAPI(Database.get())
         mockApi.server.setDispatcher(object : Dispatcher() {
             override fun dispatch(request: RecordedRequest): MockResponse {
                 if (request.path.matches(MockAPI.coursesPattern)) {
@@ -319,7 +315,6 @@ class TicketActivityTest {
     @Test
     fun prePopulateFields_thatUserHas() {
         // Setup mock server
-        val mockApi = MockAPI(Database.get())
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getTeam().toJson()))
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getEvent(false).toJson()))
 
