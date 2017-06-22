@@ -8,6 +8,7 @@ buildscript {
         crashlytics_version = '2.6.7'
         dagger_version = '2.11'
         espresso_version = '2.2.2'
+        exoplayer_version = 'r2.4.2'
         glide_version = '3.8.0'
         glide_okhttp3_integration_version = '1.5.0@aar'
         gson_version = '2.8.0'
@@ -55,24 +56,41 @@ android {
     buildToolsVersion "25.0.3"
     buildTypes {
         debug {
-            // 10.0.2.2 is the address that the android emulator uses to access the host machine
-            buildConfigField "String", "SERVER", "\"http://10.0.2.2:3000\""
-            buildConfigField "String", "AWS_COGNITO_POOL_ID", "\"us-east-1:ddfe8d69-56d1-41c7-aabd-6623ce3ddf43\""
             buildConfigField "String", "AWS_BUCKET_NAME", "\"https://kartwheel-staging.s3.amazonaws.com\""
-            buildConfigField "String", "PUBNUB_SUBSCRIPTION_KEY", "\"sub-c-10a277a8-0f99-11e7-bd0e-0619f8945a4f\""
-            buildConfigField "String", "PLAYER_NO_IMAGE_URL", "\"https://kartwheel-app.s3.amazonaws.com/shared/empty-profile.jpg\""
-            buildConfigField "String", "DEFAULT_BUDDY_URL", "\"https://s3.amazonaws.com/kartwheel-production/buddies/buddy-unicorn.png\""
-        }
-
-        release {
-            buildConfigField "String", "SERVER", "\"https://www.handstandwith.us/kartwheel\""
             buildConfigField "String", "AWS_COGNITO_POOL_ID", "\"us-east-1:ddfe8d69-56d1-41c7-aabd-6623ce3ddf43\""
-            buildConfigField "String", "AWS_BUCKET_NAME", "\"https://kartwheel-production.s3.amazonaws.com\""
-            buildConfigField "String", "PUBNUB_SUBSCRIPTION_KEY", "\"sub-c-9700ed8c-be38-11e6-8036-0619f8945a4f\""
-            buildConfigField "String", "PLAYER_NO_IMAGE_URL", "\"https://kartwheel-app.s3.amazonaws.com/shared/empty-profile.jpg\""
             buildConfigField "String", "DEFAULT_BUDDY_URL", "\"https://s3.amazonaws.com/kartwheel-production/buddies/buddy-unicorn.png\""
+            // 10.0.2.2 is the address that the android emulator uses to access the host machine
+            buildConfigField "String", "PLAYER_NO_IMAGE_URL", "\"https://kartwheel-app.s3.amazonaws.com/shared/empty-profile.jpg\""
+            buildConfigField "String", "PUBNUB_SUBSCRIPTION_KEY", "\"sub-c-10a277a8-0f99-11e7-bd0e-0619f8945a4f\""
+            buildConfigField "String", "SERVER", "\"http://10.0.2.2:3000\""
+            buildConfigField "String", "SERVER_FRAGMENT", "\"\""
+            debuggable true
+            resValue "string", "google_maps_key", "TODO"
+        }
+        staging {
+            buildConfigField "String", "AWS_BUCKET_NAME", "\"https://kartwheel-staging.s3.amazonaws.com\""
+            buildConfigField "String", "AWS_COGNITO_POOL_ID", "\"us-east-1:ddfe8d69-56d1-41c7-aabd-6623ce3ddf43\""
+            buildConfigField "String", "DEFAULT_BUDDY_URL", "\"https://s3.amazonaws.com/kartwheel-production/buddies/buddy-unicorn.png\""
+            buildConfigField "String", "PLAYER_NO_IMAGE_URL", "\"https://kartwheel-app.s3.amazonaws.com/shared/empty-profile.jpg\""
+            buildConfigField "String", "PUBNUB_SUBSCRIPTION_KEY", "\"sub-c-10a277a8-0f99-11e7-bd0e-0619f8945a4f\""
+            buildConfigField "String", "SERVER", "\"http://api.staging.handstandwith.us\""
+            buildConfigField "String", "SERVER_FRAGMENT", "\"kart/v1/\""
+            debuggable true
+            resValue "string", "google_maps_key", "TODO"
+            signingConfig signingConfigs.debug
+        }
+        release {
+            buildConfigField "String", "DEFAULT_BUDDY_URL", "\"https://s3.amazonaws.com/kartwheel-production/buddies/buddy-unicorn.png\""
+            buildConfigField "String", "AWS_BUCKET_NAME", "\"https://kartwheel-production.s3.amazonaws.com\""
+            buildConfigField "String", "AWS_COGNITO_POOL_ID", "\"us-east-1:ddfe8d69-56d1-41c7-aabd-6623ce3ddf43\""
+            buildConfigField "String", "SERVER", "\"https://www.handstandwith.us\""
+            buildConfigField "String", "SERVER_FRAGMENT", "\"kartwheel/\""
+            buildConfigField "String", "PLAYER_NO_IMAGE_URL", "\"https://kartwheel-app.s3.amazonaws.com/shared/empty-profile.jpg\""
+            buildConfigField "String", "PUBNUB_SUBSCRIPTION_KEY", "\"sub-c-9700ed8c-be38-11e6-8036-0619f8945a4f\""
+            debuggable false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            resValue "string", "google_maps_key", "TODO"
         }
     }
     compileSdkVersion 25
