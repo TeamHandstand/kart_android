@@ -2,7 +2,6 @@ package us.handstand.kartwheel.activity
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.app.Activity
 import android.os.Bundle
@@ -14,6 +13,7 @@ import android.text.TextUtils.isEmpty
 import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
+import android.view.animation.AccelerateInterpolator
 import android.widget.*
 import android.widget.Toast.LENGTH_LONG
 import us.handstand.kartwheel.KartWheel
@@ -33,6 +33,10 @@ import us.handstand.kartwheel.fragment.onboarding.StartedFragment
 import us.handstand.kartwheel.fragment.onboarding.VideoFragment
 import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.model.Storage
+import java.util.*
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledFuture
+import java.util.concurrent.TimeUnit
 
 
 class OnboardingActivity : AppCompatActivity(), View.OnClickListener, OnboardingStepCompletionListener {
@@ -47,6 +51,8 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
 
     private val controller = OnboardingController(this)
     private var fragment: OnboardingFragment? = null
+    private val scheduler = Executors.newSingleThreadScheduledExecutor()
+    private var timer: ScheduledFuture<*>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,12 +64,13 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
         makeItRainText = ViewUtil.findView(this, R.id.makeItRainDescription)
         recyclerView = ViewUtil.findView(this, R.id.bottomSheet)
         background = ViewUtil.findView(this, R.id.onboardingBackground)
+        background.setOnClickListener(this)
 
         behavior = BottomSheetBehavior.from(recyclerView)
 
         button.setOnClickListener(this)
 
-        controller.transition(NONE, POINT_SYSTEM);//Storage.lastOnboardingState)
+        controller.transition(NONE, Storage.lastOnboardingState)
     }
 
     override fun showNextStep(previous: Long, next: Long) {
@@ -93,6 +100,9 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
             if (fragment != null) {
                 supportFragmentManager.beginTransaction().remove(fragment as Fragment).commit()
             }
+            if (next == POINT_SYSTEM) {
+                startMedalRain()
+            }
         } else if (!isFinishing && !supportFragmentManager.isDestroyed) {
             supportFragmentManager.beginTransaction().replace(R.id.fragment, nextFragment as Fragment).commit()
         }
@@ -112,39 +122,54 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
             }
             R.id.onboardingBackground -> {
                 if (Storage.lastOnboardingState == POINT_SYSTEM) {
-                    val emojiImageView = getRandomEmojiImageView()
-                    val xAnimator = ObjectAnimator.ofFloat(emojiImageView, "x", getRandomXValue())
-                    val yAnimator = ObjectAnimator.ofFloat(emojiImageView, "y", background.measuredHeight.toFloat() + emojiImageView.measuredHeight)
-                    val animatorSet = AnimatorSet()
-                    animatorSet.duration = (100 + (Math.random() * (600) + 1)).toLong()
-                    animatorSet.addListener(object : AnimatorListenerAdapter() {
-                        override fun onAnimationStart(animation: Animator?) {
-                            background.addView(emojiImageView)
-                        }
-
-                        override fun onAnimationEnd(animation: Animator?) {
-                            background.removeView(emojiImageView)
-                        }
-                    })
-                    animatorSet.playTogether(xAnimator, yAnimator)
+                    addRandomMedal()
                 }
             }
         }
     }
 
+    fun startMedalRain() {
+        timer = scheduler.scheduleWithFixedDelay({
+            if (Storage.lastOnboardingState == POINT_SYSTEM && !isDestroyed) {
+                runOnUiThread { addRandomMedal() }
+            } else {
+                timer?.cancel(true)
+            }
+        }, 0, 350, TimeUnit.MILLISECONDS)
+    }
+
+    // TODO: Figure out why the RecyclerView log is so noisy when this runs this is so noisy.
+    fun addRandomMedal() {
+        val emojiImageView = getRandomEmojiImageView()
+        val animator = ObjectAnimator.ofFloat(emojiImageView, "y", background.measuredHeight.toFloat() + emojiImageView.measuredHeight)
+        animator.duration = 1500
+        animator.interpolator = accelerateInterpolator
+        animator.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationStart(animation: Animator?) {
+                background.addView(emojiImageView, emojiImageView.layoutParams)
+            }
+
+            override fun onAnimationEnd(animation: Animator?) {
+                background.removeView(emojiImageView)
+            }
+        })
+        animator.start()
+    }
+
     fun getRandomEmojiImageView(): ImageView {
         val randomEmoji = ImageView(this)
-        val emojiDrawableResource = pointSystemEmojis[((Math.random() * 10) % pointSystemEmojis.size).toInt()]
-        val size = pointSystemSizes[((Math.random() * 10) % pointSystemSizes.size).toInt()]
+        val emojiDrawableResource = pointSystemEmojis[nextRandom(0, pointSystemEmojis.size)]
+        val size = pointSystemSizes[nextRandom(0, pointSystemSizes.size)]
         randomEmoji.setImageResource(emojiDrawableResource)
         randomEmoji.layoutParams = RelativeLayout.LayoutParams(size, size)
+        randomEmoji.y = -size.toFloat()
         randomEmoji.x = getRandomXValue()
         return randomEmoji
     }
 
     fun getRandomXValue(): Float {
-        val random = (Math.random() / Int.MAX_VALUE).toFloat() * background.measuredWidth
-        return if (random < 20) 20f else if (random > background.measuredHeight - 50f) random - 50f else random
+        val random = nextRandom(0, if (background.measuredWidth <= 0) 1 else background.measuredWidth)
+        return if (random < 20) 20f else if (random > background.measuredWidth - 50f) random - 50f else random.toFloat()
     }
 
     override fun showDialog(message: String) {
@@ -183,7 +208,13 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
     }
 
     companion object {
-        val pointSystemEmojis = listOf<Int>(R.drawable.leaderboard_third_place, R.drawable.leaderboard_third_place, R.drawable.leaderboard_third_place, R.drawable.leaderboard_third_place, R.drawable.leaderboard_third_place)
+        val random = Random()
+        val accelerateInterpolator = AccelerateInterpolator()
+        val pointSystemEmojis = listOf<Int>(R.drawable.leaderboard_first_place, R.drawable.leaderboard_second_place, R.drawable.leaderboard_third_place, R.drawable.team_detail_medal_ribbon, R.drawable.onboarding_preview_crown)
         val pointSystemSizes = listOf<Int>(50, 60, 70, 80, 90)
+
+        fun nextRandom(min: Int, max: Int): Int {
+            return random.nextInt(max) + min
+        }
     }
 }
