@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils.isEmpty
 import rx.Subscription
 import us.handstand.kartwheel.R
+import us.handstand.kartwheel.controller.OnboardingController
+import us.handstand.kartwheel.controller.TicketController
 import us.handstand.kartwheel.model.Database
 import us.handstand.kartwheel.model.Event
 import us.handstand.kartwheel.model.EventModel
@@ -31,7 +33,9 @@ class LaunchActivity : AppCompatActivity() {
             subscription = Database.get().createQuery(EventModel.TABLE_NAME, eventQuery.statement, *eventQuery.args)
                     .mapToOne { it.use { Event.FACTORY.select_allMapper().map(it) } }
                     .subscribe {
-                        if (it.usersCanSeeRaces() == true) {
+                        if (it.usersCanSeeRaces() == true
+                                && (Storage.lastTicketState == TicketController.RACE_LIST || Storage.lastTicketState == TicketController.ONBOARDING)
+                                && Storage.lastOnboardingState == OnboardingController.FINISHED) {
                             startActivity(Intent(this, LoggedInActivity::class.java))
                         } else {
                             startActivity(Intent(this, TicketActivity::class.java))
