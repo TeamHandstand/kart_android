@@ -1,8 +1,6 @@
 package us.handstand.kartwheel.network
 
 
-import android.content.Context
-import android.net.Uri
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
@@ -13,7 +11,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import us.handstand.kartwheel.model.*
 import us.handstand.kartwheel.network.storage.StorageProvider
-import us.handstand.kartwheel.network.storage.TransferObserver
 import us.handstand.kartwheel.util.DateFormatter
 import java.util.*
 import java.util.concurrent.CountDownLatch
@@ -268,13 +265,5 @@ object API {
                 transaction?.end()
             }
         }))
-    }
-
-    /**
-     * @return the TransferObserver used to update progress UI
-     * // TODO: Mock TransferObserver
-     */
-    fun uploadPhoto(photoUri: Uri, context: Context): TransferObserver {
-        return storageProvider.upload(photoUri, context)
     }
 }

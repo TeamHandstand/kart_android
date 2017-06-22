@@ -1,79 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/blue">
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/titleContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/pageNumber"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:gravity="center_horizontal"
-            android:textColor="@android:color/white"
-            android:textSize="20dp"
-            tools:text="1 of 5" />
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="25dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:gravity="center_horizontal"
-            android:textColor="@android:color/white"
-            android:textSize="37dp"
-            tools:text="@string/onboarding_started_title" />
-
-        <TextView
-            android:id="@+id/description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="50dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:gravity="center_horizontal"
-            android:textColor="@android:color/white"
-            android:textSize="18dp"
-            tools:text="@string/onboarding_started_description" />
-    </LinearLayout>
-
-    <FrameLayout
-        android:id="@+id/fragment"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/button"
-        android:layout_below="@+id/titleContainer" />
+        android:background="@color/blue">
 
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/makeItRainDescription"
-        android:enabled="true"
-        android:padding="16dp"
-        android:textAllCaps="true"
-        android:textColor="@color/blue"
-        app:backgroundTint="@android:color/white"
-        tools:text="@string/onboarding_started_button" />
+        <LinearLayout
+            android:id="@+id/titleContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/makeItRainDescription"
+            <TextView
+                android:id="@+id/pageNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:gravity="center_horizontal"
+                android:textColor="@android:color/white"
+                android:textSize="20dp"
+                tools:text="1 of 5" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="25dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:gravity="center_horizontal"
+                android:textColor="@android:color/white"
+                android:textSize="37dp"
+                tools:text="@string/onboarding_started_title" />
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="50dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:gravity="center_horizontal"
+                android:textColor="@android:color/white"
+                android:textSize="18dp"
+                tools:text="@string/onboarding_started_description" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/button"
+            android:layout_below="@+id/titleContainer" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/makeItRainDescription"
+            android:enabled="true"
+            android:padding="16dp"
+            android:textAllCaps="true"
+            android:textColor="@color/blue"
+            app:backgroundTint="@android:color/white"
+            tools:text="@string/onboarding_started_button" />
+
+        <TextView
+            android:id="@+id/makeItRainDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="8dp"
+            android:gravity="center_horizontal"
+            android:text="@string/onboarding_make_it_rain"
+            android:textColor="@android:color/white"
+            android:textSize="13dp" />
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/bottomSheet"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="8dp"
-        android:gravity="center_horizontal"
-        android:text="@string/onboarding_make_it_rain"
-        android:textColor="@android:color/white"
-        android:textSize="13dp" />
-</RelativeLayout>
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:background="@android:color/white"
+        app:behavior_hideable="true"
+        app:behavior_peekHeight="0dp"
+        app:behavior_skipCollapsed="true"
+        app:layoutManager="GridLayoutManager"
+        app:layout_behavior="BottomSheetBehavior"
+        app:spanCount="4"
+        tools:listitem="@layout/recycler_view_item_emoji"
+        tools:visibility="visible" />
+</android.support.design.widget.CoordinatorLayout>

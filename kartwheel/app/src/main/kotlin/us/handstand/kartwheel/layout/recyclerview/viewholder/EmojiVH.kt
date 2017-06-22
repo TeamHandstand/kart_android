@@ -8,12 +8,13 @@ import us.handstand.kartwheel.layout.recyclerview.adapter.AdapterVH
 import us.handstand.kartwheel.layout.recyclerview.adapter.AdapterVHClickListener
 
 
-class RegistrantAvatarVH private constructor(val avatarView: CircularImageView) : AdapterVH(avatarView) {
-    override var adapterVHClickListener: AdapterVHClickListener<RegistrantAvatarVH>? = null
+class EmojiVH private constructor(val viewGroup: ViewGroup) : AdapterVH(viewGroup) {
+    override var adapterVHClickListener: AdapterVHClickListener<EmojiVH>? = null
+    private val avatarView: CircularImageView = viewGroup.findViewById(R.id.emoji) as CircularImageView
 
     companion object {
-        fun constructNewInstance(parent: ViewGroup): RegistrantAvatarVH {
-            return RegistrantAvatarVH(LayoutInflater.from(parent.context).inflate(R.layout.recycler_view_item_registrant_avatar, parent, false) as CircularImageView)
+        fun constructNewInstance(parent: ViewGroup): EmojiVH {
+            return EmojiVH(LayoutInflater.from(parent.context).inflate(R.layout.recycler_view_item_emoji, parent, false) as ViewGroup)
         }
     }
 

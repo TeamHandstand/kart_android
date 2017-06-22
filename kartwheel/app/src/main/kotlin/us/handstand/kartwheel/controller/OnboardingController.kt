@@ -3,7 +3,7 @@ package us.handstand.kartwheel.controller
 import android.support.annotation.IntDef
 import android.text.TextUtils
 import us.handstand.kartwheel.R
-import us.handstand.kartwheel.model.User
+import us.handstand.kartwheel.model.Storage
 
 interface OnboardingStepCompletionListener {
     fun showNextStep(@OnboardingController.Companion.OnboardingStep previous: Long, @OnboardingController.Companion.OnboardingStep next: Long)
@@ -72,9 +72,6 @@ class OnboardingController(var listener: OnboardingStepCompletionListener) {
         }
     }
 
-    var code: String? = null
-    var user: User? = null
-
     fun transition(@OnboardingStep from: Long, @OnboardingStep to: Long) {
         if (from != NONE && to != ERROR) {
             validateTransition(from, to)
@@ -86,7 +83,7 @@ class OnboardingController(var listener: OnboardingStepCompletionListener) {
         when (type) {
             STARTED -> transition(type, SELFIE)
             SELFIE -> transition(type, PICK_BUDDY)
-            PICK_BUDDY -> if (!TextUtils.isEmpty(user?.buddyUrl())) transition(type, BUDDY_EXPLANATION)
+            PICK_BUDDY -> if (!TextUtils.isEmpty(Storage.userBuddyUrl)) transition(type, BUDDY_EXPLANATION)
             BUDDY_EXPLANATION -> transition(type, POINT_SYSTEM)
             POINT_SYSTEM -> transition(type, VIDEO)
             VIDEO -> transition(type, FINISHED)

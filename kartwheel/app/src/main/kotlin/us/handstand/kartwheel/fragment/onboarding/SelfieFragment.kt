@@ -5,7 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.text.TextUtils
+import android.text.TextUtils.isEmpty
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +23,6 @@ import us.handstand.kartwheel.network.API
 import us.handstand.kartwheel.network.storage.TransferListener
 import us.handstand.kartwheel.network.storage.TransferObserver
 import us.handstand.kartwheel.network.storage.TransferState
-import us.handstand.kartwheel.network.storage.aws.AWS
 import us.handstand.kartwheel.util.Photos
 import java.lang.Exception
 
@@ -44,7 +43,7 @@ class SelfieFragment : Fragment(), OnboardingActivity.OnboardingFragment, Transf
     override fun onResume() {
         super.onResume()
         if (Storage.selfieTransferId != INVALID_TRANSFER_ID) {
-            transferObserver = AWS.getTransferById(Storage.selfieTransferId)
+            transferObserver = API.storageProvider.getTransferById(Storage.selfieTransferId)
         }
         transferObserver?.setTransferListener(this)
     }
@@ -61,21 +60,25 @@ class SelfieFragment : Fragment(), OnboardingActivity.OnboardingFragment, Transf
         }
     }
 
-    // TODO: Here on out needs to be mocked for tests
-    fun startUpload() {
+    /**
+     * @return true is we started the upload, or if the upload is in progress
+     */
+    fun startUpload(): Boolean {
         // No image taken
-        if (TextUtils.isEmpty(Storage.selfieUri) && TextUtils.isEmpty(Storage.userImageUrl)) {
+        if (isEmpty(Storage.selfieUri) && isEmpty(Storage.userImageUrl)) {
             Toast.makeText(activity, R.string.need_selfie, LENGTH_LONG).show()
-            return
+            return false
         }
         if (uploadInProgress()) {
             Toast.makeText(activity, R.string.wait_for_selfie_upload, LENGTH_LONG).show()
         } else {
-            // Start new upload
-            transferObserver = API.uploadPhoto(Uri.parse(Storage.selfieUri), activity)
-            transferObserver?.setTransferListener(this)
+            // Don't let user take another photo until upload finishes
             selfie.isEnabled = false
+            // Start new upload
+            transferObserver = API.storageProvider.upload(Uri.parse(Storage.selfieUri), activity)
+            transferObserver?.setTransferListener(this)
         }
+        return true
     }
 
     override fun onProgressChanged(id: Int, bytesCurrent: Long, bytesTotal: Long) {
@@ -101,6 +104,10 @@ class SelfieFragment : Fragment(), OnboardingActivity.OnboardingFragment, Transf
     }
 
     private fun uploadInProgress(): Boolean {
-        return transferObserver != null && transferObserver?.bytesTotal != transferObserver?.bytesTransferred
+        return !isEmpty(Storage.selfieUri) && transferObserver != null && transferObserver?.bytesTotal != transferObserver?.bytesTransferred
+    }
+
+    override fun readyForNextStep(): Boolean {
+        return !isEmpty(Storage.userImageUrl)
     }
 }

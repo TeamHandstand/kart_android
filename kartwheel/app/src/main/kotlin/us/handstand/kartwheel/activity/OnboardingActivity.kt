@@ -2,8 +2,11 @@ package us.handstand.kartwheel.activity
 
 import android.app.Activity
 import android.os.Bundle
+import android.support.design.widget.BottomSheetBehavior
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.RecyclerView
+import android.text.TextUtils.isEmpty
 import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
@@ -36,6 +39,8 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
     private lateinit var pageNumber: TextView
     private lateinit var button: Button
     private lateinit var makeItRainText: TextView
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var behavior: BottomSheetBehavior<RecyclerView>
 
     private val controller = OnboardingController(this)
     private var fragment: OnboardingFragment? = null
@@ -48,6 +53,9 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
         pageNumber = ViewUtil.findView(this, R.id.pageNumber)
         button = ViewUtil.findView(this, R.id.button)
         makeItRainText = ViewUtil.findView(this, R.id.makeItRainDescription)
+        recyclerView = ViewUtil.findView(this, R.id.bottomSheet)
+
+        behavior = BottomSheetBehavior.from(recyclerView)
 
         button.setOnClickListener(this)
 
@@ -91,9 +99,10 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
         // TODO: Enable/Disable button based on state of selfie/buddy upload
         when (v.id) {
             R.id.button -> {
-                if (fragment is SelfieFragment) {
-                    button.isEnabled = false
-                    (fragment as SelfieFragment).startUpload()
+                if (fragment is SelfieFragment && (isEmpty(Storage.userImageUrl) || !isEmpty(Storage.selfieUri))) {
+                    button.isEnabled = !(fragment as SelfieFragment).startUpload()
+                } else if (fragment is EmojiFragment && isEmpty(Storage.userBuddyUrl)) {
+                    button.isEnabled = !(fragment as EmojiFragment).uploadBuddyEmoji()
                 } else if (fragment?.readyForNextStep() == true) {
                     controller.onStepCompleted(Storage.lastOnboardingState)
                 }
@@ -119,6 +128,10 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
         val controller: OnboardingController
             get() {
                 return (getActivity() as OnboardingActivity).controller
+            }
+        val bottomSheetBehavior: BottomSheetBehavior<RecyclerView>
+            get() {
+                return (getActivity() as OnboardingActivity).behavior
             }
     }
 

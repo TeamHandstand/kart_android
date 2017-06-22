@@ -11,13 +11,12 @@ import us.handstand.kartwheel.test.inject.provider.ControllerProviderWithIdlingR
 import us.handstand.kartwheel.test.inject.provider.MockCloudStorageProvider
 
 class AndroidTestKartWheel : KartWheel() {
-
     override fun onCreate() {
         super.onCreate()
         // Temporarily set the thread policy so that we can start the mock server on app creation
         val threadPolicy = StrictMode.getThreadPolicy()
         StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder().permitAll().build());
-        val api = MockAPI(Database.get())
+        api = MockAPI(Database.get())
         injector = DaggerInjector.builder()
                 .controllerProvider(ControllerProviderWithIdlingResources())
                 .cloudStorageProvider(MockCloudStorageProvider())
@@ -25,5 +24,9 @@ class AndroidTestKartWheel : KartWheel() {
                 .build()
         injector.inject(API)
         StrictMode.setThreadPolicy(threadPolicy)
+    }
+
+    companion object {
+        lateinit var api: MockAPI
     }
 }
