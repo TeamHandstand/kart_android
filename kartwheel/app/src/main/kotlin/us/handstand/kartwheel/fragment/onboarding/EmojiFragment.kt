@@ -31,7 +31,7 @@ class EmojiFragment : Fragment(), OnboardingActivity.OnboardingFragment, View.On
         val fragment = inflater.inflate(R.layout.fragment_onboarding_circle_image, container, false) as ViewGroup
         emoji = ViewUtil.findView(fragment, R.id.image)
         emoji.setOnClickListener(this)
-        emoji.setImageUrl(Storage.userBuddyUrl, default = BuildConfig.DEFAULT_BUDDY_URL)
+        emoji.setImageUrl(Storage.userBuddyUrl, BuildConfig.DEFAULT_BUDDY_URL, R.drawable.buddy_placeholder)
         adapter = EmojiAdapter()
         return fragment
     }
@@ -42,7 +42,7 @@ class EmojiFragment : Fragment(), OnboardingActivity.OnboardingFragment, View.On
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 // Set the emoji icon to the one that the user has selected
                 if (newState == STATE_COLLAPSED && adapter.selectedEmojiUrl != null) {
-                    emoji.setImageUrl(adapter.selectedEmojiUrl)
+                    emoji.setImageUrl(adapter.selectedEmojiUrl, placeholder = R.drawable.buddy_placeholder)
                 }
             }
 

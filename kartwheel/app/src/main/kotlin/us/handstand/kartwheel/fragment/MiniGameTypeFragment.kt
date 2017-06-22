@@ -32,10 +32,12 @@ class MiniGameTypeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         API.getMiniGameTypes()
-        val query = MiniGameType.FACTORY.select_all()
-        subscription = Database.get().createQuery(MiniGameTypeModel.TABLE_NAME, query.statement, *query.args)
-                .mapToList { MiniGameType.FACTORY.select_allMapper().map(it) }
-                .subscribe { adapter.setMiniGameTypes(it) }
+        if (!isDetached) {
+            val query = MiniGameType.FACTORY.select_all()
+            subscription = Database.get().createQuery(MiniGameTypeModel.TABLE_NAME, query.statement, *query.args)
+                    .mapToList { MiniGameType.FACTORY.select_allMapper().map(it) }
+                    .subscribe { adapter.setMiniGameTypes(it) }
+        }
     }
 
     override fun onPause() {

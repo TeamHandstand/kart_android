@@ -20,6 +20,10 @@ object MockStorageProvider : StorageProvider {
         return transferObserver
     }
 
+    fun failUpload() {
+        transferObserver.transferListener_?.onStateChanged(1, TransferState.FAILED)
+    }
+
     class MockTransferObserver : TransferObserver {
         var transferListener_: TransferListener? = null
         override var key: String = "123"

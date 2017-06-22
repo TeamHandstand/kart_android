@@ -3,6 +3,7 @@ package us.handstand.kartwheel.network.storage.aws
 import android.content.Context
 import android.net.Uri
 import android.os.Environment
+import com.amazonaws.ClientConfiguration
 import com.amazonaws.auth.CognitoCachingCredentialsProvider
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility
 import com.amazonaws.regions.Region
@@ -101,7 +102,7 @@ object AWS : StorageProvider {
 
     override fun upload(photoUri: Uri, context: Context): TransferObserver {
         val photoFile = AWS.copyContentUriToFile(context, photoUri)
-        return AWSTransferObserver(AWS.getTransferUtility(context).upload(BuildConfig.AWS_BUCKET_NAME, photoFile.name, photoFile))
+        return AWSTransferObserver(AWS.getTransferUtility(context).upload(BuildConfig.AWS_BUCKET_NAME + "/user-profile-pictures", photoFile.name + "-user-profile-picture.jpeg", photoFile))
     }
 
     override fun getTransferById(id: Int): TransferObserver? {

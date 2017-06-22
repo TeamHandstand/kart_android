@@ -110,6 +110,29 @@ class OnboardingActivityTest {
     }
 
     @Test
+    fun enableButtons_ifUserImageUploadFailed() {
+        checkOnboardingState(STARTED)
+
+        onView(withId(R.id.button)).perform(click())
+        checkOnboardingState(SELFIE)
+
+        // Take the photo
+        onView(withId(R.id.image)).perform(click())
+        takePhotoWithNativeCamera()
+
+        // Press button for upload
+        onView(withId(R.id.button)).perform(click())
+
+        // Make sure it's uploading and then make it fail
+        assert(MockStorageProvider.uploading)
+        MockStorageProvider.failUpload()
+        // When the image fails the upload, check that both buttons are enabled
+        onView(withId(R.id.button)).check(matches(isEnabled()))
+        onView(withId(R.id.image)).check(matches(isEnabled()))
+        checkOnboardingState(SELFIE)
+    }
+
+    @Test
     fun pickBuddy() {
         checkOnboardingState(STARTED)
 

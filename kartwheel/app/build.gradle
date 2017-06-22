@@ -56,7 +56,8 @@ android {
     buildToolsVersion "25.0.3"
     buildTypes {
         debug {
-            buildConfigField "String", "AWS_BUCKET_NAME", "\"https://kartwheel-staging.s3.amazonaws.com\""
+            buildConfigField "String", "AWS_BUCKET_NAME", "\"kartwheel-staging\""
+            buildConfigField "String", "AWS_BUCKET_URL", "\"https://kartwheel-staging.s3.amazonaws.com/\""
             buildConfigField "String", "AWS_COGNITO_POOL_ID", "\"us-east-1:ddfe8d69-56d1-41c7-aabd-6623ce3ddf43\""
             buildConfigField "String", "DEFAULT_BUDDY_URL", "\"https://s3.amazonaws.com/kartwheel-production/buddies/buddy-unicorn.png\""
             // 10.0.2.2 is the address that the android emulator uses to access the host machine
@@ -68,7 +69,8 @@ android {
             resValue "string", "google_maps_key", "TODO"
         }
         staging {
-            buildConfigField "String", "AWS_BUCKET_NAME", "\"https://kartwheel-staging.s3.amazonaws.com\""
+            buildConfigField "String", "AWS_BUCKET_NAME", "\"kartwheel-staging\""
+            buildConfigField "String", "AWS_BUCKET_URL", "\"https://kartwheel-staging.s3.amazonaws.com/\""
             buildConfigField "String", "AWS_COGNITO_POOL_ID", "\"us-east-1:ddfe8d69-56d1-41c7-aabd-6623ce3ddf43\""
             buildConfigField "String", "DEFAULT_BUDDY_URL", "\"https://s3.amazonaws.com/kartwheel-production/buddies/buddy-unicorn.png\""
             buildConfigField "String", "PLAYER_NO_IMAGE_URL", "\"https://kartwheel-app.s3.amazonaws.com/shared/empty-profile.jpg\""
@@ -80,9 +82,10 @@ android {
             signingConfig signingConfigs.debug
         }
         release {
-            buildConfigField "String", "DEFAULT_BUDDY_URL", "\"https://s3.amazonaws.com/kartwheel-production/buddies/buddy-unicorn.png\""
-            buildConfigField "String", "AWS_BUCKET_NAME", "\"https://kartwheel-production.s3.amazonaws.com\""
+            buildConfigField "String", "AWS_BUCKET_NAME", "\"kartwheel-production\""
+            buildConfigField "String", "AWS_BUCKET_URL", "\"https://kartwheel-production.s3.amazonaws.com/\""
             buildConfigField "String", "AWS_COGNITO_POOL_ID", "\"us-east-1:ddfe8d69-56d1-41c7-aabd-6623ce3ddf43\""
+            buildConfigField "String", "DEFAULT_BUDDY_URL", "\"https://s3.amazonaws.com/kartwheel-production/buddies/buddy-unicorn.png\""
             buildConfigField "String", "SERVER", "\"https://www.handstandwith.us\""
             buildConfigField "String", "SERVER_FRAGMENT", "\"kartwheel/\""
             buildConfigField "String", "PLAYER_NO_IMAGE_URL", "\"https://kartwheel-app.s3.amazonaws.com/shared/empty-profile.jpg\""

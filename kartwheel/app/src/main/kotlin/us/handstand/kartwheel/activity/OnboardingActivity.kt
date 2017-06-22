@@ -39,6 +39,7 @@ import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
 
+// TODO: Video playback and scrolling shells on onboarding welcome screen
 class OnboardingActivity : AppCompatActivity(), View.OnClickListener, OnboardingStepCompletionListener {
     private lateinit var title: TextView
     private lateinit var description: TextView

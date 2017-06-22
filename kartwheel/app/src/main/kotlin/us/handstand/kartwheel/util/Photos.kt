@@ -1,17 +1,14 @@
 package us.handstand.kartwheel.util
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
 import android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import android.provider.MediaStore.EXTRA_OUTPUT
+import android.support.v4.app.Fragment
 import android.support.v4.content.FileProvider
 import com.crashlytics.android.Crashlytics
 import us.handstand.kartwheel.BuildConfig
@@ -28,7 +25,8 @@ object Photos {
     /**
      * Start Camera app for selfie. When the user takes a photo, use the returned File to retrieve it.
      */
-    fun takeSelfie(activity: Activity): File? {
+    fun takeSelfie(fragment: Fragment): File? {
+        val activity = fragment.activity
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         val resolvedComponent = takePictureIntent.resolveActivity(activity.packageManager)
         if (resolvedComponent != null) {
@@ -44,7 +42,7 @@ object Photos {
                     break
                 }
                 takePictureIntent.putExtra(EXTRA_OUTPUT, photoURI)
-                activity.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+                fragment.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
                 currentPhotoPath = tempImageFile.absolutePath
                 return tempImageFile
             } catch (e: Exception) {
@@ -54,16 +52,6 @@ object Photos {
         } else {
             return null
         }
-    }
-
-    fun getSelfieBitmap(activity: Activity): Bitmap {
-        val photoUri = Uri.parse(Storage.selfieUri)
-        activity.revokeUriPermission(photoUri, Photos.requestPermissions)
-        return getBitmapFromPath(currentPhotoPath!!)
-    }
-
-    fun getBitmapFromPath(path: String): Bitmap {
-        return BitmapFactory.decodeFile(path)
     }
 
     @Throws(IOException::class)
