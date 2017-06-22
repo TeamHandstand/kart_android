@@ -7,7 +7,6 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawable
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.text.TextUtils.isEmpty
 import android.util.AttributeSet
-import android.view.ViewTreeObserver
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.BitmapImageViewTarget
@@ -31,7 +30,7 @@ class CircularImageView : ImageView {
                 .placeholder(R.drawable.onboarding_camera)
                 .into(object : BitmapImageViewTarget(this) {
                     override fun setResource(resource: Bitmap) {
-                        setImageDrawable(getScaledCircularBitmap(original = resource))
+                        setImageDrawable(getScaledCircularBitmap(resource))
                     }
                 })
     }
@@ -40,16 +39,13 @@ class CircularImageView : ImageView {
         if (imageRes == -1) {
             super.setImageResource(placeholder)
         } else {
-//            val height = measuredHeight.toFloat()
-//            val ratio = measuredWidth / (if (height == 0f) 1f else height)
             Glide.with(context)
                     .load(imageRes)
                     .asBitmap()
                     .fitCenter()
-                    .placeholder(placeholder)
                     .into(object : BitmapImageViewTarget(this) {
                         override fun setResource(resource: Bitmap) {
-                            setImageDrawable(getScaledCircularBitmap(1f, resource))
+                            setImageDrawable(getScaledCircularBitmap(resource))
                         }
                     })
         }
@@ -70,29 +66,17 @@ class CircularImageView : ImageView {
                     .placeholder(placeholder)
                     .into(object : BitmapImageViewTarget(this) {
                         override fun setResource(resource: Bitmap) {
-                            setImageDrawable(getScaledCircularBitmap(original = resource))
+                            setImageDrawable(getScaledCircularBitmap(resource))
                         }
                     })
         }
     }
 
-    private fun getScaledCircularBitmap(ratio: Float = 1f, original: Bitmap): RoundedBitmapDrawable {
-        val scaledWidth = original.width * ratio
-        val scaledHeight = original.height * ratio
-        val size = if (measuredHeight > 0) measuredHeight.toFloat() else if (scaledWidth > scaledHeight) scaledHeight else scaledWidth
+    private fun getScaledCircularBitmap(original: Bitmap): RoundedBitmapDrawable {
+        val size = if (measuredHeight > 0) measuredHeight.toFloat() else if (original.width > original.height) original.height.toFloat() else original.width.toFloat()
         val scaledBitmap = Bitmap.createScaledBitmap(original, size.toInt(), size.toInt(), true)
         val circularBitmapDrawable = RoundedBitmapDrawableFactory.create(context.resources, scaledBitmap)
         circularBitmapDrawable.cornerRadius = size
         return circularBitmapDrawable
-    }
-
-    private fun waitForMeasuredHeight(futureUnit: () -> Unit) {
-        viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
-            override fun onPreDraw(): Boolean {
-                viewTreeObserver.removeOnPreDrawListener(this)
-                futureUnit.invoke()
-                return true
-            }
-        })
     }
 }

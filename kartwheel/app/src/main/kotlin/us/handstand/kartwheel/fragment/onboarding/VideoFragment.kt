@@ -6,19 +6,19 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.OnboardingActivity
+import us.handstand.kartwheel.layout.CircularImageView
 import us.handstand.kartwheel.layout.ViewUtil
 
 class VideoFragment : Fragment(), OnboardingActivity.OnboardingFragment, View.OnClickListener {
-    lateinit var video: ImageView
+    lateinit var video: CircularImageView
     lateinit var layout: ViewGroup
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         layout = inflater.inflate(R.layout.fragment_onboarding_circle_image, container, false) as ViewGroup
         video = ViewUtil.findView(layout, R.id.image)
-        video.setImageResource(R.drawable.onboarding_play_button)
+        video.setImageResource(R.drawable.onboarding_play_button, R.drawable.onboarding_play_button)
         video.setOnClickListener(this)
         return layout
     }
