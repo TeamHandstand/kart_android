@@ -11,7 +11,7 @@ object MockStorageProvider : StorageProvider {
     var uploading: Boolean = false
     val transferObserver = MockTransferObserver()
 
-    override fun upload(photoUri: Uri, context: Context): TransferObserver {
+    override fun uploadPhoto(photoUri: Uri, context: Context): TransferObserver {
         uploading = true
         return transferObserver
     }

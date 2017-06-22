@@ -65,7 +65,7 @@ class SelfieFragment : Fragment(), OnboardingActivity.OnboardingFragment, Transf
     }
 
     /**
-     * @return true is we started the upload, or if the upload is in progress
+     * @return true is we started the uploadPhoto, or if the uploadPhoto is in progress
      */
     fun startUpload(): Boolean {
         // No image taken
@@ -76,11 +76,13 @@ class SelfieFragment : Fragment(), OnboardingActivity.OnboardingFragment, Transf
         if (uploadInProgress()) {
             Toast.makeText(activity, R.string.wait_for_selfie_upload, LENGTH_LONG).show()
         } else {
-            // Don't let user take another photo until upload finishes
+            // Don't let user take another photo until uploadPhoto finishes
             selfie.isEnabled = false
-            // Start new upload
-            transferObserver = API.storageProvider.upload(Uri.parse(Storage.selfieUri), activity)
-            transferObserver?.setTransferListener(this)
+            // Start new uploadPhoto
+            Photos.executor.execute {
+                transferObserver = API.storageProvider.uploadPhoto(Uri.parse(Storage.selfieUri), activity)
+                transferObserver?.setTransferListener(this)
+            }
         }
         return true
     }
@@ -93,8 +95,8 @@ class SelfieFragment : Fragment(), OnboardingActivity.OnboardingFragment, Transf
     override fun onStateChanged(id: Int, state: TransferState) {
         when (state) {
             TransferState.COMPLETED -> {
-                // Update the User object on the server with the imageUrl from our selfie upload
-                API.updateUser(API.gson.fromJson("{\"imageUrl\":\"${BuildConfig.AWS_BUCKET_URL + transferObserver?.key}\"}", JsonObject::class.java), object : API.APICallback<User> {
+                // Update the User object on the server with the imageUrl from our selfie uploadPhoto
+                API.updateUser(API.gson.fromJson("{\"imageUrl\":\"${BuildConfig.AWS_BUCKET_URL + "/user-profile-pictures/" + transferObserver?.key}\"}", JsonObject::class.java), object : API.APICallback<User> {
                     override fun onSuccess(response: User) {
                         Storage.userImageUrl = response.imageUrl()!!
                         activity.runOnUiThread { controller.onStepCompleted(SELFIE) }

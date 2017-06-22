@@ -79,7 +79,7 @@ class OnboardingActivityTest {
         assert(!MockStorageProvider.uploading)
         assertThat(MockStorageProvider.transferObserver.bytesTransferred, `is`(0L))
 
-        // Press button for upload
+        // Press button for uploadPhoto
         onView(withId(R.id.button)).perform(click())
 
         // Still on the SELFIE fragment, but clicking the button/selfie pic does nothing, since we're not done uploading
@@ -120,13 +120,13 @@ class OnboardingActivityTest {
         onView(withId(R.id.image)).perform(click())
         takePhotoWithNativeCamera()
 
-        // Press button for upload
+        // Press button for uploadPhoto
         onView(withId(R.id.button)).perform(click())
 
         // Make sure it's uploading and then make it fail
         assert(MockStorageProvider.uploading)
         MockStorageProvider.failUpload()
-        // When the image fails the upload, check that both buttons are enabled
+        // When the image fails the uploadPhoto, check that both buttons are enabled
         onView(withId(R.id.button)).check(matches(isEnabled()))
         onView(withId(R.id.image)).check(matches(isEnabled()))
         checkOnboardingState(SELFIE)
@@ -156,7 +156,7 @@ class OnboardingActivityTest {
         // Buddy list should disappear
         onView(withId(R.id.bottomSheet)).check(matches(not(isCompletelyDisplayed())))
 
-        // Now upload the buddy and move onto the next step
+        // Now uploadPhoto the buddy and move onto the next step
 
         // We need the server to return a User object with the buddyUrl
         AndroidTestKartWheel.api.server.enqueue(MockResponse().setBody(MockAPI.getUser(0, true, true).toJson()))

@@ -41,7 +41,7 @@ enum class TransferState {
     WAITING_FOR_NETWORK,
     /**
      * This state represents a transfer that is a completed part of a multi-part
-     * upload. This state is primarily used internally and there should be no
+     * uploadPhoto. This state is primarily used internally and there should be no
      * need to use this state.
      */
     PART_COMPLETED,

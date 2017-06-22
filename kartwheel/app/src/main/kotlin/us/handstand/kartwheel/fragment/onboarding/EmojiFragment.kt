@@ -53,14 +53,14 @@ class EmojiFragment : Fragment(), OnboardingActivity.OnboardingFragment, View.On
     }
 
     /**
-     * @return true if upload started or is ongoing.
+     * @return true if uploadPhoto started or is ongoing.
      */
     fun uploadBuddyEmoji(): Boolean {
         if (adapter.selectedEmojiUrl == null) {
             activity.runOnUiThread { Toast.makeText(activity, R.string.need_buddy, Toast.LENGTH_LONG).show() }
             return false
         } else {
-            // Upload the buddyUrl and move onto the next step, once the upload is completed.
+            // Upload the buddyUrl and move onto the next step, once the uploadPhoto is completed.
             // If not completed, then show an error message
             API.updateUser(API.gson.fromJson("{\"buddyUrl\":\"${adapter.selectedEmojiUrl}\"}", JsonObject::class.java), object : API.APICallback<User> {
                 override fun onSuccess(response: User) {

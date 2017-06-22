@@ -15,10 +15,12 @@ import us.handstand.kartwheel.BuildConfig
 import us.handstand.kartwheel.model.Storage
 import java.io.File
 import java.io.IOException
+import java.util.concurrent.Executors
 
 object Photos {
     val REQUEST_IMAGE_CAPTURE = 1;
     val requestPermissions = FLAG_GRANT_WRITE_URI_PERMISSION or FLAG_GRANT_READ_URI_PERMISSION
+    val executor = Executors.newSingleThreadExecutor()
 
     private var currentPhotoPath: String? = null
 

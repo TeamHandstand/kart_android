@@ -1,9 +1,10 @@
 package us.handstand.kartwheel.network.storage.aws
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
-import com.amazonaws.ClientConfiguration
 import com.amazonaws.auth.CognitoCachingCredentialsProvider
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility
 import com.amazonaws.regions.Region
@@ -71,9 +72,12 @@ object AWS : StorageProvider {
 
     @Throws(IOException::class)
     fun copyContentUriToFile(context: Context, uri: Uri): File {
-        val copiedFile = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), UUID.randomUUID().toString())
+        val copiedFile = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), System.currentTimeMillis().toString() + UUID.randomUUID().toString())
         if (copiedFile.createNewFile()) {
-            context.contentResolver.openInputStream(uri).copyTo(FileOutputStream(copiedFile))
+            // Compress by 50% to reduce size of upload
+            // TODO: Don't compress if we start with a poor quality image
+            val bmp = BitmapFactory.decodeStream(context.contentResolver.openInputStream(uri))
+            bmp.compress(Bitmap.CompressFormat.JPEG, 50, FileOutputStream(copiedFile))
         }
         return copiedFile
     }
@@ -100,7 +104,7 @@ object AWS : StorageProvider {
         }
     }
 
-    override fun upload(photoUri: Uri, context: Context): TransferObserver {
+    override fun uploadPhoto(photoUri: Uri, context: Context): TransferObserver {
         val photoFile = AWS.copyContentUriToFile(context, photoUri)
         return AWSTransferObserver(AWS.getTransferUtility(context).upload(BuildConfig.AWS_BUCKET_NAME + "/user-profile-pictures", photoFile.name + "-user-profile-picture.jpeg", photoFile))
     }
