@@ -6,6 +6,7 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawable
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.ImageView
 import com.bumptech.glide.Glide
@@ -23,22 +24,19 @@ class CircularImageView : ImageView {
     }
 
     override fun setImageBitmap(bm: Bitmap) {
-        if (measuredHeight == 0) {
-            waitForMeasuredHeight { setImageBitmap(bm) }
-        } else {
-            background = null
-            setImageDrawable(getScaledCircularBitmap(original = bm))
-        }
+        background = null
+        setImageDrawable(getScaledCircularBitmap(original = bm))
     }
 
     override fun setImageResource(imageRes: Int) {
         if (imageRes == -1) {
             super.setImageResource(R.drawable.background_white_circle)
         } else {
-            if (measuredHeight == 0) {
+            if (measuredHeight == 0 && visibility == View.VISIBLE) {
                 waitForMeasuredHeight { setImageResource(imageRes) }
             } else {
-                val ratio = measuredWidth / measuredHeight.toFloat()
+                val height = measuredHeight.toFloat()
+                val ratio = measuredWidth / (if (height == 0f) 1f else height)
                 Glide.with(context)
                         .load(imageRes)
                         .asBitmap()
@@ -62,20 +60,16 @@ class CircularImageView : ImageView {
                 setImageUrl(default)
             }
         } else {
-            if (measuredHeight == 0) {
-                waitForMeasuredHeight { setImageUrl(imageUrl) }
-            } else {
-                Glide.with(context)
-                        .load(imageUrl)
-                        .asBitmap()
-                        .fitCenter()
-                        .placeholder(R.drawable.placeholder_registrant_avatar)
-                        .into(object : BitmapImageViewTarget(this) {
-                            override fun setResource(resource: Bitmap) {
-                                setImageDrawable(getScaledCircularBitmap(original = resource))
-                            }
-                        })
-            }
+            Glide.with(context)
+                    .load(imageUrl)
+                    .asBitmap()
+                    .fitCenter()
+                    .placeholder(R.drawable.placeholder_registrant_avatar)
+                    .into(object : BitmapImageViewTarget(this) {
+                        override fun setResource(resource: Bitmap) {
+                            setImageDrawable(getScaledCircularBitmap(original = resource))
+                        }
+                    })
         }
     }
 
