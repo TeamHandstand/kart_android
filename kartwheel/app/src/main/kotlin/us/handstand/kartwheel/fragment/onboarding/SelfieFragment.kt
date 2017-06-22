@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
+import com.google.gson.JsonObject
 import us.handstand.kartwheel.BuildConfig
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.OnboardingActivity
@@ -73,6 +74,7 @@ class SelfieFragment : Fragment(), OnboardingActivity.OnboardingFragment, Transf
             // Start new upload
             transferObserver = API.uploadPhoto(Uri.parse(Storage.selfieUri), activity)
             transferObserver?.setTransferListener(this)
+            selfie.isEnabled = false
         }
     }
 
@@ -85,11 +87,11 @@ class SelfieFragment : Fragment(), OnboardingActivity.OnboardingFragment, Transf
         when (state) {
             TransferState.COMPLETED -> {
                 // Update the User object on the server with the imageUrl from our selfie upload
-                API.updateUser(API.gson.toJsonTree("{\"imageUrl\":${BuildConfig.AWS_BUCKET_NAME + transferObserver?.key}}").asJsonObject)
-                controller.onStepCompleted(SELFIE)
+                API.updateUser(API.gson.fromJson("{\"imageUrl\":\"${BuildConfig.AWS_BUCKET_NAME + transferObserver?.key}\"}", JsonObject::class.java))
+                activity.runOnUiThread { controller.onStepCompleted(SELFIE) }
             }
             TransferState.FAILED, TransferState.CANCELED -> {
-                Toast.makeText(activity, R.string.selfie_upload_failed, Toast.LENGTH_LONG).show()
+                activity.runOnUiThread { Toast.makeText(activity, R.string.selfie_upload_failed, Toast.LENGTH_LONG).show() }
             }
         }
     }

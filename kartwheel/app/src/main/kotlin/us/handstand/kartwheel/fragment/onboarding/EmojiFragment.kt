@@ -20,7 +20,7 @@ class EmojiFragment : Fragment(), OnboardingActivity.OnboardingFragment, View.On
         emoji = ViewUtil.findView(fragment, R.id.image)
         emoji.setOnClickListener(this)
         emoji.setImageUrl(Storage.userBuddyUrl, default = BuildConfig.DEFAULT_BUDDY_URL)
-        return super.onCreateView(inflater, container, savedInstanceState)
+        return fragment
     }
 
     override fun onClick(v: View?) {

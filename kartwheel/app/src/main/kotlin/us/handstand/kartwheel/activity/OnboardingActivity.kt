@@ -74,6 +74,9 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
 
         Storage.lastOnboardingState = next
         val nextFragment = getFragmentForStep(next)
+        if (previous == SELFIE) {
+            button.isEnabled = true
+        }
         if (nextFragment == null) {
             if (fragment != null) {
                 supportFragmentManager.beginTransaction().remove(fragment as Fragment).commit()
@@ -89,6 +92,7 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
         when (v.id) {
             R.id.button -> {
                 if (fragment is SelfieFragment) {
+                    button.isEnabled = false
                     (fragment as SelfieFragment).startUpload()
                 } else if (fragment?.readyForNextStep() == true) {
                     controller.onStepCompleted(Storage.lastOnboardingState)

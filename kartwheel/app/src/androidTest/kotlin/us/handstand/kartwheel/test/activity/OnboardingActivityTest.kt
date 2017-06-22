@@ -12,6 +12,7 @@ import android.support.test.runner.AndroidJUnit4
 import android.support.test.uiautomator.By
 import android.support.test.uiautomator.UiDevice
 import android.support.test.uiautomator.Until
+import org.hamcrest.Matchers.not
 import org.junit.*
 import org.junit.runner.RunWith
 import us.handstand.kartwheel.KartWheel
@@ -25,6 +26,7 @@ import us.handstand.kartwheel.controller.OnboardingController.Companion.POINT_SY
 import us.handstand.kartwheel.controller.OnboardingController.Companion.SELFIE
 import us.handstand.kartwheel.controller.OnboardingController.Companion.STARTED
 import us.handstand.kartwheel.controller.OnboardingController.Companion.VIDEO
+import us.handstand.kartwheel.mocks.MockStorageProvider
 import java.util.regex.Pattern
 
 
@@ -69,11 +71,32 @@ class OnboardingActivityTest {
     @Test
     fun takePhoto() {
         checkOnboardingState(STARTED)
+
         onView(withId(R.id.button)).perform(click())
         checkOnboardingState(SELFIE)
+
+        // Take the photo
         onView(withId(R.id.image)).perform(click())
         takePhotoWithNativeCamera()
+
+        // Make sure it isn't uploading
+        assert(!MockStorageProvider.uploading)
+
+        // Start the upload
         onView(withId(R.id.button)).perform(click())
+        assert(MockStorageProvider.uploading)
+
+        // Still on the SELFIE fragment, but clicking the button/selfie pic does nothing, since we're not done uploading
+        onView(withId(R.id.button)).check(matches(not(isEnabled())))
+        onView(withId(R.id.image)).check(matches(not(isEnabled())))
+        assert(MockStorageProvider.uploading)
+        checkOnboardingState(SELFIE)
+
+        // We've now completed the transfer. The UI should change to PICK_BUDDY
+        MockStorageProvider.transferObserver.bytesTransferred = 100L
+        onView(withId(R.id.button)).check(matches(isEnabled()))
+        onView(withId(R.id.image)).check(matches(isEnabled()))
+        assert(!MockStorageProvider.uploading)
         checkOnboardingState(PICK_BUDDY)
     }
 

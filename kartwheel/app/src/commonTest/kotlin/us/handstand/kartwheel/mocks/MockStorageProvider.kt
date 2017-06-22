@@ -5,10 +5,14 @@ import android.net.Uri
 import us.handstand.kartwheel.network.storage.StorageProvider
 import us.handstand.kartwheel.network.storage.TransferListener
 import us.handstand.kartwheel.network.storage.TransferObserver
+import us.handstand.kartwheel.network.storage.TransferState
 
 object MockStorageProvider : StorageProvider {
+    var uploading: Boolean = false
+    val transferObserver = MockTransferObserver()
 
     override fun upload(photoUri: Uri, context: Context): TransferObserver {
+        uploading = true
         return transferObserver
     }
 
@@ -16,21 +20,26 @@ object MockStorageProvider : StorageProvider {
         return transferObserver
     }
 
-    // TODO: Need to replace this var if you don't want your tests crashing
-    var transferObserver = object : TransferObserver {
-        override val key: String
-            get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-        override val bytesTotal: Long
-            get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-        override val bytesTransferred: Long
-            get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+    class MockTransferObserver : TransferObserver {
+        var transferListener_: TransferListener? = null
+        override var key: String = "123"
+        override var bytesTotal: Long = 100
+        override var bytesTransferred: Long = 0
+            set(value) {
+                transferListener_?.onProgressChanged(1, value, bytesTotal)
+                if (value == bytesTotal) {
+                    uploading = false
+                    transferListener_?.onStateChanged(1, TransferState.COMPLETED)
+                }
+                field = value
+            }
 
         override fun setTransferListener(transferListener: TransferListener) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            transferListener_ = transferListener
         }
 
         override fun cleanTransferListener() {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            transferListener_ = null
         }
     }
 }
