@@ -144,7 +144,7 @@ class MockSharedPreferences(content: MutableMap<String, Map<String, Any>>,
         }
 
         override fun commit(): Boolean {
-            val previousContent: HashMap<String, Object> = content[filename] as HashMap<String, Object>
+            val previousContent: HashMap<String, Any> = content[filename] as HashMap<String, Any>
             val keysToPassToListeners = ArrayList<String>()
 
             if (shouldClearOnCommit) {
@@ -159,7 +159,7 @@ class MockSharedPreferences(content: MutableMap<String, Map<String, Any>>,
 
             for (key in editsThatNeedCommit.keys) {
                 if (editsThatNeedCommit[key] != previousContent[key]) {
-                    previousContent.put(key, editsThatNeedCommit[key] as Object)
+                    previousContent.put(key, editsThatNeedCommit[key] as Any)
                     keysToPassToListeners.add(key)
                 }
             }
