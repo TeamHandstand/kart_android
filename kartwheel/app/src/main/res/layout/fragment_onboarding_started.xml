@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<us.handstand.kartwheel.layout.recyclerview.NonInteractiveRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/onboardingStartedRecyclerView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:orientation="horizontal"
+    tools:listitem="@layout/view_onboarding_item" />
