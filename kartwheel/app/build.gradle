@@ -66,6 +66,7 @@ android {
             buildConfigField "String", "SERVER", "\"http://10.0.2.2:3000\""
             buildConfigField "String", "SERVER_FRAGMENT", "\"\""
             debuggable true
+            minifyEnabled true
             resValue "string", "google_maps_key", "TODO"
         }
         staging {
@@ -78,8 +79,10 @@ android {
             buildConfigField "String", "SERVER", "\"http://api.staging.handstandwith.us\""
             buildConfigField "String", "SERVER_FRAGMENT", "\"kart/v1/\""
             debuggable true
+            minifyEnabled true
             resValue "string", "google_maps_key", "TODO"
             signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
             buildConfigField "String", "AWS_BUCKET_NAME", "\"kartwheel-production\""
@@ -91,7 +94,7 @@ android {
             buildConfigField "String", "PLAYER_NO_IMAGE_URL", "\"https://kartwheel-app.s3.amazonaws.com/shared/empty-profile.jpg\""
             buildConfigField "String", "PUBNUB_SUBSCRIPTION_KEY", "\"sub-c-9700ed8c-be38-11e6-8036-0619f8945a4f\""
             debuggable false
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             resValue "string", "google_maps_key", "TODO"
         }
@@ -138,6 +141,8 @@ dependencies {
     }
     compile "com.github.bumptech.glide:glide:$glide_version"
     compile "com.github.bumptech.glide:okhttp3-integration:$glide_okhttp3_integration_version"
+    compile "com.google.android.exoplayer:exoplayer-core:$exoplayer_version"
+    compile "com.google.android.exoplayer:exoplayer-ui:$exoplayer_version"
     compile "com.google.android.gms:play-services-maps:$google_maps_version"
     compile "com.google.code.gson:gson:$gson_version"
     compile "com.google.dagger:dagger:$dagger_version"
