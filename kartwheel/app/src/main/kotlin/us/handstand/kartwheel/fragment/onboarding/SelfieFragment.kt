@@ -76,12 +76,17 @@ class SelfieFragment : Fragment(), OnboardingActivity.OnboardingFragment, Transf
         if (uploadInProgress()) {
             Toast.makeText(activity, R.string.wait_for_selfie_upload, LENGTH_LONG).show()
         } else {
-            // Don't let user take another photo until uploadPhoto finishes
-            selfie.isEnabled = false
-            // Start new uploadPhoto
-            Photos.executor.execute {
-                transferObserver = API.storageProvider.uploadPhoto(Uri.parse(Storage.selfieUri), activity)
-                transferObserver?.setTransferListener(this)
+            // Image already exists, let the user continue to next step
+            if (isEmpty(Storage.selfieUri)) {
+                controller.onStepCompleted(SELFIE)
+            } else {
+                // Don't let user take another photo until uploadPhoto finishes
+                selfie.isEnabled = false
+                // Upload photo to StorageProvider
+                Photos.executor.execute {
+                    transferObserver = API.storageProvider.uploadPhoto(Uri.parse(Storage.selfieUri), activity)
+                    transferObserver?.setTransferListener(this)
+                }
             }
         }
         return true
