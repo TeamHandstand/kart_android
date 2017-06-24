@@ -43,9 +43,14 @@
 -dontwarn org.slf4j.**
 -dontwarn javax.annotation.**
 -dontwarn java.beans.**
--dontwarn retrofit2.Platform$Java8
 
 -keep class okhttp3.** { *; }
 
+# Retrofit2
+-dontwarn retrofit2.Platform$Java8
+
 # Glide
 -keep class com.bumptech.glide.** { *; }
+
+# GMS
+-keep class com.google.android.gms.** { *; }
