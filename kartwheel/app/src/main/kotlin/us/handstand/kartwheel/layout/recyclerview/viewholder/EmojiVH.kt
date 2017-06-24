@@ -3,14 +3,14 @@ package us.handstand.kartwheel.layout.recyclerview.viewholder
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import us.handstand.kartwheel.R
-import us.handstand.kartwheel.layout.CircularImageView
+import us.handstand.kartwheel.layout.GlideImageView
 import us.handstand.kartwheel.layout.recyclerview.adapter.AdapterVH
 import us.handstand.kartwheel.layout.recyclerview.adapter.AdapterVHClickListener
 
 
 class EmojiVH private constructor(val viewGroup: ViewGroup) : AdapterVH(viewGroup) {
     override var adapterVHClickListener: AdapterVHClickListener<EmojiVH>? = null
-    private val avatarView: CircularImageView = viewGroup.findViewById(R.id.emoji) as CircularImageView
+    private val avatarView: GlideImageView = viewGroup.findViewById(R.id.emoji) as GlideImageView
 
     companion object {
         fun constructNewInstance(parent: ViewGroup): EmojiVH {
