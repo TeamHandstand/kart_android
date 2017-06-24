@@ -16,6 +16,7 @@ import android.view.View.VISIBLE
 import android.view.animation.AccelerateInterpolator
 import android.widget.*
 import android.widget.Toast.LENGTH_LONG
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView
 import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.controller.OnboardingController
@@ -48,7 +49,8 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
     private lateinit var makeItRainText: TextView
     private lateinit var recyclerView: RecyclerView
     private lateinit var background: RelativeLayout
-    private lateinit var behavior: BottomSheetBehavior<RecyclerView>
+    private lateinit var recyclerViewBehavior: BottomSheetBehavior<RecyclerView>
+    private lateinit var videoBehavior: BottomSheetBehavior<SimpleExoPlayerView>
 
     private val controller = OnboardingController(this)
     private var fragment: OnboardingFragment? = null
@@ -67,7 +69,8 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
         background = ViewUtil.findView(this, R.id.onboardingBackground)
         background.setOnClickListener(this)
 
-        behavior = BottomSheetBehavior.from(recyclerView)
+        recyclerViewBehavior = BottomSheetBehavior.from(recyclerView)
+        videoBehavior = BottomSheetBehavior.from(ViewUtil.findView(this, R.id.video))
 
         button.setOnClickListener(this)
 
@@ -95,6 +98,7 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
         Storage.lastOnboardingState = next
         val nextFragment = getFragmentForStep(next)
         button.isEnabled = true
+        Storage.selfieUri = ""
         if (nextFragment == null) {
             if (fragment != null) {
                 supportFragmentManager.beginTransaction().remove(fragment as Fragment).commit()
@@ -190,9 +194,13 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
             get() {
                 return (getActivity() as OnboardingActivity).controller
             }
-        val bottomSheetBehavior: BottomSheetBehavior<RecyclerView>
+        val recyclerViewBehavior: BottomSheetBehavior<RecyclerView>
             get() {
-                return (getActivity() as OnboardingActivity).behavior
+                return (getActivity() as OnboardingActivity).recyclerViewBehavior
+            }
+        val videoBehavior: BottomSheetBehavior<SimpleExoPlayerView>
+            get() {
+                return (getActivity() as OnboardingActivity).videoBehavior
             }
     }
 
