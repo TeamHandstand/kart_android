@@ -117,7 +117,6 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
         button.isEnabled = true
         Storage.selfieUri = ""
         Storage.selectedBuddyUrl = ""
-        Log.e("ONBOARDING", "showNextStep $previous to $next")
         if (nextFragment == null) {
             if (fragment != null) {
                 supportFragmentManager.beginTransaction().remove(fragment as Fragment).commit()
@@ -161,7 +160,6 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
         }, 0, 350, TimeUnit.MILLISECONDS)
     }
 
-    // TODO: Figure out why the RecyclerView log is so noisy when this runs this is so noisy.
     fun addRandomMedal() {
         val emojiImageView = getRandomEmojiImageView()
         val animator = ObjectAnimator.ofFloat(emojiImageView, "y", background.measuredHeight.toFloat() + emojiImageView.measuredHeight)
