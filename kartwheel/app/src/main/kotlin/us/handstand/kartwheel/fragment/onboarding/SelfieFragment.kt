@@ -49,8 +49,10 @@ class SelfieFragment : Fragment(), OnboardingActivity.OnboardingFragment, Selfie
         val uri = selfieController.onCameraResult(requestCode, resultCode, data)
         if (uri != null) {
             selfie.setImageUri(uri)
-            updateOnboardingState()
+        } else {
+            selfie.setImageUrl(Storage.userImageUrl, placeholder = R.drawable.onboarding_camera)
         }
+        updateOnboardingState()
     }
 
     override fun readyForNextStep(): Boolean {

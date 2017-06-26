@@ -42,11 +42,16 @@ open class SelfieUploadController @Inject constructor(val context: Context) : Tr
     }
 
     fun onCameraResult(requestCode: Int, resultCode: Int, data: Intent?): Uri? {
-        if (requestCode == Photos.REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
-            // Wait for the user to click the advance button before uploading
-            val uri = Uri.parse(Storage.selfieUri)
-            context.revokeUriPermission(uri, Photos.requestPermissions)
-            return uri
+        if (requestCode == Photos.REQUEST_IMAGE_CAPTURE) {
+            if (resultCode == Activity.RESULT_OK) {
+                // Wait for the user to click the advance button before uploading
+                val uri = Uri.parse(Storage.selfieUri)
+                context.revokeUriPermission(uri, Photos.requestPermissions)
+                return uri
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                Storage.selfieUri = ""
+                return null
+            }
         }
         return null
     }
@@ -68,7 +73,7 @@ open class SelfieUploadController @Inject constructor(val context: Context) : Tr
                 // Upload photo to StorageProvider
                 Photos.executor.execute {
                     transferObserver = API.storageProvider.uploadPhoto(Uri.parse(Storage.selfieUri), context)
-                    transferObserver?.setTransferListener(this)
+                    transferObserver?.setTransferListener(this) ?: listener?.onStateChanged(TransferState.FAILED)
                 }
                 listener?.onStateChanged(TransferState.IN_PROGRESS)
             }

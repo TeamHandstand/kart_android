@@ -21,10 +21,7 @@ import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
 import org.hamcrest.Matchers.*
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.*
 import org.junit.runner.RunWith
 import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
@@ -86,6 +83,37 @@ class OnboardingActivityTest {
                 testRule.activity.pickBuddyBehaviorCallback as IdlingResource,
                 testRule.activity.videoBehaviorCallback as IdlingResource
         )
+    }
+
+    @Test
+    fun openCameraApp_thenBackToKartwheel_withoutTakingPhoto() {
+        // User already has image
+        Storage.userImageUrl = "https://www.skipimageuploading.com"
+
+        checkOnboardingState(STARTED)
+
+        onView(withId(R.id.button)).perform(click())
+        checkOnboardingState(SELFIE)
+
+        // The advance button shouldn't be visible until we've taken a photo
+        onView(withId(R.id.button)).check(matches(withEffectiveVisibility(VISIBLE)))
+        assert(!MockStorageProvider.uploading)
+
+        // Open camera app and then press the back button
+        onView(withId(R.id.image)).perform(click())
+        device.pressBack()
+
+        // Make sure it isn't uploading
+        assertThat(Storage.selfieUri, `is`(""))
+        assert(!MockStorageProvider.uploading)
+        assertThat(MockStorageProvider.transferObserver.bytesTransferred, `is`(0L))
+
+        // Button should still be invisible
+        onView(withId(R.id.button)).check(matches(withEffectiveVisibility(VISIBLE)))
+
+        // Try advancing and you should just go to the pick buddy section
+        onView(withId(R.id.button)).perform(click())
+        checkOnboardingState(PICK_BUDDY)
     }
 
     @Test
@@ -249,6 +277,7 @@ class OnboardingActivityTest {
         onView(withId(R.id.button)).check(matches(withEffectiveVisibility(VISIBLE)))
     }
 
+    @Ignore
     @Test
     fun advanceToRaceList_whenOnboardedOnRaceDay() {
         // User already has image and buddy
@@ -312,6 +341,7 @@ class OnboardingActivityTest {
         onView(allOf(withId(R.id.raceName), withText("#3 - Race race-3"))).check(matches(isDisplayed()))
     }
 
+    @Ignore
     @Test
     fun showGameInfo_afterOnboarding_whenNotGameDay() {
         // User already has image and buddy
