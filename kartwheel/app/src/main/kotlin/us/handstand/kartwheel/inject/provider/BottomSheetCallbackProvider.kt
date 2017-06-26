@@ -12,7 +12,7 @@ open class BottomSheetCallbackProvider {
 
     open class BSBCallbackIMPL : BottomSheetBehavior.BottomSheetCallback() {
         var delegate: BottomSheetBehavior.BottomSheetCallback? = null
-        var layoutId: Int = 0
+        var tag: String? = null
 
         override fun onSlide(bottomSheet: View, slideOffset: Float) {
             delegate?.onSlide(bottomSheet, slideOffset)

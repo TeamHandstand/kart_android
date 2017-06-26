@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils.isEmpty
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
@@ -81,11 +82,12 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
         background.setOnClickListener(this)
         button.setOnClickListener(this)
         pickBuddyRecyclerView.adapter = PickBuddyAdapter()
-        pickBuddyBehaviorCallback.layoutId = R.id.bottomSheet
+        pickBuddyBehaviorCallback.tag = "_pickBuddy"
         pickBuddyBehavior.setBottomSheetCallback(pickBuddyBehaviorCallback)
-        videoBehaviorCallback.layoutId = R.id.video
+        videoBehaviorCallback.tag = "_video"
         videoBehavior.setBottomSheetCallback(videoBehaviorCallback)
 
+        Storage.lastOnboardingState = STARTED
         controller.transition(NONE, Storage.lastOnboardingState)
     }
 
@@ -106,6 +108,8 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
         pageNumber.text = next.toString() + " of 5"
         pageNumber.visibility = pageNumberVisibility
         makeItRainText.visibility = makeItRainVisibility
+        pickBuddyBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        videoBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
         Storage.lastOnboardingState = next
         val nextFragment = getFragmentForStep(next)
@@ -197,11 +201,39 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
 
     override fun onOnboardingFragmentStateChanged() {
         if (fragment?.readyForNextStep() ?: true) {
-            Log.e("readyForNext?", "true")
             button.visibility = VISIBLE
-        } else {
-            Log.e("readyForNext?", "false")
         }
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK && hasVisibleBottomSheet()) {
+            event?.startTracking()
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            val behavior = getVisibleBottomSheetBehavior()
+            if (behavior != null) {
+                behavior.state = BottomSheetBehavior.STATE_HIDDEN
+            }
+            return behavior != null
+        }
+        return super.onKeyUp(keyCode, event)
+    }
+
+    private fun hasVisibleBottomSheet(): Boolean {
+        return getVisibleBottomSheetBehavior() != null
+    }
+
+    private fun getVisibleBottomSheetBehavior(): BottomSheetBehavior<*>? {
+        if (pickBuddyBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
+            return pickBuddyBehavior
+        } else if (videoBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
+            return videoBehavior
+        }
+        return null
     }
 
     interface OnboardingFragment {

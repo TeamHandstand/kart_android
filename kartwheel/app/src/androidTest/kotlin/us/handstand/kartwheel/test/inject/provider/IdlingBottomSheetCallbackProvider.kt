@@ -15,7 +15,7 @@ class IdlingBottomSheetCallbackProvider : BottomSheetCallbackProvider() {
         private var mIsIdle: Boolean = true
         private var mResourceCallback: IdlingResource.ResourceCallback? = null
 
-        override fun getName(): String = IdlingBSBCallbackIMPL::class.java.simpleName + layoutId.toString()
+        override fun getName(): String = IdlingBSBCallbackIMPL::class.java.simpleName + tag
         override fun isIdleNow(): Boolean = mIsIdle
         override fun registerIdleTransitionCallback(callback: IdlingResource.ResourceCallback?) {
             mResourceCallback = callback

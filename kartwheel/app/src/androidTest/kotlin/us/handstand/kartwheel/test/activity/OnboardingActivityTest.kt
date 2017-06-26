@@ -2,6 +2,7 @@ package us.handstand.kartwheel.test.activity
 
 import android.support.design.widget.BottomSheetBehavior
 import android.support.test.InstrumentationRegistry
+import android.support.test.espresso.Espresso
 import android.support.test.espresso.Espresso.*
 import android.support.test.espresso.IdlingResource
 import android.support.test.espresso.action.ViewActions.click
@@ -181,6 +182,18 @@ class OnboardingActivityTest {
         // Cannot advance without a buddy, button isn't yet visible
         onView(withId(R.id.button)).check(matches(withEffectiveVisibility(INVISIBLE)))
 
+        // Open the buddy picker
+        onView(withId(R.id.image)).perform(click())
+        assertThat(testRule.activity.pickBuddyBehavior.state, `is`(BottomSheetBehavior.STATE_EXPANDED))
+
+        // Hiding the buddy picker with the back button without selecting a buddy
+        Espresso.pressBack()
+
+        // Buddy list should disappear and the advance button should not appear
+        assertThat(testRule.activity.pickBuddyBehavior.state, `is`(BottomSheetBehavior.STATE_HIDDEN))
+        assertThat(Storage.selectedBuddyUrl, isEmptyOrNullString())
+        onView(withId(R.id.button)).check(matches(withEffectiveVisibility(INVISIBLE)))
+
         // Select buddy
         onView(withId(R.id.image)).perform(click())
         onView(withId(R.id.bottomSheet)).check(matches(isCompletelyDisplayed()))
@@ -189,7 +202,6 @@ class OnboardingActivityTest {
         // Buddy list should disappear and the advance button should appear and be enabled
         assertThat(testRule.activity.pickBuddyBehavior.state, `is`(BottomSheetBehavior.STATE_HIDDEN))
         assertThat(Storage.selectedBuddyUrl, not(isEmptyOrNullString()))
-        onView(withId(R.id.button)).check(matches(isEnabled()))
         onView(withId(R.id.button)).check(matches(withEffectiveVisibility(VISIBLE)))
 
         // Now uploadPhoto the buddy and move onto the next step
@@ -215,7 +227,6 @@ class OnboardingActivityTest {
         onView(withId(R.id.button)).perform(click())
         checkOnboardingState(BUDDY_EXPLANATION)
 
-
         // Show how points are earned
         onView(withId(R.id.button)).perform(click())
         checkOnboardingState(POINT_SYSTEM)
@@ -232,7 +243,9 @@ class OnboardingActivityTest {
         assertThat(testRule.activity.videoBehavior.state, `is`(BottomSheetBehavior.STATE_EXPANDED))
 
         // Hide the video. Should now be able to advance
-        testRule.activity.videoBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        Espresso.pressBack()
+
+        assertThat(testRule.activity.videoBehavior.state, `is`(BottomSheetBehavior.STATE_HIDDEN))
         onView(withId(R.id.button)).check(matches(withEffectiveVisibility(VISIBLE)))
     }
 

@@ -101,11 +101,13 @@ class VideoFragment : Fragment(), OnboardingActivity.OnboardingFragment {
     }
 
     private fun releasePlayer() {
-        resumeWindow = video.player?.currentWindowIndex ?: 0
-        resumePosition = if (video.player?.isCurrentWindowSeekable ?: false) Math.max(0, video.player.currentPosition) else C.TIME_UNSET
-        video.player?.playWhenReady = false
-        video.player?.release()
-        video.player = null
+        if (!isDetached) {
+            resumeWindow = video.player?.currentWindowIndex ?: 0
+            resumePosition = if (video.player?.isCurrentWindowSeekable ?: false) Math.max(0, video.player.currentPosition) else C.TIME_UNSET
+            video.player?.playWhenReady = false
+            video.player?.release()
+            video.player = null
+        }
     }
 
     override fun readyForNextStep(): Boolean {
