@@ -3,6 +3,7 @@ package us.handstand.kartwheel.test.activity
 
 import android.app.Instrumentation
 import android.content.Intent
+import android.support.test.InstrumentationRegistry
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.action.ViewActions.replaceText
@@ -14,6 +15,7 @@ import android.support.test.espresso.intent.matcher.IntentMatchers.hasExtra
 import android.support.test.espresso.intent.rule.IntentsTestRule
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.runner.AndroidJUnit4
+import android.support.test.uiautomator.UiDevice
 import android.util.Log
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
@@ -40,6 +42,7 @@ class TicketActivityTest {
     @Rule @JvmField
     val testRule = IntentsTestRule(TicketActivity::class.java)
     lateinit var mockApi: MockAPI
+    var needBackPress = false
 
     @Before
     fun setUp() {
@@ -52,6 +55,9 @@ class TicketActivityTest {
     fun tearDown() {
         KartWheel.logout()
         ControllerProviderWithIdlingResources.unregisterIdlingResources()
+        if (needBackPress) {
+            UiDevice.getInstance(InstrumentationRegistry.getInstrumentation()).pressBack()
+        }
     }
 
     @Test
@@ -195,6 +201,7 @@ class TicketActivityTest {
                 hasExtra(`is`(Intent.EXTRA_INTENT),
                         allOf(hasAction(Intent.ACTION_SEND),
                                 hasExtra(Intent.EXTRA_TEXT, MockAPI.code2)))))
+        needBackPress = true
     }
 
     @Test
