@@ -22,15 +22,11 @@ class PickBuddyAdapter : RecyclerView.Adapter<BuddyVH>(), AdapterVHClickListener
     }
 
     override fun onBindViewHolder(holder: BuddyVH, position: Int) {
-        synchronized(EmojiAdapter@ this, {
-            holder.bind(buddyUrls[position])
-        })
+        holder.bind(buddyUrls[position])
     }
 
     override fun getItemCount(): Int {
-        synchronized(EmojiAdapter@ this, {
-            return buddyUrls.size
-        })
+        return buddyUrls.size
     }
 
     override fun onAdapterVHClicked(viewHolder: BuddyVH) {

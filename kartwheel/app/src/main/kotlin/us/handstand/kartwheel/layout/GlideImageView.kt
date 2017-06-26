@@ -53,24 +53,32 @@ abstract class GlideImageView : ImageView {
         }
     }
 
-    fun setImageUrl(imageUrl: String?, default: String = "", placeholder: Int = R.drawable.placeholder_registrant_avatar) {
+    fun setImageUrl(imageUrl: String?, default: String = "", placeholder: Int = R.drawable.placeholder_registrant_avatar, crop: Boolean = true) {
         if (isEmpty(imageUrl)) {
             if (isEmpty(default)) {
-                setImageResource(placeholder, placeholder)
+                Glide.with(context).load(placeholder).fitCenter().into(this)
             } else {
                 setImageUrl(default, placeholder = placeholder)
             }
         } else {
-            Glide.with(context)
-                    .load(imageUrl)
-                    .asBitmap()
-                    .fitCenter()
-                    .placeholder(placeholder)
-                    .into(object : BitmapImageViewTarget(this) {
-                        override fun setResource(resource: Bitmap) {
-                            setImageDrawable(toDrawable(resource))
-                        }
-                    })
+            if (crop) {
+                Glide.with(context)
+                        .load(imageUrl)
+                        .asBitmap()
+                        .fitCenter()
+                        .placeholder(placeholder)
+                        .into(object : BitmapImageViewTarget(this) {
+                            override fun setResource(resource: Bitmap) {
+                                setImageDrawable(toDrawable(resource))
+                            }
+                        })
+            } else {
+                Glide.with(context)
+                        .load(imageUrl)
+                        .fitCenter()
+                        .placeholder(placeholder)
+                        .into(this)
+            }
         }
     }
 }

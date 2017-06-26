@@ -25,7 +25,7 @@ class PickBuddyFragment : Fragment(), OnboardingActivity.OnboardingFragment, Vie
     lateinit var adapter: PickBuddyAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val fragment = inflater.inflate(R.layout.fragment_onboarding_circle_image, container, false) as ViewGroup
+        val fragment = inflater.inflate(R.layout.fragment_onboarding_pick_buddy, container, false) as ViewGroup
         buddy = ViewUtil.findView(fragment, R.id.image)
         buddy.setOnClickListener(this)
         buddy.setImageUrl(Storage.userBuddyUrl, placeholder = R.drawable.buddy_placeholder)
@@ -34,7 +34,7 @@ class PickBuddyFragment : Fragment(), OnboardingActivity.OnboardingFragment, Vie
                 // Set the emoji icon to the one that the user has selected
                 if ((newState == STATE_COLLAPSED || newState == STATE_HIDDEN) && !isEmpty(Storage.selectedBuddyUrl)) {
                     updateOnboardingState()
-                    buddy.setImageUrl(Storage.selectedBuddyUrl, placeholder = R.drawable.buddy_placeholder)
+                    buddy.setImageUrl(Storage.selectedBuddyUrl, placeholder = R.drawable.buddy_placeholder, crop = false)
                 }
             }
 
