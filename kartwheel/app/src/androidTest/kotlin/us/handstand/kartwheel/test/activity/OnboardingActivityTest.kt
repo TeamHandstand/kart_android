@@ -43,6 +43,7 @@ import us.handstand.kartwheel.mocks.matches
 import us.handstand.kartwheel.mocks.toJson
 import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.test.AndroidTestKartWheel
+import us.handstand.kartwheel.test.inject.provider.ControllerProviderWithIdlingResources
 import java.util.regex.Pattern
 
 
@@ -68,6 +69,7 @@ class OnboardingActivityTest {
                 return MockResponse().setHttp2ErrorCode(404)
             }
         })
+        ControllerProviderWithIdlingResources.registerIdlingResources()
         registerIdlingResources(
                 testRule.activity.pickBuddyBehaviorCallback as IdlingResource,
                 testRule.activity.videoBehaviorCallback as IdlingResource
@@ -78,6 +80,7 @@ class OnboardingActivityTest {
     fun tearDown() {
         KartWheel.logout()
         MockStorageProvider.transferObserver.bytesTransferred = 0L
+        ControllerProviderWithIdlingResources.unregisterIdlingResources()
         unregisterIdlingResources(
                 testRule.activity.pickBuddyBehaviorCallback as IdlingResource,
                 testRule.activity.videoBehaviorCallback as IdlingResource
@@ -120,7 +123,6 @@ class OnboardingActivityTest {
         checkOnboardingState(PICK_BUDDY)
         onView(withId(R.id.image)).check(matches(isEnabled()))
         // The advance button should be disabled though, since we don't have a buddy
-        onView(withId(R.id.button)).check(matches(not(isEnabled())))
         onView(withId(R.id.button)).check(matches(withEffectiveVisibility(INVISIBLE)))
     }
 

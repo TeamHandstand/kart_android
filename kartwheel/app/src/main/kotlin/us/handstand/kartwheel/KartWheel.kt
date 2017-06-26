@@ -7,10 +7,7 @@ import com.crashlytics.android.Crashlytics
 import io.fabric.sdk.android.Fabric
 import us.handstand.kartwheel.inject.DaggerInjector
 import us.handstand.kartwheel.inject.Injector
-import us.handstand.kartwheel.inject.provider.ApiProvider
-import us.handstand.kartwheel.inject.provider.BottomSheetCallbackProvider
-import us.handstand.kartwheel.inject.provider.CloudStorageProvider
-import us.handstand.kartwheel.inject.provider.ControllerProvider
+import us.handstand.kartwheel.inject.provider.*
 import us.handstand.kartwheel.model.Database
 import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.network.API
@@ -24,6 +21,7 @@ open class KartWheel : MultiDexApplication() {
         API.db = Database.get()
         Fabric.with(this, Crashlytics())
         injector = DaggerInjector.builder()
+                .applicationProvider(ApplicationProvider(this))
                 .controllerProvider(ControllerProvider())
                 .cloudStorageProvider(CloudStorageProvider())
                 .apiProvider(ApiProvider(BuildConfig.SERVER))

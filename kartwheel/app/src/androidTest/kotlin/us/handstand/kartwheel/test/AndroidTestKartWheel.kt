@@ -4,6 +4,7 @@ import android.os.StrictMode
 import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.inject.DaggerInjector
 import us.handstand.kartwheel.inject.provider.ApiProvider
+import us.handstand.kartwheel.inject.provider.ApplicationProvider
 import us.handstand.kartwheel.mocks.MockAPI
 import us.handstand.kartwheel.model.Database
 import us.handstand.kartwheel.network.API
@@ -20,6 +21,7 @@ class AndroidTestKartWheel : KartWheel() {
         API.db = Database.get()
         api = MockAPI(Database.get())
         injector = DaggerInjector.builder()
+                .applicationProvider(ApplicationProvider(this))
                 .controllerProvider(ControllerProviderWithIdlingResources())
                 .cloudStorageProvider(MockCloudStorageProvider())
                 .apiProvider(ApiProvider(api.server.url("/").uri().toString()))

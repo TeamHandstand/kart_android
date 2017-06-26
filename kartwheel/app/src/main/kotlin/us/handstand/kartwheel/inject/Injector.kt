@@ -2,6 +2,7 @@ package us.handstand.kartwheel.inject
 
 import dagger.Component
 import us.handstand.kartwheel.activity.OnboardingActivity
+import us.handstand.kartwheel.fragment.onboarding.SelfieFragment
 import us.handstand.kartwheel.fragment.race.RaceListFragment
 import us.handstand.kartwheel.fragment.ticket.GameInfoFragment
 import us.handstand.kartwheel.inject.provider.*
@@ -14,4 +15,5 @@ interface Injector {
     fun inject(api: API)
     fun inject(fragment: GameInfoFragment)
     fun inject(fragment: RaceListFragment)
+    fun inject(fragment: SelfieFragment)
 }

@@ -132,7 +132,7 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
         when (v.id) {
             R.id.button -> {
                 if (fragment is SelfieFragment && (isEmpty(Storage.userImageUrl) || !isEmpty(Storage.selfieUri))) {
-                    button.isEnabled = !(fragment as SelfieFragment).startUpload()
+                    (fragment as SelfieFragment).selfieController.upload()
                 } else if (fragment is PickBuddyFragment && (isEmpty(Storage.userBuddyUrl) || !isEmpty(Storage.selectedBuddyUrl))) {
                     button.isEnabled = !(fragment as PickBuddyFragment).uploadBuddyEmoji()
                 } else if (fragment?.readyForNextStep() == true || fragment == null) {
@@ -215,6 +215,10 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
 
         fun getActivity(): Activity
 
+        val button: Button
+            get() {
+                return (getActivity() as OnboardingActivity).button
+            }
         val controller: OnboardingController
             get() {
                 return (getActivity() as OnboardingActivity).controller
