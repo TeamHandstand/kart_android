@@ -41,20 +41,20 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <TextView
+        <us.handstand.kartwheel.layout.KartTextView
             android:id="@+id/miniGameName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16dp"
             tools:text="Mini Game Name" />
 
-        <TextView
+        <us.handstand.kartwheel.layout.KartTextView
             android:id="@+id/miniGameTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="10-15 minutes" />
 
-        <TextView
+        <us.handstand.kartwheel.layout.KartTextView
             android:id="@+id/miniGameMeetupInstructions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

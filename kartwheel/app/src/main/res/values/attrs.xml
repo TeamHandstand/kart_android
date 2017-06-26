@@ -17,4 +17,19 @@
     <declare-styleable name="AnchoredBottomSheetBehavior">
         <attr name="anchorPoint" format="dimension" />
     </declare-styleable>
+
+    <declare-styleable name="KartTextView">
+        <attr name="typeface" format="enum">
+            <enum name="regular" value="1"/>
+            <enum name="light" value="2"/>
+            <enum name="extraLight" value="3"/>
+            <enum name="medium" value="4"/>
+            <enum name="bold" value="5"/>
+            <enum name="semiBold" value="6"/>
+            <enum name="extraBold" value="7"/>
+            <enum name="black" value="8"/>
+            <enum name="phosphate" value="9"/>
+            <enum name="zamenhof" value="10"/>
+        </attr>
+    </declare-styleable>
 </resources>

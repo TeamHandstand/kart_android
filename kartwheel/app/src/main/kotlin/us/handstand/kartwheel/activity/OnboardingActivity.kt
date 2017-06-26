@@ -2,6 +2,7 @@ package us.handstand.kartwheel.activity
 
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
 import android.support.v4.app.Fragment
@@ -19,6 +20,7 @@ import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.controller.OnboardingController
 import us.handstand.kartwheel.controller.OnboardingController.Companion.ERROR
+import us.handstand.kartwheel.controller.OnboardingController.Companion.FINISHED
 import us.handstand.kartwheel.controller.OnboardingController.Companion.NONE
 import us.handstand.kartwheel.controller.OnboardingController.Companion.PICK_BUDDY
 import us.handstand.kartwheel.controller.OnboardingController.Companion.POINT_SYSTEM
@@ -26,6 +28,7 @@ import us.handstand.kartwheel.controller.OnboardingController.Companion.SELFIE
 import us.handstand.kartwheel.controller.OnboardingController.Companion.STARTED
 import us.handstand.kartwheel.controller.OnboardingController.Companion.VIDEO
 import us.handstand.kartwheel.controller.OnboardingStepCompletionListener
+import us.handstand.kartwheel.controller.TicketController
 import us.handstand.kartwheel.fragment.onboarding.PickBuddyFragment
 import us.handstand.kartwheel.fragment.onboarding.SelfieFragment
 import us.handstand.kartwheel.fragment.onboarding.StartedFragment
@@ -99,6 +102,17 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
         when (next) {
             STARTED -> pageNumberVisibility = INVISIBLE
             POINT_SYSTEM -> makeItRainVisibility = VISIBLE
+            FINISHED -> {
+                Storage.lastOnboardingState = FINISHED
+                if (Storage.showRaces) {
+                    startActivity(Intent(this, LoggedInActivity::class.java))
+                } else {
+                    Storage.lastTicketState = TicketController.GAME_INFO
+                    startActivity(Intent(this, TicketActivity::class.java))
+                }
+                finish()
+                return
+            }
         }
         title.text = resources.getString(OnboardingController.getTitleStringResIdForStep(next))
         description.text = resources.getString(OnboardingController.getDescriptionStringResIdForStep(next))

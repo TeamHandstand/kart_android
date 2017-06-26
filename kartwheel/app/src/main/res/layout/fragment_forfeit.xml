@@ -20,12 +20,12 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <TextView
+            <us.handstand.kartwheel.layout.KartTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/forfeit_description" />
 
-            <TextView
+            <us.handstand.kartwheel.layout.KartTextView
                 android:id="@+id/forfeit_code_link"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -36,11 +36,13 @@
         </LinearLayout>
     </ScrollView>
 
-    <android.support.v7.widget.AppCompatButton
+    <us.handstand.kartwheel.layout.KartButton
         android:id="@+id/additionalButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:background="@drawable/button_long"
         android:text="@string/keep_ticket"
         android:textAllCaps="true"
         android:textColor="@android:color/white"

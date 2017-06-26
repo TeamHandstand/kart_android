@@ -25,7 +25,8 @@ class VariableScrollSpeedLayoutManager : LinearLayoutManager {
             }
 
             override fun calculateSpeedPerPixel(displayMetrics: DisplayMetrics): Float {
-                return if (scrollSpeed > 0) scrollSpeed / displayMetrics.densityDpi else 1f
+                return 2f
+                //return if (scrollSpeed > 0) scrollSpeed / displayMetrics.densityDpi else 1f
             }
         }
         linearSmoothScroller.targetPosition = position

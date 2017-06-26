@@ -42,7 +42,7 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <TextView
+                <us.handstand.kartwheel.layout.KartTextView
                     android:id="@+id/raceName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
                     android:textStyle="bold"
                     tools:text="Racey McPlaceholder" />
 
-                <TextView
+                <us.handstand.kartwheel.layout.KartTextView
                     android:id="@+id/raceDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -68,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal" />
 
-            <TextView
+            <us.handstand.kartwheel.layout.KartTextView
                 android:id="@+id/raceCountdownTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -80,7 +80,7 @@
                 android:textSize="24dp"
                 android:textStyle="bold" />
 
-            <TextView
+            <us.handstand.kartwheel.layout.KartTextView
                 android:id="@+id/raceCountdown"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -91,7 +91,7 @@
                 android:textStyle="bold"
                 tools:text="1:54:49" />
 
-            <TextView
+            <us.handstand.kartwheel.layout.KartTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
@@ -111,7 +111,7 @@
                 app:layoutManager="LinearLayoutManager"
                 tools:listitem="@layout/recycler_view_item_registrant_avatar" />
 
-            <TextView
+            <us.handstand.kartwheel.layout.KartTextView
                 android:id="@+id/spotsLeft"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -121,7 +121,7 @@
                 android:textSize="16dp"
                 tools:text="+5 Spots Available" />
 
-            <TextView
+            <us.handstand.kartwheel.layout.KartTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"

@@ -8,6 +8,7 @@ import io.fabric.sdk.android.Fabric
 import us.handstand.kartwheel.inject.DaggerInjector
 import us.handstand.kartwheel.inject.Injector
 import us.handstand.kartwheel.inject.provider.*
+import us.handstand.kartwheel.layout.Font
 import us.handstand.kartwheel.model.Database
 import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.network.API
@@ -29,6 +30,7 @@ open class KartWheel : MultiDexApplication() {
                 .build()
 
         injector.inject(API)
+        injector.inject(Font)
     }
 
     companion object {

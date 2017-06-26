@@ -6,6 +6,7 @@ import us.handstand.kartwheel.fragment.onboarding.SelfieFragment
 import us.handstand.kartwheel.fragment.race.RaceListFragment
 import us.handstand.kartwheel.fragment.ticket.GameInfoFragment
 import us.handstand.kartwheel.inject.provider.*
+import us.handstand.kartwheel.layout.Font
 import us.handstand.kartwheel.network.API
 
 
@@ -13,6 +14,7 @@ import us.handstand.kartwheel.network.API
 interface Injector {
     fun inject(activity: OnboardingActivity)
     fun inject(api: API)
+    fun inject(font: Font)
     fun inject(fragment: GameInfoFragment)
     fun inject(fragment: RaceListFragment)
     fun inject(fragment: SelfieFragment)

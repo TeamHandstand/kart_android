@@ -14,7 +14,9 @@ class CircularImageView : GlideImageView {
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
     init {
-        setImageResource(R.drawable.placeholder_registrant_avatar_grey, R.drawable.placeholder_registrant_avatar_grey)
+        if (!isInEditMode) {
+            setImageResource(R.drawable.placeholder_registrant_avatar_grey, R.drawable.placeholder_registrant_avatar_grey)
+        }
     }
 
     override fun toDrawable(original: Bitmap): Drawable {

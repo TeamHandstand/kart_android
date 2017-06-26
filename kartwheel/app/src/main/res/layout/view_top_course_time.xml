@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     tools:parentTag="RelativeLayout">
 
-    <TextView
+    <us.handstand.kartwheel.layout.KartTextView
         android:id="@+id/rank"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
         android:layout_marginLeft="28dp"
         android:layout_toRightOf="@+id/rank" />
 
-    <TextView
+    <us.handstand.kartwheel.layout.KartTextView
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
         android:textSize="16dp"
         android:textStyle="bold" />
 
-    <TextView
+    <us.handstand.kartwheel.layout.KartTextView
         android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

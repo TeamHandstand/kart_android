@@ -2,7 +2,7 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
+    <us.handstand.kartwheel.layout.KartTextView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/player_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -12,9 +12,10 @@
         android:textColor="@color/green"
         android:textSize="34dp"
         android:textStyle="bold"
+        app:typeface="phosphate"
         tools:text="P1" />
 
-    <TextView
+    <us.handstand.kartwheel.layout.KartTextView
         android:id="@+id/player_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

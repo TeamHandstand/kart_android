@@ -59,7 +59,7 @@ class MedalRain(val activity: OnboardingActivity) {
     fun getRandomEmojiImageView(): ImageView {
         val randomEmoji = ImageView(activity)
         val emojiDrawableResource = pointSystemEmojis[nextRandom(0, pointSystemEmojis.size)]
-        val size = pointSystemSizes[nextRandom(0, pointSystemSizes.size)]
+        val size = ViewUtil.dpToPx(activity, pointSystemSizes[nextRandom(0, pointSystemSizes.size)])
         randomEmoji.setImageResource(emojiDrawableResource)
         randomEmoji.layoutParams = RelativeLayout.LayoutParams(size, size)
         randomEmoji.y = -size.toFloat()

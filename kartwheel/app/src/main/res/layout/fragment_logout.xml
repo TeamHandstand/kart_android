@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        android:layout_marginTop="16dp"
         android:gravity="center_horizontal"
         android:orientation="horizontal">
 
@@ -17,12 +18,14 @@
             android:layout_height="64dp"
             android:src="@drawable/launch" />
 
-        <TextView
+        <us.handstand.kartwheel.layout.KartTextView
             style="@style/GameInfoTitleStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/logout_title"
-            android:textColor="@color/red" />
+            android:textColor="@color/red"
+            android:textSize="34dp"
+            app:typeface="zamenhof" />
     </LinearLayout>
 
     <ScrollView
@@ -42,12 +45,12 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <TextView
+            <us.handstand.kartwheel.layout.KartTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/logout_description" />
 
-            <TextView
+            <us.handstand.kartwheel.layout.KartTextView
                 android:id="@+id/forfeit_code_link"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -58,23 +61,39 @@
         </LinearLayout>
     </ScrollView>
 
-    <android.support.v7.widget.AppCompatButton
+    <us.handstand.kartwheel.layout.KartButton
         android:id="@+id/keepTicketButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/logoutButton"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/button_long"
+        android:padding="16dp"
         android:text="@string/keep_ticket"
         android:textAllCaps="true"
         android:textColor="@android:color/white"
-        app:backgroundTint="@color/blue" />
+        android:textSize="34dp"
+        app:backgroundTint="@color/blue"
+        app:typeface="zamenhof" />
 
-    <android.support.v7.widget.AppCompatButton
+    <us.handstand.kartwheel.layout.KartButton
         android:id="@+id/logoutButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/button_long"
+        android:padding="16dp"
         android:text="@string/logout"
         android:textAllCaps="true"
         android:textColor="@android:color/white"
-        app:backgroundTint="@color/red" />
+        android:textSize="34dp"
+        app:backgroundTint="@color/red"
+        app:typeface="zamenhof" />
 </RelativeLayout>

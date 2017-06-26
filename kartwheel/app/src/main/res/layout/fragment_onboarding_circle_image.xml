@@ -3,25 +3,20 @@
     android:id="@+id/imageContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center_horizontal"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_gravity="center_horizontal">
+    <us.handstand.kartwheel.layout.CircularImageView
+        android:id="@+id/image"
+        android:layout_width="175dp"
+        android:layout_height="175dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/background_white_circle"
+        android:minHeight="175dp"
+        android:minWidth="175dp"
+        android:src="@drawable/onboarding_camera" />
 
-        <us.handstand.kartwheel.layout.CircularImageView
-            android:id="@+id/image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@drawable/background_white_circle"
-            android:minHeight="175dp"
-            android:minWidth="175dp"
-            android:src="@drawable/onboarding_camera" />
-    </FrameLayout>
-
-    <TextView
+    <us.handstand.kartwheel.layout.KartTextView
         android:id="@+id/imageText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

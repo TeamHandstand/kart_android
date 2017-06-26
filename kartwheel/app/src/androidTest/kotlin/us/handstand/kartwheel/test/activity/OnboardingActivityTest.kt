@@ -249,6 +249,109 @@ class OnboardingActivityTest {
         onView(withId(R.id.button)).check(matches(withEffectiveVisibility(VISIBLE)))
     }
 
+    @Test
+    fun advanceToRaceList_whenOnboardedOnRaceDay() {
+        // User already has image and buddy
+        Storage.userImageUrl = "https://www.skipimageuploading.com"
+        Storage.userBuddyUrl = "https://www.skipbuddyuploading.com"
+
+        checkOnboardingState(STARTED)
+
+        onView(withId(R.id.button)).perform(click())
+        checkOnboardingState(SELFIE)
+
+        onView(withId(R.id.button)).perform(click())
+        checkOnboardingState(PICK_BUDDY)
+
+        // Should advance to the buddy explanation screen, since we already have one
+        onView(withId(R.id.button)).perform(click())
+        checkOnboardingState(BUDDY_EXPLANATION)
+
+        // Show how points are earned
+        onView(withId(R.id.button)).perform(click())
+        checkOnboardingState(POINT_SYSTEM)
+
+        // Should advance to the video since there's no action for the user to perform on the explanation
+        onView(withId(R.id.button)).perform(click())
+        checkOnboardingState(VIDEO)
+
+        // Play the video
+        onView(withId(R.id.image)).perform(click())
+        assertThat(testRule.activity.videoBehavior.state, `is`(BottomSheetBehavior.STATE_EXPANDED))
+        // Hide the video. Should now be able to advance
+        Espresso.pressBack()
+        assertThat(testRule.activity.videoBehavior.state, `is`(BottomSheetBehavior.STATE_HIDDEN))
+        onView(withId(R.id.button)).check(matches(withEffectiveVisibility(VISIBLE)))
+
+        // Setup mock server to return the courses and race list
+        mockApi.server.setDispatcher(object : Dispatcher() {
+            override fun dispatch(request: RecordedRequest): MockResponse {
+                if (request.path.matches(MockAPI.coursesPattern)) {
+                    return MockResponse().setBody(MockAPI.courses.toJson("courses"))
+                } else if (request.path.matches(MockAPI.racesPattern)) {
+                    return MockResponse().setBody(MockAPI.races.toJson("races"))
+                } else if (request.path.matches(MockAPI.raceParticipantsPattern)) {
+                    return MockResponse().setBody(MockAPI.getRaceParticipants().toJson("users"))
+                } else if (request.path.matches(MockAPI.userPattern)) {
+                    return MockResponse().setBody(MockAPI.getUser(1, true, true).toJson())
+                } else if (request.path.matches(MockAPI.teamPattern)) {
+                    return MockResponse().setBody(MockAPI.getTeam(signUpUser1 = true, onboardedUser1 = true).toJson())
+                } else if (request.path.matches(MockAPI.eventPattern)) {
+                    return MockResponse().setBody(MockAPI.getEvent(true).toJson())
+                } else {
+                    Log.e("Unknown path", request.path)
+                }
+                return MockResponse().setHttp2ErrorCode(404)
+            }
+        })
+        onView(withId(R.id.button)).perform(click())
+
+        // Check that there are three races queued
+        onView(allOf(withId(R.id.raceName), withText("#1 - Race race-1"))).check(matches(isDisplayed()))
+        onView(allOf(withId(R.id.raceName), withText("#2 - Race race-2"))).check(matches(isDisplayed()))
+        onView(allOf(withId(R.id.raceName), withText("#3 - Race race-3"))).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun showGameInfo_afterOnboarding_whenNotGameDay() {
+        // User already has image and buddy
+        Storage.userImageUrl = "https://www.skipimageuploading.com"
+        Storage.userBuddyUrl = "https://www.skipbuddyuploading.com"
+
+        checkOnboardingState(STARTED)
+
+        onView(withId(R.id.button)).perform(click())
+        checkOnboardingState(SELFIE)
+
+        onView(withId(R.id.button)).perform(click())
+        checkOnboardingState(PICK_BUDDY)
+
+        // Should advance to the buddy explanation screen, since we already have one
+        onView(withId(R.id.button)).perform(click())
+        checkOnboardingState(BUDDY_EXPLANATION)
+
+        // Show how points are earned
+        onView(withId(R.id.button)).perform(click())
+        checkOnboardingState(POINT_SYSTEM)
+
+        // Should advance to the video since there's no action for the user to perform on the explanation
+        onView(withId(R.id.button)).perform(click())
+        checkOnboardingState(VIDEO)
+
+        // Play the video
+        onView(withId(R.id.image)).perform(click())
+        assertThat(testRule.activity.videoBehavior.state, `is`(BottomSheetBehavior.STATE_EXPANDED))
+        // Hide the video. Should now be able to advance
+        Espresso.pressBack()
+        assertThat(testRule.activity.videoBehavior.state, `is`(BottomSheetBehavior.STATE_HIDDEN))
+        onView(withId(R.id.button)).check(matches(withEffectiveVisibility(VISIBLE)))
+
+        // Should see the GameInfoFragment
+        onView(withId(R.id.button)).perform(click())
+        onView(allOf(withParent(withId(R.id.playerOne)), withId(R.id.player_name))).check(matches(withText(MockAPI.firstName1 + " " + MockAPI.lastName1)))
+        onView(allOf(withParent(withId(R.id.playerTwo)), withId(R.id.player_name))).check(matches(withText(startsWith("UNCLAIMED"))))
+    }
+
     fun takePhotoWithNativeCamera() {
         device.findObject(By.res("com.android.camera:id/shutter_button").clazz("android.widget.ImageView").text(Pattern.compile("")).pkg("com.android.camera")).clickAndWait(Until.newWindow(), 500)
         device.findObject(By.res("com.android.camera:id/btn_done").clazz("android.widget.ImageView").text(Pattern.compile("")).pkg("com.android.camera")).clickAndWait(Until.newWindow(), 500)

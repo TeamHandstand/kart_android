@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
+            <us.handstand.kartwheel.layout.KartTextView
                 android:id="@+id/pageNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -26,9 +26,10 @@
                 android:gravity="center_horizontal"
                 android:textColor="@android:color/white"
                 android:textSize="20dp"
-                tools:text="1 of 5" />
+                app:typeface="bold"
+                tools:text="2 of 5" />
 
-            <TextView
+            <us.handstand.kartwheel.layout.KartTextView
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -38,41 +39,49 @@
                 android:gravity="center_horizontal"
                 android:textColor="@android:color/white"
                 android:textSize="37dp"
-                tools:text="@string/onboarding_started_title" />
+                app:typeface="zamenhof"
+                tools:text="@string/onboarding_pick_buddy_title" />
 
-            <TextView
+            <us.handstand.kartwheel.layout.KartTextView
                 android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="50dp"
+                android:layout_marginBottom="16dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:gravity="center_horizontal"
                 android:textColor="@android:color/white"
                 android:textSize="18dp"
-                tools:text="@string/onboarding_started_description" />
+                tools:text="@string/onboarding_pick_buddy_description" />
         </LinearLayout>
 
         <FrameLayout
             android:id="@+id/fragment"
+            android:name="us.handstand.kartwheel.fragment.onboarding.PickBuddyFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/button"
-            android:layout_below="@+id/titleContainer" />
+            android:layout_below="@+id/titleContainer"
+            tools:layout="@layout/fragment_onboarding_circle_image" />
 
-        <android.support.v7.widget.AppCompatButton
+        <us.handstand.kartwheel.layout.KartButton
             android:id="@+id/button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/makeItRainDescription"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/button_long"
             android:enabled="true"
             android:padding="16dp"
             android:textAllCaps="true"
             android:textColor="@color/blue"
+            android:textSize="34dp"
             app:backgroundTint="@android:color/white"
-            tools:text="@string/onboarding_started_button" />
+            app:typeface="zamenhof"
+            tools:text="@string/onboarding_pick_buddy_button" />
 
-        <TextView
+        <us.handstand.kartwheel.layout.KartTextView
             android:id="@+id/makeItRainDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

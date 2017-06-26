@@ -9,27 +9,33 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/additionalButton"
         android:layout_alignParentTop="true"
+        android:layout_margin="16dp"
         android:background="@drawable/background_code_input"
         android:elevation="5dp"
         android:gravity="center"
         android:orientation="vertical"
         android:padding="16dp">
 
-        <TextView
+        <us.handstand.kartwheel.layout.KartTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/already_claimed_explanation" />
 
     </LinearLayout>
 
-    <android.support.v7.widget.AppCompatButton
+    <us.handstand.kartwheel.layout.KartButton
         android:id="@+id/additionalButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:background="@drawable/button_long"
         android:enabled="true"
+        android:padding="16dp"
         android:text="@string/contact_us"
         android:textAllCaps="true"
         android:textColor="@android:color/white"
-        app:backgroundTint="@color/green" />
+        android:textSize="34dp"
+        app:backgroundTint="@color/green"
+        app:typeface="zamenhof" />
 </RelativeLayout>

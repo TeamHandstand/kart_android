@@ -9,11 +9,12 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
+        <us.handstand.kartwheel.layout.KartTextView
             style="@style/GameInfoTitleStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/your_team" />
+            android:text="@string/your_team"
+            app:typeface="zamenhof" />
 
         <us.handstand.kartwheel.layout.GameInfoPlayerView
             android:id="@+id/playerOne"
@@ -33,11 +34,12 @@
             app:playerName="UNCLAIMED"
             app:playerNumber="2" />
 
-        <TextView
+        <us.handstand.kartwheel.layout.KartTextView
             style="@style/GameInfoTitleStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/the_items" />
+            android:text="@string/the_items"
+            app:typeface="zamenhof" />
 
         <us.handstand.kartwheel.layout.ItemView
             android:layout_width="match_parent"
