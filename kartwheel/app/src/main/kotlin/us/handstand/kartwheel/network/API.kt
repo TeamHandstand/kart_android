@@ -1,6 +1,7 @@
 package us.handstand.kartwheel.network
 
 
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
@@ -29,7 +30,7 @@ object API {
         fun onSuccess(response: T)
 
         fun onFailure(errorCode: Int, errorResponse: String) {
-            // Optional
+            Log.e("APICallback", errorResponse)
         }
     }
 

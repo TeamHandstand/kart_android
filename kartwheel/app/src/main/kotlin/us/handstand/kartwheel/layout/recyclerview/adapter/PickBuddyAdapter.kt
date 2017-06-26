@@ -1,47 +1,46 @@
 package us.handstand.kartwheel.layout.recyclerview.adapter
 
 import android.support.design.widget.BottomSheetBehavior
-import android.support.design.widget.BottomSheetBehavior.STATE_COLLAPSED
+import android.support.design.widget.BottomSheetBehavior.STATE_HIDDEN
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
-import us.handstand.kartwheel.layout.recyclerview.viewholder.EmojiVH
+import us.handstand.kartwheel.layout.recyclerview.viewholder.BuddyVH
+import us.handstand.kartwheel.model.Storage
 
-class EmojiAdapter : RecyclerView.Adapter<EmojiVH>(), AdapterVHClickListener<EmojiVH> {
+class PickBuddyAdapter : RecyclerView.Adapter<BuddyVH>(), AdapterVHClickListener<BuddyVH> {
     var recyclerView: RecyclerView? = null
-    var selectedEmojiUrl: String? = null
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView?) {
         super.onAttachedToRecyclerView(recyclerView)
         this.recyclerView = recyclerView
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EmojiVH {
-        val rvh = EmojiVH.constructNewInstance(parent)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BuddyVH {
+        val rvh = BuddyVH.constructNewInstance(parent)
         rvh.adapterVHClickListener = this
         return rvh
     }
 
-    override fun onBindViewHolder(holder: EmojiVH, position: Int) {
+    override fun onBindViewHolder(holder: BuddyVH, position: Int) {
         synchronized(EmojiAdapter@ this, {
-            holder.bind(emojiUrls[position])
+            holder.bind(buddyUrls[position])
         })
     }
 
     override fun getItemCount(): Int {
         synchronized(EmojiAdapter@ this, {
-            return emojiUrls.size
+            return buddyUrls.size
         })
     }
 
-    override fun onAdapterVHClicked(viewHolder: EmojiVH) {
-        // TODO: Highlight the buddy
-        selectedEmojiUrl = emojiUrls[viewHolder.adapterPosition]
+    override fun onAdapterVHClicked(viewHolder: BuddyVH) {
+        Storage.selectedBuddyUrl = buddyUrls[viewHolder.adapterPosition]
         // Collapse the RecyclerView
-        BottomSheetBehavior.from(recyclerView).state = STATE_COLLAPSED
+        BottomSheetBehavior.from(recyclerView).state = STATE_HIDDEN
     }
 
     companion object {
-        val emojiUrls = listOf("https://s3.amazonaws.com/kartwheel-production/buddies/buddy-wolf.png",
+        val buddyUrls = listOf("https://s3.amazonaws.com/kartwheel-production/buddies/buddy-wolf.png",
                 "https://s3.amazonaws.com/kartwheel-production/buddies/buddy-snowman.png",
                 "https://s3.amazonaws.com/kartwheel-production/buddies/buddy-waffles.png",
                 "https://s3.amazonaws.com/kartwheel-production/buddies/buddy-tiger.png",

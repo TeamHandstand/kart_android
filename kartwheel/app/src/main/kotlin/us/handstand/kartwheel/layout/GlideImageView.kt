@@ -19,7 +19,9 @@ abstract class GlideImageView : ImageView {
     abstract fun toDrawable(original: Bitmap): Drawable
 
     init {
-        setImageResource(R.drawable.placeholder_registrant_avatar_grey, R.drawable.placeholder_registrant_avatar_grey)
+        if (!isInEditMode) {
+            setImageResource(R.drawable.placeholder_registrant_avatar_grey, R.drawable.placeholder_registrant_avatar_grey)
+        }
     }
 
     fun setImageUri(uri: Uri) {

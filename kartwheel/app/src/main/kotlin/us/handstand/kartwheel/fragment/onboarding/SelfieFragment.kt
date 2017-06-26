@@ -61,6 +61,7 @@ class SelfieFragment : Fragment(), OnboardingActivity.OnboardingFragment, Transf
             val uri = Uri.parse(Storage.selfieUri)
             activity.revokeUriPermission(uri, Photos.requestPermissions)
             selfie.setImageUri(uri)
+            updateOnboardingState()
         }
     }
 
@@ -129,6 +130,6 @@ class SelfieFragment : Fragment(), OnboardingActivity.OnboardingFragment, Transf
     }
 
     override fun readyForNextStep(): Boolean {
-        return !isEmpty(Storage.userImageUrl)
+        return !isEmpty(Storage.userImageUrl) || !isEmpty(Storage.selfieUri)
     }
 }

@@ -40,6 +40,14 @@ class MockAPI(val db: BriteDatabase?) {
         API.db = db
     }
 
+    fun setupApp() {
+        Storage.code = code1
+        Storage.eventId = eventId
+        Storage.teamId = teamId
+        Storage.ticketId = ticketId1
+        Storage.userId = userId1
+    }
+
     companion object {
         val coursesPattern = Pattern.compile("/events/[^/]+/courses")
         val racesPattern = Pattern.compile("/events/[^/]+/races")

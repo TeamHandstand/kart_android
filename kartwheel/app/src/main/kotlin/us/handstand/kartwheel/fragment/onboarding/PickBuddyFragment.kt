@@ -2,10 +2,8 @@ package us.handstand.kartwheel.fragment.onboarding
 
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
-import android.support.design.widget.BottomSheetBehavior.STATE_COLLAPSED
-import android.support.design.widget.BottomSheetBehavior.STATE_EXPANDED
+import android.support.design.widget.BottomSheetBehavior.*
 import android.support.v4.app.Fragment
-import android.support.v7.widget.RecyclerView
 import android.text.TextUtils.isEmpty
 import android.view.LayoutInflater
 import android.view.View
@@ -17,53 +15,48 @@ import us.handstand.kartwheel.activity.OnboardingActivity
 import us.handstand.kartwheel.controller.OnboardingController.Companion.PICK_BUDDY
 import us.handstand.kartwheel.layout.CircularImageView
 import us.handstand.kartwheel.layout.ViewUtil
-import us.handstand.kartwheel.layout.recyclerview.adapter.EmojiAdapter
+import us.handstand.kartwheel.layout.recyclerview.adapter.PickBuddyAdapter
 import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.model.User
 import us.handstand.kartwheel.network.API
 
-class EmojiFragment : Fragment(), OnboardingActivity.OnboardingFragment, View.OnClickListener {
-    lateinit var emoji: CircularImageView
-    lateinit var adapter: EmojiAdapter
+class PickBuddyFragment : Fragment(), OnboardingActivity.OnboardingFragment, View.OnClickListener {
+    lateinit var buddy: CircularImageView
+    lateinit var adapter: PickBuddyAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val fragment = inflater.inflate(R.layout.fragment_onboarding_circle_image, container, false) as ViewGroup
-        emoji = ViewUtil.findView(fragment, R.id.image)
-        emoji.setOnClickListener(this)
-        emoji.setImageUrl(Storage.userBuddyUrl, placeholder = R.drawable.buddy_placeholder)
-        adapter = EmojiAdapter()
-        return fragment
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        recyclerViewBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+        buddy = ViewUtil.findView(fragment, R.id.image)
+        buddy.setOnClickListener(this)
+        buddy.setImageUrl(Storage.userBuddyUrl, placeholder = R.drawable.buddy_placeholder)
+        pickBuddyBehaviorCallback.delegate = object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 // Set the emoji icon to the one that the user has selected
-                if (newState == STATE_COLLAPSED && adapter.selectedEmojiUrl != null) {
-                    emoji.setImageUrl(adapter.selectedEmojiUrl, placeholder = R.drawable.buddy_placeholder)
+                if ((newState == STATE_COLLAPSED || newState == STATE_HIDDEN) && !isEmpty(Storage.selectedBuddyUrl)) {
+                    updateOnboardingState()
+                    buddy.setImageUrl(Storage.selectedBuddyUrl, placeholder = R.drawable.buddy_placeholder)
                 }
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {}
-        })
-        val recyclerView = (activity.findViewById(R.id.bottomSheet) as RecyclerView)
-        recyclerView.adapter = adapter
+        }
+        return fragment
     }
 
     /**
      * @return true if uploadPhoto started or is ongoing.
      */
     fun uploadBuddyEmoji(): Boolean {
-        if (adapter.selectedEmojiUrl == null) {
+        if (isEmpty(Storage.selectedBuddyUrl)) {
             activity.runOnUiThread { Toast.makeText(activity, R.string.need_buddy, Toast.LENGTH_LONG).show() }
             return false
         } else {
-            // Upload the buddyUrl and move onto the next step, once the uploadPhoto is completed.
+            // Upload the selectedBuddyUrl and move onto the next step, once the uploadPhoto is completed.
             // If not completed, then show an error message
-            API.updateUser(API.gson.fromJson("{\"buddyUrl\":\"${adapter.selectedEmojiUrl}\"}", JsonObject::class.java), object : API.APICallback<User> {
+            API.updateUser(API.gson.fromJson("{\"buddyUrl\":\"${Storage.selectedBuddyUrl}\"}", JsonObject::class.java), object : API.APICallback<User> {
                 override fun onSuccess(response: User) {
                     Storage.userBuddyUrl = response.buddyUrl()!!
+                    Storage.selectedBuddyUrl = ""
                     controller.onStepCompleted(PICK_BUDDY)
                 }
 
@@ -78,10 +71,10 @@ class EmojiFragment : Fragment(), OnboardingActivity.OnboardingFragment, View.On
 
     // Toggle the BottomSheet's visibility whenever the emoji icon is clicked
     override fun onClick(v: View?) {
-        recyclerViewBehavior.state = if (recyclerViewBehavior.state == STATE_EXPANDED) STATE_COLLAPSED else STATE_EXPANDED
+        recyclerViewBehavior.state = if (recyclerViewBehavior.state == STATE_EXPANDED) STATE_HIDDEN else STATE_EXPANDED
     }
 
     override fun readyForNextStep(): Boolean {
-        return !isEmpty(Storage.userBuddyUrl)
+        return !isEmpty(Storage.userBuddyUrl) || !isEmpty(Storage.selectedBuddyUrl)
     }
 }

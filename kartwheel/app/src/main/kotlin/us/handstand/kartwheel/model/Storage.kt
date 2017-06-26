@@ -9,20 +9,21 @@ import us.handstand.kartwheel.controller.TicketController
 class Storage private constructor(val prefs: SharedPreferences) {
 
     companion object {
-        private const val USER_ID = "user_id"
-        private const val USER_IMAGE_URL = "user_image_url"
-        private const val USER_BUDDY_URL = "user_buddy_url"
-        private const val TEAM_ID = "team_id"
-        private const val EVENT_ID = "event_id"
-        private const val TICKET_ID = "ticket_id"
+        private const val BUDDY_URI = "buddy_uri"
         private const val EMOJI_CODE = "emoji_code"
-        private const val SHOW_RACES = "show_races"
+        private const val EVENT_ID = "event_id"
         private const val LAST_TICKET_STEP = "last_ticket_step"
         private const val LAST_ONBOARDING_STEP = "last_onboarding_step"
         private const val SELFIE_URI = "selfie_uri"
         private const val SELFIE_TRANSFER_ID = "selfie_transfer_id"
+        private const val SHOW_RACES = "show_races"
+        private const val TEAM_ID = "team_id"
+        private const val TICKET_ID = "ticket_id"
+        private const val USER_ID = "user_id"
+        private const val USER_BUDDY_URL = "user_buddy_url"
+        private const val USER_IMAGE_URL = "user_image_url"
 
-        @StringDef(USER_ID, EMOJI_CODE, EVENT_ID, TEAM_ID, TICKET_ID, SHOW_RACES, USER_IMAGE_URL, USER_BUDDY_URL, LAST_TICKET_STEP, SELFIE_URI, SELFIE_TRANSFER_ID)
+        @StringDef(BUDDY_URI, USER_ID, EMOJI_CODE, EVENT_ID, TEAM_ID, TICKET_ID, SHOW_RACES, USER_IMAGE_URL, USER_BUDDY_URL, LAST_TICKET_STEP, SELFIE_URI, SELFIE_TRANSFER_ID)
         private annotation class KEYS
 
         private lateinit var instance: Storage
@@ -108,6 +109,13 @@ class Storage private constructor(val prefs: SharedPreferences) {
             set(value) {
                 return set(SELFIE_URI, value)
             }
+        var selectedBuddyUrl: String
+            get() {
+                return getString(BUDDY_URI)
+            }
+            set(value) {
+                return set(BUDDY_URI, value)
+            }
         var selfieTransferId: Int
             get() {
                 return getInt(SELFIE_TRANSFER_ID)
@@ -149,18 +157,19 @@ class Storage private constructor(val prefs: SharedPreferences) {
         }
 
         fun clear() {
-            userId = ""
-            teamId = ""
-            ticketId = ""
-            showRaces = false
-            eventId = ""
+            selectedBuddyUrl = ""
             code = ""
-            userImageUrl = ""
-            userBuddyUrl = ""
-            selfieUri = ""
-            selfieTransferId = -1
+            eventId = ""
             lastTicketState = TicketController.Companion.TOS
             lastOnboardingState = OnboardingController.Companion.STARTED
+            selfieTransferId = -1
+            selfieUri = ""
+            showRaces = false
+            teamId = ""
+            ticketId = ""
+            userId = ""
+            userBuddyUrl = ""
+            userImageUrl = ""
         }
     }
 }

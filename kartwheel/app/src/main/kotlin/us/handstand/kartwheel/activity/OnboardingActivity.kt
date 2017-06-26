@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils.isEmpty
+import android.util.Log
 import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
@@ -28,29 +29,34 @@ import us.handstand.kartwheel.controller.OnboardingController.Companion.SELFIE
 import us.handstand.kartwheel.controller.OnboardingController.Companion.STARTED
 import us.handstand.kartwheel.controller.OnboardingController.Companion.VIDEO
 import us.handstand.kartwheel.controller.OnboardingStepCompletionListener
-import us.handstand.kartwheel.fragment.onboarding.EmojiFragment
+import us.handstand.kartwheel.fragment.onboarding.PickBuddyFragment
 import us.handstand.kartwheel.fragment.onboarding.SelfieFragment
 import us.handstand.kartwheel.fragment.onboarding.StartedFragment
 import us.handstand.kartwheel.fragment.onboarding.VideoFragment
+import us.handstand.kartwheel.inject.provider.BottomSheetCallbackProvider.BSBCallbackIMPL
 import us.handstand.kartwheel.layout.ViewUtil
+import us.handstand.kartwheel.layout.recyclerview.adapter.PickBuddyAdapter
 import us.handstand.kartwheel.model.Storage
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 
-// TODO: Video playback and scrolling shells on onboarding welcome screen
 class OnboardingActivity : AppCompatActivity(), View.OnClickListener, OnboardingStepCompletionListener {
-    private lateinit var title: TextView
-    private lateinit var description: TextView
-    private lateinit var pageNumber: TextView
-    private lateinit var button: Button
-    private lateinit var makeItRainText: TextView
-    private lateinit var recyclerView: RecyclerView
     private lateinit var background: RelativeLayout
-    private lateinit var recyclerViewBehavior: BottomSheetBehavior<RecyclerView>
-    private lateinit var videoBehavior: BottomSheetBehavior<SimpleExoPlayerView>
+    private lateinit var button: Button
+    private lateinit var description: TextView
+    private lateinit var makeItRainText: TextView
+    private lateinit var pageNumber: TextView
+    private lateinit var pickBuddyRecyclerView: RecyclerView
+    private lateinit var title: TextView
+    private lateinit var video: SimpleExoPlayerView
+    lateinit var pickBuddyBehavior: BottomSheetBehavior<RecyclerView>
+    lateinit var videoBehavior: BottomSheetBehavior<SimpleExoPlayerView>
+    @Inject lateinit var pickBuddyBehaviorCallback: BSBCallbackIMPL
+    @Inject lateinit var videoBehaviorCallback: BSBCallbackIMPL
 
     private val controller = OnboardingController(this)
     private var fragment: OnboardingFragment? = null
@@ -60,19 +66,25 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_onboarding)
-        title = ViewUtil.findView(this, R.id.title)
-        description = ViewUtil.findView(this, R.id.description)
-        pageNumber = ViewUtil.findView(this, R.id.pageNumber)
-        button = ViewUtil.findView(this, R.id.button)
-        makeItRainText = ViewUtil.findView(this, R.id.makeItRainDescription)
-        recyclerView = ViewUtil.findView(this, R.id.bottomSheet)
+        KartWheel.injector.inject(this)
         background = ViewUtil.findView(this, R.id.onboardingBackground)
+        button = ViewUtil.findView(this, R.id.button)
+        description = ViewUtil.findView(this, R.id.description)
+        makeItRainText = ViewUtil.findView(this, R.id.makeItRainDescription)
+        pageNumber = ViewUtil.findView(this, R.id.pageNumber)
+        pickBuddyRecyclerView = ViewUtil.findView(this, R.id.bottomSheet)
+        title = ViewUtil.findView(this, R.id.title)
+        video = ViewUtil.findView(this, R.id.video)
+        pickBuddyBehavior = BottomSheetBehavior.from(pickBuddyRecyclerView)
+        videoBehavior = BottomSheetBehavior.from(video)
+
         background.setOnClickListener(this)
-
-        recyclerViewBehavior = BottomSheetBehavior.from(recyclerView)
-        videoBehavior = BottomSheetBehavior.from(ViewUtil.findView(this, R.id.video))
-
         button.setOnClickListener(this)
+        pickBuddyRecyclerView.adapter = PickBuddyAdapter()
+        pickBuddyBehaviorCallback.layoutId = R.id.bottomSheet
+        pickBuddyBehavior.setBottomSheetCallback(pickBuddyBehaviorCallback)
+        videoBehaviorCallback.layoutId = R.id.video
+        videoBehavior.setBottomSheetCallback(videoBehaviorCallback)
 
         controller.transition(NONE, Storage.lastOnboardingState)
     }
@@ -97,8 +109,11 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
 
         Storage.lastOnboardingState = next
         val nextFragment = getFragmentForStep(next)
+        button.visibility = VISIBLE
         button.isEnabled = true
         Storage.selfieUri = ""
+        Storage.selectedBuddyUrl = ""
+        Log.e("ONBOARDING", "showNextStep $previous to $next")
         if (nextFragment == null) {
             if (fragment != null) {
                 supportFragmentManager.beginTransaction().remove(fragment as Fragment).commit()
@@ -107,6 +122,7 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
                 startMedalRain()
             }
         } else if (!isFinishing && !supportFragmentManager.isDestroyed) {
+            button.visibility = if (nextFragment.readyForNextStep()) VISIBLE else INVISIBLE
             supportFragmentManager.beginTransaction().replace(R.id.fragment, nextFragment as Fragment).commit()
         }
         fragment = nextFragment
@@ -117,8 +133,8 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
             R.id.button -> {
                 if (fragment is SelfieFragment && (isEmpty(Storage.userImageUrl) || !isEmpty(Storage.selfieUri))) {
                     button.isEnabled = !(fragment as SelfieFragment).startUpload()
-                } else if (fragment is EmojiFragment && isEmpty(Storage.userBuddyUrl)) {
-                    button.isEnabled = !(fragment as EmojiFragment).uploadBuddyEmoji()
+                } else if (fragment is PickBuddyFragment && (isEmpty(Storage.userBuddyUrl) || !isEmpty(Storage.selectedBuddyUrl))) {
+                    button.isEnabled = !(fragment as PickBuddyFragment).uploadBuddyEmoji()
                 } else if (fragment?.readyForNextStep() == true || fragment == null) {
                     controller.onStepCompleted(Storage.lastOnboardingState)
                 }
@@ -180,12 +196,21 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
     }
 
     override fun onOnboardingFragmentStateChanged() {
-        // TODO: Do I need this, since we're not using fragments?
+        if (fragment?.readyForNextStep() ?: true) {
+            Log.e("readyForNext?", "true")
+            button.visibility = VISIBLE
+        } else {
+            Log.e("readyForNext?", "false")
+        }
     }
 
     interface OnboardingFragment {
         fun readyForNextStep(): Boolean {
             return false
+        }
+
+        fun updateOnboardingState() {
+            (getActivity() as OnboardingActivity).onOnboardingFragmentStateChanged()
         }
 
         fun getActivity(): Activity
@@ -194,21 +219,35 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
             get() {
                 return (getActivity() as OnboardingActivity).controller
             }
+        val video: SimpleExoPlayerView
+            get() {
+                return (getActivity() as OnboardingActivity).video
+            }
         val recyclerViewBehavior: BottomSheetBehavior<RecyclerView>
             get() {
-                return (getActivity() as OnboardingActivity).recyclerViewBehavior
+                return (getActivity() as OnboardingActivity).pickBuddyBehavior
             }
         val videoBehavior: BottomSheetBehavior<SimpleExoPlayerView>
             get() {
                 return (getActivity() as OnboardingActivity).videoBehavior
             }
+
+        val pickBuddyBehaviorCallback: BSBCallbackIMPL
+            get() {
+                return (getActivity() as OnboardingActivity).pickBuddyBehaviorCallback
+            }
+        val videoBehaviorCallback: BSBCallbackIMPL
+            get() {
+                return (getActivity() as OnboardingActivity).videoBehaviorCallback
+            }
+
     }
 
     fun getFragmentForStep(step: Long): OnboardingFragment? {
         when (step) {
             STARTED -> return StartedFragment()
             SELFIE -> return SelfieFragment()
-            PICK_BUDDY -> return EmojiFragment()
+            PICK_BUDDY -> return PickBuddyFragment()
             VIDEO -> return VideoFragment()
         }
         return null

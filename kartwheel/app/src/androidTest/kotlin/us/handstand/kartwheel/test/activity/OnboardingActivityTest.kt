@@ -1,7 +1,9 @@
 package us.handstand.kartwheel.test.activity
 
+import android.support.design.widget.BottomSheetBehavior
 import android.support.test.InstrumentationRegistry
-import android.support.test.espresso.Espresso.onView
+import android.support.test.espresso.Espresso.*
+import android.support.test.espresso.IdlingResource
 import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.contrib.RecyclerViewActions
@@ -13,9 +15,11 @@ import android.support.test.runner.AndroidJUnit4
 import android.support.test.uiautomator.By
 import android.support.test.uiautomator.UiDevice
 import android.support.test.uiautomator.Until
+import android.util.Log
+import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
-import org.hamcrest.Matchers.`is`
-import org.hamcrest.Matchers.not
+import okhttp3.mockwebserver.RecordedRequest
+import org.hamcrest.Matchers.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -35,6 +39,7 @@ import us.handstand.kartwheel.controller.OnboardingController.Companion.VIDEO
 import us.handstand.kartwheel.layout.recyclerview.viewholder.RegistrantAvatarVH
 import us.handstand.kartwheel.mocks.MockAPI
 import us.handstand.kartwheel.mocks.MockStorageProvider
+import us.handstand.kartwheel.mocks.matches
 import us.handstand.kartwheel.mocks.toJson
 import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.test.AndroidTestKartWheel
@@ -46,17 +51,37 @@ class OnboardingActivityTest {
     @Rule @JvmField
     val testRule = IntentsTestRule(OnboardingActivity::class.java)
     private lateinit var device: UiDevice
+    private lateinit var mockApi: MockAPI
 
     @Before
     fun setUp() {
-        val instrumentation = InstrumentationRegistry.getInstrumentation();
-        device = UiDevice.getInstance(instrumentation);
+        device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        mockApi = AndroidTestKartWheel.api
+        mockApi.setupApp()
+        mockApi.server.setDispatcher(object : Dispatcher() {
+            override fun dispatch(request: RecordedRequest): MockResponse {
+                if (request.path.matches(MockAPI.userPattern)) {
+                    return MockResponse().setBody(MockAPI.getUser(1, true, true).toJson())
+                } else {
+                    Log.e("Unknown path", request.path)
+                }
+                return MockResponse().setHttp2ErrorCode(404)
+            }
+        })
+        registerIdlingResources(
+                testRule.activity.pickBuddyBehaviorCallback as IdlingResource,
+                testRule.activity.videoBehaviorCallback as IdlingResource
+        )
     }
 
     @After
     fun tearDown() {
         KartWheel.logout()
         MockStorageProvider.transferObserver.bytesTransferred = 0L
+        unregisterIdlingResources(
+                testRule.activity.pickBuddyBehaviorCallback as IdlingResource,
+                testRule.activity.videoBehaviorCallback as IdlingResource
+        )
     }
 
     @Test
@@ -66,10 +91,9 @@ class OnboardingActivityTest {
         onView(withId(R.id.button)).perform(click())
         checkOnboardingState(SELFIE)
 
-        // Try advancing without taking a photo
-        onView(withId(R.id.button)).perform(click())
+        // The advance button shouldn't be visible until we've taken a photo
+        onView(withId(R.id.button)).check(matches(withEffectiveVisibility(INVISIBLE)))
         assert(!MockStorageProvider.uploading)
-        checkOnboardingState(SELFIE)
 
         // Take the photo
         onView(withId(R.id.image)).perform(click())
@@ -79,7 +103,8 @@ class OnboardingActivityTest {
         assert(!MockStorageProvider.uploading)
         assertThat(MockStorageProvider.transferObserver.bytesTransferred, `is`(0L))
 
-        // Press button for uploadPhoto
+        // Press button for uploadPhoto. It should now be visible
+        onView(withId(R.id.button)).check(matches(withEffectiveVisibility(VISIBLE)))
         onView(withId(R.id.button)).perform(click())
 
         // Still on the SELFIE fragment, but clicking the button/selfie pic does nothing, since we're not done uploading
@@ -90,21 +115,26 @@ class OnboardingActivityTest {
 
         // We've now completed the transfer. The UI should change to PICK_BUDDY
         MockStorageProvider.transferObserver.bytesTransferred = 100L
-        onView(withId(R.id.button)).check(matches(isEnabled()))
-        onView(withId(R.id.image)).check(matches(isEnabled()))
         assert(!MockStorageProvider.uploading)
+
         checkOnboardingState(PICK_BUDDY)
+        onView(withId(R.id.image)).check(matches(isEnabled()))
+        // The advance button should be disabled though, since we don't have a buddy
+        onView(withId(R.id.button)).check(matches(not(isEnabled())))
+        onView(withId(R.id.button)).check(matches(withEffectiveVisibility(INVISIBLE)))
     }
 
     @Test
     fun skipImageUpload_ifUserAlreadyHasImageUrl() {
+        Storage.userImageUrl = "https://www.skipimageuploading.com"
+
         checkOnboardingState(STARTED)
 
         onView(withId(R.id.button)).perform(click())
         checkOnboardingState(SELFIE)
 
         // Try advancing without taking a photo; should succeed
-        Storage.userImageUrl = "https://www.skipimageuploading.com"
+        onView(withId(R.id.button)).check(matches(withEffectiveVisibility(VISIBLE)))
         onView(withId(R.id.button)).perform(click())
         checkOnboardingState(PICK_BUDDY)
     }
@@ -127,6 +157,7 @@ class OnboardingActivityTest {
         assert(MockStorageProvider.uploading)
         MockStorageProvider.failUpload()
         // When the image fails the uploadPhoto, check that both buttons are enabled
+        onView(withId(R.id.button)).check(matches(withEffectiveVisibility(VISIBLE)))
         onView(withId(R.id.button)).check(matches(isEnabled()))
         onView(withId(R.id.image)).check(matches(isEnabled()))
         checkOnboardingState(SELFIE)
@@ -134,32 +165,32 @@ class OnboardingActivityTest {
 
     @Test
     fun pickBuddy() {
+        // User already has image; we can skip this work
+        Storage.userImageUrl = "https://www.skipimageuploading.com"
+
         checkOnboardingState(STARTED)
 
         onView(withId(R.id.button)).perform(click())
         checkOnboardingState(SELFIE)
-        // User already has image; we can skip this work
-        Storage.userImageUrl = "https://www.skipimageuploading.com"
 
         onView(withId(R.id.button)).perform(click())
         checkOnboardingState(PICK_BUDDY)
 
-        // Try advancing without a buddy
-        onView(withId(R.id.button)).perform(click())
-        checkOnboardingState(PICK_BUDDY)
+        // Cannot advance without a buddy, button isn't yet visible
+        onView(withId(R.id.button)).check(matches(withEffectiveVisibility(INVISIBLE)))
 
         // Select buddy
         onView(withId(R.id.image)).perform(click())
         onView(withId(R.id.bottomSheet)).check(matches(isCompletelyDisplayed()))
         onView(withId(R.id.bottomSheet)).perform(RecyclerViewActions.actionOnItemAtPosition<RegistrantAvatarVH>(0, click()))
 
-        // Buddy list should disappear
-        onView(withId(R.id.bottomSheet)).check(matches(not(isCompletelyDisplayed())))
+        // Buddy list should disappear and the advance button should appear and be enabled
+        assertThat(testRule.activity.pickBuddyBehavior.state, `is`(BottomSheetBehavior.STATE_HIDDEN))
+        assertThat(Storage.selectedBuddyUrl, not(isEmptyOrNullString()))
+        onView(withId(R.id.button)).check(matches(isEnabled()))
+        onView(withId(R.id.button)).check(matches(withEffectiveVisibility(VISIBLE)))
 
         // Now uploadPhoto the buddy and move onto the next step
-
-        // We need the server to return a User object with the buddyUrl
-        AndroidTestKartWheel.api.server.enqueue(MockResponse().setBody(MockAPI.getUser(0, true, true).toJson()))
         onView(withId(R.id.button)).perform(click())
         checkOnboardingState(BUDDY_EXPLANATION)
     }
@@ -201,7 +232,7 @@ class OnboardingActivityTest {
     fun checkOnboardingState(@OnboardingStep step: Long) {
         onView(withId(R.id.title)).check(matches(withText(OnboardingController.getTitleStringResIdForStep(step))))
         onView(withId(R.id.pageNumber)).check(matches(withEffectiveVisibility(if (step == STARTED) INVISIBLE else VISIBLE)))
-        onView(withId(R.id.pageNumber)).check(matches(withText("${step} of 5")))
+        onView(withId(R.id.pageNumber)).check(matches(withText("$step of 5")))
         onView(withId(R.id.description)).check(matches(withText(OnboardingController.getDescriptionStringResIdForStep(step))))
         onView(withId(R.id.button)).check(matches(withText(OnboardingController.getButtonStringResIdForStep(step))))
         onView(withId(R.id.makeItRainDescription)).check(matches(withEffectiveVisibility(if (step == POINT_SYSTEM) VISIBLE else INVISIBLE)))

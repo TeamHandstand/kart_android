@@ -27,8 +27,8 @@ object MockStorageProvider : StorageProvider {
     class MockTransferObserver : TransferObserver {
         var transferListener_: TransferListener? = null
         override var key: String = "123"
-        override var bytesTotal: Long = 100
-        override var bytesTransferred: Long = 0
+        override var bytesTotal: Long = 100L
+        override var bytesTransferred: Long = 0L
             set(value) {
                 transferListener_?.onProgressChanged(1, value, bytesTotal)
                 if (value == bytesTotal) {

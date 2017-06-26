@@ -6,7 +6,7 @@
     android:layout_weight="1">
 
     <us.handstand.kartwheel.layout.SimpleGlideImageView
-        android:id="@+id/emoji"
+        android:id="@+id/buddy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center" />

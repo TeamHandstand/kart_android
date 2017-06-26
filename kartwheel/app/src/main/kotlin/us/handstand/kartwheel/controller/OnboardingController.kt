@@ -1,7 +1,7 @@
 package us.handstand.kartwheel.controller
 
 import android.support.annotation.IntDef
-import android.text.TextUtils
+import android.text.TextUtils.isEmpty
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.model.Storage
 
@@ -83,7 +83,7 @@ class OnboardingController(var listener: OnboardingStepCompletionListener) {
         when (type) {
             STARTED -> transition(type, SELFIE)
             SELFIE -> transition(type, PICK_BUDDY)
-            PICK_BUDDY -> if (!TextUtils.isEmpty(Storage.userBuddyUrl)) transition(type, BUDDY_EXPLANATION)
+            PICK_BUDDY -> if (!isEmpty(Storage.userBuddyUrl)) transition(type, BUDDY_EXPLANATION)
             BUDDY_EXPLANATION -> transition(type, POINT_SYSTEM)
             POINT_SYSTEM -> transition(type, VIDEO)
             VIDEO -> transition(type, FINISHED)

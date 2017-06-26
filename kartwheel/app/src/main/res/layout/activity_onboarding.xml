@@ -96,8 +96,7 @@
         app:layoutManager="GridLayoutManager"
         app:layout_behavior="BottomSheetBehavior"
         app:spanCount="3"
-        tools:listitem="@layout/recycler_view_item_emoji"
-        tools:visibility="visible" />
+        tools:listitem="@layout/recycler_view_item_buddy" />
 
     <com.google.android.exoplayer2.ui.SimpleExoPlayerView
         android:id="@+id/video"

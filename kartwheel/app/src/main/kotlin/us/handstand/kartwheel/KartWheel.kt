@@ -8,6 +8,7 @@ import io.fabric.sdk.android.Fabric
 import us.handstand.kartwheel.inject.DaggerInjector
 import us.handstand.kartwheel.inject.Injector
 import us.handstand.kartwheel.inject.provider.ApiProvider
+import us.handstand.kartwheel.inject.provider.BottomSheetCallbackProvider
 import us.handstand.kartwheel.inject.provider.CloudStorageProvider
 import us.handstand.kartwheel.inject.provider.ControllerProvider
 import us.handstand.kartwheel.model.Database
@@ -26,6 +27,7 @@ open class KartWheel : MultiDexApplication() {
                 .controllerProvider(ControllerProvider())
                 .cloudStorageProvider(CloudStorageProvider())
                 .apiProvider(ApiProvider(BuildConfig.SERVER))
+                .bottomSheetCallbackProvider(BottomSheetCallbackProvider())
                 .build()
 
         injector.inject(API)
