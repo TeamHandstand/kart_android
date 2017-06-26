@@ -79,7 +79,7 @@ class OnboardingActivityTest {
 
     @After
     fun tearDown() {
-        KartWheel.logout()
+        KartWheel.logout(false)
         MockStorageProvider.transferObserver.bytesTransferred = 0L
         ControllerProviderWithIdlingResources.unregisterIdlingResources()
         unregisterIdlingResources(

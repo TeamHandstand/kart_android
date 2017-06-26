@@ -53,7 +53,7 @@ class TicketActivityTest {
 
     @After
     fun tearDown() {
-        KartWheel.logout()
+        KartWheel.logout(false)
         ControllerProviderWithIdlingResources.unregisterIdlingResources()
         if (needBackPress) {
             UiDevice.getInstance(InstrumentationRegistry.getInstrumentation()).pressBack()

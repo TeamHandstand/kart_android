@@ -12,6 +12,7 @@ import us.handstand.kartwheel.layout.Font
 import us.handstand.kartwheel.model.Database
 import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.network.API
+import us.handstand.kartwheel.util.ThreadManager
 
 open class KartWheel : MultiDexApplication() {
 
@@ -35,9 +36,16 @@ open class KartWheel : MultiDexApplication() {
 
     companion object {
         lateinit var injector: Injector
-        fun logout() {
-            Storage.clear()
-            Database.clear(Database.get())
+        fun logout(submitOnExecutor: Boolean = true) {
+            if (submitOnExecutor) {
+                ThreadManager.databaseExecutor.submit {
+                    Storage.clear()
+                    Database.clear(Database.get())
+                }
+            } else {
+                Storage.clear()
+                Database.clear(Database.get())
+            }
         }
     }
 }
