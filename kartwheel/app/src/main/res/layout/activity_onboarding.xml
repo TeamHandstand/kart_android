@@ -98,12 +98,19 @@
         app:spanCount="3"
         tools:listitem="@layout/recycler_view_item_buddy" />
 
-    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
-        android:id="@+id/video"
+    <FrameLayout
+        android:id="@+id/videoSheet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@android:color/black"
         app:behavior_hideable="true"
         app:behavior_peekHeight="0dp"
         app:behavior_skipCollapsed="true"
-        app:layout_behavior="BottomSheetBehavior" />
+        app:layout_behavior="BottomSheetBehavior">
+
+        <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+            android:id="@+id/video"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
 </android.support.design.widget.CoordinatorLayout>

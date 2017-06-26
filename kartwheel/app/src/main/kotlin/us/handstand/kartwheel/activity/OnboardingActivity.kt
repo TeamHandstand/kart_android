@@ -55,7 +55,7 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
     private lateinit var title: TextView
     private lateinit var video: SimpleExoPlayerView
     lateinit var pickBuddyBehavior: BottomSheetBehavior<RecyclerView>
-    lateinit var videoBehavior: BottomSheetBehavior<SimpleExoPlayerView>
+    lateinit var videoBehavior: BottomSheetBehavior<FrameLayout>
     @Inject lateinit var pickBuddyBehaviorCallback: BSBCallbackIMPL
     @Inject lateinit var videoBehaviorCallback: BSBCallbackIMPL
 
@@ -77,7 +77,7 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
         title = ViewUtil.findView(this, R.id.title)
         video = ViewUtil.findView(this, R.id.video)
         pickBuddyBehavior = BottomSheetBehavior.from(pickBuddyRecyclerView)
-        videoBehavior = BottomSheetBehavior.from(video)
+        videoBehavior = BottomSheetBehavior.from(ViewUtil.findView(this, R.id.videoSheet))
 
         background.setOnClickListener(this)
         button.setOnClickListener(this)
@@ -263,7 +263,7 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
             get() {
                 return (getActivity() as OnboardingActivity).pickBuddyBehavior
             }
-        val videoBehavior: BottomSheetBehavior<SimpleExoPlayerView>
+        val videoBehavior: BottomSheetBehavior<FrameLayout>
             get() {
                 return (getActivity() as OnboardingActivity).videoBehavior
             }
