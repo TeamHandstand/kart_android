@@ -7,7 +7,7 @@
         android:layout_width="142dp"
         android:layout_height="82dp"
         android:layout_marginRight="16dp"
-        tools:src="@mipmap/red_turtle" />
+        tools:src="@drawable/item_shell_red" />
 
     <TextView
         android:id="@+id/title"

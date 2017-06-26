@@ -15,7 +15,7 @@
         <ImageView
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:src="@mipmap/group" />
+            android:src="@drawable/launch" />
 
         <TextView
             style="@style/GameInfoTitleStyle"

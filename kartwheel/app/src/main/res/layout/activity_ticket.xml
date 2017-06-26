@@ -15,7 +15,7 @@
             android:layout_width="128dp"
             android:layout_height="128dp"
             android:layout_alignParentLeft="true"
-            android:src="@mipmap/group" />
+            android:src="@drawable/launch" />
 
         <TextView
             android:id="@+id/title_text"

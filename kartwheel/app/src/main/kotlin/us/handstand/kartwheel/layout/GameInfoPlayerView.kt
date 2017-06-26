@@ -64,7 +64,7 @@ class GameInfoPlayerView : RelativeLayout, View.OnClickListener {
             if (isClaimed) {
                 forfeitOrShare.visibility = GONE
             } else {
-                forfeitOrShare.setImageResource(R.mipmap.share_button)
+                forfeitOrShare.setImageResource(R.drawable.share_button)
             }
         }
     }

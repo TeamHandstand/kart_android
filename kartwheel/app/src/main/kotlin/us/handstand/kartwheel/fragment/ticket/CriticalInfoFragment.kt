@@ -67,8 +67,8 @@ class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnC
             ticketController.user = ticketController.user!!.construct(charmanderOrSquirtle!!, pancakeOrWaffle!!)
         }
         critInfoText!!.setText(if (currentQuestion == FOOD) R.string.pancakes_waffles else R.string.charmander_squirtle)
-        leftImage!!.setImageResource(if (currentQuestion == FOOD) R.mipmap.pancakes else R.mipmap.charmander)
-        rightImage!!.setImageResource(if (currentQuestion == FOOD) R.mipmap.waffles else R.mipmap.squirtle)
+        leftImage!!.setImageResource(if (currentQuestion == FOOD) R.drawable.pancakes else R.drawable.charmander)
+        rightImage!!.setImageResource(if (currentQuestion == FOOD) R.drawable.waffles else R.drawable.squirtle)
 
         leftImage!!.isSelected = selectedAnswer == LEFT
         rightImage!!.isSelected = selectedAnswer == RIGHT

@@ -37,14 +37,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:src="@mipmap/pancakes" />
+                android:src="@drawable/pancakes" />
 
             <ImageView
                 android:id="@+id/right_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:src="@mipmap/waffles" />
+                android:src="@drawable/waffles" />
         </RelativeLayout>
     </LinearLayout>
 

@@ -26,7 +26,7 @@ class ItemView : RelativeLayout {
         View.inflate(context, R.layout.item_view, this)
         val a = context.theme.obtainStyledAttributes(attrs, R.styleable.ItemView, 0, 0)
         try {
-            (findViewById(R.id.image) as ImageView).setImageResource(a.getResourceId(R.styleable.ItemView_src, R.mipmap.red_turtle))
+            (findViewById(R.id.image) as ImageView).setImageResource(a.getResourceId(R.styleable.ItemView_src, R.drawable.race_item_red_shell))
             (findViewById(R.id.title) as TextView).text = a.getString(R.styleable.ItemView_title)
             (findViewById(R.id.description) as TextView).text = a.getString(R.styleable.ItemView_description)
         } finally {
