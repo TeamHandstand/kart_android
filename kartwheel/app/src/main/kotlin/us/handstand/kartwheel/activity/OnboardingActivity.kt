@@ -83,7 +83,6 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
         videoBehaviorCallback.tag = "_video"
         videoBehavior.setBottomSheetCallback(videoBehaviorCallback)
 
-        Storage.lastOnboardingState = STARTED
         controller.transition(NONE, Storage.lastOnboardingState)
     }
 
