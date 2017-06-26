@@ -224,6 +224,16 @@ class OnboardingActivityTest {
         onView(withId(R.id.button)).perform(click())
         checkOnboardingState(VIDEO)
 
+        // The advance button should be invisible until the user opens the video
+        onView(withId(R.id.button)).check(matches(withEffectiveVisibility(INVISIBLE)))
+
+        // Play the video
+        onView(withId(R.id.image)).perform(click())
+        assertThat(testRule.activity.videoBehavior.state, `is`(BottomSheetBehavior.STATE_EXPANDED))
+
+        // Hide the video. Should now be able to advance
+        testRule.activity.videoBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        onView(withId(R.id.button)).check(matches(withEffectiveVisibility(VISIBLE)))
     }
 
     fun takePhotoWithNativeCamera() {
