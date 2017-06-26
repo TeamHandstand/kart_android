@@ -5,17 +5,21 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <us.handstand.kartwheel.layout.CircularImageView
-        android:id="@+id/image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:background="@drawable/background_white_circle"
-        android:maxHeight="200dp"
-        android:maxWidth="200dp"
-        android:minHeight="175dp"
-        android:minWidth="175dp"
-        android:src="@drawable/onboarding_camera" />
+    <FrameLayout
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center_horizontal">
+
+        <us.handstand.kartwheel.layout.CircularImageView
+            android:id="@+id/image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/background_white_circle"
+            android:minHeight="175dp"
+            android:minWidth="175dp"
+            android:src="@drawable/onboarding_camera" />
+    </FrameLayout>
 
     <TextView
         android:id="@+id/imageText"
