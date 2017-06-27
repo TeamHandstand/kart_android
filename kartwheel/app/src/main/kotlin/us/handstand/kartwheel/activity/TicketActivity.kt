@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatButton
 import android.view.View
+import android.view.ViewTreeObserver
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
@@ -81,6 +82,14 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ticket)
+        val parentView = findViewById(R.id.parent)
+        parentView.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+            override fun onPreDraw(): Boolean {
+                parentView.viewTreeObserver.removeOnPreDrawListener(this)
+                parentView.background = ViewUtil.drawStripes(this@TicketActivity, parentView.measuredWidth.toFloat(), parentView.measuredHeight.toFloat())
+                return true
+            }
+        })
         title = ViewUtil.findView(this, R.id.title_text)
         button = ViewUtil.findView(this, R.id.button)
         button!!.setOnClickListener(this)

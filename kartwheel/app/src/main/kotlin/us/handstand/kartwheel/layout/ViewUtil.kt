@@ -6,7 +6,9 @@ import android.content.Context
 import android.content.res.AssetManager
 import android.content.res.ColorStateList
 import android.content.res.Resources
-import android.graphics.Typeface
+import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.support.annotation.ColorRes
 import android.support.annotation.IdRes
 import android.support.annotation.StringRes
@@ -19,6 +21,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
+import us.handstand.kartwheel.R
 
 
 object ViewUtil {
@@ -64,5 +67,36 @@ object ViewUtil {
         if (!TextUtils.isEmpty(value)) {
             editText.setText(value)
         }
+    }
+
+    // Draw stripes
+    private val line = Path()
+    private val paint = Paint()
+    private var strokeWidth: Float = 0f
+
+    init {
+        paint.style = Paint.Style.STROKE
+    }
+
+    fun drawStripes(context: Context, width: Float, height: Float): Drawable {
+        // Init the stroke width if it isn't already init'd
+        if (strokeWidth == 0f) {
+            strokeWidth = ViewUtil.dpToPx(context, 120).toFloat()
+            paint.strokeWidth = strokeWidth / 2
+        }
+
+        val bmp = Bitmap.createBitmap(width.toInt(), height.toInt(), Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bmp)
+
+        paint.color = context.resources.getColor(R.color.textLightGrey_40p)
+        canvas.translate(-width / 2, height / 10)
+        canvas.rotate(-30f)
+        var step = 0f
+        while (step / 2 < height) {
+            canvas.translate(0f, strokeWidth)
+            canvas.drawLine(-width, 0f, 2 * width, 0f, paint)
+            step += 2 * strokeWidth
+        }
+        return BitmapDrawable(context.resources, bmp)
     }
 }
