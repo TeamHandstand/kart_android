@@ -7,6 +7,7 @@ import android.support.v4.widget.ContentLoadingProgressBar
 import android.text.Editable
 import android.text.TextUtils.isEmpty
 import android.text.TextWatcher
+import android.text.method.LinkMovementMethod
 import android.view.KeyEvent
 import android.view.KeyEvent.ACTION_UP
 import android.view.LayoutInflater
@@ -29,6 +30,7 @@ class CodeEntryFragment : Fragment(), TicketActivity.TicketFragment, TextView.On
         progress = findView(fragmentView, R.id.networkProgress)
         codeEntry.setOnEditorActionListener(this)
         codeEntry.addTextChangedListener(this)
+        (fragmentView.findViewById(R.id.getCodeText) as TextView).movementMethod = LinkMovementMethod.getInstance()
         return fragmentView
     }
 

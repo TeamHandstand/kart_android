@@ -42,10 +42,10 @@
     </FrameLayout>
 
     <us.handstand.kartwheel.layout.KartTextView
+        android:id="@+id/getCodeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:autoLink="web"
         android:gravity="center_horizontal"
         android:text="@string/does_not_have_code" />
 
