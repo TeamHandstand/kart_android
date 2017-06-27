@@ -24,7 +24,7 @@
             android:id="@+id/code_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@null"
+            android:background="@android:color/transparent"
             android:gravity="center_horizontal"
             android:imeOptions="actionGo"
             android:maxLines="1"

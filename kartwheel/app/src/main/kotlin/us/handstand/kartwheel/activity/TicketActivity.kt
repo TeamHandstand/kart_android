@@ -96,7 +96,10 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
         ticketController.transition(NONE, Storage.lastTicketState)
     }
 
-    override fun showDialog(message: String) {
+    override fun showDialog(@FragmentType step: Long, message: String) {
+        if (step == CODE_ENTRY && ticketFragment is CodeEntryFragment) {
+            (ticketFragment as CodeEntryFragment).setProgressVisibility(View.INVISIBLE)
+        }
         Toast.makeText(this, message, LENGTH_LONG).show()
     }
 
@@ -140,6 +143,9 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
 
     override fun onClick(v: View) {
         if (v.isEnabled && v.id == R.id.button && ticketFragment!!.isAdvanceButtonEnabled() && ticketFragment!!.canAdvanceToNextStep()) {
+            if (ticketFragment is CodeEntryFragment) {
+                (ticketFragment as CodeEntryFragment).setProgressVisibility(View.VISIBLE)
+            }
             ticketController.onStepCompleted(Storage.lastTicketState)
         }
     }

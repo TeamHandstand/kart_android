@@ -27,7 +27,7 @@ class TicketController(var listener: TicketStepCompletionListener) {
 
         interface TicketStepCompletionListener {
             fun showNextStep(@FragmentType previous: Long, @FragmentType next: Long)
-            fun showDialog(message: String)
+            fun showDialog(@FragmentType step: Long, message: String)
             fun onTicketFragmentStateChanged()
         }
     }
@@ -64,7 +64,7 @@ class TicketController(var listener: TicketStepCompletionListener) {
                     if (errorCode == 409) {
                         transition(type, ALREADY_CLAIMED)
                     } else {
-                        listener.showDialog(errorResponse)
+                        listener.showDialog(CODE_ENTRY, errorResponse)
                     }
                 }
             })
@@ -84,24 +84,24 @@ class TicketController(var listener: TicketStepCompletionListener) {
                     }
 
                     override fun onFailure(errorCode: Int, errorResponse: String) {
-                        listener.showDialog("Unable to create user: $errorResponse")
+                        listener.showDialog(WELCOME, "Unable to create user: $errorResponse")
                         transition(type, ERROR)
                     }
                 })
             } else {
-                listener.showDialog("Not all of your information was supplied!")
+                listener.showDialog(WELCOME, "Not all of your information was supplied!")
             }
 
             FORFEIT -> API.forfeitTicket(Storage.ticketId, object : API.APICallback<JsonElement> {
                 override fun onSuccess(response: JsonElement) {
                     user = null
                     code = null
-                    listener.showDialog("Ticket forfeited")
+                    listener.showDialog(FORFEIT, "Ticket forfeited")
                     transition(type, CODE_ENTRY)
                 }
 
                 override fun onFailure(errorCode: Int, errorResponse: String) {
-                    listener.showDialog("Unable to forfeit ticket: $errorResponse")
+                    listener.showDialog(FORFEIT, "Unable to forfeit ticket: $errorResponse")
                     transition(type, ERROR)
                 }
             })
