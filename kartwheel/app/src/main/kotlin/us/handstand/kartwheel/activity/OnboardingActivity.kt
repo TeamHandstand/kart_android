@@ -13,6 +13,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
+import android.view.ViewTreeObserver
 import android.widget.*
 import android.widget.Toast.LENGTH_LONG
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView
@@ -74,6 +75,13 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
         pickBuddyBehavior = BottomSheetBehavior.from(pickBuddyRecyclerView)
         videoBehavior = BottomSheetBehavior.from(ViewUtil.findView(this, R.id.videoSheet))
 
+        background.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+            override fun onPreDraw(): Boolean {
+                background.viewTreeObserver.removeOnPreDrawListener(this)
+                background.background = ViewUtil.drawStripes(this@OnboardingActivity, background.measuredWidth.toFloat(), background.measuredHeight.toFloat(), R.color.blue_background, R.color.blue)
+                return true
+            }
+        })
         background.setOnClickListener(this)
         button.setOnClickListener(this)
         medalRain.onCreate(background)

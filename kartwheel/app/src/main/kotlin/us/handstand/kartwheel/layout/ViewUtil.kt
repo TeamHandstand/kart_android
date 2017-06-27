@@ -78,17 +78,19 @@ object ViewUtil {
         paint.style = Paint.Style.STROKE
     }
 
-    fun drawStripes(context: Context, width: Float, height: Float): Drawable {
+    fun drawStripes(context: Context, width: Float, height: Float, backgroundColor: Int, stripeColor: Int = 0): Drawable {
         // Init the stroke width if it isn't already init'd
         if (strokeWidth == 0f) {
             strokeWidth = ViewUtil.dpToPx(context, 120).toFloat()
             paint.strokeWidth = strokeWidth / 2
         }
 
+        paint.color = context.resources.getColor(stripeColor)
+
         val bmp = Bitmap.createBitmap(width.toInt(), height.toInt(), Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bmp)
 
-        paint.color = context.resources.getColor(R.color.textLightGrey_40p)
+        canvas.drawColor(context.resources.getColor(backgroundColor))
         canvas.translate(-width / 2, height / 10)
         canvas.rotate(-30f)
         var step = 0f

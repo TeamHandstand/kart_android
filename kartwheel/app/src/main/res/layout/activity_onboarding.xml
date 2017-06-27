@@ -9,8 +9,7 @@
     <RelativeLayout
         android:id="@+id/onboardingBackground"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/blue">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:id="@+id/titleContainer"

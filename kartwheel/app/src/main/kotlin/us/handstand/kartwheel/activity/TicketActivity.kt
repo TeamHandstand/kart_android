@@ -86,7 +86,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
         parentView.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
             override fun onPreDraw(): Boolean {
                 parentView.viewTreeObserver.removeOnPreDrawListener(this)
-                parentView.background = ViewUtil.drawStripes(this@TicketActivity, parentView.measuredWidth.toFloat(), parentView.measuredHeight.toFloat())
+                parentView.background = ViewUtil.drawStripes(this@TicketActivity, parentView.measuredWidth.toFloat(), parentView.measuredHeight.toFloat(), android.R.color.white, R.color.textLightGrey_40p)
                 return true
             }
         })
