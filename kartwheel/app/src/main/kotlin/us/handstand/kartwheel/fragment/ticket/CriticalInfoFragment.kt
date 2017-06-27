@@ -15,11 +15,10 @@ import us.handstand.kartwheel.activity.TicketActivity
 import us.handstand.kartwheel.layout.ViewUtil
 
 class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnClickListener {
-    internal var critInfoText: TextView? = null
-
-    internal var leftImage: ImageView? = null
-    internal var rightImage: ImageView? = null
-    internal var button: AppCompatButton? = null
+    private lateinit var button: AppCompatButton
+    private lateinit var critInfoText: TextView
+    private lateinit var leftImage: ImageView
+    private lateinit var rightImage: ImageView
     private var pancakeOrWaffle: String? = null
     private var charmanderOrSquirtle: String? = null
     @Question private var currentQuestion: Int = FOOD
@@ -30,8 +29,8 @@ class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnC
         critInfoText = ViewUtil.findView(view, R.id.critical_information_question)
         leftImage = ViewUtil.findView(view, R.id.left_image)
         rightImage = ViewUtil.findView(view, R.id.right_image)
-        leftImage!!.setOnClickListener(this)
-        rightImage!!.setOnClickListener(this)
+        leftImage.setOnClickListener(this)
+        rightImage.setOnClickListener(this)
         currentQuestion = FOOD
         selectedAnswer = NONE
         return view
@@ -66,12 +65,12 @@ class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnC
             currentQuestion = FINISHED
             ticketController.user = ticketController.user!!.construct(charmanderOrSquirtle!!, pancakeOrWaffle!!)
         }
-        critInfoText!!.setText(if (currentQuestion == FOOD) R.string.pancakes_waffles else R.string.charmander_squirtle)
-        leftImage!!.setImageResource(if (currentQuestion == FOOD) R.drawable.pancakes else R.drawable.charmander)
-        rightImage!!.setImageResource(if (currentQuestion == FOOD) R.drawable.waffles else R.drawable.squirtle)
+        critInfoText.setText(if (currentQuestion == FOOD) R.string.pancakes_waffles else R.string.charmander_squirtle)
+        leftImage.setImageResource(if (currentQuestion == FOOD) R.drawable.pancakes else R.drawable.charmander)
+        rightImage.setImageResource(if (currentQuestion == FOOD) R.drawable.waffles else R.drawable.squirtle)
 
-        leftImage!!.isSelected = selectedAnswer == LEFT
-        rightImage!!.isSelected = selectedAnswer == RIGHT
+        leftImage.isSelected = selectedAnswer == LEFT
+        rightImage.isSelected = selectedAnswer == RIGHT
         ticketController.onTicketFragmentStateChanged()
         return currentQuestion == FINISHED
     }

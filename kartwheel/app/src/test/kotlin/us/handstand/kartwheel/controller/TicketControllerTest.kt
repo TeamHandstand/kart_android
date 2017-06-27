@@ -74,7 +74,7 @@ class TicketControllerTest : TicketController.Companion.TicketStepCompletionList
         nextStep = next
     }
 
-    override fun showDialog(message: String) {
+    override fun showDialog(step: Long, message: String) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

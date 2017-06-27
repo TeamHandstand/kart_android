@@ -1,8 +1,10 @@
 package us.handstand.kartwheel
 
 
+import android.app.Application
+import android.content.Context
 import android.preference.PreferenceManager
-import android.support.multidex.MultiDexApplication
+import android.support.multidex.MultiDex
 import com.crashlytics.android.Crashlytics
 import io.fabric.sdk.android.Fabric
 import us.handstand.kartwheel.inject.DaggerInjector
@@ -14,7 +16,14 @@ import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.network.API
 import us.handstand.kartwheel.util.ThreadManager
 
-open class KartWheel : MultiDexApplication() {
+open class KartWheel : Application() {
+
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+        if (BuildConfig.DEBUG) {
+            MultiDex.install(this)
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
