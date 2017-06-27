@@ -18,7 +18,7 @@ class TOSFragment : Fragment(), TicketActivity.TicketFragment {
     private var scrolledToBottom: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val fragmentView = inflater.inflate(R.layout.fragment_tos, container, false) as ViewGroup
+        val fragmentView = inflater.inflate(R.layout.fragment_ticket_tos, container, false) as ViewGroup
         scrollView = ViewUtil.findView(fragmentView, R.id.tos_scroll_view)
         scrollView.listener = {
             activity.runOnUiThread {

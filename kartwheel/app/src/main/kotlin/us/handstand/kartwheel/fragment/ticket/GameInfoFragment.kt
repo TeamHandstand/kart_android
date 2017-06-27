@@ -17,7 +17,6 @@ import us.handstand.kartwheel.controller.TicketController.Companion.GAME_INFO
 import us.handstand.kartwheel.layout.GameInfoPlayerView
 import us.handstand.kartwheel.layout.GameInfoPlayerView.Companion.OnPlayerActionClickListener
 import us.handstand.kartwheel.layout.ViewUtil.findView
-import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.model.Ticket
 import us.handstand.kartwheel.model.User
 import javax.inject.Inject
@@ -30,7 +29,7 @@ class GameInfoFragment : Fragment(), TicketActivity.TicketFragment, GameInfoCont
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         KartWheel.injector.inject(this)
         // TODO: FAB Buttons
-        val fragmentView = inflater!!.inflate(R.layout.fragment_game_info, container, false) as ViewGroup
+        val fragmentView = inflater!!.inflate(R.layout.fragment_ticket_game_info, container, false) as ViewGroup
         playerOne = findView(fragmentView, R.id.playerOne)
         playerTwo = findView(fragmentView, R.id.playerTwo)
         playerOne.playerActionClickListener = this

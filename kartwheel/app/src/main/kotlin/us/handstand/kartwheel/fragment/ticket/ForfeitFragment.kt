@@ -22,7 +22,7 @@ import us.handstand.kartwheel.model.TicketModel
 class ForfeitFragment : Fragment(), TicketActivity.TicketFragment, OnClickListener {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val fragmentView = inflater!!.inflate(R.layout.fragment_forfeit, container, false) as ViewGroup
+        val fragmentView = inflater!!.inflate(R.layout.fragment_ticket_forfeit, container, false) as ViewGroup
         fragmentView.findViewById(R.id.additionalButton).setOnClickListener(this)
         val codeLink = ViewUtil.findView<TextView>(fragmentView, R.id.forfeit_code_link)
         codeLink.text = activity.resources.getText(R.string.copy_code).toString() + Storage.code

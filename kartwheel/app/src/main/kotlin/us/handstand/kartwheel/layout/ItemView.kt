@@ -23,7 +23,7 @@ class ItemView : RelativeLayout {
     }
 
     fun init(attrs: AttributeSet?) {
-        View.inflate(context, R.layout.item_view, this)
+        View.inflate(context, R.layout.view_game_info_item, this)
         val a = context.theme.obtainStyledAttributes(attrs, R.styleable.ItemView, 0, 0)
         try {
             (findViewById(R.id.image) as ImageView).setImageResource(a.getResourceId(R.styleable.ItemView_src, R.drawable.race_item_red_shell))

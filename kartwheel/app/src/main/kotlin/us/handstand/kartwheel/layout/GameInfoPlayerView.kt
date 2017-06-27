@@ -33,7 +33,7 @@ class GameInfoPlayerView : RelativeLayout, View.OnClickListener {
     }
 
     fun init(attrs: AttributeSet?) {
-        View.inflate(context, R.layout.game_info_player_view, this)
+        View.inflate(context, R.layout.view_game_info_player, this)
         playerNumber = findViewById(R.id.player_number) as TextView
         playerName = findViewById(R.id.player_name) as TextView
         forfeitOrShare = findViewById(R.id.forfeit_or_share) as ImageView

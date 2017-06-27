@@ -26,7 +26,7 @@ class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnC
     @Answer private var selectedAnswer: Int = NONE
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater!!.inflate(R.layout.fragment_crit_info, container, false) as ViewGroup
+        val view = inflater!!.inflate(R.layout.fragment_ticket_crit_info, container, false) as ViewGroup
         critInfoText = ViewUtil.findView(view, R.id.critical_information_question)
         leftImage = ViewUtil.findView(view, R.id.left_image)
         rightImage = ViewUtil.findView(view, R.id.right_image)

@@ -22,7 +22,7 @@ class MiniGameTypeView : RelativeLayout {
     var image: ImageView
 
     init {
-        View.inflate(context, R.layout.view_holder_mini_game_type, this)
+        View.inflate(context, R.layout.recycler_view_holder_mini_game, this)
         name = ViewUtil.findView(this, R.id.miniGameName)
         timeEstimate = ViewUtil.findView(this, R.id.miniGameTime)
         meetupInstructions = ViewUtil.findView(this, R.id.miniGameMeetupInstructions)

@@ -104,7 +104,7 @@
         app:layoutManager="GridLayoutManager"
         app:layout_behavior="BottomSheetBehavior"
         app:spanCount="3"
-        tools:listitem="@layout/recycler_view_item_buddy" />
+        tools:listitem="@layout/recycler_view_holder_buddy" />
 
     <FrameLayout
         android:id="@+id/videoSheet"

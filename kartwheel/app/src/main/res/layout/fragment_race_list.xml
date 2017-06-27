@@ -4,4 +4,4 @@
     android:id="@+id/raceListRecyclerView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:listitem="@layout/view_holder_race_summary" />
+    tools:listitem="@layout/recycler_view_holder_race_list" />

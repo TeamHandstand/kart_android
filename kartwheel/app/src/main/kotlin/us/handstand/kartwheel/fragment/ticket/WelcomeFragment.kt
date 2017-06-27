@@ -35,7 +35,7 @@ class WelcomeFragment : Fragment(), TicketFragment, android.text.TextWatcher, On
     lateinit private var button: AppCompatButton
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val fragmentView = inflater!!.inflate(layout.fragment_welcome, container, false) as ViewGroup
+        val fragmentView = inflater!!.inflate(layout.fragment_ticket_welcome, container, false) as ViewGroup
         birth = findView(fragmentView, R.id.birth)
         cell = findView(fragmentView, R.id.cell)
         email = findView(fragmentView, R.id.email)

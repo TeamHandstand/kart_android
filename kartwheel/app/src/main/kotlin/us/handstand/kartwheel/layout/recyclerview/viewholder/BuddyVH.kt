@@ -15,7 +15,7 @@ class BuddyVH private constructor(val viewGroup: ViewGroup) : AdapterVH(viewGrou
 
     companion object {
         fun constructNewInstance(parent: ViewGroup): BuddyVH {
-            return BuddyVH(LayoutInflater.from(parent.context).inflate(R.layout.recycler_view_item_buddy, parent, false) as ViewGroup)
+            return BuddyVH(LayoutInflater.from(parent.context).inflate(R.layout.recycler_view_holder_buddy, parent, false) as ViewGroup)
         }
     }
 

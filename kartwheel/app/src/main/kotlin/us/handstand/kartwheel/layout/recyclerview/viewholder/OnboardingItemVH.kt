@@ -13,7 +13,7 @@ class OnboardingItemVH private constructor(viewGroup: ViewGroup) : RecyclerView.
 
     companion object {
         fun constructNewInstance(parent: ViewGroup): OnboardingItemVH {
-            return OnboardingItemVH(LayoutInflater.from(parent.context).inflate(R.layout.view_onboarding_item, parent, false) as ViewGroup)
+            return OnboardingItemVH(LayoutInflater.from(parent.context).inflate(R.layout.recycler_view_holder_onboarding_started, parent, false) as ViewGroup)
         }
     }
 

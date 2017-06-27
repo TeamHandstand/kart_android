@@ -7,4 +7,4 @@
     android:layout_gravity="center"
     android:gravity="center"
     android:orientation="horizontal"
-    tools:listitem="@layout/view_onboarding_item" />
+    tools:listitem="@layout/recycler_view_holder_onboarding_started" />

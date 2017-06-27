@@ -29,7 +29,7 @@ class RaceSummaryView : RelativeLayout {
     val runnerEmojiCode = 0x1F3C3
 
     init {
-        View.inflate(context, R.layout.view_holder_race_summary, this)
+        View.inflate(context, R.layout.recycler_view_holder_race_list, this)
         startTime = ViewUtil.findView(this, R.id.startTime)
         raceName = ViewUtil.findView(this, R.id.raceName)
         details = ViewUtil.findView(this, R.id.raceDetails)

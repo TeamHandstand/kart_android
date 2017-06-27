@@ -13,7 +13,7 @@ class RegistrantAvatarVH private constructor(val avatarView: CircularImageView) 
 
     companion object {
         fun constructNewInstance(parent: ViewGroup): RegistrantAvatarVH {
-            return RegistrantAvatarVH(LayoutInflater.from(parent.context).inflate(R.layout.recycler_view_item_registrant_avatar, parent, false) as CircularImageView)
+            return RegistrantAvatarVH(LayoutInflater.from(parent.context).inflate(R.layout.recycler_view_holder_registrant_avatar, parent, false) as CircularImageView)
         }
     }
 

@@ -25,7 +25,7 @@ class CodeEntryFragment : Fragment(), TicketActivity.TicketFragment, TextView.On
     private lateinit var progress: ContentLoadingProgressBar
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val fragmentView = inflater.inflate(R.layout.fragment_code_entry, container, false) as ViewGroup
+        val fragmentView = inflater.inflate(R.layout.fragment_ticket_code_entry, container, false) as ViewGroup
         codeEntry = findView(fragmentView, R.id.code_edit_text)
         progress = findView(fragmentView, R.id.networkProgress)
         codeEntry.setOnEditorActionListener(this)

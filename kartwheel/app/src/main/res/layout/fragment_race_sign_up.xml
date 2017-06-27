@@ -109,7 +109,7 @@
                 android:layout_marginBottom="10dp"
                 android:orientation="horizontal"
                 app:layoutManager="LinearLayoutManager"
-                tools:listitem="@layout/recycler_view_item_registrant_avatar" />
+                tools:listitem="@layout/recycler_view_holder_registrant_avatar" />
 
             <us.handstand.kartwheel.layout.KartTextView
                 android:id="@+id/spotsLeft"

@@ -13,7 +13,7 @@ import us.handstand.kartwheel.activity.TicketActivity
 class AlreadyClaimedFragment : Fragment(), TicketActivity.TicketFragment, View.OnClickListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val fragmentViewGroup = inflater.inflate(R.layout.fragment_already_claimed, container, false) as ViewGroup
+        val fragmentViewGroup = inflater.inflate(R.layout.fragment_ticket_already_claimed, container, false) as ViewGroup
         fragmentViewGroup.findViewById(R.id.additionalButton).setOnClickListener(this)
         return fragmentViewGroup
     }
