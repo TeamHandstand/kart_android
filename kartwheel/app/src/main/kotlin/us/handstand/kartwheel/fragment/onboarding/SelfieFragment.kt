@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import us.handstand.kartwheel.BuildConfig
 import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.OnboardingActivity
@@ -31,7 +30,7 @@ class SelfieFragment : Fragment(), OnboardingActivity.OnboardingFragment, Selfie
         selfieController.listener = this
         selfie = ViewUtil.findView(fragment, R.id.image)
         selfie.setOnClickListener { Photos.takeSelfie(this) }
-        selfie.setImageUrl(Storage.userImageUrl, BuildConfig.PLAYER_NO_IMAGE_URL, R.drawable.onboarding_camera)
+        selfie.setImageUrl(Storage.userImageUrl, placeholder = R.drawable.onboarding_camera)
         return fragment
     }
 
