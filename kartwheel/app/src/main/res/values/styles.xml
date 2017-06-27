@@ -11,10 +11,11 @@
     <style name="TicketContentTitleStyle">
         <item name="android:layout_centerHorizontal">true</item>
         <item name="android:layout_gravity">center_horizontal</item>
-        <item name="android:layout_marginBottom">16dp</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:textColor">@color/red</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:textSize">26dp</item>
+        <item name="typeface">zamenhof</item>
     </style>
 
     <style name="TicketInputStyle">
