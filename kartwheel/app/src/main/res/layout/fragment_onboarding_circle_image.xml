@@ -22,5 +22,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="11dp"
         android:gravity="center_horizontal"
-        android:text="@string/onboarding_selfie_tap_to_change" />
+        android:text="@string/onboarding_selfie_tap_to_change"
+        android:textColor="@android:color/white" />
 </LinearLayout>
