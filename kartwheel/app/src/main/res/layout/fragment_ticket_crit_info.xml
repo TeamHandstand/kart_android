@@ -11,57 +11,12 @@
         android:layout_height="wrap_content"
         android:text="@string/critical_information" />
 
-    <LinearLayout
+    <us.handstand.kartwheel.layout.CritInfoRelativeLayout
+        android:id="@+id/imageHolder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:background="@android:color/white"
         android:elevation="5dp"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <us.handstand.kartwheel.layout.KartTextView
-            android:id="@+id/critical_information_question"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="16dp"
-            android:text="@string/pancakes_waffles"
-            android:textSize="17dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:layout_marginTop="16dp"
-            android:orientation="horizontal">
-
-            <FrameLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
-
-                <ImageView
-                    android:id="@+id/left_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:src="@drawable/pancakes" />
-            </FrameLayout>
-
-            <FrameLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
-
-                <ImageView
-                    android:id="@+id/right_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:src="@drawable/waffles" />
-            </FrameLayout>
-        </LinearLayout>
-    </LinearLayout>
-
+        android:padding="16dp" />
 </LinearLayout>

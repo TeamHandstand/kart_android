@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.TicketActivity
+import us.handstand.kartwheel.layout.CritInfoRelativeLayout
 import us.handstand.kartwheel.layout.ViewUtil
 
 class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnClickListener {
@@ -19,26 +20,29 @@ class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnC
     private lateinit var critInfoText: TextView
     private lateinit var leftImage: ImageView
     private lateinit var rightImage: ImageView
+    private lateinit var glassesSelector: CritInfoRelativeLayout
     private var pancakeOrWaffle: String? = null
     private var charmanderOrSquirtle: String? = null
     @Question private var currentQuestion: Int = FOOD
     @Answer private var selectedAnswer: Int = NONE
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater!!.inflate(R.layout.fragment_ticket_crit_info, container, false) as ViewGroup
-        critInfoText = ViewUtil.findView(view, R.id.critical_information_question)
-        leftImage = ViewUtil.findView(view, R.id.left_image)
-        rightImage = ViewUtil.findView(view, R.id.right_image)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_ticket_crit_info, container, false) as ViewGroup
+        glassesSelector = ViewUtil.findView(view, R.id.imageHolder)
+        critInfoText = ViewUtil.findView(view, R.id.question)
+        leftImage = ViewUtil.findView(view, R.id.leftImage)
+        rightImage = ViewUtil.findView(view, R.id.rightImage)
         leftImage.setOnClickListener(this)
         rightImage.setOnClickListener(this)
         currentQuestion = FOOD
         selectedAnswer = NONE
+        glassesSelector.resetSelection(R.color.yellow)
         return view
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        button = ViewUtil.findView(activity, R.id.button)
+        button = (activity.findViewById(R.id.button) as AppCompatButton)
     }
 
     override fun getTitleResId(): Int {
@@ -61,6 +65,7 @@ class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnC
         if (currentQuestion == FOOD) {
             currentQuestion = POKEMON
             selectedAnswer = NONE
+            glassesSelector.resetSelection(R.color.blue)
         } else if (currentQuestion == POKEMON) {
             currentQuestion = FINISHED
             ticketController.user = ticketController.user!!.construct(charmanderOrSquirtle!!, pancakeOrWaffle!!)
@@ -76,20 +81,22 @@ class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnC
     }
 
     override fun onClick(v: View) {
-        if (v.id == R.id.left_image) {
+        if (v.id == R.id.leftImage) {
             selectedAnswer = LEFT
             if (currentQuestion == POKEMON) {
                 charmanderOrSquirtle = "charmander"
             } else if (currentQuestion == FOOD) {
                 pancakeOrWaffle = "pancake"
             }
-        } else if (v.id == R.id.right_image) {
+            glassesSelector.leftImageTapped()
+        } else if (v.id == R.id.rightImage) {
             selectedAnswer = RIGHT
             if (currentQuestion == POKEMON) {
                 charmanderOrSquirtle = "squirtle"
             } else if (currentQuestion == FOOD) {
                 pancakeOrWaffle = "waffle"
             }
+            glassesSelector.rightImageTapped()
         }
 
         ticketController.onTicketFragmentStateChanged()

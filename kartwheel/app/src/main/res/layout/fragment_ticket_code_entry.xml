@@ -21,15 +21,15 @@
         android:elevation="5dp">
 
         <EditText
-            android:id="@+id/code_edit_text"
+            android:id="@+id/codeEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:gravity="center_horizontal"
             android:imeOptions="actionGo"
+            android:inputType="text"
             android:maxLines="1"
-            android:padding="16dp"
-            android:singleLine="true" />
+            android:padding="16dp" />
 
         <android.support.v4.widget.ContentLoadingProgressBar
             android:id="@+id/networkProgress"

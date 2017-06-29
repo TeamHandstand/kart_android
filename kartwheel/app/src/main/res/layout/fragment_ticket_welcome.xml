@@ -16,7 +16,7 @@
             android:orientation="horizontal">
 
             <EditText
-                android:id="@+id/first_name"
+                android:id="@+id/firstName"
                 style="@style/TicketInputStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -24,11 +24,11 @@
                 android:layout_weight="1"
                 android:hint="@string/first_name"
                 android:imeOptions="actionNext"
-                android:nextFocusDown="@+id/last_name"
-                android:nextFocusRight="@+id/last_name" />
+                android:nextFocusDown="@+id/lastName"
+                android:nextFocusRight="@+id/lastName" />
 
             <EditText
-                android:id="@+id/last_name"
+                android:id="@+id/lastName"
                 style="@style/TicketInputStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

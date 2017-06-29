@@ -32,7 +32,7 @@ class TicketController(var listener: TicketStepCompletionListener) {
         }
     }
 
-    var code: String? = null
+    var code: String = ""
     var user: User? = null
 
     fun transition(@FragmentType from: Long, @FragmentType to: Long) {
@@ -46,7 +46,7 @@ class TicketController(var listener: TicketStepCompletionListener) {
         when (type) {
             TOS -> transition(type, CODE_ENTRY)
 
-            CODE_ENTRY -> API.claimTicket(code!!, object : API.APICallback<User> {
+            CODE_ENTRY -> API.claimTicket(code, object : API.APICallback<User> {
                 override fun onSuccess(response: User) {
                     user = response
                     if (response.hasAllInformation()) {
@@ -95,7 +95,7 @@ class TicketController(var listener: TicketStepCompletionListener) {
             FORFEIT -> API.forfeitTicket(Storage.ticketId, object : API.APICallback<JsonElement> {
                 override fun onSuccess(response: JsonElement) {
                     user = null
-                    code = null
+                    code = ""
                     listener.showDialog(FORFEIT, "Ticket forfeited")
                     transition(type, CODE_ENTRY)
                 }

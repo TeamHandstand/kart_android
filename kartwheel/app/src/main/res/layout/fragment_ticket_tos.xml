@@ -18,7 +18,7 @@
         android:text="@string/tos" />
 
     <us.handstand.kartwheel.layout.TOSScrollView
-        android:id="@+id/tos_scroll_view"
+        android:id="@+id/tosScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/title"
