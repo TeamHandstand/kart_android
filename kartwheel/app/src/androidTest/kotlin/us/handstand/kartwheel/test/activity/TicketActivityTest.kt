@@ -57,7 +57,6 @@ class TicketActivityTest {
         }
     }
 
-    @Ignore
     @Test
     fun show_codeEntry_whenFinishedReadingTOS() {
         (testRule.activity.findViewById(R.id.tosScrollView) as TOSScrollView).listener!!.invoke()
@@ -155,7 +154,6 @@ class TicketActivityTest {
         onView(withId(R.id.title)).check(matches(withText(R.string.onboarding_started_title)))
     }
 
-    @Ignore
     @Test
     fun open_emailApp_whenAlreadyClaimed_contactUsButtonClicked() {
         intending(hasAction(Intent.ACTION_CHOOSER)).respondWith(Instrumentation.ActivityResult(0, Intent()))
@@ -180,7 +178,6 @@ class TicketActivityTest {
                                 hasExtra(Intent.EXTRA_TEXT, testRule.activity.resources.getString(R.string.contact_us_body, MockAPI.code2))))))
     }
 
-    @Ignore
     @Test
     fun shareNonClaimedUserTicket() {
         // Setup mock server
@@ -204,7 +201,6 @@ class TicketActivityTest {
         needBackPress = true
     }
 
-    @Ignore
     @Test
     fun showGameInfo_ifOnboarded_andEverythingFilledOut_onPreGameday() {
         // Setup mock server
@@ -235,7 +231,6 @@ class TicketActivityTest {
         onView(allOf(withParent(withId(R.id.playerTwo)), withId(R.id.player_name))).check(matches(withText(startsWith("UNCLAIMED"))))
     }
 
-    @Ignore
     @Test
     fun forfeitUser_thenNevermind() {
         // Setup mock server
@@ -256,7 +251,6 @@ class TicketActivityTest {
         onView(allOf(withParent(withId(R.id.playerOne)), withId(R.id.player_name))).check(matches(withText(MockAPI.firstName1 + " " + MockAPI.lastName1)))
     }
 
-    @Ignore
     @Test
     fun actuallyForfeitUser_butDoNotSave() {
         // Setup mock server
@@ -284,7 +278,6 @@ class TicketActivityTest {
         onView(allOf(withParent(withId(R.id.playerOne)), withId(R.id.player_name))).check(matches(withText(MockAPI.firstName1 + " " + MockAPI.lastName1)))
     }
 
-    @Ignore
     @Test
     fun showRaceList_ifOnboarded_andEverythingFilledOut_onGameday() {
         // Setup mock server
