@@ -7,6 +7,7 @@ import android.preference.PreferenceManager
 import android.support.multidex.MultiDex
 import com.crashlytics.android.Crashlytics
 import io.fabric.sdk.android.Fabric
+import us.handstand.kartwheel.controller.TicketController
 import us.handstand.kartwheel.inject.DaggerInjector
 import us.handstand.kartwheel.inject.Injector
 import us.handstand.kartwheel.inject.provider.*
@@ -45,15 +46,17 @@ open class KartWheel : Application() {
 
     companion object {
         lateinit var injector: Injector
-        fun logout(submitOnExecutor: Boolean = true) {
+        fun logout(submitOnExecutor: Boolean = true, lastTicketState: Long = TicketController.TOS) {
             if (submitOnExecutor) {
                 ThreadManager.databaseExecutor.submit {
                     Storage.clear()
                     Database.clear(Database.get())
+                    Storage.lastTicketState = lastTicketState
                 }
             } else {
                 Storage.clear()
                 Database.clear(Database.get())
+                Storage.lastTicketState = lastTicketState
             }
         }
     }

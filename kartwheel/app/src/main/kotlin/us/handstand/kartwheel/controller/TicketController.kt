@@ -2,6 +2,7 @@ package us.handstand.kartwheel.controller
 
 import android.support.annotation.IntDef
 import android.text.TextUtils.isEmpty
+import android.util.Log
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.squareup.sqlbrite.BriteDatabase
@@ -50,6 +51,11 @@ class TicketController(val db: BriteDatabase?, var listener: TicketStepCompletio
                 }
     }
 
+    fun onDestroy() {
+        userSubscription?.unsubscribe()
+        userSubscription = null
+    }
+
     var code: String = ""
     var user: User? = null
     var pancakeOrWaffle: String? = null
@@ -67,28 +73,31 @@ class TicketController(val db: BriteDatabase?, var listener: TicketStepCompletio
         when (type) {
             TOS -> transition(type, CODE_ENTRY)
 
-            CODE_ENTRY -> API.claimTicket(code, object : API.APICallback<User> {
-                override fun onSuccess(response: User) {
-                    user = response
-                    if (response.hasAllInformation()) {
-                        if (response.wasOnboarded()) {
-                            transition(type, if (Storage.showRaces) RACE_LIST else GAME_INFO)
+            CODE_ENTRY -> {
+                Log.e("onStepCompleted", "CODE_ENTRY")
+                API.claimTicket(code, object : API.APICallback<User> {
+                    override fun onSuccess(response: User) {
+                        user = response
+                        if (response.hasAllInformation()) {
+                            if (response.wasOnboarded()) {
+                                transition(type, if (Storage.showRaces) RACE_LIST else GAME_INFO)
+                            } else {
+                                transition(type, ONBOARDING)
+                            }
                         } else {
-                            transition(type, ONBOARDING)
+                            transition(type, WELCOME)
                         }
-                    } else {
-                        transition(type, WELCOME)
                     }
-                }
 
-                override fun onFailure(errorCode: Int, errorResponse: String) {
-                    if (errorCode == 409) {
-                        transition(type, ALREADY_CLAIMED)
-                    } else {
-                        listener.showDialog(CODE_ENTRY, errorResponse)
+                    override fun onFailure(errorCode: Int, errorResponse: String) {
+                        if (errorCode == 409) {
+                            transition(type, ALREADY_CLAIMED)
+                        } else {
+                            listener.showDialog(CODE_ENTRY, errorResponse)
+                        }
                     }
-                }
-            })
+                })
+            }
 
             ALREADY_CLAIMED -> transition(type, CODE_ENTRY)
 
@@ -129,19 +138,22 @@ class TicketController(val db: BriteDatabase?, var listener: TicketStepCompletio
             }
 
 
-            FORFEIT -> API.forfeitTicket(Storage.ticketId, object : API.APICallback<JsonElement> {
-                override fun onSuccess(response: JsonElement) {
-                    user = null
-                    code = ""
-                    listener.showDialog(FORFEIT, "Ticket forfeited")
-                    transition(type, CODE_ENTRY)
-                }
+            FORFEIT -> {
+                API.forfeitTicket(Storage.ticketId, object : API.APICallback<JsonElement> {
+                    override fun onSuccess(response: JsonElement) {
+                        user = null
+                        code = ""
+                        listener.showDialog(FORFEIT, "Ticket forfeited")
+                        transition(type, CODE_ENTRY)
+                    }
 
-                override fun onFailure(errorCode: Int, errorResponse: String) {
-                    listener.showDialog(FORFEIT, "Unable to forfeit ticket: $errorResponse")
-                    transition(type, ERROR)
-                }
-            })
+                    override fun onFailure(errorCode: Int, errorResponse: String) {
+                        listener.showDialog(FORFEIT, "Unable to forfeit ticket: $errorResponse")
+                        transition(type, ERROR)
+                    }
+                })
+            }
+            else -> Log.e("onStepCompleted", "Invalid next step: " + type.toString())
         }
     }
 

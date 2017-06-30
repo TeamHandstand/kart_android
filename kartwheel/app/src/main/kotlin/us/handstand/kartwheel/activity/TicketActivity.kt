@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatButton
+import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.TextView
@@ -54,7 +55,6 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
         fun getActivity(): Activity
 
         companion object {
-            const val INTENT_EXTRA_FRAGMENT_TYPE = "fragment_type"
             fun getFragment(@FragmentType fragmentType: Long): TicketFragment {
                 when (fragmentType) {
                     TOS -> return TOSFragment()
@@ -97,6 +97,11 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
         ticketController.transition(NONE, Storage.lastTicketState)
     }
 
+    override fun onDestroy() {
+        ticketController.onDestroy()
+        super.onDestroy()
+    }
+
     override fun showDialog(@FragmentType step: Long, message: String) {
         if (step == CODE_ENTRY && ticketFragment is CodeEntryFragment) {
             (ticketFragment as CodeEntryFragment).setProgressVisibility(View.INVISIBLE)
@@ -106,14 +111,17 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
 
     override fun showNextStep(@FragmentType previous: Long, @FragmentType next: Long) {
         // Make sure that we're starting with fresh data.
-        if (next == ERROR || next == CODE_ENTRY) {
+        if (next == ERROR) {
             KartWheel.logout()
+        } else if (next == CODE_ENTRY) {
+            KartWheel.logout(lastTicketState = CODE_ENTRY)
         }
 
         if (next != ERROR) {
             ViewUtil.hideKeyboard(this)
             ticketFragment = TicketFragment.getFragment(next)
             title!!.text = resources.getString(ticketFragment!!.getTitleResId())
+            Log.e("NextState", next.toString())
             Storage.lastTicketState = next
             onTicketFragmentStateChanged()
             if (next == RACE_LIST) {
@@ -147,7 +155,14 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
             if (ticketFragment is CodeEntryFragment) {
                 (ticketFragment as CodeEntryFragment).setProgressVisibility(View.VISIBLE)
             }
-            ticketController.onStepCompleted(Storage.lastTicketState)
+            try {
+                val lastState = Storage.lastTicketState
+                Log.e("lastState", lastState.toString())
+                ticketController?.onStepCompleted(lastState)
+            } catch(e: Exception) {
+                e.printStackTrace()
+            }
+            Log.e("Shit", "Happened")
         }
     }
 }
