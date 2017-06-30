@@ -191,8 +191,8 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
             val behavior = getVisibleBottomSheetBehavior()
             if (behavior != null) {
                 behavior.state = BottomSheetBehavior.STATE_HIDDEN
+                return true
             }
-            return behavior != null
         }
         return super.onKeyUp(keyCode, event)
     }
@@ -202,9 +202,9 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
     }
 
     private fun getVisibleBottomSheetBehavior(): BottomSheetBehavior<*>? {
-        if (pickBuddyBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
+        if (pickBuddyBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
             return pickBuddyBehavior
-        } else if (videoBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
+        } else if (videoBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
             return videoBehavior
         }
         return null
