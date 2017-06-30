@@ -24,6 +24,7 @@
                 android:layout_weight="1"
                 android:hint="@string/first_name"
                 android:imeOptions="actionNext"
+                android:inputType="textCapSentences|textPersonName"
                 android:nextFocusDown="@+id/lastName"
                 android:nextFocusRight="@+id/lastName" />
 
@@ -36,6 +37,7 @@
                 android:layout_weight="1"
                 android:hint="@string/last_name"
                 android:imeOptions="actionNext"
+                android:inputType="textCapSentences|textPersonName"
                 android:nextFocusDown="@+id/email"
                 android:nextFocusRight="@+id/email" />
         </LinearLayout>
@@ -68,7 +70,7 @@
                 android:digits="0123456789-"
                 android:hint="@string/cell"
                 android:imeOptions="actionNext"
-                android:inputType="number"
+                android:inputType="number|phone"
                 android:maxLength="12"
                 android:nextFocusDown="@+id/birth"
                 android:nextFocusRight="@+id/birth" />
@@ -82,11 +84,11 @@
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
+            android:digits="0123456789/"
             android:hint="@string/dob"
             android:imeOptions="actionNext"
-            android:inputType="number"
+            android:inputType="number|date"
             android:maxLength="10"
-            android:digits="0123456789/"
             android:nextFocusDown="@+id/nickname"
             android:nextFocusForward="@+id/nickname"
             android:nextFocusRight="@+id/nickname" />
@@ -99,7 +101,8 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:hint="@string/nickname"
-            android:imeOptions="actionGo" />
+            android:imeOptions="actionGo"
+            android:inputType="textCapSentences|textPersonName" />
 
     </LinearLayout>
 </ScrollView>
