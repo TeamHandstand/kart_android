@@ -67,6 +67,7 @@ class CritInfoRelativeLayout : RelativeLayout, ValueAnimator.AnimatorUpdateListe
         rightImageView.setImageResource(rightImageRes)
         question.setText(questionRes)
         currentPos = 0f
+        updateCoords()
         paint.color = context.resources.getColor(colorRes)
         if (leftIsSelected) {
             val animator = ValueAnimator.ofFloat(360f, 0f)
