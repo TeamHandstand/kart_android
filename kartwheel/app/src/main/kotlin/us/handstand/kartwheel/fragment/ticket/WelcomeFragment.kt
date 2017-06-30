@@ -1,5 +1,6 @@
 package us.handstand.kartwheel.fragment.ticket
 
+import us.handstand.kartwheel.model.User
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -51,15 +52,18 @@ class WelcomeFragment : Fragment(), TicketFragment, android.text.TextWatcher, On
         nickname.setOnEditorActionListener(this)
 
         // Pre-populate the cells that the user has already filled out
-        val user = ticketController.user
+        populateInput(ticketController.user)
+
+        return fragmentView
+    }
+
+    fun populateInput(user: User?) {
         ViewUtil.setIfNotEmpty(birth, if (user?.birth() == null) null else DateFormatter.getString(user.birth()!!))
         ViewUtil.setIfNotEmpty(cell, user?.cell())
         ViewUtil.setIfNotEmpty(email, user?.email())
         ViewUtil.setIfNotEmpty(firstName, user?.firstName())
         ViewUtil.setIfNotEmpty(lastName, user?.lastName())
         ViewUtil.setIfNotEmpty(nickname, user?.nickName())
-
-        return fragmentView
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

@@ -97,9 +97,9 @@ class MockAPI(val db: BriteDatabase?) {
 
         fun getUser(which: Int, signedUp: Boolean = true, onboarded: Boolean): User {
             if (which == 1) {
-                return User.create(userId1, null, if (signedUp) birth1 else null, if (onboarded) buddyUrl1 else null, if (signedUp) cell1 else null, if (signedUp) "charmander" else null, if (signedUp) email1 else null, eventId, if (signedUp) firstName1 else null, if (onboarded) imageUrl1 else null, if (signedUp) lastName1 else null, null, if (signedUp) nickname1 else null, if (signedUp) "waffle" else null, null, false, null, null, teamId, null, null, null)
+                return User.create(userId1, null, if (signedUp) birth1 else null, if (onboarded) buddyUrl1 else null, if (signedUp) cell1 else null, if (signedUp) "charmander" else null, if (signedUp) email1 else null, eventId, if (signedUp) firstName1 else null, if (signedUp) "furby" else null, if (onboarded) imageUrl1 else null, if (signedUp) lastName1 else null, null, if (signedUp) nickname1 else null, if (signedUp) "waffle" else null, null, false, null, null, teamId, null, null)
             } else {
-                return User.create(userId2, null, if (signedUp) birth2 else null, if (onboarded) buddyUrl2 else null, if (signedUp) cell2 else null, if (signedUp) "squirtle" else null, if (signedUp) email2 else null, eventId, if (signedUp) firstName2 else null, if (onboarded) imageUrl2 else null, if (signedUp) lastName2 else null, null, if (signedUp) nickname2 else null, if (signedUp) "pancake" else null, null, false, null, null, teamId, null, null, null)
+                return User.create(userId2, null, if (signedUp) birth2 else null, if (onboarded) buddyUrl2 else null, if (signedUp) cell2 else null, if (signedUp) "squirtle" else null, if (signedUp) email2 else null, eventId, if (signedUp) firstName2 else null, if (signedUp) "tamagachi" else null, if (onboarded) imageUrl2 else null, if (signedUp) lastName2 else null, null, if (signedUp) nickname2 else null, if (signedUp) "pancake" else null, null, false, null, null, teamId, null, null)
             }
         }
 

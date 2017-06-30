@@ -21,8 +21,6 @@ class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnC
     private lateinit var leftImage: ImageView
     private lateinit var rightImage: ImageView
     private lateinit var glassesSelector: CritInfoRelativeLayout
-    private var pancakeOrWaffle: String? = null
-    private var charmanderOrSquirtle: String? = null
     @Question private var currentQuestion: Int = FOOD
     @Answer private var selectedAnswer: Int = NONE
 
@@ -36,7 +34,7 @@ class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnC
         rightImage.setOnClickListener(this)
         currentQuestion = FOOD
         selectedAnswer = NONE
-        glassesSelector.resetSelection(R.color.yellow)
+        glassesSelector.nextQuestion(R.drawable.pancakes, R.drawable.waffles, R.string.pancakes_waffles, R.color.yellow)
         return view
     }
 
@@ -63,16 +61,19 @@ class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnC
 
     override fun canAdvanceToNextStep(): Boolean {
         if (currentQuestion == FOOD) {
+            ticketController.pancakeOrWaffle = if (selectedAnswer == LEFT) "pancake" else "waffle"
+            glassesSelector.nextQuestion(R.drawable.charmander, R.drawable.squirtle, R.string.charmander_squirtle, R.color.blue)
             currentQuestion = POKEMON
             selectedAnswer = NONE
-            glassesSelector.resetSelection(R.color.blue)
         } else if (currentQuestion == POKEMON) {
+            ticketController.charmanderOrSquirtle = if (selectedAnswer == LEFT) "charmander" else "squirtle"
+            glassesSelector.nextQuestion(R.drawable.furby, R.drawable.tamagachi, R.string.furby_tamagachi, R.color.red)
+            currentQuestion = NINETIES
+            selectedAnswer = NONE
+        } else if (currentQuestion == NINETIES) {
+            ticketController.furbyOrTamagachi = if (selectedAnswer == LEFT) "furby" else "tamagachi"
             currentQuestion = FINISHED
-            ticketController.user = ticketController.user!!.construct(charmanderOrSquirtle!!, pancakeOrWaffle!!)
         }
-        critInfoText.setText(if (currentQuestion == FOOD) R.string.pancakes_waffles else R.string.charmander_squirtle)
-        leftImage.setImageResource(if (currentQuestion == FOOD) R.drawable.pancakes else R.drawable.charmander)
-        rightImage.setImageResource(if (currentQuestion == FOOD) R.drawable.waffles else R.drawable.squirtle)
 
         leftImage.isSelected = selectedAnswer == LEFT
         rightImage.isSelected = selectedAnswer == RIGHT
@@ -83,19 +84,9 @@ class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnC
     override fun onClick(v: View) {
         if (v.id == R.id.leftImage) {
             selectedAnswer = LEFT
-            if (currentQuestion == POKEMON) {
-                charmanderOrSquirtle = "charmander"
-            } else if (currentQuestion == FOOD) {
-                pancakeOrWaffle = "pancake"
-            }
             glassesSelector.leftImageTapped()
         } else if (v.id == R.id.rightImage) {
             selectedAnswer = RIGHT
-            if (currentQuestion == POKEMON) {
-                charmanderOrSquirtle = "squirtle"
-            } else if (currentQuestion == FOOD) {
-                pancakeOrWaffle = "waffle"
-            }
             glassesSelector.rightImageTapped()
         }
 
@@ -109,7 +100,8 @@ class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnC
 
         const val FOOD = 0
         const val POKEMON = 1
-        const val FINISHED = 2
+        const val NINETIES = 2
+        const val FINISHED = 3
 
         @IntDef(NONE.toLong(), LEFT.toLong(), RIGHT.toLong())
         annotation class Answer

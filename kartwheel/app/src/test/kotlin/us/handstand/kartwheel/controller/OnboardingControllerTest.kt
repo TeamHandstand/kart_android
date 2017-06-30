@@ -1,8 +1,10 @@
 package us.handstand.kartwheel.controller
 
 import org.hamcrest.CoreMatchers
+import org.junit.After
 import org.junit.Assert.assertThat
 import org.junit.Assert.fail
+import org.junit.Before
 import org.junit.Test
 import us.handstand.kartwheel.controller.OnboardingController.Companion.BUDDY_EXPLANATION
 import us.handstand.kartwheel.controller.OnboardingController.Companion.FINISHED
@@ -12,6 +14,8 @@ import us.handstand.kartwheel.controller.OnboardingController.Companion.POINT_SY
 import us.handstand.kartwheel.controller.OnboardingController.Companion.SELFIE
 import us.handstand.kartwheel.controller.OnboardingController.Companion.STARTED
 import us.handstand.kartwheel.controller.OnboardingController.Companion.VIDEO
+import us.handstand.kartwheel.mocks.MockDBContext
+import us.handstand.kartwheel.model.Storage
 
 class OnboardingControllerTest : OnboardingStepCompletionListener {
     val onboardingController = OnboardingController(this)
@@ -19,6 +23,16 @@ class OnboardingControllerTest : OnboardingStepCompletionListener {
     var nextStep: Long = NONE
 
     val items = listOf(STARTED, SELFIE, PICK_BUDDY, BUDDY_EXPLANATION, POINT_SYSTEM, VIDEO, FINISHED)
+
+    @Before
+    fun setUp() {
+        Storage.initialize(MockDBContext().sharedPrefs)
+    }
+
+    @After
+    fun tearDown() {
+        Storage.clear()
+    }
 
     @Test
     fun startedTransitions() {

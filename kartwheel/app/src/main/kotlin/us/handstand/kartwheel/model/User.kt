@@ -48,6 +48,7 @@ abstract class User : UserModel {
             putIfNotAbsent(cv, UserModel.EMAIL, email())
             putIfNotAbsent(cv, UserModel.EVENTID, eventId())
             putIfNotAbsent(cv, UserModel.FIRSTNAME, firstName())
+            putIfNotAbsent(cv, UserModel.FURBYORTAMAGACHI, furbyOrTamagachi())
             putIfNotAbsent(cv, UserModel.IMAGEURL, imageUrl())
             putIfNotAbsent(cv, UserModel.LASTNAME, lastName())
             putIfNotAbsent(cv, UserModel.MINIGAMEID, miniGameId())
@@ -60,47 +61,16 @@ abstract class User : UserModel {
             putIfNotAbsent(cv, UserModel.TEAMID, teamId())
             putIfNotAbsent(cv, UserModel.TOTALANTIMILES, totalAntiMiles())
             putIfNotAbsent(cv, UserModel.TOTALDISTANCEMILES, totalDistanceMiles())
-            putIfNotAbsent(cv, UserModel.UPDATEDAT, updatedAt()?.time)
             return cv
         }
 
-    fun hasCriticalInfo(): Boolean {
-        return !isEmpty(charmanderOrSquirtle()) && !isEmpty(pancakeOrWaffle())
-    }
-
     fun hasAllInformation(): Boolean {
-        return hasCriticalInfo() && !isEmpty(cell()) && !isEmpty(email())
+        return !isEmpty(cell()) && !isEmpty(email())
                 && !isEmpty(firstName()) && !isEmpty(lastName()) && !isEmpty(nickName())
     }
 
     fun wasOnboarded(): Boolean {
         return !isEmpty(buddyUrl()) && !isEmpty(imageUrl())
-    }
-
-    fun construct(charmanderOrSquirtle: String, pancakeOrWaffle: String): User {
-        return create(id(),
-                authToken(), // authToken
-                birth(),
-                buddyUrl(),
-                cell(),
-                charmanderOrSquirtle,
-                email(),
-                eventId(),
-                firstName(),
-                imageUrl(), // imageUrl
-                lastName(),
-                miniGameId(), // miniGameId
-                nickName(),
-                pancakeOrWaffle,
-                pushDeviceToken(), // device token
-                pushEnabled(), // push enabled
-                raceId(), // race id
-                referralType(), // referral type
-                teamId(), // team id
-                totalAntiMiles(), // total anti miles
-                totalDistanceMiles(), // total distance miles
-                updatedAt() // updated at
-        )
     }
 
     fun construct(birth: String, cell: String, email: String, firstName: String, lastName: String, nickname: String): User {
@@ -113,6 +83,7 @@ abstract class User : UserModel {
                 email,
                 eventId(),
                 firstName,
+                furbyOrTamagachi(),
                 imageUrl(), // imageUrl
                 lastName,
                 miniGameId(), // miniGameId
@@ -124,8 +95,7 @@ abstract class User : UserModel {
                 referralType(), // referral type
                 teamId(), // team id
                 totalAntiMiles(), // total anti miles
-                totalDistanceMiles(), // total distance miles
-                updatedAt() // updated at
+                totalDistanceMiles() // total distance miles
         )
     }
 
@@ -135,7 +105,7 @@ abstract class User : UserModel {
             return create("", "", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
         }
 
-        val FACTORY = UserModel.Factory<User>(Creator<User> { id, authToken, birth, buddyUrl, cell, charmanderOrSquirtle, email, eventId, firstName, imageUrl, lastName, miniGameId, nickName, pancakeOrWaffle, pushDeviceToken, pushEnabled, raceId, referralType, teamId, totalAntiMiles, totalDistanceMiles, updatedAt -> create(id, authToken, birth, buddyUrl, cell, charmanderOrSquirtle, email, eventId, firstName, imageUrl, lastName, miniGameId, nickName, pancakeOrWaffle, pushDeviceToken, pushEnabled, raceId, referralType, teamId, totalAntiMiles, totalDistanceMiles, updatedAt) }, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG)
+        val FACTORY = UserModel.Factory<User>(Creator<User> { id, authToken, birth, buddyUrl, cell, charmanderOrSquirtle, email, eventId, firstName, furbyOrTamagachi, imageUrl, lastName, miniGameId, nickName, pancakeOrWaffle, pushDeviceToken, pushEnabled, raceId, referralType, teamId, totalAntiMiles, totalDistanceMiles -> create(id, authToken, birth, buddyUrl, cell, charmanderOrSquirtle, email, eventId, firstName, furbyOrTamagachi, imageUrl, lastName, miniGameId, nickName, pancakeOrWaffle, pushDeviceToken, pushEnabled, raceId, referralType, teamId, totalAntiMiles, totalDistanceMiles) }, ColumnAdapters.DATE_LONG)
 
         // Needed by Gson
         @JvmStatic

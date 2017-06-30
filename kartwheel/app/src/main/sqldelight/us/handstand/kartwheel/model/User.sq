@@ -11,6 +11,7 @@ CREATE TABLE user (
     email TEXT,
     eventId TEXT,
     firstName TEXT,
+    furbyOrTamagachi TEXT,
     imageUrl TEXT,
     lastName TEXT,
     miniGameId TEXT,
@@ -22,14 +23,14 @@ CREATE TABLE user (
     referralType TEXT,
     teamId TEXT,
     totalAntiMiles REAL,
-    totalDistanceMiles REAL,
-    updatedAt INTEGER as Date
+    totalDistanceMiles REAL
 );
 
-select_all:
+select_for_id:
 SELECT *
 FROM user
-WHERE id = ?;
+WHERE id = ?
+LIMIT 1;
 
 select_from_team:
 SELECT *
@@ -48,6 +49,6 @@ WHERE id=?;
 
 insert_row:
 INSERT INTO user(id, authToken, birth, cell, charmanderOrSquirtle, email, eventId,
-firstName, imageUrl, lastName, miniGameId, nickName, pancakeOrWaffle, raceId, referralType, teamId,
-totalAntiMiles, totalDistanceMiles, updatedAt)
+firstName, furbyOrTamagachi, imageUrl, lastName, miniGameId, nickName, pancakeOrWaffle, raceId, referralType, teamId,
+totalAntiMiles, totalDistanceMiles)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);

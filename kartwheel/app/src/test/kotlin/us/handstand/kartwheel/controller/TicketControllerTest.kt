@@ -1,8 +1,10 @@
 package us.handstand.kartwheel.controller
 
 import org.hamcrest.CoreMatchers
+import org.junit.After
 import org.junit.Assert.assertThat
 import org.junit.Assert.fail
+import org.junit.Before
 import org.junit.Test
 import us.handstand.kartwheel.controller.TicketController.Companion.ALREADY_CLAIMED
 import us.handstand.kartwheel.controller.TicketController.Companion.CODE_ENTRY
@@ -14,13 +16,25 @@ import us.handstand.kartwheel.controller.TicketController.Companion.ONBOARDING
 import us.handstand.kartwheel.controller.TicketController.Companion.RACE_LIST
 import us.handstand.kartwheel.controller.TicketController.Companion.TOS
 import us.handstand.kartwheel.controller.TicketController.Companion.WELCOME
+import us.handstand.kartwheel.mocks.MockDBContext
+import us.handstand.kartwheel.model.Storage
 
 class TicketControllerTest : TicketController.Companion.TicketStepCompletionListener {
-    val ticketController = TicketController(this)
+    val ticketController = TicketController(null, this)
 
     var nextStep = NONE
 
     val items = listOf(TOS, CODE_ENTRY, CRITICAL_INFO, WELCOME, ALREADY_CLAIMED, FORFEIT, GAME_INFO, ONBOARDING, RACE_LIST)
+
+    @Before
+    fun setUp() {
+        Storage.initialize(MockDBContext().sharedPrefs)
+    }
+
+    @After
+    fun tearDown() {
+        Storage.clear()
+    }
 
     @Test
     fun tosTransitions() {
@@ -29,17 +43,17 @@ class TicketControllerTest : TicketController.Companion.TicketStepCompletionList
 
     @Test
     fun codeEntryTransitions() {
-        testTransitions(CODE_ENTRY, { it == CRITICAL_INFO || it == GAME_INFO || it == ALREADY_CLAIMED || it == RACE_LIST || it == ONBOARDING })
+        testTransitions(CODE_ENTRY, { it == WELCOME || it == GAME_INFO || it == ALREADY_CLAIMED || it == RACE_LIST || it == ONBOARDING })
     }
 
     @Test
     fun criticalInfoTransitions() {
-        testTransitions(CRITICAL_INFO, { it == WELCOME })
+        testTransitions(CRITICAL_INFO, { it == GAME_INFO || it == ONBOARDING || it == RACE_LIST })
     }
 
     @Test
     fun welcomeTransitions() {
-        testTransitions(WELCOME, { it == GAME_INFO || it == ONBOARDING || it == RACE_LIST })
+        testTransitions(WELCOME, { it == CRITICAL_INFO })
     }
 
     @Test

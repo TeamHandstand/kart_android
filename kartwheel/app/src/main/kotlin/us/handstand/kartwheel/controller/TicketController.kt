@@ -1,20 +1,25 @@
 package us.handstand.kartwheel.controller
 
 import android.support.annotation.IntDef
+import android.text.TextUtils.isEmpty
 import com.google.gson.JsonElement
+import com.google.gson.JsonObject
+import com.squareup.sqlbrite.BriteDatabase
+import rx.Subscription
 import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.model.User
+import us.handstand.kartwheel.model.UserModel
 import us.handstand.kartwheel.network.API
 
 
-class TicketController(var listener: TicketStepCompletionListener) {
+class TicketController(val db: BriteDatabase?, var listener: TicketStepCompletionListener) {
     companion object {
         const val ERROR = -2L
         const val NONE = -1L
         const val TOS = 0L
         const val CODE_ENTRY = 1L
-        const val CRITICAL_INFO = 2L
-        const val WELCOME = 3L
+        const val WELCOME = 2L
+        const val CRITICAL_INFO = 3L
         const val ALREADY_CLAIMED = 4L
         const val FORFEIT = 5L
         const val GAME_INFO = 6L
@@ -32,8 +37,24 @@ class TicketController(var listener: TicketStepCompletionListener) {
         }
     }
 
+    private var userSubscription: Subscription? = null
+
+    init {
+        val query = User.FACTORY.select_for_id(Storage.userId)
+        userSubscription = db?.createQuery(UserModel.TABLE_NAME, query.statement, *query.args)
+                ?.mapToOne { User.FACTORY.select_for_idMapper().map(it) }
+                ?.subscribe {
+                    user = it
+                    userSubscription?.unsubscribe()
+                    userSubscription = null
+                }
+    }
+
     var code: String = ""
     var user: User? = null
+    var pancakeOrWaffle: String? = null
+    var charmanderOrSquirtle: String? = null
+    var furbyOrTamagachi: String? = null
 
     fun transition(@FragmentType from: Long, @FragmentType to: Long) {
         if (from != NONE && to != ERROR) {
@@ -56,7 +77,7 @@ class TicketController(var listener: TicketStepCompletionListener) {
                             transition(type, ONBOARDING)
                         }
                     } else {
-                        transition(type, CRITICAL_INFO)
+                        transition(type, WELCOME)
                     }
                 }
 
@@ -71,16 +92,10 @@ class TicketController(var listener: TicketStepCompletionListener) {
 
             ALREADY_CLAIMED -> transition(type, CODE_ENTRY)
 
-            CRITICAL_INFO -> if (user?.hasCriticalInfo() == true) transition(type, WELCOME)
-
             WELCOME -> if (user?.hasAllInformation() == true) {
                 API.updateUser(user!!, object : API.APICallback<User> {
                     override fun onSuccess(response: User) {
-                        if (response.wasOnboarded()) {
-                            transition(type, if (Storage.showRaces) RACE_LIST else GAME_INFO)
-                        } else {
-                            transition(type, ONBOARDING)
-                        }
+                        transition(type, CRITICAL_INFO)
                     }
 
                     override fun onFailure(errorCode: Int, errorResponse: String) {
@@ -91,6 +106,28 @@ class TicketController(var listener: TicketStepCompletionListener) {
             } else {
                 listener.showDialog(WELCOME, "Not all of your information was supplied!")
             }
+
+            CRITICAL_INFO -> if (!isEmpty(pancakeOrWaffle) && !isEmpty(charmanderOrSquirtle) && !isEmpty(furbyOrTamagachi)) {
+                API.updateUser(API.gson.fromJson("{" +
+                        "\"pancakeOrWaffle\":\"$pancakeOrWaffle\"," +
+                        "\"charmanderOrSquirtle\":\"$charmanderOrSquirtle\"," +
+                        "\"furbyOrTamagachi\":\"$furbyOrTamagachi\"" +
+                        "}", JsonObject::class.java), object : API.APICallback<User> {
+                    override fun onSuccess(response: User) {
+                        if (response.wasOnboarded()) {
+                            transition(type, if (Storage.showRaces) RACE_LIST else GAME_INFO)
+                        } else {
+                            transition(type, ONBOARDING)
+                        }
+                    }
+
+                    override fun onFailure(errorCode: Int, errorResponse: String) {
+                        listener.showDialog(CRITICAL_INFO, "Unable to create user: $errorResponse")
+                        transition(type, ERROR)
+                    }
+                })
+            }
+
 
             FORFEIT -> API.forfeitTicket(Storage.ticketId, object : API.APICallback<JsonElement> {
                 override fun onSuccess(response: JsonElement) {
@@ -111,10 +148,10 @@ class TicketController(var listener: TicketStepCompletionListener) {
     private fun validateTransition(@FragmentType from: Long, @FragmentType to: Long) {
         when (from) {
             TOS -> if (to == CODE_ENTRY) return
-            CODE_ENTRY -> if (to == ALREADY_CLAIMED || to == GAME_INFO || to == CRITICAL_INFO || to == ONBOARDING || to == RACE_LIST) return
+            CODE_ENTRY -> if (to == ALREADY_CLAIMED || to == GAME_INFO || to == WELCOME || to == ONBOARDING || to == RACE_LIST) return
             ALREADY_CLAIMED -> if (to == CODE_ENTRY) return
-            CRITICAL_INFO -> if (to == WELCOME) return
-            WELCOME -> if (to == GAME_INFO || to == ONBOARDING || to == RACE_LIST) return
+            CRITICAL_INFO -> if (to == GAME_INFO || to == ONBOARDING || to == RACE_LIST) return
+            WELCOME -> if (to == CRITICAL_INFO) return
             GAME_INFO -> if (to == FORFEIT) return
             FORFEIT -> if (to == CODE_ENTRY || to == GAME_INFO) return
         }

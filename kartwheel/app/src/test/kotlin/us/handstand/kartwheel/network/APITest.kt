@@ -8,6 +8,8 @@ import org.junit.Before
 import org.junit.Test
 import us.handstand.kartwheel.inject.DaggerInjector
 import us.handstand.kartwheel.inject.provider.ApiProvider
+import us.handstand.kartwheel.inject.provider.ApplicationProvider
+import us.handstand.kartwheel.mock.MockKartWheel
 import us.handstand.kartwheel.mocks.MockAPI
 import us.handstand.kartwheel.mocks.toJson
 import us.handstand.kartwheel.model.Storage
@@ -23,6 +25,7 @@ class APITest {
     fun setUp() {
         val injector = DaggerInjector.builder()
                 .apiProvider(ApiProvider(mockApi.server.url("/").uri().toString()))
+                .applicationProvider(ApplicationProvider(MockKartWheel()))
                 .build()
         injector.inject(API)
     }

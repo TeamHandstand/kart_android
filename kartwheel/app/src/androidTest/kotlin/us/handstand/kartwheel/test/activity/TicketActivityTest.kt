@@ -79,14 +79,6 @@ class TicketActivityTest {
         onView(withId(R.id.codeEditText)).perform(replaceText(MockAPI.code1))
         onView(withId(R.id.button)).perform(click())
 
-        // Click on waffles
-        onView(withId(R.id.leftImage)).perform(click())
-        onView(withId(R.id.button)).perform(click())
-
-        // Click on squirtle
-        onView(withId(R.id.rightImage)).perform(click())
-        onView(withId(R.id.button)).perform(click())
-
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getUser(1, false, false).toJson()))
         // Enter information
         onView(withId(R.id.firstName)).perform(replaceText("Matthew"))
@@ -95,6 +87,20 @@ class TicketActivityTest {
         onView(withId(R.id.cell)).perform(replaceText("4083064285"))
         onView(withId(R.id.birth)).perform(replaceText("07251989"))
         onView(withId(R.id.nickname)).perform(replaceText("Matty Otter"))
+        onView(withId(R.id.button)).perform(click())
+
+
+        mockApi.server.enqueue(MockResponse().setBody(MockAPI.getUser(1, true, false).toJson()))
+        // Click on waffles
+        onView(withId(R.id.leftImage)).perform(click())
+        onView(withId(R.id.button)).perform(click())
+
+        // Click on squirtle
+        onView(withId(R.id.rightImage)).perform(click())
+        onView(withId(R.id.button)).perform(click())
+
+        // Click on tamagachi
+        onView(withId(R.id.rightImage)).perform(click())
         onView(withId(R.id.button)).perform(click())
 
         onView(withId(R.id.title)).check(matches(withText(R.string.onboarding_started_title)))
@@ -112,14 +118,6 @@ class TicketActivityTest {
 
         // Enter the code
         onView(withId(R.id.codeEditText)).perform(replaceText(MockAPI.code1))
-        onView(withId(R.id.button)).perform(click())
-
-        // Click on waffles
-        onView(withId(R.id.leftImage)).perform(click())
-        onView(withId(R.id.button)).perform(click())
-
-        // Click on squirtle
-        onView(withId(R.id.rightImage)).perform(click())
         onView(withId(R.id.button)).perform(click())
 
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getUser(1, false, false).toJson()))
@@ -150,6 +148,21 @@ class TicketActivityTest {
         // Also validate phone number
         onView(withId(R.id.cell)).perform(replaceText("4083064285"))
         onView(withId(R.id.button)).perform(click())
+
+
+        mockApi.server.enqueue(MockResponse().setBody(MockAPI.getUser(1, true, false).toJson()))
+        // Click on waffles
+        onView(withId(R.id.leftImage)).perform(click())
+        onView(withId(R.id.button)).perform(click())
+
+        // Click on squirtle
+        onView(withId(R.id.rightImage)).perform(click())
+        onView(withId(R.id.button)).perform(click())
+
+        // Click on tamagachi
+        onView(withId(R.id.rightImage)).perform(click())
+        onView(withId(R.id.button)).perform(click())
+
 
         onView(withId(R.id.title)).check(matches(withText(R.string.onboarding_started_title)))
     }
@@ -330,14 +343,6 @@ class TicketActivityTest {
         onView(withId(R.id.codeEditText)).perform(replaceText(MockAPI.code1))
         onView(withId(R.id.button)).perform(click())
 
-        // Click on waffles
-        onView(withId(R.id.leftImage)).perform(click())
-        onView(withId(R.id.button)).perform(click())
-
-        // Click on squirtle
-        onView(withId(R.id.rightImage)).perform(click())
-        onView(withId(R.id.button)).perform(click())
-
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getUser(1, false, false).toJson()))
         // Enter information
         onView(withId(R.id.firstName)).perform(replaceText("Matthew"))
@@ -346,6 +351,19 @@ class TicketActivityTest {
         onView(withId(R.id.cell)).perform(replaceText("4083064285"))
         onView(withId(R.id.birth)).perform(replaceText("07251989"))
         onView(withId(R.id.nickname)).perform(replaceText("Matty Otter"))
+        onView(withId(R.id.button)).perform(click())
+
+        mockApi.server.enqueue(MockResponse().setBody(MockAPI.getUser(1, true, false).toJson()))
+        // Click on waffles
+        onView(withId(R.id.leftImage)).perform(click())
+        onView(withId(R.id.button)).perform(click())
+
+        // Click on squirtle
+        onView(withId(R.id.rightImage)).perform(click())
+        onView(withId(R.id.button)).perform(click())
+
+        // Click on tamagachi
+        onView(withId(R.id.rightImage)).perform(click())
         onView(withId(R.id.button)).perform(click())
 
         onView(withId(R.id.title)).check(matches(withText(R.string.onboarding_started_title)))

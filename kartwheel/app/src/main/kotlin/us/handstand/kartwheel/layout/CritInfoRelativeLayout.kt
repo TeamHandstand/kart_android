@@ -8,7 +8,9 @@ import android.graphics.Path
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
+import android.widget.ImageView
 import android.widget.RelativeLayout
+import android.widget.TextView
 import us.handstand.kartwheel.R
 
 
@@ -30,14 +32,16 @@ class CritInfoRelativeLayout : RelativeLayout, ValueAnimator.AnimatorUpdateListe
     var centerXLeft = 0f
     var centerXRight = 0f
     var centerY = 0f
-    val leftImageView: View
-    val rightImageView: View
+    val leftImageView: ImageView
+    val rightImageView: ImageView
+    val question: TextView
 
 
     init {
         View.inflate(context, R.layout.view_crit_info, this)
         leftImageView = ViewUtil.findView(this, R.id.leftImage)
         rightImageView = ViewUtil.findView(this, R.id.rightImage)
+        question = ViewUtil.findView(this, R.id.question)
         paint.color = context.resources.getColor(R.color.yellow)
         paint.strokeWidth = ViewUtil.dpToPx(context, 2).toFloat()
         paint.style = Paint.Style.STROKE
@@ -58,7 +62,10 @@ class CritInfoRelativeLayout : RelativeLayout, ValueAnimator.AnimatorUpdateListe
         rightIsSelected = true
     }
 
-    fun resetSelection(colorRes: Int) {
+    fun nextQuestion(leftImageRes: Int, rightImageRes: Int, questionRes: Int, colorRes: Int) {
+        leftImageView.setImageResource(leftImageRes)
+        rightImageView.setImageResource(rightImageRes)
+        question.setText(questionRes)
         currentPos = 0f
         paint.color = context.resources.getColor(colorRes)
         if (leftIsSelected) {
