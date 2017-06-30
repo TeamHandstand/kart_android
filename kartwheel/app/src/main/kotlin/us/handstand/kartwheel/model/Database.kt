@@ -42,14 +42,14 @@ class Database private constructor(context: Context) : SQLiteOpenHelper(context,
             }
         }
 
-        fun get(): BriteDatabase {
+        @Synchronized fun get(): BriteDatabase {
             if (database == null) {
                 throw RuntimeException("Database should be initialized on app startup!")
             }
             return database!!.db
         }
 
-        fun clear(db: BriteDatabase?) {
+        @Synchronized fun clear(db: BriteDatabase?) {
             if (db == null) {
                 return
             }
