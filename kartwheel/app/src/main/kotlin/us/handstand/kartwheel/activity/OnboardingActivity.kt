@@ -100,9 +100,8 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
     }
 
     override fun showNextStep(previous: Long, next: Long) {
-        // Make sure that we're starting with fresh data.
         if (next == ERROR) {
-            KartWheel.logout()
+            return
         }
         var pageNumberVisibility = VISIBLE
         var makeItRainVisibility = INVISIBLE

@@ -111,9 +111,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
 
     override fun showNextStep(@FragmentType previous: Long, @FragmentType next: Long) {
         // Make sure that we're starting with fresh data.
-        if (next == ERROR) {
-            KartWheel.logout()
-        } else if (next == CODE_ENTRY) {
+        if (next == CODE_ENTRY) {
             KartWheel.logout(lastTicketState = CODE_ENTRY)
         }
 
