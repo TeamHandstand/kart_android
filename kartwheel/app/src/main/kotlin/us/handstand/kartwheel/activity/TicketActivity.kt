@@ -1,5 +1,6 @@
 package us.handstand.kartwheel.activity
 
+import us.handstand.kartwheel.layout.KartButton
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -77,7 +78,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
     val ticketController = TicketController(Database.get(), this)
     private var ticketFragment: TicketFragment? = null
     internal var title: TextView? = null
-    internal var button: AppCompatButton? = null
+    internal var button: KartButton? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -146,6 +147,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
     override fun onClick(v: View) {
         if (v.isEnabled && v.id == R.id.button && ticketFragment!!.isAdvanceButtonEnabled() && ticketFragment!!.canAdvanceToNextStep()) {
             if (ticketFragment is CodeEntryFragment) {
+                button!!.loading = true
                 (ticketFragment as CodeEntryFragment).setProgressVisibility(View.VISIBLE)
             }
             val lastState = Storage.lastTicketState
