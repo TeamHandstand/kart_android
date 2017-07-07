@@ -1,0 +1,28 @@
+import java.util.Date;
+
+CREATE TABLE race_log_event(
+    id TEXT NOT NULL PRIMARY KEY,
+    attackerId TEXT,
+    challengeSlug TEXT,
+    displayable INTEGER as Boolean Default 0,
+    distance REAL,
+    eventType TEXT NOT NULL,
+    itemName TEXT,
+    itemId TEXT,
+    itemSlug TEXT,
+    lapNumber INTEGER,
+    pointId TEXT NOT NULL,
+    raceId TEXT NOT NULL,
+    ranking INTEGER,
+    relativeTime TEXT NOT NULL,
+    response TEXT,
+    targetId TEXT,
+    time INTEGER as Date NOT NULL,
+    totalTime INTEGER as Date,
+    userId TEXT NOT NULL
+);
+
+select_all:
+SELECT *
+FROM race_log_event
+WHERE id = ?;

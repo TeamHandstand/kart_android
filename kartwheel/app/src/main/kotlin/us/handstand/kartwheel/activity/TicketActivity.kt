@@ -103,33 +103,37 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
     }
 
     override fun showDialog(@FragmentType step: Long, message: String) {
-        if (step == CODE_ENTRY && ticketFragment is CodeEntryFragment) {
-            (ticketFragment as CodeEntryFragment).setProgressVisibility(View.INVISIBLE)
+        runOnUiThread {
+            if (step == CODE_ENTRY && ticketFragment is CodeEntryFragment) {
+                (ticketFragment as CodeEntryFragment).setProgressVisibility(View.INVISIBLE)
+            }
+            Toast.makeText(this, message, LENGTH_LONG).show()
         }
-        Toast.makeText(this, message, LENGTH_LONG).show()
     }
 
     override fun showNextStep(@FragmentType previous: Long, @FragmentType next: Long) {
-        // Make sure that we're starting with fresh data.
-        if (next == CODE_ENTRY) {
-            KartWheel.logout(lastTicketState = CODE_ENTRY)
-        }
+        runOnUiThread {
+            // Make sure that we're starting with fresh data.
+            if (next == CODE_ENTRY) {
+                KartWheel.logout(lastTicketState = CODE_ENTRY)
+            }
 
-        if (next != ERROR) {
-            ViewUtil.hideKeyboard(this)
-            ticketFragment = TicketFragment.getFragment(next)
-            title!!.text = resources.getString(ticketFragment!!.getTitleResId())
-            Log.e("NextState", next.toString())
-            Storage.lastTicketState = next
-            onTicketFragmentStateChanged()
-            if (next == RACE_LIST) {
-                startActivity(Intent(this, LoggedInActivity::class.java))
-                finish()
-            } else if (next == ONBOARDING) {
-                startActivity(Intent(this, OnboardingActivity::class.java))
-                finish()
-            } else if (!isFinishing && !supportFragmentManager.isDestroyed) {
-                supportFragmentManager.beginTransaction().replace(R.id.fragment, ticketFragment as Fragment?).commit()
+            if (next != ERROR) {
+                ViewUtil.hideKeyboard(this)
+                ticketFragment = TicketFragment.getFragment(next)
+                title!!.text = resources.getString(ticketFragment!!.getTitleResId())
+                Log.e("NextState", next.toString())
+                Storage.lastTicketState = next
+                onTicketFragmentStateChanged()
+                if (next == RACE_LIST) {
+                    startActivity(Intent(this, LoggedInActivity::class.java))
+                    finish()
+                } else if (next == ONBOARDING) {
+                    startActivity(Intent(this, OnboardingActivity::class.java))
+                    finish()
+                } else if (!isFinishing && !supportFragmentManager.isDestroyed) {
+                    supportFragmentManager.beginTransaction().replace(R.id.fragment, ticketFragment as Fragment?).commit()
+                }
             }
         }
     }
@@ -156,7 +160,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
             try {
                 val lastState = Storage.lastTicketState
                 Log.e("lastState", lastState.toString())
-                ticketController?.onStepCompleted(lastState)
+                ticketController.onStepCompleted(lastState)
             } catch(e: Exception) {
                 e.printStackTrace()
             }

@@ -102,51 +102,52 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
     override fun showNextStep(previous: Long, next: Long) {
         if (next == ERROR) {
             return
-        }
-        var pageNumberVisibility = VISIBLE
-        var makeItRainVisibility = INVISIBLE
-        when (next) {
-            STARTED -> pageNumberVisibility = INVISIBLE
-            POINT_SYSTEM -> makeItRainVisibility = VISIBLE
-            FINISHED -> {
-                Storage.lastOnboardingState = FINISHED
-                if (Storage.showRaces) {
-                    startActivity(Intent(this, LoggedInActivity::class.java))
-                } else {
-                    Storage.lastTicketState = TicketController.GAME_INFO
-                    startActivity(Intent(this, TicketActivity::class.java))
-                }
-                finish()
-                return
+        } else if (next == FINISHED) {
+            Storage.lastOnboardingState = FINISHED
+            if (Storage.showRaces) {
+                startActivity(Intent(this, LoggedInActivity::class.java))
+            } else {
+                Storage.lastTicketState = TicketController.GAME_INFO
+                startActivity(Intent(this, TicketActivity::class.java))
             }
+            finish()
+            return
         }
-        title.text = resources.getString(OnboardingController.getTitleStringResIdForStep(next))
-        description.text = resources.getString(OnboardingController.getDescriptionStringResIdForStep(next))
-        button.text = resources.getString(OnboardingController.getButtonStringResIdForStep(next))
-        pageNumber.text = next.toString() + " of 5"
-        pageNumber.visibility = pageNumberVisibility
-        makeItRainText.visibility = makeItRainVisibility
-        pickBuddyBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        videoBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        runOnUiThread {
+            var pageNumberVisibility = VISIBLE
+            var makeItRainVisibility = INVISIBLE
+            when (next) {
+                STARTED -> pageNumberVisibility = INVISIBLE
+                POINT_SYSTEM -> makeItRainVisibility = VISIBLE
+            }
+            title.text = resources.getString(OnboardingController.getTitleStringResIdForStep(next))
+            description.text = resources.getString(OnboardingController.getDescriptionStringResIdForStep(next))
+            button.text = resources.getString(OnboardingController.getButtonStringResIdForStep(next))
+            pageNumber.text = next.toString() + " of 5"
+            pageNumber.visibility = pageNumberVisibility
+            makeItRainText.visibility = makeItRainVisibility
+            pickBuddyBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            videoBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
-        Storage.lastOnboardingState = next
-        val nextFragment = getFragmentForStep(next)
-        button.visibility = VISIBLE
-        button.isEnabled = true
-        Storage.selfieUri = ""
-        Storage.selectedBuddyUrl = ""
-        if (nextFragment == null) {
-            if (fragment != null) {
-                supportFragmentManager.beginTransaction().remove(fragment as Fragment).commit()
+            Storage.lastOnboardingState = next
+            val nextFragment = getFragmentForStep(next)
+            button.visibility = VISIBLE
+            button.isEnabled = true
+            Storage.selfieUri = ""
+            Storage.selectedBuddyUrl = ""
+            if (nextFragment == null) {
+                if (fragment != null) {
+                    supportFragmentManager.beginTransaction().remove(fragment as Fragment).commit()
+                }
+                if (next == POINT_SYSTEM) {
+                    medalRain.start()
+                }
+            } else if (!isFinishing && !supportFragmentManager.isDestroyed) {
+                button.visibility = if (nextFragment.readyForNextStep()) VISIBLE else INVISIBLE
+                supportFragmentManager.beginTransaction().replace(R.id.fragment, nextFragment as Fragment).commit()
             }
-            if (next == POINT_SYSTEM) {
-                medalRain.start()
-            }
-        } else if (!isFinishing && !supportFragmentManager.isDestroyed) {
-            button.visibility = if (nextFragment.readyForNextStep()) VISIBLE else INVISIBLE
-            supportFragmentManager.beginTransaction().replace(R.id.fragment, nextFragment as Fragment).commit()
+            fragment = nextFragment
         }
-        fragment = nextFragment
     }
 
     override fun onClick(v: View) {
@@ -169,7 +170,7 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
     }
 
     override fun showDialog(message: String) {
-        Toast.makeText(this, message, LENGTH_LONG).show()
+        runOnUiThread { Toast.makeText(this, message, LENGTH_LONG).show() }
     }
 
     override fun onOnboardingFragmentStateChanged() {

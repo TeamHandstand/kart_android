@@ -8,7 +8,6 @@ import com.google.gson.Gson
 import com.google.gson.TypeAdapter
 import com.squareup.sqlbrite.BriteDatabase
 import us.handstand.kartwheel.model.TeamModel.Creator
-import us.handstand.kartwheel.model.columnadapter.ColumnAdapters
 
 @AutoValue
 abstract class Team : TeamModel {

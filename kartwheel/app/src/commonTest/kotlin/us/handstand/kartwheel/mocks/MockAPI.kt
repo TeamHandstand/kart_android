@@ -118,7 +118,7 @@ class MockAPI(val db: BriteDatabase?) {
         fun getRace(order: Long, id: String, course: Course): Race {
             val startTime = DateFormatter[firstRaceStartTime.time + (order * (DateFormatter.millisecondsPerMinute * 5))]!!
             val endTime = DateFormatter[startTime.time + (order * (DateFormatter.millisecondsPerMinute * 5))]!!
-            return Race.create(id, course, course.id(), null, eventId, endTime, null, "Race " + id, (Math.random() * course.maxRegistrants()!!.toDouble()).toLong(), order, null, null, null, null, null, null, startTime, (Math.random() * 3).toLong() + 1, null, null)
+            return Race.create(id, course, course.id(), null, endTime, eventId, null, "Race " + id, (Math.random() * course.maxRegistrants()!!.toDouble()).toLong(), order, null, null, null, null, null, null, startTime, (Math.random() * 3).toLong() + 1, null, null)
         }
 
         // TODO: Return actual list of users per race

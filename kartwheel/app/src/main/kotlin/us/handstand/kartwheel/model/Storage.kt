@@ -17,13 +17,14 @@ class Storage private constructor(val prefs: SharedPreferences) {
         private const val SELFIE_URI = "selfie_uri"
         private const val SELFIE_TRANSFER_ID = "selfie_transfer_id"
         private const val SHOW_RACES = "show_races"
+        private const val FCM_TOKEN = "fcm_token"
         private const val TEAM_ID = "team_id"
         private const val TICKET_ID = "ticket_id"
         private const val USER_ID = "user_id"
         private const val USER_BUDDY_URL = "user_buddy_url"
         private const val USER_IMAGE_URL = "user_image_url"
 
-        @StringDef(BUDDY_URI, USER_ID, EMOJI_CODE, EVENT_ID, TEAM_ID, TICKET_ID, SHOW_RACES, USER_IMAGE_URL, USER_BUDDY_URL, LAST_TICKET_STEP, SELFIE_URI, SELFIE_TRANSFER_ID)
+        @StringDef(BUDDY_URI, USER_ID, EMOJI_CODE, EVENT_ID, TEAM_ID, TICKET_ID, SHOW_RACES, USER_IMAGE_URL, USER_BUDDY_URL, LAST_TICKET_STEP, SELFIE_URI, SELFIE_TRANSFER_ID, FCM_TOKEN)
         private annotation class KEYS
 
         private lateinit var instance: Storage
@@ -123,6 +124,18 @@ class Storage private constructor(val prefs: SharedPreferences) {
             set(value) {
                 return set(SELFIE_TRANSFER_ID, value)
             }
+        val pubNubChannelGroup: String
+            get() {
+                return "user-group-$userId"
+            }
+        var fcmToken: String
+            get() {
+                return getString(FCM_TOKEN)
+            }
+            set(value) {
+                return set(FCM_TOKEN, value)
+            }
+
 
         private fun getString(@KEYS key: String, default: String = ""): String {
             return instance.prefs.getString(key, default)

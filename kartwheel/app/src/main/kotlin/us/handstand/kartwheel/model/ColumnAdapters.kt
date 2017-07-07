@@ -1,10 +1,8 @@
-package us.handstand.kartwheel.model.columnadapter
+package us.handstand.kartwheel.model
 
 
 import com.google.gson.reflect.TypeToken
 import com.squareup.sqldelight.ColumnAdapter
-import us.handstand.kartwheel.model.Course
-import us.handstand.kartwheel.model.Point
 import us.handstand.kartwheel.network.API
 import us.handstand.kartwheel.util.DateFormatter
 import java.io.ByteArrayInputStream

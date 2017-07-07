@@ -8,10 +8,21 @@ import retrofit2.Callback
 import retrofit2.Response
 import us.handstand.kartwheel.BuildConfig
 import us.handstand.kartwheel.KartWheel
+import us.handstand.kartwheel.util.ThreadManager
 
-class SafeCallback(private val relay: API.APICallback<JsonObject>?) : Callback<JsonElement> {
+class SafeCallback(private val relay: API.APICallback<JsonObject>?, private val useExecutor: Boolean = true) : Callback<JsonElement> {
 
     override fun onResponse(call: Call<JsonElement>?, response: Response<JsonElement>?) {
+        if (useExecutor) {
+            ThreadManager.databaseExecutor.execute {
+                performResponse(call, response)
+            }
+        } else {
+            performResponse(call, response)
+        }
+    }
+
+    private fun performResponse(call: Call<JsonElement>?, response: Response<JsonElement>?) {
         try {
             if (response?.code() == 200) {
                 if (response.body() is JsonObject) {
@@ -36,6 +47,16 @@ class SafeCallback(private val relay: API.APICallback<JsonObject>?) : Callback<J
     }
 
     override fun onFailure(call: Call<JsonElement>?, t: Throwable?) {
+        if (useExecutor) {
+            ThreadManager.databaseExecutor.execute {
+                performFailure(call, t)
+            }
+        } else {
+            performFailure(call, t)
+        }
+    }
+
+    private fun performFailure(call: Call<JsonElement>?, t: Throwable?) {
         if (BuildConfig.DEBUG) {
             t?.printStackTrace()
         }
@@ -43,7 +64,7 @@ class SafeCallback(private val relay: API.APICallback<JsonObject>?) : Callback<J
     }
 
     private companion object {
-        val defaultError = "Something went wrong"
+        const val defaultError = "Something went wrong"
         val parser = JsonParser()
     }
 }

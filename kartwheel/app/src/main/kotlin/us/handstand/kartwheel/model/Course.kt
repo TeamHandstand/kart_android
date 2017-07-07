@@ -9,7 +9,6 @@ import com.google.gson.TypeAdapter
 import com.squareup.sqlbrite.BriteDatabase
 import us.handstand.kartwheel.model.CourseModel.Creator
 import us.handstand.kartwheel.model.Util.putIfNotAbsent
-import us.handstand.kartwheel.model.columnadapter.ColumnAdapters
 import java.util.*
 
 @AutoValue

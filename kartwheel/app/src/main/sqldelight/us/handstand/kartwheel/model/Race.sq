@@ -7,8 +7,8 @@ CREATE TABLE race (
     course BLOB as Course,
     courseId TEXT,
     deletedAt INTEGER as Date,
+    endTime INTEGER as Date,
     eventId TEXT,
-    endTime INTEGER as Date NOT NULL,
     funQuestion TEXT,
     name TEXT,
     openSpots INTEGER DEFAULT 20,
@@ -19,7 +19,7 @@ CREATE TABLE race (
     shortAnswer1 TEXT,
     shortAnswer2 TEXT,
     slug TEXT,
-    startTime INTEGER as Date NOT NULL,
+    startTime INTEGER as Date,
     totalLaps INTEGER DEFAULT 0,
     updatedAt INTEGER as Date,
     videoUrl TEXT

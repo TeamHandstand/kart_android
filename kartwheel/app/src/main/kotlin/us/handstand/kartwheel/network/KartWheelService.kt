@@ -15,6 +15,9 @@ internal interface KartWheelService {
     @PUT(BuildConfig.SERVER_FRAGMENT + "events/{eventId}/users/{userId}")
     fun updateUser(@Path("userId") userId: String, @Path("eventId") eventId: String, @Body user: JsonObject): Call<JsonElement>
 
+    @GET(BuildConfig.SERVER_FRAGMENT + "events/{eventId}/users/{userId}")
+    fun getUser(@Path("userId") userId: String, @Path("eventId") eventId: String): Call<JsonElement>
+
     @POST(BuildConfig.SERVER_FRAGMENT + "events/{eventId}/tickets/{ticketId}/forfeit")
     fun forfeitTicket(@Path("eventId") eventId: String, @Path("ticketId") ticketId: String): Call<JsonElement>
 
@@ -23,6 +26,12 @@ internal interface KartWheelService {
 
     @GET(BuildConfig.SERVER_FRAGMENT + "events/{eventId}/courses")
     fun getCourses(@Path("eventId") eventId: String): Call<JsonElement>
+
+    @GET(BuildConfig.SERVER_FRAGMENT + "events/{eventId}/courses/{courseId}/top_times")
+    fun getTopCourseTimes(@Path("eventId") eventId: String, @Path("courseId") courseId: String): Call<JsonElement>
+
+    @GET(BuildConfig.SERVER_FRAGMENT + "events/{eventId}/races/{raceId}/user_race_infos")
+    fun getUserRaceInfos(@Path("eventId") eventId: String, @Path("raceId") raceId: String): Call<JsonElement>
 
     @GET(BuildConfig.SERVER_FRAGMENT + "events/{eventId}")
     fun getEvent(@Path("eventId") eventId: String): Call<JsonElement>

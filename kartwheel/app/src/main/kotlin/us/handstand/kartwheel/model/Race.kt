@@ -9,12 +9,12 @@ import com.google.gson.Gson
 import com.google.gson.TypeAdapter
 import com.squareup.sqlbrite.BriteDatabase
 import us.handstand.kartwheel.model.RaceModel.Creator
+import us.handstand.kartwheel.model.RaceModel.TABLE_NAME
 import us.handstand.kartwheel.model.Util.putIfNotAbsent
-import us.handstand.kartwheel.model.columnadapter.ColumnAdapters
 import us.handstand.kartwheel.util.DateFormatter
 
 @AutoValue
-abstract class Race : RaceModel, Comparable<Race> {
+abstract class Race : RaceModel, Comparable<Race>, Insertable {
 
     override fun compareTo(other: Race): Int {
         val myRaceOrder = raceOrder()
@@ -44,9 +44,11 @@ abstract class Race : RaceModel, Comparable<Race> {
         @RaceStatus
         get() {
             val openSpots = openSpots()
-            if (endTime().before(DateFormatter[System.currentTimeMillis()])) {
+            val endTime = endTime()
+            val registrantIds = registrantIds()
+            if (endTime != null && endTime.before(DateFormatter[System.currentTimeMillis()])) {
                 return FINISHED
-            } else if (registrantIds() != null && registrantIds()!!.contains(Storage.userId)) {
+            } else if (registrantIds != null && registrantIds.contains(Storage.userId)) {
                 return REGISTERED
             } else if (timeUntilRace < Race.ALLOWABLE_SECONDS_BEFORE_START_TIME_TO_REGISTER) {
                 return REGISTRATION_CLOSED
@@ -58,7 +60,7 @@ abstract class Race : RaceModel, Comparable<Race> {
         }
 
     val timeUntilRace: Long
-        get() = startTime().time - System.currentTimeMillis()
+        get() = if (startTime() == null) 0L else startTime()!!.time - System.currentTimeMillis()
 
 
     fun hasLowRegistrantCount(): Boolean {
@@ -74,11 +76,11 @@ abstract class Race : RaceModel, Comparable<Race> {
         }
     }
 
-    fun insert(db: BriteDatabase?) {
-        db?.insert(RaceModel.TABLE_NAME, contentValues, SQLiteDatabase.CONFLICT_REPLACE)
+    override fun tableName(): String {
+        return TABLE_NAME
     }
 
-    private val contentValues: ContentValues
+    override val contentValues: ContentValues
         get() {
             val cv = ContentValues()
             putIfNotAbsent(cv, RaceModel.ID, id())
@@ -86,7 +88,7 @@ abstract class Race : RaceModel, Comparable<Race> {
             putIfNotAbsent(cv, RaceModel.COURSEID, courseId())
             putIfNotAbsent(cv, RaceModel.DELETEDAT, deletedAt()?.time)
             putIfNotAbsent(cv, RaceModel.EVENTID, eventId())
-            putIfNotAbsent(cv, RaceModel.ENDTIME, endTime().time)
+            putIfNotAbsent(cv, RaceModel.ENDTIME, endTime()?.time)
             putIfNotAbsent(cv, RaceModel.FUNQUESTION, funQuestion())
             putIfNotAbsent(cv, RaceModel.NAME, name())
             putIfNotAbsent(cv, RaceModel.OPENSPOTS, openSpots())
@@ -96,7 +98,7 @@ abstract class Race : RaceModel, Comparable<Race> {
             putIfNotAbsent(cv, RaceModel.SHORTANSWER1, shortAnswer1())
             putIfNotAbsent(cv, RaceModel.SHORTANSWER2, shortAnswer2())
             putIfNotAbsent(cv, RaceModel.SLUG, slug())
-            putIfNotAbsent(cv, RaceModel.STARTTIME, startTime().time)
+            putIfNotAbsent(cv, RaceModel.STARTTIME, startTime()?.time)
             putIfNotAbsent(cv, RaceModel.TOTALLAPS, totalLaps())
             putIfNotAbsent(cv, RaceModel.UPDATEDAT, updatedAt()?.time)
             putIfNotAbsent(cv, RaceModel.VIDEOURL, videoUrl())
@@ -114,7 +116,7 @@ abstract class Race : RaceModel, Comparable<Race> {
         const val HAS_OPEN_SPOTS = 4L
         const val DEFAULT_RACE_NAME = "Racey McRacerson"
 
-        val FACTORY = RaceModel.Factory<Race>(Creator<Race> { id, course, courseId, deletedAt, eventId, endTime, funQuestion, name, openSpots, raceOrder, registrantIds, registrantImageUrls, replayUrl, shortAnswer1, shortAnswer2, slug, startTime, totalLaps, updatedAt, videoUrl -> create(id, course, courseId, deletedAt, eventId, endTime, funQuestion, name, openSpots, raceOrder, registrantIds, registrantImageUrls, replayUrl, shortAnswer1, shortAnswer2, slug, startTime, totalLaps, updatedAt, videoUrl) }, ColumnAdapters.COURSE_BLOB, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG, ColumnAdapters.LIST_STRING_BLOB, ColumnAdapters.LIST_STRING_BLOB, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG)
+        val FACTORY = RaceModel.Factory<Race>(Creator<Race> { id, course, courseId, deletedAt, endTime, eventId, funQuestion, name, openSpots, raceOrder, registrantIds, registrantImageUrls, replayUrl, shortAnswer1, shortAnswer2, slug, startTime, totalLaps, updatedAt, videoUrl -> create(id, course, courseId, deletedAt, endTime, eventId, funQuestion, name, openSpots, raceOrder, registrantIds, registrantImageUrls, replayUrl, shortAnswer1, shortAnswer2, slug, startTime, totalLaps, updatedAt, videoUrl) }, ColumnAdapters.COURSE_BLOB, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG, ColumnAdapters.LIST_STRING_BLOB, ColumnAdapters.LIST_STRING_BLOB, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG)
         // Required by Gson
         @JvmStatic
         fun typeAdapter(gson: Gson): TypeAdapter<Race> {

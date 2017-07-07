@@ -46,14 +46,17 @@ class LogoutFragment : Fragment(), View.OnClickListener {
             API.forfeitTicket(Storage.ticketId, object : API.APICallback<JsonElement> {
                 override fun onSuccess(response: JsonElement) {
                     KartWheel.logout()
-                    startActivity(Intent(activity, LaunchActivity::class.java))
-                    activity.finish()
-                    makeText(activity, "Logged out", LENGTH_LONG).show()
+
+                    activity.runOnUiThread {
+                        makeText(activity, "Logged out", LENGTH_LONG).show()
+                        startActivity(Intent(activity, LaunchActivity::class.java))
+                        activity.finish()
+                    }
                 }
 
                 override fun onFailure(errorCode: Int, errorResponse: String) {
                     super.onFailure(errorCode, errorResponse)
-                    makeText(activity, "Unable to logout. Try again.", LENGTH_LONG).show()
+                    activity.runOnUiThread { makeText(activity, "Unable to logout. Try again.", LENGTH_LONG).show() }
                 }
             })
         }

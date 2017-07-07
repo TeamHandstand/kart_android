@@ -50,8 +50,8 @@ object DateFormatter {
         return dateFormat.format(date)
     }
 
-    fun getTimeOfDay(date: Date): String {
-        return timeOfDayFormat.format(date)
+    fun getTimeOfDay(date: Date?): String {
+        return if (date == null) "" else timeOfDayFormat.format(date)
     }
 
     fun getFromUserInput(input: String): String {

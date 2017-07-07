@@ -2,20 +2,21 @@ package us.handstand.kartwheel.model
 
 
 import android.content.ContentValues
-import android.database.sqlite.SQLiteDatabase
 import com.google.auto.value.AutoValue
 import com.google.gson.Gson
 import com.google.gson.TypeAdapter
-import com.squareup.sqlbrite.BriteDatabase
 import us.handstand.kartwheel.model.EventModel.Creator
 import us.handstand.kartwheel.model.Util.putIfNotAbsent
-import us.handstand.kartwheel.model.columnadapter.ColumnAdapters
 
 @AutoValue
-abstract class Event : EventModel {
+abstract class Event : EventModel, Insertable {
 
-    fun insert(db: BriteDatabase?) {
-        if (db != null) {
+    override fun tableName(): String {
+        return EventModel.TABLE_NAME
+    }
+
+    override val contentValues: ContentValues
+        get() {
             val cv = ContentValues()
             putIfNotAbsent(cv, EventModel.ID, id())
             putIfNotAbsent(cv, EventModel.ENDTIME, endTime().time)
@@ -23,9 +24,8 @@ abstract class Event : EventModel {
             putIfNotAbsent(cv, EventModel.STARTTIME, startTime().time)
             putIfNotAbsent(cv, EventModel.UPDATEDAT, updatedAt()?.time)
             putIfNotAbsent(cv, EventModel.USERSCANSEERACES, usersCanSeeRaces())
-            db.insert(EventModel.TABLE_NAME, cv, SQLiteDatabase.CONFLICT_REPLACE)
+            return cv
         }
-    }
 
     companion object : Creator<Event> by Creator(::AutoValue_Event) {
         val FACTORY = EventModel.Factory<Event>(Creator<Event> { id, endTime, name, startTime, updatedAt, usersCanSeeRaces -> create(id, endTime, name, startTime, updatedAt, usersCanSeeRaces) }, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG)

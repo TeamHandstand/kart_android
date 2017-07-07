@@ -8,18 +8,25 @@ import us.handstand.kartwheel.layout.recyclerview.viewholder.RegistrantAvatarVH
 
 
 class RegistrantAvatarAdapter : RecyclerView.Adapter<RegistrantAvatarVH>() {
-    val registrants = ArrayList<String>()
+    val registrantImageUrls = ArrayList<String>()
     val handler = Handler(Looper.getMainLooper())
-    var maxRegistrants = 0L
+    var openSpots = 0L
 
-    fun setRegistrants(races: List<String>) {
+    fun setRegistrantImageUrls(registrantImageUrls: List<String>) {
         handler.post {
             synchronized(RegistrantAvatarAdapter@ this, {
-                this.registrants.clear()
-                this.registrants.addAll(races)
-                val openSpots = maxRegistrants - registrants.size
+                this.registrantImageUrls.clear()
+                this.registrantImageUrls.addAll(registrantImageUrls)
+                notifyOpenSpotsChanged()
+            })
+        }
+    }
+
+    fun notifyOpenSpotsChanged() {
+        handler.post {
+            synchronized(RegistrantAvatarAdapter@ this, {
                 for (i in 1..openSpots) {
-                    this.registrants.add("")
+                    this.registrantImageUrls.add("")
                 }
                 notifyDataSetChanged()
             })
@@ -32,13 +39,13 @@ class RegistrantAvatarAdapter : RecyclerView.Adapter<RegistrantAvatarVH>() {
 
     override fun onBindViewHolder(holder: RegistrantAvatarVH, position: Int) {
         synchronized(RegistrantAvatarAdapter@ this, {
-            holder.bind(registrants[position])
+            holder.bind(registrantImageUrls[position])
         })
     }
 
     override fun getItemCount(): Int {
         synchronized(RegistrantAvatarAdapter@ this, {
-            return registrants.size
+            return registrantImageUrls.size
         })
     }
 }

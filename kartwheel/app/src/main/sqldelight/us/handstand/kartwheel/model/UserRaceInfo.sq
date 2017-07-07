@@ -1,17 +1,19 @@
+import java.util.Date;
+
 CREATE TABLE user_race_info (
-    id TEXT NOT NULL PRIMARY KEY,
+    id TEXT PRIMARY KEY NOT NULL,
     challengeId TEXT,
     completionPercent REAL DEFAULT 0,
     courseId TEXT,
     currentLap INTEGER DEFAULT 0,
     endTime TEXT,
+    deletedAt INTEGER as Date,
     funAnswerDisplayText TEXT,
     itemId TEXT,
     latitude REAL DEFAULT 37.770968,
     longitude REAL DEFAULT -122.432627,
     raceId TEXT,
     ranking INTEGER DEFAULT 0,
-    removedAt TEXT,
     state TEXT DEFAULT 'attached',
     targeted INTEGER DEFAULT 0,
     targetedBy TEXT,
@@ -19,7 +21,7 @@ CREATE TABLE user_race_info (
     totalMileage REAL DEFAULT 0,
     totalTime REAL DEFAULT 0,
     userId TEXT,
-    updatedAt TEXT
+    updatedAt INTEGER as Date
 );
 
 select_all:
@@ -32,3 +34,15 @@ SELECT *
 FROM user_race_info
 WHERE raceId = ? AND userId = ?
 LIMIT 1;
+
+select_for_id:
+SELECT *
+FROM user_race_info
+WHERE id = ?
+LIMIT 1;
+
+select_for_race:
+SELECT *
+FROM user_race_info
+WHERE raceId = ?
+AND deletedAt IS NULL;

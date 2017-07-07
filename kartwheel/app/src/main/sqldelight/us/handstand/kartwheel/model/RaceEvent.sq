@@ -1,0 +1,14 @@
+import java.util.Date;
+
+CREATE TABLE race_event(
+    id TEXT NOT NULL PRIMARY KEY AUTOINCREMENT,
+    message TEXT,
+    soundName TEXT,
+    type TEXT,
+    vibrate INTEGER as Boolean Default 0 NOT NULL
+);
+
+select_all:
+SELECT *
+FROM race_event
+WHERE id = ?;

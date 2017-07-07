@@ -52,3 +52,12 @@ INSERT INTO user(id, authToken, birth, cell, charmanderOrSquirtle, email, eventI
 firstName, furbyOrTamagachi, imageUrl, lastName, miniGameId, nickName, pancakeOrWaffle, raceId, referralType, teamId,
 totalAntiMiles, totalDistanceMiles)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+select_top_three_for_race:
+SELECT t1.*
+FROM user t1
+INNER JOIN user_race_info t2
+ON t1.id == t2.userId
+WHERE t2.raceId=?
+ORDER BY t2.totalTime ASC
+LIMIT 3;

@@ -26,8 +26,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
-import rx.Subscription
 import us.handstand.kartwheel.R
+import us.handstand.kartwheel.controller.RaceSignUpController
+import us.handstand.kartwheel.controller.RaceSignUpListener
 import us.handstand.kartwheel.layout.BatteryWarningView
 import us.handstand.kartwheel.layout.TopCourseTimeView
 import us.handstand.kartwheel.layout.ViewUtil
@@ -35,35 +36,35 @@ import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior
 import us.handstand.kartwheel.layout.recyclerview.adapter.RegistrantAvatarAdapter
 import us.handstand.kartwheel.model.*
 import us.handstand.kartwheel.network.API
+import us.handstand.kartwheel.notifications.PubNubManager
 import us.handstand.kartwheel.util.StringUtil
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 
 // TODO: Add error callbacks when trying to join/leave a race
-class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
-    lateinit var signUpButton: FloatingActionButton
-    lateinit var raceName: TextView
-    lateinit var raceDescription: TextView
-    lateinit var raceCountdownTitle: TextView
-    lateinit var raceCountdown: TextView
-    lateinit var spotsLeft: TextView
-    lateinit var firstTopTime: TopCourseTimeView
-    lateinit var secondTopTime: TopCourseTimeView
-    lateinit var thirdTopTime: TopCourseTimeView
-    lateinit var registrantRecyclerView: RecyclerView
-    lateinit var batteryWarning: BatteryWarningView
-    lateinit var mapView: MapView
-    lateinit var toolbar: View
-    lateinit var behavior: AnchoredBottomSheetBehavior<NestedScrollView>
-    var map: GoogleMap? = null
-    var subscription: Subscription? = null
-    var raceSubscription: Subscription? = null
-    var participantSubscription: Subscription? = null
-    val registrantAvatarAdapter = RegistrantAvatarAdapter()
-    val countdownScheduler = Executors.newSingleThreadScheduledExecutor()!!
-    var race: Race? = null
-    val batteryInfoReceiver = object : BroadcastReceiver() {
+class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener, RaceSignUpListener {
+
+    lateinit private var signUpButton: FloatingActionButton
+    lateinit private var raceName: TextView
+    lateinit private var raceDescription: TextView
+    lateinit private var raceCountdownTitle: TextView
+    lateinit private var raceCountdown: TextView
+    lateinit private var spotsLeft: TextView
+    lateinit private var firstTopTime: TopCourseTimeView
+    lateinit private var secondTopTime: TopCourseTimeView
+    lateinit private var thirdTopTime: TopCourseTimeView
+    lateinit private var registrantRecyclerView: RecyclerView
+    lateinit private var batteryWarning: BatteryWarningView
+    lateinit private var mapView: MapView
+    lateinit private var toolbar: View
+    lateinit private var behavior: AnchoredBottomSheetBehavior<NestedScrollView>
+    lateinit private var controller: RaceSignUpController
+    private var map: GoogleMap? = null
+
+    private val registrantAvatarAdapter = RegistrantAvatarAdapter()
+    private val countdownScheduler = Executors.newSingleThreadScheduledExecutor()!!
+    private val batteryInfoReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             batteryWarning.setBatteryPercentage(intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0))
         }
@@ -92,11 +93,11 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener 
         mapView.getMapAsync(this)
         countdownScheduler.scheduleWithFixedDelay({
             raceCountdown.post {
-                if (race?.alreadyStarted() == true) {
+                if (controller.race?.alreadyStarted() == true) {
                     raceCountdown.text = "Start The Race!"
                     raceCountdownTitle.visibility = GONE
                 } else {
-                    raceCountdown.text = StringUtil.hourMinSecFromMs(race?.timeUntilRace)
+                    raceCountdown.text = StringUtil.hourMinSecFromMs(controller.race?.timeUntilRace)
                 }
             }
         }, 0, 1L, TimeUnit.SECONDS)
@@ -113,31 +114,30 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener 
         return fragmentView
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        controller = RaceSignUpController(Database.get(), Storage.eventId, activity.intent.getStringExtra(RaceModel.ID), this)
+    }
+
+
     override fun onResume() {
         super.onResume()
         mapView.onResume()
-        val raceId = activity.intent.getStringExtra(RaceModel.ID)
-        // Get Race and the participants from the network and from the Database
-        val raceQuery = Race.FACTORY.select_for_id(raceId)
-        raceSubscription = Database.get().createQuery(RaceModel.TABLE_NAME, raceQuery.statement, *raceQuery.args)
-                .mapToOne { Race.FACTORY.select_for_idMapper().map(it) }
-                .subscribe { activity.runOnUiThread { onRaceUpdated(it) } }
-        API.getRaceParticipants(Storage.eventId, raceId)
+        controller.subscribe()
         activity.registerReceiver(batteryInfoReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
     }
 
     override fun onPause() {
         super.onPause()
         mapView.onPause()
-        raceSubscription?.unsubscribe()
-        participantSubscription?.unsubscribe()
+        controller.unsubscribe()
         activity.unregisterReceiver(batteryInfoReceiver)
+        PubNubManager.unsubscribe(PubNubManager.PubNubChannelType.raceRoomChannel, activity.intent.getStringExtra(RaceModel.ID))
     }
 
     override fun onDestroy() {
         mapView.onDestroy()
-        raceSubscription?.unsubscribe()
-        participantSubscription?.unsubscribe()
+        controller.unsubscribe()
         super.onDestroy()
     }
 
@@ -156,23 +156,33 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener 
         mapView.onLowMemory()
     }
 
-    fun onRaceUpdated(race: Race?) {
-        raceName.text = race?.name() ?: Race.DEFAULT_RACE_NAME
-        val miles = (race?.course()?.distance() ?: 0.0) * (race?.totalLaps() ?: 0L)
-        raceDescription.text = race?.totalLaps().toString() + " laps | " + miles.toString().substring(0, 3) + " miles"
-        spotsLeft.text = "+" + ((race?.course()?.maxRegistrants() ?: 0) - (race?.registrantIds()?.size ?: 0)).toString() + " Spots Available"
-        registrantAvatarAdapter.maxRegistrants = (race?.course()?.maxRegistrants() ?: 0L)
-        registrantAvatarAdapter.setRegistrants(race?.registrantImageUrls()!!)
-        if (race.registrantIds()?.contains(Storage.userId) == true) {
-            signUpButton.setImageResource(R.drawable.ic_clear_white_24dp)
-            @Suppress("DEPRECATION")
-            signUpButton.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.red))
-        } else {
-            signUpButton.setImageResource(R.drawable.flag)
-            @Suppress("DEPRECATION")
-            signUpButton.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.blue))
+    @Suppress("DEPRECATION")
+    override fun onParticipantsUpdated(participantImageUrls: List<String>) {
+        activity.runOnUiThread {
+            registrantAvatarAdapter.setRegistrantImageUrls(participantImageUrls)
+            if (controller.userInRace) {
+                signUpButton.setImageResource(R.drawable.ic_clear_white_24dp)
+                signUpButton.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.red))
+            } else {
+                signUpButton.setImageResource(R.drawable.flag)
+                signUpButton.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.blue))
+            }
         }
-        this.race = race
+    }
+
+    override fun onRaceUpdated(race: Race) {
+        activity.runOnUiThread {
+            raceName.text = race.name() ?: Race.DEFAULT_RACE_NAME
+            val miles = (race.course()?.distance() ?: 0.0) * (race.totalLaps() ?: 0L)
+            raceDescription.text = race.totalLaps().toString() + " laps | " + miles.toString().substring(0, 3) + " miles"
+            spotsLeft.text = "+ ${race.openSpots()} Spots Available"
+            registrantAvatarAdapter.openSpots = race.openSpots() ?: 0L
+            registrantAvatarAdapter.notifyOpenSpotsChanged()
+        }
+    }
+
+    override fun onTopThreeUpdated(topThree: List<User>) {
+        // TODO
     }
 
     override fun onClick(v: View) {
@@ -184,51 +194,42 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener 
             }
             return
         }
-        val raceId = activity.intent.getStringExtra(RaceModel.ID)
-        if (race?.registrantIds()?.contains(Storage.userId) == true) {
-            API.leaveRace(Storage.eventId, raceId, object : API.APICallback<Boolean> {
-                override fun onSuccess(response: Boolean) {
-                    API.getRaceParticipants(Storage.eventId, raceId)
-                }
-            })
+        if (controller.userInRace) {
+            API.leaveRace(controller.eventId, controller.raceId)
         } else {
-            API.joinRace(Storage.eventId, raceId, object : API.APICallback<UserRaceInfo> {
-                override fun onSuccess(response: UserRaceInfo) {
-                    API.getRaceParticipants(Storage.eventId, raceId)
-                }
-            })
+            API.joinRace(controller.eventId, controller.raceId)
         }
     }
 
     override fun onMapReady(map: GoogleMap) {
         this.map = map
         val raceQuery = Race.FACTORY.select_for_id(activity.intent.getStringExtra(RaceModel.ID))
-        subscription = Database.get().createQuery(RaceModel.TABLE_NAME, raceQuery.statement, *raceQuery.args)
-                .mapToOne { Race.FACTORY.select_for_idMapper().map(it) }
-                .subscribe { activity.runOnUiThread { drawCourse(it.course(), this.map!!) } }
+        val cursor = Database.get().query(raceQuery.statement, *raceQuery.args)
+        if (cursor.moveToFirst()) {
+            drawCourse(Race.FACTORY.select_for_idMapper().map(cursor).course(), map)
+        }
     }
 
     private fun drawCourse(course: Course?, map: GoogleMap) {
-        subscription?.unsubscribe()
-        if (course != null) {
-            val courseBounds = course.findCorners()
-            val courseLatLng = LatLng(courseBounds.centerLat, courseBounds.centerLong)
-            map.moveCamera(CameraUpdateFactory.newLatLng(courseLatLng))
-            map.setMinZoomPreference(15f)
-            val coursePolyline = PolylineOptions()
-            for (point in course.vertices()!!) {
-                coursePolyline.add(LatLng(point.latitude(), point.longitude()))
-            }
-            @Suppress("DEPRECATION")
-            coursePolyline.color(resources.getColor(R.color.blue))
-            map.addPolyline(coursePolyline)
-            val flag = MarkerOptions()
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_flag))
-                    .position(LatLng(course.startLat(), course.startLong()))
-                    .anchor(.5f, .5f)
-                    .zIndex(10f)
-            map.addMarker(flag)
+        if (course == null) {
+            return
         }
-
+        val courseBounds = course.findCorners()
+        val courseLatLng = LatLng(courseBounds.centerLat, courseBounds.centerLong)
+        map.moveCamera(CameraUpdateFactory.newLatLng(courseLatLng))
+        map.setMinZoomPreference(15f)
+        val coursePolyline = PolylineOptions()
+        for (point in course.vertices()!!) {
+            coursePolyline.add(LatLng(point.latitude(), point.longitude()))
+        }
+        @Suppress("DEPRECATION")
+        coursePolyline.color(resources.getColor(R.color.blue))
+        map.addPolyline(coursePolyline)
+        val flag = MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_flag))
+                .position(LatLng(course.startLat(), course.startLong()))
+                .anchor(.5f, .5f)
+                .zIndex(10f)
+        map.addMarker(flag)
     }
 }

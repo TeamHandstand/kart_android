@@ -1,9 +1,9 @@
 CREATE TABLE item_zone (
     id TEXT NOT NULL PRIMARY KEY,
+    activeBlockCount INTEGER,
+    courseId TEXT,
     latitude REAL DEFAULT 0,
     longitude REAL DEFAULT 0,
-    courseId TEXT,
-    activeBlockCount INTEGER,
     updatedAt TEXT
 );
 

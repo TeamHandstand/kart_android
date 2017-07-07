@@ -19,9 +19,10 @@ class RegistrantAvatarVH private constructor(val avatarView: CircularImageView) 
 
     init {
         avatarView.setOnClickListener { adapterVHClickListener?.onAdapterVHClicked(this) }
+        avatarView.setImageResource(-1, R.drawable.placeholder_registrant_avatar)
     }
 
     fun bind(imageUrl: String) {
-        avatarView.setImageUrl(imageUrl)
+        avatarView.setImageUrl(imageUrl, placeholder = R.drawable.placeholder_registrant_avatar)
     }
 }

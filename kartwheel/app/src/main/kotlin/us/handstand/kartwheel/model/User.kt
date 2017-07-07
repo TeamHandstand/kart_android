@@ -2,7 +2,6 @@ package us.handstand.kartwheel.model
 
 
 import android.content.ContentValues
-import android.database.sqlite.SQLiteDatabase
 import android.text.TextUtils.isEmpty
 import com.google.auto.value.AutoValue
 import com.google.gson.Gson
@@ -10,33 +9,24 @@ import com.google.gson.TypeAdapter
 import com.squareup.sqlbrite.BriteDatabase
 import us.handstand.kartwheel.model.UserModel.Creator
 import us.handstand.kartwheel.model.Util.putIfNotAbsent
-import us.handstand.kartwheel.model.columnadapter.ColumnAdapters
 import us.handstand.kartwheel.util.DateFormatter
 
 @AutoValue
-abstract class User : UserModel {
+abstract class User : UserModel, Insertable {
 
-    fun insert(db: BriteDatabase?) {
-        db?.insert(UserModel.TABLE_NAME, contentValues, SQLiteDatabase.CONFLICT_REPLACE)
-    }
-
-    fun insertWithRaceId(db: BriteDatabase?, raceId: String) {
-        if (db != null) {
-            val cv = ContentValues()
-            cv.put(UserModel.RACEID, raceId)
-            db.insert(UserModel.TABLE_NAME, contentValues, SQLiteDatabase.CONFLICT_REPLACE)
-        }
-    }
-
-    fun update(db: BriteDatabase?) {
+    fun updateRace(db: BriteDatabase?, raceId: String? = null) {
         if (db != null) {
             val cv = contentValues
-            cv.remove(UserModel.ID)
-            db.update(UserModel.TABLE_NAME, cv, UserModel.ID + " = ?", id())
+            cv.put(UserModel.RACEID, raceId ?: "")
+            insertOrUpdate(db, cv)
         }
     }
 
-    private val contentValues: ContentValues
+    override fun tableName(): String {
+        return UserModel.TABLE_NAME
+    }
+
+    override val contentValues: ContentValues
         get() {
             val cv = ContentValues()
             putIfNotAbsent(cv, UserModel.ID, id())
@@ -106,6 +96,19 @@ abstract class User : UserModel {
         }
 
         val FACTORY = UserModel.Factory<User>(Creator<User> { id, authToken, birth, buddyUrl, cell, charmanderOrSquirtle, email, eventId, firstName, furbyOrTamagachi, imageUrl, lastName, miniGameId, nickName, pancakeOrWaffle, pushDeviceToken, pushEnabled, raceId, referralType, teamId, totalAntiMiles, totalDistanceMiles -> create(id, authToken, birth, buddyUrl, cell, charmanderOrSquirtle, email, eventId, firstName, furbyOrTamagachi, imageUrl, lastName, miniGameId, nickName, pancakeOrWaffle, pushDeviceToken, pushEnabled, raceId, referralType, teamId, totalAntiMiles, totalDistanceMiles) }, ColumnAdapters.DATE_LONG)
+
+        fun updateRaceId(db: BriteDatabase?, id: String?, raceId: String?) {
+            if (id == null) {
+                return
+            }
+            val userStatement = User.FACTORY.select_for_id(id)
+            db?.query(userStatement.statement, *userStatement.args)?.use {
+                if (it.moveToFirst()) {
+                    User.FACTORY.select_for_idMapper().map(it)
+                            .updateRace(db, raceId)
+                }
+            }
+        }
 
         // Needed by Gson
         @JvmStatic
