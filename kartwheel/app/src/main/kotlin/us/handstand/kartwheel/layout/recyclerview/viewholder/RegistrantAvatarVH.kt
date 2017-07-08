@@ -1,7 +1,9 @@
 package us.handstand.kartwheel.layout.recyclerview.viewholder
 
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.layout.CircularImageView
 import us.handstand.kartwheel.layout.recyclerview.adapter.AdapterVH
@@ -19,10 +21,13 @@ class RegistrantAvatarVH private constructor(val avatarView: CircularImageView) 
 
     init {
         avatarView.setOnClickListener { adapterVHClickListener?.onAdapterVHClicked(this) }
-        avatarView.setImageResource(-1, R.drawable.placeholder_registrant_avatar)
     }
 
     fun bind(imageUrl: String) {
-        avatarView.setImageUrl(imageUrl, placeholder = R.drawable.placeholder_registrant_avatar)
+        if (TextUtils.isEmpty(imageUrl)) {
+            avatarView.setImageResource(R.drawable.placeholder_registrant_avatar)
+        } else {
+            avatarView.setImageUrl(imageUrl, placeholder = R.drawable.placeholder_registrant_avatar)
+        }
     }
 }

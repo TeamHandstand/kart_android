@@ -20,7 +20,7 @@ abstract class GlideImageView : ImageView {
 
     init {
         if (!isInEditMode) {
-            setImageResource(R.drawable.placeholder_registrant_avatar_grey, R.drawable.placeholder_registrant_avatar_grey)
+            setImageResource(R.drawable.placeholder_registrant_avatar_grey)
         }
     }
 
