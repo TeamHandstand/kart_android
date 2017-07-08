@@ -68,7 +68,7 @@ android {
             debuggable true
             minifyEnabled false
             multiDexEnabled true
-            resValue "string", "google_maps_key", "TODO"
+            resValue "string", "google_maps_key", "AIzaSyDMR6PxrRUtWt2QJ5AeZ1G-ayl5AwXsltU"
         }
         staging {
             buildConfigField "String", "AWS_BUCKET_NAME", "\"kartwheel-staging\""
@@ -83,7 +83,7 @@ android {
             debuggable true
             minifyEnabled false
             multiDexEnabled true
-            resValue "string", "google_maps_key", "TODO"
+            resValue "string", "google_maps_key", "AIzaSyDMR6PxrRUtWt2QJ5AeZ1G-ayl5AwXsltU"
             signingConfig signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -101,7 +101,7 @@ android {
             minifyEnabled true
             multiDexEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            resValue "string", "google_maps_key", "TODO"
+            resValue "string", "google_maps_key", "AIzaSyDMR6PxrRUtWt2QJ5AeZ1G-ayl5AwXsltU"
         }
     }
     compileSdkVersion 25
