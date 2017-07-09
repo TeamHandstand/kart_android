@@ -171,6 +171,18 @@ object API {
         }))
     }
 
+    fun getTopCourseTimes(eventId: String, courseId: String) {
+        kartWheelService!!.getTopCourseTimes(eventId, courseId).enqueue(SafeCallback(object : APICallback<JsonObject> {
+            override fun onSuccess(response: JsonObject) {
+                db?.newTransaction()?.use {
+                    val userRaceInfos = gson.fromJson(response.get("user_race_infos"), Array<UserRaceInfo>::class.java)
+                    userRaceInfos?.forEach { it.insertOrUpdate(db) }
+                    it.markSuccessful()
+                }
+            }
+        }))
+    }
+
     fun forfeitTicket(ticketId: String, apiCallback: APICallback<JsonElement>? = null) {
         kartWheelService!!.forfeitTicket(Storage.eventId, ticketId).enqueue(SafeCallback(apiCallback))
     }

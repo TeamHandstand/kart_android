@@ -43,7 +43,7 @@ class RaceSignUpController(val db: BriteDatabase?, val eventId: String, val race
         API.getUserRaceInfos(eventId, raceId) {
             it?.forEach { User.updateRaceId(db, it.userId(), it.raceId()) }
         }
-        // TODO: API.getTopCourseTimes(eventId, raceId)
+        API.getTopCourseTimes(eventId, raceId)
         PubNubManager.subscribe(PubNubManager.PubNubChannelType.raceRoomChannel, raceId)
     }
 
