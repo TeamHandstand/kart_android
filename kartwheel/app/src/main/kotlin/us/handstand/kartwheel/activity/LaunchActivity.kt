@@ -23,11 +23,10 @@ class LaunchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launch)
         val parentView = findViewById(R.id.parent)
-        parentView.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
-            override fun onPreDraw(): Boolean {
-                parentView.viewTreeObserver.removeOnPreDrawListener(this)
+        parentView.viewTreeObserver.addOnDrawListener(object : ViewTreeObserver.OnDrawListener {
+            override fun onDraw() {
+                parentView.viewTreeObserver.removeOnDrawListener(this)
                 parentView.background = ViewUtil.drawStripes(this@LaunchActivity, parentView.measuredWidth.toFloat(), parentView.measuredHeight.toFloat(), R.color.blue_background, R.color.blue)
-                return true
             }
         })
     }

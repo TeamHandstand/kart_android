@@ -9,7 +9,6 @@ import com.squareup.sqlbrite.BriteDatabase
 import us.handstand.kartwheel.model.UserRaceInfoModel.Creator
 import us.handstand.kartwheel.model.Util.putIfNotAbsent
 import us.handstand.kartwheel.network.API
-import us.handstand.kartwheel.notifications.PubNubManager
 import java.util.concurrent.CountDownLatch
 
 @AutoValue
@@ -18,41 +17,50 @@ abstract class UserRaceInfo : UserRaceInfoModel, Insertable {
         return UserRaceInfoModel.TABLE_NAME
     }
 
-    fun delete(db: BriteDatabase?) {
-        db?.delete(UserRaceInfoModel.TABLE_NAME, UserRaceInfoModel.ID + "=?", id())
-    }
-
     override fun update(db: BriteDatabase?, channel: String, latch: CountDownLatch?) {
-        if (db != null) {
-            if (deletedAt() != null) {
-                // Remove UserRaceInfo
-                val userRaceInfo = UserRaceInfo.remove(db, id())
+        if (db == null) {
+            return
+        }
+        if (deletedAt() != null) {
+            // TODO: Should this be done for every delete?
+            db.newTransaction().use {
                 // Drop User from race
-                User.updateRaceId(db, userRaceInfo?.userId(), null)
-                latch?.countDown()
-            } else if (userId() != null) {
-                // Find the User belonging to this UserRaceInfo
-                val userStatement = User.FACTORY.select_for_id(userId()!!)
-                db.query(userStatement.statement, *userStatement.args).use {
-                    val userFound = it.moveToFirst()
-                    if (userFound) {
-                        updateInfoAndUser(db, channel, latch, User.FACTORY.select_for_idMapper().map(it).id())
-                    } else {
-                        API.getUser(userId()!!, false) { updateInfoAndUser(db, channel, latch) }
-                    }
-                }
-            } else {
-                updateInfoAndUser(db, channel, latch)
+                CompiledStatements.UserRaceInfo.removeUserFromRace.bind(id())
+                CompiledStatements.execute(db, CompiledStatements.UserRaceInfo.removeUserFromRace)
+                // Remove UserRaceInfo
+                CompiledStatements.UserRaceInfo.delete.bind(id())
+                CompiledStatements.execute(db, CompiledStatements.UserRaceInfo.delete)
+                it.markSuccessful()
             }
+            latch?.countDown()
+        } else if (userId() != null) {
+            // Find the User belonging to this UserRaceInfo
+            val userStatement = User.FACTORY.select_for_id(userId()!!)
+            db.query(userStatement.statement, *userStatement.args).use {
+                // If found, just update the User and UserRaceInfo
+                val userFound = it.moveToFirst()
+                if (userFound) {
+                    updateInfoAndUser(db, latch)
+                } else {
+                    // Else, get the User from the network and then update the User and UserRaceInfo
+                    API.getUser(userId()!!, false) { updateInfoAndUser(db, latch) }
+                }
+            }
+        } else {
+            // This shouldn't happen, but in case it does we at least have the UserRaceInfo in the DB.
+            updateInfoAndUser(db, latch)
         }
     }
 
-    private fun updateInfoAndUser(db: BriteDatabase?, channel: String? = null, latch: CountDownLatch? = null, userId: String? = null) {
-        val cv = contentValues
-        putIfNotAbsent(cv, UserRaceInfoModel.USERID, userId ?: userId())
-        putIfNotAbsent(cv, UserRaceInfoModel.RACEID, PubNubManager.idFromChannel(channel))
-        insertOrUpdate(db, cv)
-        User.updateRaceId(db, userId ?: userId(), PubNubManager.idFromChannel(channel))
+    private fun updateInfoAndUser(db: BriteDatabase?, latch: CountDownLatch? = null, userId: String? = null) {
+        db?.newTransaction()?.use {
+            // Update the User with this raceId
+            CompiledStatements.User.updateRace.bind(raceId(), userId ?: userId()!!)
+            CompiledStatements.execute(db, CompiledStatements.User.updateRace)
+            // Insert this UserRaceInfo into the database
+            insertOrUpdate(db, contentValues)
+            it.markSuccessful()
+        }
         latch?.countDown()
     }
 
@@ -84,18 +92,6 @@ abstract class UserRaceInfo : UserRaceInfoModel, Insertable {
 
     companion object : Creator<UserRaceInfo> by Creator(::AutoValue_UserRaceInfo) {
         val FACTORY = UserRaceInfoModel.Factory<UserRaceInfo>(Creator<UserRaceInfo> { id, challengeId, completionPercent, courseId, currentLap, deletedAt, endTime, funAnswerDisplayText, itemId, latitude, longitude, raceId, ranking, state, targeted, targetedBy, totalAntiMiles, totalMileage, totalTime, userId, updatedAt -> create(id, challengeId, completionPercent, courseId, currentLap, deletedAt, endTime, funAnswerDisplayText, itemId, latitude, longitude, raceId, ranking, state, targeted, targetedBy, totalAntiMiles, totalMileage, totalTime, userId, updatedAt) }, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG)
-
-        fun remove(db: BriteDatabase?, id: String): UserRaceInfo? {
-            val userRaceInfoStatement = UserRaceInfo.FACTORY.select_for_id(id)
-            var userRaceInfo: UserRaceInfo? = null
-            db?.query(userRaceInfoStatement.statement, *userRaceInfoStatement.args)?.use {
-                if (it.moveToFirst()) {
-                    userRaceInfo = UserRaceInfo.FACTORY.select_for_idMapper().map(it)
-                    userRaceInfo?.delete(db)
-                }
-            }
-            return userRaceInfo
-        }
 
         // Needed by Gson
         @JvmStatic

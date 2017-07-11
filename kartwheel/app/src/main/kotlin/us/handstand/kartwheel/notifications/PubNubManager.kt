@@ -7,7 +7,6 @@ import com.pubnub.api.PNConfiguration
 import com.pubnub.api.PubNub
 import com.pubnub.api.callbacks.PNCallback
 import com.pubnub.api.callbacks.SubscribeCallback
-import com.pubnub.api.enums.PNPushType
 import com.pubnub.api.models.consumer.PNStatus
 import com.pubnub.api.models.consumer.channel_group.PNChannelGroupsAddChannelResult
 import com.pubnub.api.models.consumer.channel_group.PNChannelGroupsRemoveChannelResult
@@ -65,13 +64,17 @@ object PubNubManager : SubscribeCallback() {
                 })
     }
 
+    fun tearDown() {
+        pub.unsubscribeAll()
+    }
+
     fun subscribe(channelType: PubNubChannelType, id: String) {
         pub.addChannelsToChannelGroup()
                 .channelGroup(Storage.pubNubChannelGroup)
                 .channels(mutableListOf(channelForType(channelType, id)))
                 .async(object : PNCallback<PNChannelGroupsAddChannelResult>() {
-                    override fun onResponse(result: PNChannelGroupsAddChannelResult, status: PNStatus) {
-                        Log.e(TAG, "Channels ${status.affectedChannels.toString()} status: ${status.statusCode}")
+                    override fun onResponse(result: PNChannelGroupsAddChannelResult?, status: PNStatus?) {
+                        Log.e(TAG, "Channels ${status?.affectedChannels} status: ${status?.statusCode}")
                     }
                 })
     }
@@ -81,8 +84,8 @@ object PubNubManager : SubscribeCallback() {
                 .channelGroup(Storage.pubNubChannelGroup)
                 .channels(mutableListOf(channelForType(channelType, id)))
                 .async(object : PNCallback<PNChannelGroupsRemoveChannelResult>() {
-                    override fun onResponse(result: PNChannelGroupsRemoveChannelResult, status: PNStatus) {
-                        Log.e(TAG, "Channel removed: ${status.affectedChannels.toString()}")
+                    override fun onResponse(result: PNChannelGroupsRemoveChannelResult?, status: PNStatus?) {
+                        Log.e(TAG, "Channel removed: ${status?.affectedChannels}")
                     }
                 })
     }
@@ -125,9 +128,7 @@ object PubNubManager : SubscribeCallback() {
             db?.newTransaction()?.use {
                 val array = API.gson.fromJson(results, type)
                 val latch = CountDownLatch(array.size)
-                for (element in array) {
-                    element.update(db, channel, latch)
-                }
+                array.forEach { it.update(db, channel, latch) }
                 latch.await()
                 it.markSuccessful()
             }

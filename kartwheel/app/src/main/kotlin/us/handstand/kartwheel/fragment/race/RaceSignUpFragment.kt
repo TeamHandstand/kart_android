@@ -36,7 +36,6 @@ import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior
 import us.handstand.kartwheel.layout.recyclerview.adapter.RegistrantAvatarAdapter
 import us.handstand.kartwheel.model.*
 import us.handstand.kartwheel.network.API
-import us.handstand.kartwheel.notifications.PubNubManager
 import us.handstand.kartwheel.util.StringUtil
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -132,12 +131,10 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
         mapView.onPause()
         controller.unsubscribe()
         activity.unregisterReceiver(batteryInfoReceiver)
-        PubNubManager.unsubscribe(PubNubManager.PubNubChannelType.raceRoomChannel, activity.intent.getStringExtra(RaceModel.ID))
     }
 
     override fun onDestroy() {
         mapView.onDestroy()
-        controller.unsubscribe()
         super.onDestroy()
     }
 
@@ -203,10 +200,14 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
 
     override fun onMapReady(map: GoogleMap) {
         this.map = map
+        if (true) {
+            return
+        }
         val raceQuery = Race.FACTORY.select_for_id(activity.intent.getStringExtra(RaceModel.ID))
-        val cursor = Database.get().query(raceQuery.statement, *raceQuery.args)
-        if (cursor.moveToFirst()) {
-            drawCourse(Race.FACTORY.select_for_idMapper().map(cursor).course(), map)
+        Database.get().query(raceQuery.statement, *raceQuery.args).use {
+            if (it.moveToFirst()) {
+                drawCourse(Race.FACTORY.select_for_idMapper().map(it).course(), map)
+            }
         }
     }
 

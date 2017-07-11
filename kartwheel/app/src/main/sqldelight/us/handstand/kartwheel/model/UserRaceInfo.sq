@@ -24,11 +24,6 @@ CREATE TABLE user_race_info (
     updatedAt INTEGER as Date
 );
 
-select_all:
-SELECT *
-FROM user_race_info
-WHERE id=?;
-
 select_for_race_and_user:
 SELECT *
 FROM user_race_info
@@ -46,3 +41,19 @@ SELECT *
 FROM user_race_info
 WHERE raceId = ?
 AND deletedAt IS NULL;
+
+delete_all_for_race:
+DELETE FROM user_race_info
+WHERE raceId = ?;
+
+delete_for_id:
+DELETE FROM user_race_info
+WHERE id = ?;
+
+delete_for_user_and_race:
+DELETE FROM user_race_info
+WHERE userId= ? AND raceId = ?;
+
+remove_race_id_from_user:
+UPDATE user SET raceId = NULL
+WHERE user.id=(SELECT userId FROM user_race_info WHERE user_race_info.id=? LIMIT 1);

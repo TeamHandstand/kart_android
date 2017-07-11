@@ -154,35 +154,6 @@ object API {
         }, useExecutor = useExecutor))
     }
 
-    fun getUserRaceInfos(eventId: String, raceId: String, onSuccess: (Array<UserRaceInfo>?) -> Unit) {
-        kartWheelService!!.getUserRaceInfos(eventId, raceId).enqueue(SafeCallback(object : APICallback<JsonObject> {
-            override fun onSuccess(response: JsonObject) {
-                db?.newTransaction()?.use {
-                    val userRaceInfos = gson.fromJson(response.get("user_race_infos"), Array<UserRaceInfo>::class.java)
-                    userRaceInfos?.forEach { it.insertOrUpdate(db) }
-                    onSuccess.invoke(userRaceInfos)
-                    it.markSuccessful()
-                }
-            }
-
-            override fun onFailure(errorCode: Int, errorResponse: String) {
-                super.onFailure(errorCode, errorResponse)
-            }
-        }))
-    }
-
-    fun getTopCourseTimes(eventId: String, courseId: String) {
-        kartWheelService!!.getTopCourseTimes(eventId, courseId).enqueue(SafeCallback(object : APICallback<JsonObject> {
-            override fun onSuccess(response: JsonObject) {
-                db?.newTransaction()?.use {
-                    val userRaceInfos = gson.fromJson(response.get("user_race_infos"), Array<UserRaceInfo>::class.java)
-                    userRaceInfos?.forEach { it.insertOrUpdate(db) }
-                    it.markSuccessful()
-                }
-            }
-        }))
-    }
-
     fun forfeitTicket(ticketId: String, apiCallback: APICallback<JsonElement>? = null) {
         kartWheelService!!.forfeitTicket(Storage.eventId, ticketId).enqueue(SafeCallback(apiCallback))
     }
@@ -193,13 +164,13 @@ object API {
                     override fun onSuccess(response: JsonObject) {
                         val courses = gson.fromJson(response.get("courses"), Array<Course>::class.java)
                         val courseMap = mutableMapOf<String, Course>()
-                        val transaction = db?.newTransaction()
-                        for (course in courses) {
-                            course.insert(db)
-                            courseMap.put(course.id(), course)
+                        db?.newTransaction()?.use {
+                            courses.forEach {
+                                it.insert(db)
+                                courseMap.put(it.id(), it)
+                            }
+                            it.markSuccessful()
                         }
-                        transaction?.markSuccessful()
-                        transaction?.end()
                         apiCallback?.onSuccess(courseMap)
                     }
                 }))
@@ -211,12 +182,10 @@ object API {
                     override fun onSuccess(response: JsonObject) {
                         val races = gson.fromJson(response.get("races"), Array<Race>::class.java)
                         if (save) {
-                            val transaction = db?.newTransaction()
-                            for (race in races) {
-                                race.insert(db)
+                            db?.newTransaction()?.use {
+                                races?.forEach { it.insert(db) }
+                                it.markSuccessful()
                             }
-                            transaction?.markSuccessful()
-                            transaction?.end()
                         }
                         apiCallback?.onSuccess(Arrays.asList(*races))
                     }
@@ -233,16 +202,28 @@ object API {
                 // Don't save this time
                 getRaces(eventId, false, object : API.APICallback<List<Race>> {
                     override fun onSuccess(response: List<Race>) {
-                        val transaction = db?.newTransaction()
-                        val latch = CountDownLatch(response.size)
-                        for (race in response) {
-                            race.insert(db, courseResponse[race.courseId()])
-                            getRaceParticipants(eventId, race.id(), APITransactionCallback(transaction, latch, true))
+                        db?.newTransaction()?.use {
+                            response.forEach {
+                                it.insert(db, courseResponse[it.courseId()])
+                            }
+                            it.markSuccessful()
                         }
                     }
                 })
             }
         })
+    }
+
+    fun getTopCourseTimes(eventId: String, courseId: String) {
+        kartWheelService!!.getTopCourseTimes(eventId, courseId).enqueue(SafeCallback(object : APICallback<JsonObject> {
+            override fun onSuccess(response: JsonObject) {
+                db?.newTransaction()?.use {
+                    val userRaceInfos = gson.fromJson(response.get("userRaceInfos"), Array<UserRaceInfo>::class.java)
+                    userRaceInfos?.forEach { it.insertOrUpdate(db) }
+                    it.markSuccessful()
+                }
+            }
+        }))
     }
 
     fun getRaceParticipants(eventId: String, raceId: String, apiCallback: APICallback<Array<User>>? = null) {
@@ -262,17 +243,38 @@ object API {
         }))
     }
 
+    fun getUserRaceInfos(eventId: String, raceId: String) {
+        kartWheelService!!.getUserRaceInfos(eventId, raceId).enqueue(SafeCallback(object : APICallback<JsonObject> {
+            override fun onSuccess(response: JsonObject) {
+                db?.newTransaction()?.use {
+                    // Delete all previous UserRaceInfos
+                    CompiledStatements.UserRaceInfo.deleteAllForRace.bind(raceId)
+                    CompiledStatements.execute(db, CompiledStatements.UserRaceInfo.deleteAllForRace)
+                    // Remove the race ID from all Users
+                    CompiledStatements.User.removeRace.bind(raceId)
+                    CompiledStatements.execute(db, CompiledStatements.User.removeRace)
+                    // Insert the UserRaceInfos from the server. Will also update the Users
+                    val userRaceInfos = gson.fromJson(response.get("userRaceInfos"), Array<UserRaceInfo>::class.java)
+                    val latch = CountDownLatch(userRaceInfos?.size ?: 0)
+                    userRaceInfos?.forEach { it.update(db, raceId, latch) }
+                    latch.await()
+                    it.markSuccessful()
+                }
+            }
+        }))
+    }
+
     fun joinRace(eventId: String, raceId: String, apiCallback: APICallback<UserRaceInfo>? = null) {
         kartWheelService!!.joinRace(eventId, raceId).enqueue(SafeCallback(object : APICallback<JsonObject> {
             override fun onSuccess(response: JsonObject) {
-                db?.newTransaction()?.use {
-                    val userRaceInfo = gson.fromJson(response.get("userRaceInfo"), UserRaceInfo::class.java)
-                    userRaceInfo.insert(db)
-                    // Store the race id
-                    User.updateRaceId(db, Storage.userId, raceId)
-                    apiCallback?.onSuccess(userRaceInfo)
-                    it.markSuccessful()
-                }
+                val userRaceInfo = gson.fromJson(response.get("userRaceInfo"), UserRaceInfo::class.java)
+                userRaceInfo.update(db)
+                apiCallback?.onSuccess(userRaceInfo)
+            }
+
+            override fun onFailure(errorCode: Int, errorResponse: String) {
+                super.onFailure(errorCode, errorResponse)
+                apiCallback?.onFailure(errorCode, errorResponse)
             }
         }))
     }
@@ -280,17 +282,24 @@ object API {
     fun leaveRace(eventId: String, raceId: String, apiCallback: APICallback<Boolean>? = null) {
         kartWheelService!!.leaveRace(eventId, raceId).enqueue(SafeCallback(object : APICallback<JsonObject> {
             override fun onSuccess(response: JsonObject) {
-                db?.newTransaction()?.use {
-                    val successfullyLeftRace = response.get("success").asBoolean
-                    // Delete the UserRaceInfo for this race
-                    val userRaceInfoQuery = UserRaceInfo.FACTORY.select_for_race_and_user(raceId, Storage.userId)
-                    db?.createQuery(UserRaceInfoModel.TABLE_NAME, userRaceInfoQuery.statement, *userRaceInfoQuery.args)
-                            ?.mapToOne { UserRaceInfo.FACTORY.select_for_race_and_userMapper().map(it) }
-                            ?.doOnNext { it.delete(db) }
-                    // Clear the race ID
-                    User.updateRaceId(db, Storage.userId, null)
-                    apiCallback?.onSuccess(successfullyLeftRace)
+                val successfullyLeftRace = response.get("success").asBoolean
+                if (successfullyLeftRace) {
+                    db?.newTransaction()?.use {
+                        // Remove the race id for the User
+                        CompiledStatements.User.updateRace.bind(null, Storage.userId)
+                        CompiledStatements.execute(db, CompiledStatements.User.updateRace)
+                        // Delete the UserRaceInfo for this race
+                        CompiledStatements.UserRaceInfo.deleteForUserAndRace.bind(Storage.userId, raceId)
+                        CompiledStatements.execute(db, CompiledStatements.UserRaceInfo.deleteForUserAndRace)
+                        it.markSuccessful()
+                    }
                 }
+                apiCallback?.onSuccess(successfullyLeftRace)
+            }
+
+            override fun onFailure(errorCode: Int, errorResponse: String) {
+                super.onFailure(errorCode, errorResponse)
+                apiCallback?.onFailure(errorCode, errorResponse)
             }
         }))
     }
@@ -302,12 +311,10 @@ object API {
                 if (miniGameTypes == null || miniGameTypes.isEmpty()) {
                     return
                 }
-                val transaction = db?.newTransaction()
-                for (miniGameType in miniGameTypes) {
-                    miniGameType.insert(db)
+                db?.newTransaction()?.use {
+                    miniGameTypes.forEach { it.insert(db) }
+                    it.markSuccessful()
                 }
-                transaction?.markSuccessful()
-                transaction?.end()
             }
         }))
     }

@@ -13,7 +13,6 @@ interface RaceSignUpListener {
 }
 
 class RaceSignUpController(val db: BriteDatabase?, val eventId: String, val raceId: String, val listener: RaceSignUpListener) {
-
     private var raceSubscription: Subscription? = null
     private var registrantSubscription: Subscription? = null
     private var topThreeSubscription: Subscription? = null
@@ -35,22 +34,21 @@ class RaceSignUpController(val db: BriteDatabase?, val eventId: String, val race
                 ?.mapToList { User.FACTORY.select_for_race_idMapper().map(it) }
                 ?.subscribe { onRegistrantsUpdated(it) }
         // Listen for the top three registrants for this race
-        val topThreeQuery = User.FACTORY.select_top_three_for_race(raceId)
-        topThreeSubscription = db?.createQuery(UserModel.TABLE_NAME, topThreeQuery.statement, *topThreeQuery.args)
-                ?.mapToList { User.FACTORY.select_top_three_for_raceMapper().map(it) }
-                ?.subscribe { listener.onTopThreeUpdated(it) }
-        API.getRaceParticipants(eventId, raceId)
-        API.getUserRaceInfos(eventId, raceId) {
-            it?.forEach { User.updateRaceId(db, it.userId(), it.raceId()) }
-        }
-        API.getTopCourseTimes(eventId, raceId)
+//        val topThreeQuery = User.FACTORY.select_top_three_for_race(raceId)
+//        topThreeSubscription = db?.createQuery(UserModel.TABLE_NAME, topThreeQuery.statement, *topThreeQuery.args)
+//                ?.mapToList { User.FACTORY.select_top_three_for_raceMapper().map(it) }
+//                ?.subscribe { listener.onTopThreeUpdated(it) }
+        API.getUserRaceInfos(eventId, raceId)
+//        API.getTopCourseTimes(eventId, raceId)
         PubNubManager.subscribe(PubNubManager.PubNubChannelType.raceRoomChannel, raceId)
     }
+
 
     fun unsubscribe() {
         raceSubscription?.unsubscribe()
         registrantSubscription?.unsubscribe()
         topThreeSubscription?.unsubscribe()
+        PubNubManager.unsubscribe(PubNubManager.PubNubChannelType.raceRoomChannel, raceId)
     }
 
     private fun onRegistrantsUpdated(users: List<User>) {

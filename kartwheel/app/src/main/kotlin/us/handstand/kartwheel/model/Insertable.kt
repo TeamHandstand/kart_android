@@ -22,7 +22,11 @@ interface Insertable {
         db?.insert(tableName(), contentValues, SQLiteDatabase.CONFLICT_REPLACE)
     }
 
-    fun update(db: BriteDatabase?, channel: String = "", latch: CountDownLatch? = null) {
+    /**
+     * Update the Insertable. Return true if it was update. False if there was an error or if the
+     * Item did not exist in the database.
+     */
+    fun update(db: BriteDatabase?, channel: String = "", latch: CountDownLatch? = null){
         if (db != null) {
             val cv = contentValues
             cv.remove("id")

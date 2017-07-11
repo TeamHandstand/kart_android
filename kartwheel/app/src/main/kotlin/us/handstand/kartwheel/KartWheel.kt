@@ -14,8 +14,10 @@ import us.handstand.kartwheel.inject.provider.*
 import us.handstand.kartwheel.layout.Font
 import us.handstand.kartwheel.model.Database
 import us.handstand.kartwheel.model.Storage
+import us.handstand.kartwheel.model.CompiledStatements
 import us.handstand.kartwheel.network.API
 import us.handstand.kartwheel.util.ThreadManager
+import us.handstand.kartwheel.notifications.PubNubManager
 
 open class KartWheel : Application() {
 
@@ -30,6 +32,7 @@ open class KartWheel : Application() {
         super.onCreate()
         Storage.initialize(PreferenceManager.getDefaultSharedPreferences(this))
         Database.initialize(this)
+        CompiledStatements.initialize(Database.get())
         API.db = Database.get()
         Fabric.with(this, Crashlytics())
         injector = DaggerInjector.builder()
@@ -51,11 +54,13 @@ open class KartWheel : Application() {
                 ThreadManager.databaseExecutor.submit {
                     Storage.clear()
                     Database.clear(Database.get())
+                    PubNubManager.tearDown()
                     Storage.lastTicketState = lastTicketState
                 }
             } else {
                 Storage.clear()
                 Database.clear(Database.get())
+                PubNubManager.tearDown()
                 Storage.lastTicketState = lastTicketState
             }
         }

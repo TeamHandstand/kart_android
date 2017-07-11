@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatButton
-import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.TextView
@@ -122,7 +121,6 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
                 ViewUtil.hideKeyboard(this)
                 ticketFragment = TicketFragment.getFragment(next)
                 title!!.text = resources.getString(ticketFragment!!.getTitleResId())
-                Log.e("NextState", next.toString())
                 Storage.lastTicketState = next
                 onTicketFragmentStateChanged()
                 if (next == RACE_LIST) {
@@ -157,14 +155,8 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
             if (ticketFragment is CodeEntryFragment) {
                 (ticketFragment as CodeEntryFragment).setProgressVisibility(View.VISIBLE)
             }
-            try {
-                val lastState = Storage.lastTicketState
-                Log.e("lastState", lastState.toString())
-                ticketController.onStepCompleted(lastState)
-            } catch(e: Exception) {
-                e.printStackTrace()
-            }
-            Log.e("Shit", "Happened")
+            val lastState = Storage.lastTicketState
+            ticketController.onStepCompleted(lastState)
         }
     }
 }
