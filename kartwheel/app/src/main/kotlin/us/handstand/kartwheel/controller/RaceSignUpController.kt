@@ -6,8 +6,10 @@ import us.handstand.kartwheel.model.*
 import us.handstand.kartwheel.network.API
 import us.handstand.kartwheel.notifications.PubNubManager
 
+data class RegistrantInfo(val firstName: String? = "", val imageUrl: String? = "")
+
 interface RaceSignUpListener {
-    fun onParticipantsUpdated(participantImageUrls: List<String>)
+    fun onRegistrantsUpdated(registrantInfos: List<RegistrantInfo>)
     fun onRaceUpdated(race: Race)
     fun onTopThreeUpdated(topThree: List<User>)
 }
@@ -52,17 +54,17 @@ class RaceSignUpController(val db: BriteDatabase?, val eventId: String, val race
     }
 
     private fun onRegistrantsUpdated(users: List<User>) {
-        val imageUrls = mutableListOf<String>()
+        val registrantInfos = mutableListOf<RegistrantInfo>()
         val userId = Storage.userId
         userInRace = false
         for (user in users) {
             if (user.imageUrl() != null) {
-                imageUrls.add(user.imageUrl()!!)
+                registrantInfos.add(RegistrantInfo(user.firstName(), user.imageUrl()))
             }
             if (user.id() == userId) {
                 userInRace = true
             }
         }
-        listener.onParticipantsUpdated(imageUrls)
+        listener.onRegistrantsUpdated(registrantInfos)
     }
 }

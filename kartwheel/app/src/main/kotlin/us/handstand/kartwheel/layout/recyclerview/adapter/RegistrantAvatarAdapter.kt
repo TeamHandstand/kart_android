@@ -4,19 +4,20 @@ import android.os.Handler
 import android.os.Looper
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
+import us.handstand.kartwheel.controller.RegistrantInfo
 import us.handstand.kartwheel.layout.recyclerview.viewholder.RegistrantAvatarVH
 
 
 class RegistrantAvatarAdapter : RecyclerView.Adapter<RegistrantAvatarVH>() {
-    val registrantImageUrls = ArrayList<String>()
+    val registrantInfos = ArrayList<RegistrantInfo>()
     val handler = Handler(Looper.getMainLooper())
     var openSpots = 0L
 
-    fun setRegistrantImageUrls(registrantImageUrls: List<String>) {
+    fun setRegistrantInfos(registrantInfos: List<RegistrantInfo>) {
         handler.post {
             synchronized(RegistrantAvatarAdapter@ this, {
-                this.registrantImageUrls.clear()
-                this.registrantImageUrls.addAll(registrantImageUrls)
+                this.registrantInfos.clear()
+                this.registrantInfos.addAll(registrantInfos)
                 notifyOpenSpotsChanged()
             })
         }
@@ -26,7 +27,7 @@ class RegistrantAvatarAdapter : RecyclerView.Adapter<RegistrantAvatarVH>() {
         handler.post {
             synchronized(RegistrantAvatarAdapter@ this, {
                 for (i in 1..openSpots) {
-                    this.registrantImageUrls.add("")
+                    this.registrantInfos.add(RegistrantInfo())
                 }
                 notifyDataSetChanged()
             })
@@ -39,13 +40,13 @@ class RegistrantAvatarAdapter : RecyclerView.Adapter<RegistrantAvatarVH>() {
 
     override fun onBindViewHolder(holder: RegistrantAvatarVH, position: Int) {
         synchronized(RegistrantAvatarAdapter@ this, {
-            holder.bind(registrantImageUrls[position])
+            holder.bind(registrantInfos[position])
         })
     }
 
     override fun getItemCount(): Int {
         synchronized(RegistrantAvatarAdapter@ this, {
-            return registrantImageUrls.size
+            return registrantInfos.size
         })
     }
 }

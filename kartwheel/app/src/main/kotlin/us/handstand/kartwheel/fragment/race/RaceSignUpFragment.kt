@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.PolylineOptions
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.controller.RaceSignUpController
 import us.handstand.kartwheel.controller.RaceSignUpListener
+import us.handstand.kartwheel.controller.RegistrantInfo
 import us.handstand.kartwheel.layout.BatteryWarningView
 import us.handstand.kartwheel.layout.TopCourseTimeView
 import us.handstand.kartwheel.layout.ViewUtil
@@ -154,9 +155,9 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
     }
 
     @Suppress("DEPRECATION")
-    override fun onParticipantsUpdated(participantImageUrls: List<String>) {
+    override fun onRegistrantsUpdated(registrantInfos: List<RegistrantInfo>) {
         activity.runOnUiThread {
-            registrantAvatarAdapter.setRegistrantImageUrls(participantImageUrls)
+            registrantAvatarAdapter.setRegistrantInfos(registrantInfos)
             if (controller.userInRace) {
                 signUpButton.setImageResource(R.drawable.ic_clear_white_24dp)
                 signUpButton.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.red))

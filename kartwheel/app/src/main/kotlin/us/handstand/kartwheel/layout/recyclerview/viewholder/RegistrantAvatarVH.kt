@@ -3,31 +3,36 @@ package us.handstand.kartwheel.layout.recyclerview.viewholder
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.bumptech.glide.Glide
+import android.widget.TextView
 import us.handstand.kartwheel.R
+import us.handstand.kartwheel.controller.RegistrantInfo
 import us.handstand.kartwheel.layout.CircularImageView
 import us.handstand.kartwheel.layout.recyclerview.adapter.AdapterVH
 import us.handstand.kartwheel.layout.recyclerview.adapter.AdapterVHClickListener
 
 
-class RegistrantAvatarVH private constructor(val avatarView: CircularImageView) : AdapterVH(avatarView) {
+class RegistrantAvatarVH private constructor(val parent: ViewGroup) : AdapterVH(parent) {
     override var adapterVHClickListener: AdapterVHClickListener<RegistrantAvatarVH>? = null
+    val avatarView = parent.findViewById(R.id.avatar) as CircularImageView
+    val firstName = parent.findViewById(R.id.firstName) as TextView
 
     companion object {
         fun constructNewInstance(parent: ViewGroup): RegistrantAvatarVH {
-            return RegistrantAvatarVH(LayoutInflater.from(parent.context).inflate(R.layout.recycler_view_holder_registrant_avatar, parent, false) as CircularImageView)
+            return RegistrantAvatarVH(LayoutInflater.from(parent.context).inflate(R.layout.recycler_view_holder_registrant_avatar, parent, false) as ViewGroup)
         }
+
     }
 
     init {
         avatarView.setOnClickListener { adapterVHClickListener?.onAdapterVHClicked(this) }
     }
 
-    fun bind(imageUrl: String) {
-        if (TextUtils.isEmpty(imageUrl)) {
+    fun bind(registrantInfo: RegistrantInfo) {
+        if (TextUtils.isEmpty(registrantInfo.imageUrl)) {
             avatarView.setImageResource(R.drawable.placeholder_registrant_avatar)
         } else {
-            avatarView.setImageUrl(imageUrl, placeholder = R.drawable.placeholder_registrant_avatar)
+            avatarView.setImageUrl(registrantInfo.imageUrl, placeholder = R.drawable.placeholder_registrant_avatar)
         }
+        this.firstName.text = registrantInfo.firstName
     }
 }

@@ -1,6 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<us.handstand.kartwheel.layout.CircularImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="40dp"
-    android:layout_height="40dp"
-    android:layout_margin="10dp"
-    android:src="@drawable/placeholder_registrant_avatar" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <us.handstand.kartwheel.layout.CircularImageView
+        android:id="@+id/avatar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="10dp"
+        android:src="@drawable/placeholder_registrant_avatar" />
+
+    <us.handstand.kartwheel.layout.KartTextView
+        android:id="@+id/firstName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:lines="1"
+        android:textSize="12dp"
+        app:typeface="regular"
+        tools:text="Matt" />
+</LinearLayout>
