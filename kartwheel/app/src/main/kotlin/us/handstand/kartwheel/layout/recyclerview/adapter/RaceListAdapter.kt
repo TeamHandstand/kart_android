@@ -8,9 +8,9 @@ import us.handstand.kartwheel.model.Race
 
 
 class RaceListAdapter(val controller: RaceListController) : RecyclerView.Adapter<RaceSummaryVH>() {
-    val races = ArrayList<Race>()
+    val races = ArrayList<Race.RaceWithCourse>()
 
-    fun setRaces(races: List<Race>) {
+    fun setRaces(races: List<Race.RaceWithCourse>) {
         this.races.clear()
         this.races.addAll(races)
         notifyDataSetChanged()

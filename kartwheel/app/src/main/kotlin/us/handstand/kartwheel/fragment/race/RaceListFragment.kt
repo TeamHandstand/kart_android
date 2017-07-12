@@ -50,7 +50,7 @@ class RaceListFragment : Fragment(), RaceListController.RaceListListener {
         activity.startActivity(intent)
     }
 
-    override fun onRacesUpdated(races: List<Race>) {
+    override fun onRacesUpdated(races: List<Race.RaceWithCourse>) {
         activity.runOnUiThread { raceAdapter.setRaces(races) }
     }
 }

@@ -170,8 +170,8 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
     override fun onRaceUpdated(race: Race) {
         activity.runOnUiThread {
             raceName.text = race.name() ?: Race.DEFAULT_RACE_NAME
-            val miles = (race.course()?.distance() ?: 0.0) * (race.totalLaps() ?: 0L)
-            raceDescription.text = race.totalLaps().toString() + " laps | " + miles.toString().substring(0, 3) + " miles"
+//            val miles = (race.c().distance() ?: 0.0) * (race.totalLaps() ?: 0L)
+//            raceDescription.text = race.totalLaps().toString() + " laps | " + miles.toString().substring(0, 3) + " miles"
             spotsLeft.text = "+ ${race.openSpots()} Spots Available"
             registrantAvatarAdapter.openSpots = race.openSpots() ?: 0L
             registrantAvatarAdapter.notifyOpenSpotsChanged()
@@ -206,7 +206,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
         val raceQuery = Race.FACTORY.select_for_id(activity.intent.getStringExtra(RaceModel.ID))
         Database.get().query(raceQuery.statement, *raceQuery.args).use {
             if (it.moveToFirst()) {
-                drawCourse(Race.FACTORY.select_for_idMapper().map(it).course(), map)
+//                drawCourse(Race.FACTORY.select_for_idMapper().map(it), map)
             }
         }
     }

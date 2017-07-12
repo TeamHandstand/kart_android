@@ -51,7 +51,7 @@ UPDATE user SET raceId = ? WHERE id=?;
 select_top_three_for_race:
 SELECT t1.*
 FROM user t1
-INNER JOIN user_race_info t2 ON t1.id == t2.userId
+INNER JOIN user_race_info t2 ON t1.id = t2.userId
 WHERE t2.raceId=?
 ORDER BY t2.totalTime ASC
 LIMIT 3;

@@ -37,11 +37,11 @@ class RaceSummaryView : RelativeLayout {
         avatar = ViewUtil.findView(this, R.id.avatar)
     }
 
-    fun setRace(race: Race) {
-        startTime.text = DateFormatter.getTimeOfDay(race.startTime()).replace(' ', '\n')
-        raceName.text = resources.getString(R.string.race_name, race.raceOrder(), race.name() ?: Race.DEFAULT_RACE_NAME)
-        val distance = (race.course()?.distance() ?: 0.0) * (race.totalLaps() ?: 0L)
-        details.text = resources.getString(R.string.race_details, race.totalLaps(), distance)
+    fun setRace(race: Race.RaceWithCourse) {
+        startTime.text = DateFormatter.getTimeOfDay(race.r().startTime()).replace(' ', '\n')
+        raceName.text = resources.getString(R.string.race_name, race.r().raceOrder(), race.r().name() ?: Race.DEFAULT_RACE_NAME)
+        val distance = (race.c()?.distance() ?: 0.0) * (race.r().totalLaps() ?: 0L)
+        details.text = resources.getString(R.string.race_details, race.r().totalLaps(), distance)
 
         alpha = 1f
         var spotsLeftTextColorRes = R.color.textDarkGrey
@@ -64,7 +64,7 @@ class RaceSummaryView : RelativeLayout {
             }
             HAS_OPEN_SPOTS -> {
                 spotsLeftTextColorRes = if (race.hasLowRegistrantCount()) R.color.green else R.color.yellow
-                spotsLeft.text = resources.getString(R.string.spots_left, race.openSpots())
+                spotsLeft.text = resources.getString(R.string.spots_left, race.r().openSpots())
             }
         }
         @Suppress("DEPRECATION")
@@ -72,7 +72,7 @@ class RaceSummaryView : RelativeLayout {
         startTime.setBackgroundResource(backgroundFromStartTime(race))
     }
 
-    fun backgroundFromStartTime(race: Race): Int {
+    fun backgroundFromStartTime(race: Race.RaceWithCourse): Int {
         val timeSinceNow = race.timeUntilRace
         if (timeSinceNow < 60 * 2) {
             return R.drawable.background_race_list_time_red

@@ -20,6 +20,9 @@ class Database private constructor(context: Context) : SQLiteOpenHelper(context,
         for (createTableStatement in createTables) {
             sqLiteDatabase.execSQL(createTableStatement)
         }
+        for (createViewStatement in createViews) {
+            sqLiteDatabase.execSQL(createViewStatement)
+        }
     }
 
     override fun onUpgrade(sqLiteDatabase: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -35,6 +38,8 @@ class Database private constructor(context: Context) : SQLiteOpenHelper(context,
         private val tables = arrayOf(TeamModel.TABLE_NAME, TicketModel.TABLE_NAME, UserModel.TABLE_NAME,
                 UserRaceInfoModel.TABLE_NAME, RaceModel.TABLE_NAME, CourseModel.TABLE_NAME, EventModel.TABLE_NAME,
                 MiniGameTypeModel.TABLE_NAME)
+        private val createViews = arrayOf(RaceModel.RACE_WITH_COURSE_VIEW)
+        private val views = arrayOf(RaceModel.RACEWITHCOURSE_VIEW_NAME)
 
         fun initialize(context: Context) {
             if (database == null) {
@@ -54,11 +59,12 @@ class Database private constructor(context: Context) : SQLiteOpenHelper(context,
                 return
             }
             for (table in tables) {
-                db.writableDatabase.execSQL("DROP TABLE IF EXISTS " + table)
+                db.writableDatabase.execSQL("DROP TABLE IF EXISTS $table")
             }
-            for (createStatement in createTables) {
-                db.writableDatabase.execSQL(createStatement)
+            for (view in views) {
+                db.writableDatabase.execSQL("DROP VIEW IF EXISTS $view")
             }
+            database?.onCreate(db.writableDatabase)
         }
     }
 }

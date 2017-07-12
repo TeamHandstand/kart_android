@@ -2,14 +2,11 @@ package us.handstand.kartwheel.model
 
 
 import android.content.ContentValues
-import android.database.sqlite.SQLiteDatabase
 import android.support.annotation.IntDef
 import com.google.auto.value.AutoValue
 import com.google.gson.Gson
 import com.google.gson.TypeAdapter
-import com.squareup.sqlbrite.BriteDatabase
-import us.handstand.kartwheel.model.RaceModel.Creator
-import us.handstand.kartwheel.model.RaceModel.TABLE_NAME
+import us.handstand.kartwheel.model.RaceModel.*
 import us.handstand.kartwheel.model.Util.putIfNotAbsent
 import us.handstand.kartwheel.util.DateFormatter
 
@@ -36,45 +33,8 @@ abstract class Race : RaceModel, Comparable<Race>, Insertable {
         return startTime == null || startTime.time - System.currentTimeMillis() < 0
     }
 
-    // User is registered for this race
-    // Registration is closed
-    // Registration is full
-    // Not registered for the race
-    val raceStatus: Long
-        @RaceStatus
-        get() {
-            val openSpots = openSpots()
-            val endTime = endTime()
-            val registrantIds = registrantIds()
-            if (endTime != null && endTime.before(DateFormatter[System.currentTimeMillis()])) {
-                return FINISHED
-            } else if (registrantIds != null && registrantIds.contains(Storage.userId)) {
-                return REGISTERED
-            } else if (timeUntilRace < Race.ALLOWABLE_SECONDS_BEFORE_START_TIME_TO_REGISTER) {
-                return REGISTRATION_CLOSED
-            } else if (openSpots ?: 0 == 0L) {
-                return RACE_IS_FULL
-            } else {
-                return HAS_OPEN_SPOTS
-            }
-        }
-
     val timeUntilRace: Long
         get() = if (startTime() == null) 0L else startTime()!!.time - System.currentTimeMillis()
-
-
-    fun hasLowRegistrantCount(): Boolean {
-        val openSpots = openSpots()
-        return openSpots ?: 0L > LOW_REGISTRANTS_NUMBER
-    }
-
-    fun insert(db: BriteDatabase?, course: Course?) {
-        if (db != null) {
-            val cv = contentValues
-            cv.put(RaceModel.COURSE, ColumnAdapters.courseToBlob(course))
-            db.insert(RaceModel.TABLE_NAME, cv, SQLiteDatabase.CONFLICT_REPLACE)
-        }
-    }
 
     override fun tableName(): String {
         return TABLE_NAME
@@ -84,7 +44,6 @@ abstract class Race : RaceModel, Comparable<Race>, Insertable {
         get() {
             val cv = ContentValues()
             putIfNotAbsent(cv, RaceModel.ID, id())
-            putIfNotAbsent(cv, RaceModel.COURSE, ColumnAdapters.courseToBlob(course()))
             putIfNotAbsent(cv, RaceModel.COURSEID, courseId())
             putIfNotAbsent(cv, RaceModel.DELETEDAT, deletedAt()?.time)
             putIfNotAbsent(cv, RaceModel.EVENTID, eventId())
@@ -93,7 +52,6 @@ abstract class Race : RaceModel, Comparable<Race>, Insertable {
             putIfNotAbsent(cv, RaceModel.NAME, name())
             putIfNotAbsent(cv, RaceModel.OPENSPOTS, openSpots())
             putIfNotAbsent(cv, RaceModel.RACEORDER, raceOrder())
-            putIfNotAbsent(cv, RaceModel.REGISTRANTIDS, ColumnAdapters.listStringToBlob(registrantIds()))
             putIfNotAbsent(cv, RaceModel.REPLAYURL, replayUrl())
             putIfNotAbsent(cv, RaceModel.SHORTANSWER1, shortAnswer1())
             putIfNotAbsent(cv, RaceModel.SHORTANSWER2, shortAnswer2())
@@ -116,11 +74,46 @@ abstract class Race : RaceModel, Comparable<Race>, Insertable {
         const val HAS_OPEN_SPOTS = 4L
         const val DEFAULT_RACE_NAME = "Racey McRacerson"
 
-        val FACTORY = RaceModel.Factory<Race>(Creator<Race> { id, course, courseId, deletedAt, endTime, eventId, funQuestion, name, openSpots, raceOrder, registrantIds, registrantImageUrls, replayUrl, shortAnswer1, shortAnswer2, slug, startTime, totalLaps, updatedAt, videoUrl -> create(id, course, courseId, deletedAt, endTime, eventId, funQuestion, name, openSpots, raceOrder, registrantIds, registrantImageUrls, replayUrl, shortAnswer1, shortAnswer2, slug, startTime, totalLaps, updatedAt, videoUrl) }, ColumnAdapters.COURSE_BLOB, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG, ColumnAdapters.LIST_STRING_BLOB, ColumnAdapters.LIST_STRING_BLOB, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG)
+        val FACTORY = RaceModel.Factory<Race>(Creator<Race> { id, courseId, deletedAt, endTime, eventId, funQuestion, name, openSpots, raceOrder, replayUrl, shortAnswer1, shortAnswer2, slug, startTime, totalLaps, updatedAt, videoUrl -> create(id, courseId, deletedAt, endTime, eventId, funQuestion, name, openSpots, raceOrder, replayUrl, shortAnswer1, shortAnswer2, slug, startTime, totalLaps, updatedAt, videoUrl) }, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG)
+        val RACE_WITH_COURSE_SELECT: RaceModel.RaceWithCourseMapper<Race, Course, RaceWithCourse> = FACTORY.select_races_with_courseMapper(::AutoValue_Race_RaceWithCourse, Course.FACTORY)
         // Required by Gson
         @JvmStatic
         fun typeAdapter(gson: Gson): TypeAdapter<Race> {
             return AutoValue_Race.GsonTypeAdapter(gson)
+        }
+    }
+
+    @AutoValue
+    abstract class RaceWithCourse : RaceWithCourseModel<Race, Course> {
+        // User is registered for this race
+        // Registration is closed
+        // Registration is full
+        // Not registered for the race
+        val raceStatus: Long
+            @RaceStatus
+            get() {
+                val openSpots = r().openSpots()
+                val endTime = r().endTime()
+                if (endTime != null && endTime.before(DateFormatter[System.currentTimeMillis()])) {
+                    return FINISHED
+                } else if (registrantIds().contains(Storage.userId)) {
+                    return REGISTERED
+                } else if (timeUntilRace < Race.ALLOWABLE_SECONDS_BEFORE_START_TIME_TO_REGISTER) {
+                    return REGISTRATION_CLOSED
+                } else if (openSpots ?: 0 == 0L) {
+                    return RACE_IS_FULL
+                } else {
+                    return HAS_OPEN_SPOTS
+                }
+            }
+
+        val timeUntilRace: Long
+            get() = if (r().startTime() == null) 0L else r().startTime()!!.time - System.currentTimeMillis()
+
+
+        fun hasLowRegistrantCount(): Boolean {
+            val openSpots = r().openSpots()
+            return openSpots ?: 0L > LOW_REGISTRANTS_NUMBER
         }
     }
 }

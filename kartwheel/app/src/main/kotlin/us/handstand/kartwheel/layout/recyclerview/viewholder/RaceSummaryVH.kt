@@ -21,8 +21,8 @@ class RaceSummaryVH private constructor(val raceSummaryView: RaceSummaryView) : 
         raceSummaryView.setOnClickListener { raceListController?.onRaceItemClicked(raceId) }
     }
 
-    fun bind(race: Race) {
-        raceId = race.id()
+    fun bind(race: Race.RaceWithCourse) {
+        raceId = race.r().id()
         raceSummaryView.setRace(race)
     }
 }

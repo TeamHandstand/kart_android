@@ -1,10 +1,8 @@
 import java.util.Date;
 import java.util.List;
-import us.handstand.kartwheel.model.Course;
 
 CREATE TABLE race (
     id TEXT NOT NULL PRIMARY KEY,
-    course BLOB as Course,
     courseId TEXT,
     deletedAt INTEGER as Date,
     endTime INTEGER as Date,
@@ -13,8 +11,6 @@ CREATE TABLE race (
     name TEXT,
     openSpots INTEGER DEFAULT 20,
     raceOrder INTEGER DEFAULT 0,
-    registrantIds BLOB as List<String>,
-    registrantImageUrls BLOB as List<String>,
     replayUrl TEXT,
     shortAnswer1 TEXT,
     shortAnswer2 TEXT,
@@ -41,12 +37,26 @@ FROM race
 WHERE id=?
 LIMIT 1;
 
-insert_participants:
-UPDATE race
-SET registrantIds=?, registrantImageUrls=?
-WHERE id=?;
+select_course_from_race:
+SELECT * FROM course
+WHERE id=(SELECT courseId FROM race WHERE id=?);
 
-insert_row:
-INSERT INTO race(id, course, courseId, deletedAt, eventId, endTime, funQuestion, name, openSpots,
-raceOrder, registrantIds, registrantImageUrls, replayUrl, shortAnswer1, shortAnswer2, slug, startTime, totalLaps, updatedAt, videoUrl)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+race_with_course_view:
+CREATE VIEW IF NOT EXISTS raceWithCourse AS
+SELECT
+r.*,
+c.*,
+coalesce(GROUP_CONCAT(u.id), 'empty') as registrantIds,
+coalesce(GROUP_CONCAT(u.imageUrl), 'empty') as registrantImageUrls
+FROM race r
+LEFT OUTER JOIN course c
+    ON r.courseId=c.id
+LEFT OUTER JOIN user u
+    ON u.raceId=r.id
+WHERE r.courseId = c.id
+GROUP BY r.id
+ORDER BY r.raceOrder ASC;
+
+select_races_with_course:
+SELECT * FROM raceWithCourse
+WHERE eventId=?;

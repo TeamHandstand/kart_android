@@ -13,16 +13,16 @@ open class RaceListController {
     private var subscription: Subscription? = null
 
     interface RaceListListener {
-        fun onRacesUpdated(races: List<Race>)
+        fun onRacesUpdated(races: List<Race.RaceWithCourse>)
         fun onRaceItemClicked(raceId: String)
     }
 
     open fun subscribe(raceListListener: RaceListListener) {
         this.raceListListener = raceListListener
         API.getRacesWithCourses(Storage.eventId)
-        val raceQuery = Race.FACTORY.select_for_event_id(Storage.eventId)
-        subscription = Database.get().createQuery(RaceModel.TABLE_NAME, raceQuery.statement, *raceQuery.args)
-                .mapToList { Race.FACTORY.select_for_event_idMapper().map(it) }
+        val raceQuery = Race.FACTORY.select_races_with_course(Storage.eventId)
+        subscription = Database.get().createQuery(RaceModel.RACEWITHCOURSE_VIEW_NAME, raceQuery.statement, *raceQuery.args)
+                .mapToList { Race.RACE_WITH_COURSE_SELECT.map(it) }
                 .subscribe { onRacesUpdated(it) }
     }
 
@@ -31,7 +31,7 @@ open class RaceListController {
         raceListListener = null
     }
 
-    open fun onRacesUpdated(races: List<Race>) {
+    open fun onRacesUpdated(races: List<Race.RaceWithCourse>) {
         raceListListener?.onRacesUpdated(races)
     }
 

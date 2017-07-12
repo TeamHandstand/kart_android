@@ -176,7 +176,7 @@ object API {
                 }))
     }
 
-    private fun getRaces(eventId: String, save: Boolean, apiCallback: APICallback<List<Race>>? = null) {
+    private fun getRaces(eventId: String, save: Boolean = true, apiCallback: APICallback<List<Race>>? = null) {
         kartWheelService!!.getRaces(eventId)
                 .enqueue(SafeCallback(object : APICallback<JsonObject> {
                     override fun onSuccess(response: JsonObject) {
@@ -198,18 +198,8 @@ object API {
 
     fun getRacesWithCourses(eventId: String) {
         getCourses(eventId, object : API.APICallback<Map<String, Course>> {
-            override fun onSuccess(courseResponse: Map<String, Course>) {
-                // Don't save this time
-                getRaces(eventId, false, object : API.APICallback<List<Race>> {
-                    override fun onSuccess(response: List<Race>) {
-                        db?.newTransaction()?.use {
-                            response.forEach {
-                                it.insert(db, courseResponse[it.courseId()])
-                            }
-                            it.markSuccessful()
-                        }
-                    }
-                })
+            override fun onSuccess(response: Map<String, Course>) {
+                getRaces(eventId)
             }
         })
     }
