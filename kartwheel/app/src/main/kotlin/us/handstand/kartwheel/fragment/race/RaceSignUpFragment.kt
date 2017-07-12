@@ -94,7 +94,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
         mapView.getMapAsync(this)
         countdownScheduler.scheduleWithFixedDelay({
             raceCountdown.post {
-                if (controller.race?.alreadyStarted() == true) {
+                if (controller.race?.r()?.alreadyStarted() == true) {
                     raceCountdown.text = "Start The Race!"
                     raceCountdownTitle.visibility = GONE
                 } else {
@@ -178,13 +178,13 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
         }
     }
 
-    override fun onRaceUpdated(race: Race) {
+    override fun onRaceUpdated(race: Race.RaceWithCourse) {
         activity.runOnUiThread {
-            raceName.text = race.name() ?: Race.DEFAULT_RACE_NAME
-//            val miles = (race.c().distance() ?: 0.0) * (race.totalLaps() ?: 0L)
-//            raceDescription.text = race.totalLaps().toString() + " laps | " + miles.toString().substring(0, 3) + " miles"
-            spotsLeft.text = "+ ${race.openSpots()} Spots Available"
-            registrantAvatarAdapter.openSpots = race.openSpots() ?: 0L
+            raceName.text = race.r().name() ?: Race.DEFAULT_RACE_NAME
+            val miles = (race.c()?.distance() ?: 0.0) * (race.r().totalLaps() ?: 0L)
+            raceDescription.text = race.r().totalLaps().toString() + " laps | " + miles.toString().substring(0, 3) + " miles"
+            spotsLeft.text = "+ ${race.r().openSpots()} Spots Available"
+            registrantAvatarAdapter.openSpots = race.r().openSpots() ?: 0L
             registrantAvatarAdapter.notifyOpenSpotsChanged()
         }
     }

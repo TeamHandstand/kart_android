@@ -44,10 +44,11 @@ WHERE id=(SELECT courseId FROM race WHERE id=?);
 race_with_course_view:
 CREATE VIEW IF NOT EXISTS raceWithCourse AS
 SELECT
+r.id as raceId,
 r.*,
 c.*,
-coalesce(GROUP_CONCAT(u.id), 'empty') as registrantIds,
-coalesce(GROUP_CONCAT(u.imageUrl), 'empty') as registrantImageUrls
+coalesce(GROUP_CONCAT(u.id), '') as registrantIds,
+coalesce(GROUP_CONCAT(u.imageUrl), '') as registrantImageUrls
 FROM race r
 LEFT OUTER JOIN course c
     ON r.courseId=c.id
@@ -57,6 +58,11 @@ WHERE r.courseId = c.id
 GROUP BY r.id
 ORDER BY r.raceOrder ASC;
 
-select_races_with_course:
+select_races_with_course_from_event:
 SELECT * FROM raceWithCourse
 WHERE eventId=?;
+
+select_race_with_course:
+SELECT * FROM raceWithCourse
+WHERE raceId=?
+LIMIT 1;

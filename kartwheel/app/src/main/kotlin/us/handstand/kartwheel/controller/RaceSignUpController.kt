@@ -10,7 +10,7 @@ data class RegistrantInfo(val firstName: String? = "", val imageUrl: String? = "
 
 interface RaceSignUpListener {
     fun onRegistrantsUpdated(registrantInfos: List<RegistrantInfo>)
-    fun onRaceUpdated(race: Race)
+    fun onRaceUpdated(race: Race.RaceWithCourse)
     fun onTopThreeUpdated(topThree: List<User>)
 }
 
@@ -18,15 +18,15 @@ class RaceSignUpController(val db: BriteDatabase?, val eventId: String, val race
     private var raceSubscription: Subscription? = null
     private var registrantSubscription: Subscription? = null
     private var topThreeSubscription: Subscription? = null
-    var race: Race? = null
+    var race: Race.RaceWithCourse? = null
     var userInRace = false
 
     fun subscribe() {
         // Listen for Race updates
-        val raceQuery = Race.FACTORY.select_for_id(raceId)
-        raceSubscription = db?.createQuery(RaceModel.TABLE_NAME, raceQuery.statement, *raceQuery.args)
-                ?.mapToOne { Race.FACTORY.select_for_idMapper().map(it) }
-                ?.subscribe {
+        val raceQuery = Race.FACTORY.select_race_with_course(raceId)
+        raceSubscription = Database.get().createQuery(RaceModel.RACEWITHCOURSE_VIEW_NAME, raceQuery.statement, *raceQuery.args)
+                .mapToOne { Race.RACE_WITH_COURSE_SELECT.map(it) }
+                .subscribe {
                     this.race = it
                     listener.onRaceUpdated(it)
                 }

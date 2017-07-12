@@ -20,9 +20,9 @@ open class RaceListController {
     open fun subscribe(raceListListener: RaceListListener) {
         this.raceListListener = raceListListener
         API.getRacesWithCourses(Storage.eventId)
-        val raceQuery = Race.FACTORY.select_races_with_course(Storage.eventId)
+        val raceQuery = Race.FACTORY.select_races_with_course_from_event(Storage.eventId)
         subscription = Database.get().createQuery(RaceModel.RACEWITHCOURSE_VIEW_NAME, raceQuery.statement, *raceQuery.args)
-                .mapToList { Race.RACE_WITH_COURSE_SELECT.map(it) }
+                .mapToList { Race.RACES_WITH_COURSE_FROM_EVENT_SELECT.map(it) }
                 .subscribe { onRacesUpdated(it) }
     }
 

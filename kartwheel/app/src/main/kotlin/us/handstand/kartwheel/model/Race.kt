@@ -75,7 +75,8 @@ abstract class Race : RaceModel, Comparable<Race>, Insertable {
         const val DEFAULT_RACE_NAME = "Racey McRacerson"
 
         val FACTORY = RaceModel.Factory<Race>(Creator<Race> { id, courseId, deletedAt, endTime, eventId, funQuestion, name, openSpots, raceOrder, replayUrl, shortAnswer1, shortAnswer2, slug, startTime, totalLaps, updatedAt, videoUrl -> create(id, courseId, deletedAt, endTime, eventId, funQuestion, name, openSpots, raceOrder, replayUrl, shortAnswer1, shortAnswer2, slug, startTime, totalLaps, updatedAt, videoUrl) }, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG)
-        val RACE_WITH_COURSE_SELECT: RaceModel.RaceWithCourseMapper<Race, Course, RaceWithCourse> = FACTORY.select_races_with_courseMapper(::AutoValue_Race_RaceWithCourse, Course.FACTORY)
+        val RACES_WITH_COURSE_FROM_EVENT_SELECT: RaceModel.RaceWithCourseMapper<Race, Course, RaceWithCourse> = FACTORY.select_races_with_course_from_eventMapper(::AutoValue_Race_RaceWithCourse, Course.FACTORY)
+        val RACE_WITH_COURSE_SELECT: RaceModel.RaceWithCourseMapper<Race, Course, RaceWithCourse> = FACTORY.select_race_with_courseMapper(::AutoValue_Race_RaceWithCourse, Course.FACTORY)
         // Required by Gson
         @JvmStatic
         fun typeAdapter(gson: Gson): TypeAdapter<Race> {
