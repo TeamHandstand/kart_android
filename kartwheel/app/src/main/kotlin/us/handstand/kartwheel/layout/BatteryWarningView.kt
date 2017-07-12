@@ -20,7 +20,6 @@ class BatteryWarningView : LinearLayout {
         View.inflate(context, R.layout.view_battery_warning, this)
         batteryPercentage = ViewUtil.findView(this, R.id.batteryPercentage)
         batteryDescription = ViewUtil.findView(this, R.id.batteryDescription)
-        setBackgroundResource(R.drawable.background_white_transparent)
         if (isInEditMode) {
             setBatteryPercentage(50)
         }

@@ -17,6 +17,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.TextView
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -108,6 +109,15 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Long) {
+            }
+        })
+
+        val bottomSheet = fragmentView.findViewById(R.id.bottomSheet)
+        bottomSheet.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+            override fun onPreDraw(): Boolean {
+                bottomSheet.viewTreeObserver.removeOnPreDrawListener(this)
+                bottomSheet.background = ViewUtil.drawStripes(context, bottomSheet.measuredWidth.toFloat(), bottomSheet.measuredHeight.toFloat(), android.R.color.white, R.color.textLightGrey_40p)
+                return true
             }
         })
 
