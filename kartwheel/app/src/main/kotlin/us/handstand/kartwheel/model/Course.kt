@@ -25,6 +25,9 @@ abstract class Course : CourseModel {
         var lowLong = 0.0
         var highLat = 0.0
         var highLong = 0.0
+        if (vertices() == null) {
+            return CourseBounds(lowLat, lowLong, highLat, highLong)
+        }
         Collections.sort(vertices()!!)
         for (point in vertices()!!) {
             if (first) {
@@ -63,6 +66,7 @@ abstract class Course : CourseModel {
             putIfNotAbsent(cv, CourseModel.STARTLAT, startLat())
             putIfNotAbsent(cv, CourseModel.STARTLONG, startLong())
             putIfNotAbsent(cv, CourseModel.UPDATEDAT, updatedAt()?.time)
+            putIfNotAbsent(cv, CourseModel.VERTICES, ColumnAdapters.listPointToBlob(vertices()))
             db.insert(CourseModel.TABLE_NAME, cv, SQLiteDatabase.CONFLICT_REPLACE)
         }
     }

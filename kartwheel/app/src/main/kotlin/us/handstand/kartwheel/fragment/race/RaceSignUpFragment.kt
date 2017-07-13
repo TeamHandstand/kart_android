@@ -62,6 +62,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
     lateinit private var behavior: AnchoredBottomSheetBehavior<NestedScrollView>
     lateinit private var controller: RaceSignUpController
     private var map: GoogleMap? = null
+    private var mapInitialized = false
 
     private val registrantAvatarAdapter = RegistrantAvatarAdapter()
     private val countdownScheduler = Executors.newSingleThreadScheduledExecutor()!!
@@ -186,6 +187,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
             spotsLeft.text = "+ ${race.r().openSpots()} Spots Available"
             registrantAvatarAdapter.openSpots = race.r().openSpots() ?: 0L
             registrantAvatarAdapter.notifyOpenSpotsChanged()
+            drawCourse(race.c(), map)
         }
     }
 
@@ -211,28 +213,22 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
 
     override fun onMapReady(map: GoogleMap) {
         this.map = map
-        if (true) {
-            return
-        }
-        val raceQuery = Race.FACTORY.select_for_id(activity.intent.getStringExtra(RaceModel.ID))
-        Database.get().query(raceQuery.statement, *raceQuery.args).use {
-            if (it.moveToFirst()) {
-//                drawCourse(Race.FACTORY.select_for_idMapper().map(it), map)
-            }
-        }
+        drawCourse(controller.race?.c(), map)
     }
 
-    private fun drawCourse(course: Course?, map: GoogleMap) {
-        if (course == null) {
+    private fun drawCourse(course: Course?, map: GoogleMap?) {
+        if (course == null || map == null || mapInitialized) {
             return
+        } else {
+            mapInitialized = true
         }
         val courseBounds = course.findCorners()
         val courseLatLng = LatLng(courseBounds.centerLat, courseBounds.centerLong)
         map.moveCamera(CameraUpdateFactory.newLatLng(courseLatLng))
         map.setMinZoomPreference(15f)
         val coursePolyline = PolylineOptions()
-        for (point in course.vertices()!!) {
-            coursePolyline.add(LatLng(point.latitude(), point.longitude()))
+        course.vertices()?.forEach {
+            coursePolyline.add(LatLng(it.latitude(), it.longitude()))
         }
         @Suppress("DEPRECATION")
         coursePolyline.color(resources.getColor(R.color.blue))
