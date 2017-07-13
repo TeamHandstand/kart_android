@@ -17,7 +17,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import android.widget.TextView
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -31,10 +30,13 @@ import us.handstand.kartwheel.R
 import us.handstand.kartwheel.controller.RaceSignUpController
 import us.handstand.kartwheel.controller.RaceSignUpListener
 import us.handstand.kartwheel.controller.RegistrantInfo
-import us.handstand.kartwheel.layout.BatteryWarningView
-import us.handstand.kartwheel.layout.TopCourseTimeView
-import us.handstand.kartwheel.layout.ViewUtil
+import us.handstand.kartwheel.layout.*
 import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior
+import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior.Companion.STATE_ANCHOR_POINT
+import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior.Companion.STATE_COLLAPSED
+import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior.Companion.STATE_DRAGGING
+import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior.Companion.STATE_EXPANDED
+import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior.Companion.STATE_SETTLING
 import us.handstand.kartwheel.layout.recyclerview.adapter.RegistrantAvatarAdapter
 import us.handstand.kartwheel.model.*
 import us.handstand.kartwheel.network.API
@@ -61,8 +63,11 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
     lateinit private var toolbar: View
     lateinit private var behavior: AnchoredBottomSheetBehavior<NestedScrollView>
     lateinit private var controller: RaceSignUpController
+    lateinit private var raceSignUpParent: ViewGroup
+    lateinit private var bottomSheet: NestedScrollView
     private var map: GoogleMap? = null
     private var mapInitialized = false
+    private var lastBehaviorState: Long = 0
 
     private val registrantAvatarAdapter = RegistrantAvatarAdapter()
     private val countdownScheduler = Executors.newSingleThreadScheduledExecutor()!!
@@ -74,6 +79,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val fragmentView = inflater.inflate(R.layout.fragment_race_sign_up, container, false) as ViewGroup
+        raceSignUpParent = ViewUtil.findView(fragmentView, R.id.raceSignUpParent)
         signUpButton = ViewUtil.findView(fragmentView, R.id.signUpButton)
         signUpButton.setOnClickListener(this)
         batteryWarning = ViewUtil.findView(fragmentView, R.id.batteryWarning)
@@ -91,8 +97,8 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
         thirdTopTime = ViewUtil.findView(fragmentView, R.id.thirdTopTime)
         toolbar = ViewUtil.findView(fragmentView, R.id.toolbar)
         mapView = ViewUtil.findView(fragmentView, R.id.map)
-        mapView.onCreate(savedInstanceState)
-        mapView.getMapAsync(this)
+        bottomSheet = ViewUtil.findView(fragmentView, R.id.bottomSheet)
+        bottomSheet.setCandyCaneBackground(android.R.color.white, R.color.textLightGrey_40p)
         countdownScheduler.scheduleWithFixedDelay({
             raceCountdown.post {
                 if (controller.race?.r()?.alreadyStarted() == true) {
@@ -104,24 +110,17 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
             }
         }, 0, 1L, TimeUnit.SECONDS)
 
-        behavior = AnchoredBottomSheetBehavior.from(ViewUtil.findView(fragmentView, R.id.bottomSheet))
+        behavior = AnchoredBottomSheetBehavior.from(bottomSheet)
+        behavior.state = STATE_ANCHOR_POINT
         behavior.addBottomSheetCallback(object : AnchoredBottomSheetBehavior.BottomSheetCallback() {
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-            }
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
 
             override fun onStateChanged(bottomSheet: View, newState: Long) {
+                moveToCenter(controller.race?.c(), newState)
             }
         })
-
-        val bottomSheet = fragmentView.findViewById(R.id.bottomSheet)
-        bottomSheet.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
-            override fun onPreDraw(): Boolean {
-                bottomSheet.viewTreeObserver.removeOnPreDrawListener(this)
-                bottomSheet.background = ViewUtil.drawStripes(context, bottomSheet.measuredWidth.toFloat(), bottomSheet.measuredHeight.toFloat(), android.R.color.white, R.color.textLightGrey_40p)
-                return true
-            }
-        })
-
+        mapView.onCreate(savedInstanceState)
+        mapView.getMapAsync(this)
         return fragmentView
     }
 
@@ -187,6 +186,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
             spotsLeft.text = "+ ${race.r().openSpots()} Spots Available"
             registrantAvatarAdapter.openSpots = race.r().openSpots() ?: 0L
             registrantAvatarAdapter.notifyOpenSpotsChanged()
+            // Draw the course in case the map was ready before we got the race
             drawCourse(race.c(), map)
         }
     }
@@ -197,10 +197,10 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
 
     override fun onClick(v: View) {
         if (v.id == R.id.batteryWarning) {
-            if (behavior.state == AnchoredBottomSheetBehavior.STATE_COLLAPSED) {
-                behavior.state = AnchoredBottomSheetBehavior.STATE_EXPANDED
-            } else if (behavior.state == AnchoredBottomSheetBehavior.STATE_EXPANDED) {
-                behavior.state = AnchoredBottomSheetBehavior.STATE_COLLAPSED
+            if (behavior.state == STATE_COLLAPSED) {
+                behavior.state = STATE_EXPANDED
+            } else if (behavior.state == STATE_EXPANDED) {
+                behavior.state = STATE_COLLAPSED
             }
             return
         }
@@ -213,23 +213,25 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
 
     override fun onMapReady(map: GoogleMap) {
         this.map = map
-        drawCourse(controller.race?.c(), map)
+        raceSignUpParent.runOnGlobalLayout {
+            drawCourse(controller.race?.c(), map)
+            moveToCenter(controller.race?.c(), STATE_ANCHOR_POINT)
+        }
     }
 
     private fun drawCourse(course: Course?, map: GoogleMap?) {
-        if (course == null || map == null || mapInitialized) {
+        if (mapInitialized || course == null || course.vertices() == null || map == null) {
             return
         } else {
             mapInitialized = true
         }
-        val courseBounds = course.findCorners()
-        val courseLatLng = LatLng(courseBounds.centerLat, courseBounds.centerLong)
-        map.moveCamera(CameraUpdateFactory.newLatLng(courseLatLng))
+        // Move the camera to the course
+        val courseCenter = course.findCenter()
+        map.moveCamera(CameraUpdateFactory.newLatLng(LatLng(courseCenter.longitude, courseCenter.latitude)))
         map.setMinZoomPreference(15f)
+        // Draw the course
         val coursePolyline = PolylineOptions()
-        course.vertices()?.forEach {
-            coursePolyline.add(LatLng(it.latitude(), it.longitude()))
-        }
+        course.vertices()?.forEach { coursePolyline.add(LatLng(it.latitude(), it.longitude())) }
         @Suppress("DEPRECATION")
         coursePolyline.color(resources.getColor(R.color.blue))
         map.addPolyline(coursePolyline)
@@ -239,5 +241,29 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
                 .anchor(.5f, .5f)
                 .zIndex(10f)
         map.addMarker(flag)
+    }
+
+    private fun moveToCenter(course: Course?, newState: Long = behavior.state) {
+        if (course != null && newState != STATE_SETTLING && newState != STATE_DRAGGING) {
+            drawCourse(course, map)
+            if (behavior.state == lastBehaviorState) {
+                return
+            }
+            if (newState == STATE_ANCHOR_POINT && checkLastState(STATE_COLLAPSED)) {
+                map?.animateCamera(CameraUpdateFactory.scrollBy(0f, anchorPointCenter))
+            } else if (newState == STATE_COLLAPSED && checkLastState(STATE_ANCHOR_POINT)) {
+                map?.animateCamera(CameraUpdateFactory.scrollBy(0f, -anchorPointCenter))
+            } else {
+                return
+            }
+            lastBehaviorState = newState
+        }
+    }
+
+    private val anchorPointCenter: Float
+        get() = raceSignUpParent.measuredHeight / 2f - (behavior.anchorPoint / 2f)
+
+    private fun checkLastState(state: Long): Boolean {
+        return lastBehaviorState == state || lastBehaviorState == 0L
     }
 }

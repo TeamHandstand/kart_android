@@ -18,10 +18,10 @@ import android.text.TextUtils
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
-import us.handstand.kartwheel.R
 
 
 object ViewUtil {
@@ -100,5 +100,41 @@ object ViewUtil {
             step += 2 * strokeWidth
         }
         return BitmapDrawable(context.resources, bmp)
+    }
+
+
+}
+
+fun View.runOnPreDraw(runnable: (view: View) -> Unit) {
+    viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+        override fun onPreDraw(): Boolean {
+            viewTreeObserver.removeOnPreDrawListener(this)
+            runnable.invoke(this@runOnPreDraw)
+            return true
+        }
+    })
+}
+
+fun View.runOnDraw(runnable: (view: View) -> Unit) {
+    viewTreeObserver.addOnDrawListener(object : ViewTreeObserver.OnDrawListener {
+        override fun onDraw() {
+            viewTreeObserver.removeOnDrawListener(this)
+            runnable.invoke(this@runOnDraw)
+        }
+    })
+}
+
+fun View.runOnGlobalLayout(runnable: (view: View) -> Unit) {
+    viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+        override fun onGlobalLayout() {
+            viewTreeObserver.removeOnGlobalLayoutListener(this)
+            runnable.invoke(this@runOnGlobalLayout)
+        }
+    })
+}
+
+fun View.setCandyCaneBackground(backgroundColor: Int, stripeColor: Int) {
+    runOnGlobalLayout {
+        it.background = ViewUtil.drawStripes(it.context, it.measuredWidth.toFloat(), it.measuredHeight.toFloat(), backgroundColor, stripeColor)
     }
 }

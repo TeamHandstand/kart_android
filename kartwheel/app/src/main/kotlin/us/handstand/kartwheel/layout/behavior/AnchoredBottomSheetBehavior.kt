@@ -51,8 +51,8 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
     @Retention(AnnotationRetention.SOURCE)
     annotation class State
 
-    private val anchorPoint: Int
     private val minimumVelocity: Float
+    val anchorPoint: Int
     /**
      * Gets/sets the height of the bottom sheet when it is collapsed in pixels.
      *

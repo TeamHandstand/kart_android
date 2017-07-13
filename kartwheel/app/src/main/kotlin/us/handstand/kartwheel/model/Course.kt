@@ -3,6 +3,7 @@ package us.handstand.kartwheel.model
 
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
+import com.google.android.gms.maps.model.LatLng
 import com.google.auto.value.AutoValue
 import com.google.gson.Gson
 import com.google.gson.TypeAdapter
@@ -17,6 +18,11 @@ abstract class Course : CourseModel {
     data class CourseBounds(val lowLat: Double, val lowLong: Double, val highLat: Double, val highLong: Double) {
         val centerLat: Double = (lowLat + highLat) / 2
         val centerLong: Double = (lowLong + highLong) / 2
+    }
+
+    fun findCenter(): LatLng {
+        val bounds = findCorners()
+        return LatLng(bounds.centerLat, bounds.centerLong)
     }
 
     fun findCorners(): CourseBounds {

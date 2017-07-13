@@ -34,10 +34,10 @@ class Database private constructor(context: Context) : SQLiteOpenHelper(context,
         private val VERSION = 1
         private val createTables = arrayOf(TeamModel.CREATE_TABLE, TicketModel.CREATE_TABLE, UserModel.CREATE_TABLE,
                 UserRaceInfoModel.CREATE_TABLE, RaceModel.CREATE_TABLE, CourseModel.CREATE_TABLE, EventModel.CREATE_TABLE,
-                MiniGameTypeModel.CREATE_TABLE)
+                MiniGameTypeModel.CREATE_TABLE, ItemZoneModel.CREATE_TABLE)
         private val tables = arrayOf(TeamModel.TABLE_NAME, TicketModel.TABLE_NAME, UserModel.TABLE_NAME,
                 UserRaceInfoModel.TABLE_NAME, RaceModel.TABLE_NAME, CourseModel.TABLE_NAME, EventModel.TABLE_NAME,
-                MiniGameTypeModel.TABLE_NAME)
+                MiniGameTypeModel.TABLE_NAME, ItemZoneModel.TABLE_NAME)
         private val createViews = arrayOf(RaceModel.RACE_WITH_COURSE_VIEW)
         private val views = arrayOf(RaceModel.RACEWITHCOURSE_VIEW_NAME)
 
