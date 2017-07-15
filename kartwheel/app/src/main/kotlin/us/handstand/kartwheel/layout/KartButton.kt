@@ -144,6 +144,9 @@ class KartButton : AppCompatButton, KartFontView, ValueAnimator.AnimatorUpdateLi
         if (animatedValue <= halfCircumference) {
             startAngle = 270f
             sweepAngle = -((halfCircumference - animatedValue) / halfCircumference) * 180f
+        } else if (animatedValue > totalLength - halfCircumference) {
+            startAngle = 90f
+            sweepAngle = 180f * ((animatedValue - (totalLength - halfCircumference)) / halfCircumference)
         }
         return Arc(startAngle, sweepAngle)
     }
@@ -170,7 +173,7 @@ class KartButton : AppCompatButton, KartFontView, ValueAnimator.AnimatorUpdateLi
             valueEndInCircle = halfCircumference
 
             startAngle = 270f + (1 - valueStartInCircle / valueEndInCircle) * 180f
-            sweepAngle =180f - (1 - valueStartInCircle / valueEndInCircle) * 180f
+            sweepAngle = 180f - (1 - valueStartInCircle / valueEndInCircle) * 180f
         }
         return Arc(startAngle, sweepAngle)
     }
