@@ -43,7 +43,7 @@ class KartButton : AppCompatButton, KartFontView, ValueAnimator.AnimatorUpdateLi
             if (value && !field) {
                 animator = ValueAnimator.ofFloat(0f, totalLength)
                 animator!!.repeatCount = ValueAnimator.INFINITE
-                animator!!.duration = 3000L
+                animator!!.duration = 1000L
                 animator!!.addUpdateListener(this)
                 animator!!.start()
             } else if (animator != null) {
@@ -78,7 +78,7 @@ class KartButton : AppCompatButton, KartFontView, ValueAnimator.AnimatorUpdateLi
             halfCircumference = Math.PI.toFloat() * cornerRadius
             paint.color = context.resources.getColor(loadingColor)
             paint.strokeWidth = strokeWidth
-
+            paint.isAntiAlias = true
         } finally {
             typedArray.recycle()
         }
@@ -86,21 +86,21 @@ class KartButton : AppCompatButton, KartFontView, ValueAnimator.AnimatorUpdateLi
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        centerXLeft = cornerRadius
-        centerXRight = measuredWidth - cornerRadius
-        centerY = cornerRadius
+        centerXLeft = cornerRadius + paint.strokeWidth
+        centerXRight = measuredWidth - cornerRadius - paint.strokeWidth
+        centerY = cornerRadius + paint.strokeWidth / 2f
         legLength = centerXRight - centerXLeft
         totalLength = 2 * halfCircumference + 2 * legLength
 
-        leftRect.left = 0f
+        leftRect.left = 0f + paint.strokeWidth
         leftRect.right = 2 * cornerRadius + leftRect.left
-        leftRect.top = 0f
-        leftRect.bottom = measuredHeight.toFloat()
+        leftRect.top = 0f + paint.strokeWidth
+        leftRect.bottom = measuredHeight.toFloat() - paint.strokeWidth
 
-        rightRect.right = measuredWidth.toFloat()
-        rightRect.left = rightRect.right - 2 * cornerRadius
-        rightRect.top = 0f
-        rightRect.bottom = measuredHeight.toFloat()
+        rightRect.right = measuredWidth.toFloat() - paint.strokeWidth
+        rightRect.left = rightRect.right - 2 * cornerRadius - paint.strokeWidth
+        rightRect.top = 0f + paint.strokeWidth
+        rightRect.bottom = measuredHeight.toFloat() - paint.strokeWidth
 
         loading = true
     }
@@ -125,15 +125,15 @@ class KartButton : AppCompatButton, KartFontView, ValueAnimator.AnimatorUpdateLi
         segment.addArc(leftRect, leftArc.startAngle, leftArc.sweepAngle)
 
         val lineMovementTop = getTopLine(animatedValue)
-        segment.moveTo(lineMovementTop.start, 0f)
-        segment.lineTo(lineMovementTop.end, 0f)
+        segment.moveTo(lineMovementTop.start, paint.strokeWidth)
+        segment.lineTo(lineMovementTop.end, paint.strokeWidth)
 
         val rightArc = getRightArc(animatedValue)
         segment.addArc(rightRect, rightArc.startAngle, rightArc.sweepAngle)
 
         val lineMovementBottom = getBottomLine(animatedValue)
-        segment.moveTo(lineMovementBottom.start, centerY + cornerRadius)
-        segment.lineTo(lineMovementBottom.end, centerY + cornerRadius)
+        segment.moveTo(lineMovementBottom.start, centerY + cornerRadius - paint.strokeWidth)
+        segment.lineTo(lineMovementBottom.end, centerY + cornerRadius - paint.strokeWidth)
 
         invalidate()
     }
