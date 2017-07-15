@@ -1,7 +1,5 @@
 package us.handstand.kartwheel.fragment.ticket
 
-import us.handstand.kartwheel.model.User
-
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.AppCompatButton
@@ -23,6 +21,7 @@ import us.handstand.kartwheel.activity.TicketActivity.TicketFragment
 import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.layout.ViewUtil.findView
 import us.handstand.kartwheel.layout.ViewUtil.isEmpty
+import us.handstand.kartwheel.model.User
 import us.handstand.kartwheel.util.DateFormatter
 
 class WelcomeFragment : Fragment(), TicketFragment, android.text.TextWatcher, OnEditorActionListener {
@@ -81,6 +80,10 @@ class WelcomeFragment : Fragment(), TicketFragment, android.text.TextWatcher, On
 
     override fun getAdvanceButtonColor(): Int {
         return if (isAdvanceButtonEnabled()) color.blue else super.getAdvanceButtonColor()
+    }
+
+    override fun getAdvanceButtonLoadingColor(): Int {
+        return if (isAdvanceButtonEnabled()) color.blue_loading else super.getAdvanceButtonLoadingColor()
     }
 
     override fun isAdvanceButtonEnabled(): Boolean {

@@ -46,6 +46,10 @@ class ForfeitFragment : Fragment(), TicketActivity.TicketFragment, OnClickListen
         return R.color.red
     }
 
+    override fun getAdvanceButtonLoadingColor(): Int {
+        return R.color.red_loading
+    }
+
     override fun isAdvanceButtonEnabled(): Boolean {
         return true
     }

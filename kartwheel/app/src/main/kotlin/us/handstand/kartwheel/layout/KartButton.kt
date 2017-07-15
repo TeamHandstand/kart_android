@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
+import android.support.annotation.ColorRes
 import android.support.v7.widget.AppCompatButton
 import android.util.AttributeSet
 import android.view.animation.LinearInterpolator
@@ -105,6 +106,10 @@ class KartButton : AppCompatButton, KartFontView, ValueAnimator.AnimatorUpdateLi
         rightRect.bottom = measuredHeight.toFloat() - paint.strokeWidth
 
         loading = true
+    }
+
+    fun setLoadingColor(@ColorRes loadingColor: Int) {
+        paint.color = context.resources.getColor(loadingColor)
     }
 
     override fun onDraw(canvas: Canvas) {

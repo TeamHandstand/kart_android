@@ -27,7 +27,11 @@ class AlreadyClaimedFragment : Fragment(), TicketActivity.TicketFragment, View.O
     }
 
     override fun getAdvanceButtonColor(): Int {
-        return us.handstand.kartwheel.R.color.blue
+        return R.color.blue
+    }
+
+    override fun getAdvanceButtonLoadingColor(): Int {
+        return R.color.blue_loading
     }
 
     override fun isAdvanceButtonEnabled(): Boolean {
