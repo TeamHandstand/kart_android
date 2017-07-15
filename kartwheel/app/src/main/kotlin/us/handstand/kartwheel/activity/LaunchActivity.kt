@@ -4,12 +4,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils.isEmpty
-import android.view.ViewTreeObserver
 import rx.Subscription
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.controller.OnboardingController
 import us.handstand.kartwheel.controller.TicketController
-import us.handstand.kartwheel.layout.ViewUtil
+import us.handstand.kartwheel.layout.setCandyCaneBackground
 import us.handstand.kartwheel.model.Database
 import us.handstand.kartwheel.model.Event
 import us.handstand.kartwheel.model.EventModel
@@ -22,13 +21,7 @@ class LaunchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launch)
-        val parentView = findViewById(R.id.parent)
-        parentView.viewTreeObserver.addOnDrawListener(object : ViewTreeObserver.OnDrawListener {
-            override fun onDraw() {
-                parentView.viewTreeObserver.removeOnDrawListener(this)
-                parentView.background = ViewUtil.drawStripes(this@LaunchActivity, parentView.measuredWidth.toFloat(), parentView.measuredHeight.toFloat(), R.color.blue_background, R.color.blue)
-            }
-        })
+        findViewById(R.id.parent).setCandyCaneBackground(R.color.blue_background, R.color.blue)
     }
 
     override fun onResume() {

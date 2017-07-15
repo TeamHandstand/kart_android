@@ -78,7 +78,7 @@ object ViewUtil {
         paint.style = Paint.Style.STROKE
     }
 
-    fun drawStripes(context: Context, width: Float, height: Float, backgroundColor: Int, stripeColor: Int = 0): Drawable {
+    fun getCandyCaneBackgroundDrawable(context: Context, width: Float, height: Float, backgroundColor: Int, stripeColor: Int = 0): Drawable {
         // Init the stroke width if it isn't already init'd
         if (strokeWidth == 0f) {
             strokeWidth = ViewUtil.dpToPx(context, 120).toFloat()
@@ -135,6 +135,6 @@ fun View.runOnGlobalLayout(runnable: (view: View) -> Unit) {
 
 fun View.setCandyCaneBackground(backgroundColor: Int, stripeColor: Int) {
     runOnGlobalLayout {
-        it.background = ViewUtil.drawStripes(it.context, it.measuredWidth.toFloat(), it.measuredHeight.toFloat(), backgroundColor, stripeColor)
+        background = ViewUtil.getCandyCaneBackgroundDrawable(it.context, it.measuredWidth.toFloat(), it.measuredHeight.toFloat(), backgroundColor, stripeColor)
     }
 }
