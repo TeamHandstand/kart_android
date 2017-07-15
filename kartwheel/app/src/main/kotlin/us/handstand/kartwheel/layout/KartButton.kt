@@ -132,8 +132,8 @@ class KartButton : AppCompatButton, KartFontView, ValueAnimator.AnimatorUpdateLi
         segment.addArc(rightRect, rightArc.startAngle, rightArc.sweepAngle)
 
         val lineMovementBottom = getBottomLine(animatedValue)
-//        segment.moveTo(lineMovementBottom.start, centerY + cornerRadius)
-//        segment.lineTo(lineMovementBottom.end, centerY + cornerRadius)
+        segment.moveTo(lineMovementBottom.start, centerY + cornerRadius)
+        segment.lineTo(lineMovementBottom.end, centerY + cornerRadius)
 
         invalidate()
     }
@@ -201,13 +201,13 @@ class KartButton : AppCompatButton, KartFontView, ValueAnimator.AnimatorUpdateLi
         var end = 0f
         val lineStart = totalLength - legLength
         val lineEnd = totalLength
-        if (animatedValue > lineStart - halfCircumference) {
+        if (animatedValue >= lineStart - halfCircumference) {
             if (animatedValue > lineStart) {
                 start = centerXRight - (animatedValue - lineStart)
                 end = start - halfCircumference
             } else {
                 start = centerXRight
-                end = start - (lineStart - animatedValue)
+                end = start - (animatedValue - (lineStart - halfCircumference))
             }
             if (end < centerXLeft) {
                 end = centerXLeft
