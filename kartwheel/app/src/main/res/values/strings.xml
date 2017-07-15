@@ -95,6 +95,7 @@
     <string name="forfeit_description">If you forfeit your ticket, you will be removed entirely from the game. You may
     give your ticket code to a friend!\n\nThey can download the app and use the code to get started. Lucky them&#8230;</string>
     <string name="copy_code">Copy your code:\u0020</string>
+    <string name="code_copied">Code copied!</string>
     <string name="need_selfie">Need a selfie, brah!</string>
     <string name="wait_for_selfie_upload">Patience is key&#8230;Please wait for selfie to upload</string>
     <string name="selfie_upload_failed">Unable to upload selfie. Please check your network and try again.</string>

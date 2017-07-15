@@ -2,6 +2,8 @@ package us.handstand.kartwheel.layout
 
 
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.res.AssetManager
 import android.content.res.ColorStateList
@@ -22,6 +24,8 @@ import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
+import us.handstand.kartwheel.R
 
 
 object ViewUtil {
@@ -102,7 +106,12 @@ object ViewUtil {
         return BitmapDrawable(context.resources, bmp)
     }
 
-
+    fun copyToClipboard(context: Context, text: String) {
+        Toast.makeText(context, R.string.code_copied, Toast.LENGTH_LONG).show()
+        val clipboard = context.getSystemService(android.content.Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText(context.getString(R.string.code_copied), text)
+        clipboard.primaryClip = clip
+    }
 }
 
 fun View.runOnPreDraw(runnable: (view: View) -> Unit) {

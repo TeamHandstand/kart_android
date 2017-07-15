@@ -1,8 +1,5 @@
 package us.handstand.kartwheel.fragment.ticket
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -10,7 +7,6 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.TicketActivity
 import us.handstand.kartwheel.controller.TicketController.Companion
@@ -32,10 +28,7 @@ class ForfeitFragment : Fragment(), TicketActivity.TicketFragment, OnClickListen
 
     override fun onClick(v: View) {
         if (v.id == R.id.forfeit_code_link) {
-            Toast.makeText(activity, "Code copied!", Toast.LENGTH_LONG).show()
-            val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText("Code copied!", activity.intent.getStringExtra(TicketModel.CODE))
-            clipboard.primaryClip = clip
+            ViewUtil.copyToClipboard(activity, activity.intent.getStringExtra(TicketModel.CODE))
         } else if (v.id == R.id.additionalButton) {
             ticketController.transition(Companion.FORFEIT, Companion.GAME_INFO)
         }
