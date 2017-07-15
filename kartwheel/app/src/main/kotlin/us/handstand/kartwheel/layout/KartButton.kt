@@ -40,7 +40,7 @@ class KartButton : AppCompatButton, KartFontView, ValueAnimator.AnimatorUpdateLi
     private var animator: ValueAnimator? = null
     var loading: Boolean = false
         set(value) {
-            if (value) {
+            if (value && !field) {
                 animator = ValueAnimator.ofFloat(0f, totalLength)
                 animator!!.repeatCount = ValueAnimator.INFINITE
                 animator!!.duration = 3000L
@@ -101,6 +101,8 @@ class KartButton : AppCompatButton, KartFontView, ValueAnimator.AnimatorUpdateLi
         rightRect.left = rightRect.right - 2 * cornerRadius
         rightRect.top = 0f
         rightRect.bottom = measuredHeight.toFloat()
+
+        loading = true
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -118,18 +120,70 @@ class KartButton : AppCompatButton, KartFontView, ValueAnimator.AnimatorUpdateLi
         // and may span from 0 to totalLength - legLength.
         val animatedValue = animation.getAnimatedValue() as Float
         segment.reset()
+
+        val leftArc = getLeftArc(animatedValue)
+        segment.addArc(leftRect, leftArc.startAngle, leftArc.sweepAngle)
+
+        val lineMovementTop = getTopLine(animatedValue)
+        segment.moveTo(lineMovementTop.start, 0f)
+        segment.lineTo(lineMovementTop.end, 0f)
+
+        val rightArc = getRightArc(animatedValue)
+        segment.addArc(rightRect, rightArc.startAngle, rightArc.sweepAngle)
+
+        val lineMovementBottom = getBottomLine(animatedValue)
+//        segment.moveTo(lineMovementBottom.start, centerY + cornerRadius)
+//        segment.lineTo(lineMovementBottom.end, centerY + cornerRadius)
+
+        invalidate()
+    }
+
+    private fun getLeftArc(animatedValue: Float): Arc {
+        var startAngle = 0f
+        var sweepAngle = 0f
         if (animatedValue <= halfCircumference) {
-            segment.addArc(leftRect, 270f, -((halfCircumference - animatedValue) / halfCircumference) * 180f)
+            startAngle = 270f
+            sweepAngle = -((halfCircumference - animatedValue) / halfCircumference) * 180f
         }
+        return Arc(startAngle, sweepAngle)
+    }
+
+    private fun getRightArc(animatedValue: Float): Arc {
+        val startOfRightArc = totalLength - legLength - halfCircumference
+        val endOfRightArc = totalLength - legLength
+        // Animated value (left side) will have something contained within the half circle if the value + halfCircumference is within the half circle
+        val amountWithinHalfCircle = halfCircumference - /* amount to animate in circle */(totalLength - legLength - animatedValue)
+        var valueStartInCircle = 0f
+        var valueEndInCircle = 0f
+        var startAngle = 0f
+        var sweepAngle = 0f
+        if (animatedValue < startOfRightArc && animatedValue > startOfRightArc - halfCircumference) {
+            // animated value is before start of circle
+            valueEndInCircle = (animatedValue + halfCircumference) - startOfRightArc
+            // Start at 270deg plus the remainder of the sweep angle and continue clockwise up to 180deg
+            startAngle = 270f
+            // sweepAngle will be the fraction of valueStartInCircle to halfCircumference * 180deg
+            sweepAngle = (valueEndInCircle / halfCircumference) * 180f
+        } else if (animatedValue >= startOfRightArc && animatedValue < endOfRightArc) {
+            // animated value is in the circle
+            valueStartInCircle = endOfRightArc - animatedValue
+            valueEndInCircle = halfCircumference
+
+            startAngle = 270f + (1 - valueStartInCircle / valueEndInCircle) * 180f
+            sweepAngle =180f - (1 - valueStartInCircle / valueEndInCircle) * 180f
+        }
+        return Arc(startAngle, sweepAngle)
+    }
+
+    private fun getTopLine(animatedValue: Float): LineMovement {
+        var start = 0f
+        var end = 0f
         if (animatedValue > 0f && animatedValue < halfCircumference + legLength) {
-            val start: Float
             if (animatedValue > halfCircumference) {
                 start = centerXLeft + (animatedValue - halfCircumference)
             } else {
                 start = centerXLeft
             }
-            segment.moveTo(start, 0f)
-            var end: Float
             if (animatedValue < halfCircumference) {
                 end = start + animatedValue
             } else {
@@ -138,35 +192,31 @@ class KartButton : AppCompatButton, KartFontView, ValueAnimator.AnimatorUpdateLi
             if (end > centerXRight) {
                 end = centerXRight + paint.strokeWidth
             }
-            segment.lineTo(end, 0f)
         }
+        return LineMovement(start, end)
+    }
 
-        // Animated value (left side) will have something contained within the half circle if the value + halfCircumference is within the half circle
-        if (animatedValue + halfCircumference > (halfCircumference + legLength) && animatedValue < 2 * halfCircumference + legLength) {
-            // Has to grow and shrink
-            segment.addArc(rightRect, 270f, -((animatedValue - (legLength + halfCircumference)) / halfCircumference) * 180f)
-        }
-
-        if (animatedValue > totalLength - (legLength + halfCircumference)) {
-            val start: Float
-            if (animatedValue > totalLength - legLength) {
-                start = centerXRight - (animatedValue - (totalLength - legLength))
-            } else {
-                start = centerXRight
-            }
-            segment.moveTo(start + paint.strokeWidth, centerY + cornerRadius)
-            var end: Float
-            if (animatedValue > totalLength - legLength) {
+    private fun getBottomLine(animatedValue: Float): LineMovement {
+        var start = 0f
+        var end = 0f
+        val lineStart = totalLength - legLength
+        val lineEnd = totalLength
+        if (animatedValue > lineStart - halfCircumference) {
+            if (animatedValue > lineStart) {
+                start = centerXRight - (animatedValue - lineStart)
                 end = start - halfCircumference
             } else {
-                end = start - (animatedValue - (totalLength - legLength))
+                start = centerXRight
+                end = start - (lineStart - animatedValue)
             }
-            if (end < centerXLeft + paint.strokeWidth) {
-                end = centerXLeft + paint.strokeWidth
+            if (end < centerXLeft) {
+                end = centerXLeft
             }
-            segment.lineTo(end, centerY + cornerRadius)
         }
-
-        invalidate()
+        return LineMovement(start, end)
     }
+
+    private data class LineMovement(val start: Float, val end: Float)
+
+    private data class Arc(val startAngle: Float, val sweepAngle: Float)
 }
