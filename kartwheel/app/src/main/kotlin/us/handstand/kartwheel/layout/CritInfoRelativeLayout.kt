@@ -1,6 +1,6 @@
 package us.handstand.kartwheel.layout
 
-import android.animation.ValueAnimator
+import android.animation.*
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -63,38 +63,89 @@ class CritInfoRelativeLayout : RelativeLayout, ValueAnimator.AnimatorUpdateListe
     }
 
     fun nextQuestion(leftImageRes: Int, rightImageRes: Int, questionRes: Int, colorRes: Int) {
-        leftImageView.setImageResource(leftImageRes)
-        rightImageView.setImageResource(rightImageRes)
-        question.setText(questionRes)
+        val removeQuestionAnimator = AnimatorSet()
+        removeQuestionAnimator.duration = 150L
+        removeQuestionAnimator.playTogether(
+                getTextTranslationAnimator(0f, -2 * question.measuredHeight.toFloat(), questionRes),
+                getScaleAnimator(1f, 0.5f, leftImageRes, rightImageRes),
+                getSegmentHideAnimator(colorRes)
+        )
+
+        val addQuestionAnimator = AnimatorSet()
+        addQuestionAnimator.duration = 150L
+        addQuestionAnimator.playTogether(
+                getTextTranslationAnimator(-2 * question.measuredHeight.toFloat(), 0f),
+                getScaleAnimator(0.5f, 1f)
+        )
+
+        val allAnimators = AnimatorSet()
+        allAnimators.playSequentially(removeQuestionAnimator, addQuestionAnimator)
+
         currentPos = 0f
-        updateCoords()
-        paint.color = context.resources.getColor(colorRes)
-        if (leftIsSelected) {
-            val animator = ValueAnimator.ofFloat(360f, 0f)
-            animator.duration = 300L
-            animator.addUpdateListener {
-                segment.reset()
-                val animatedValue = it.getAnimatedValue() as Float
-                segment.addArc(circleLeft, 270f, -animatedValue)
-                invalidate()
-            }
-            animator.start()
-        } else if (rightIsSelected) {
-            val animator = ValueAnimator.ofFloat(360f, 0f)
-            animator.duration = 300L
-            animator.addUpdateListener {
-                segment.reset()
-                val animatedValue = it.getAnimatedValue() as Float
-                segment.addArc(circleRight, -90f, animatedValue)
-                invalidate()
-            }
-            animator.start()
-        }
         leftIsSelected = false
         rightIsSelected = false
+
+        allAnimators.start()
     }
 
-    fun animateLineTo(start: Float, leftSelection: Boolean) {
+    private fun getTextTranslationAnimator(start: Float, end: Float, endTextRes: Int = -1): Animator {
+        val animator = ObjectAnimator.ofFloat(question, "translationY", start, end)
+        animator.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator?) {
+                if (endTextRes != -1) {
+                    question.setText(endTextRes)
+                }
+            }
+        })
+        return animator
+    }
+
+    private fun getScaleAnimator(start: Float, end: Float, leftEndRes: Int = -1, rightEndRes: Int = -1): Animator {
+        val animator = ValueAnimator.ofFloat(start, end)
+        animator.addUpdateListener {
+            leftImageView.setScale(it.getAnimatedValue() as Float)
+            rightImageView.setScale(it.getAnimatedValue() as Float)
+        }
+        animator.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator?) {
+                if (leftEndRes != -1) {
+                    leftImageView.setImageResource(leftEndRes)
+                }
+                if (rightEndRes != -1) {
+                    rightImageView.setImageResource(rightEndRes)
+                }
+            }
+        })
+        return animator
+    }
+
+    private fun View.setScale(scale: Float) {
+        scaleX = scale
+        scaleY = scale
+    }
+
+    private fun getSegmentHideAnimator(colorRes: Int): Animator {
+        updateCoords()
+        val rect = if (leftIsSelected) circleLeft else if (rightIsSelected) circleRight else null
+        val startAngle = if (leftIsSelected) 270f else -90f
+        val animator = ValueAnimator.ofFloat(360f, 0f)
+        animator.addUpdateListener {
+            segment.reset()
+            val animatedValue = it.getAnimatedValue() as Float
+            if (rect != null) {
+                segment.addArc(rect, startAngle, -animatedValue)
+            }
+            invalidate()
+        }
+        animator.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator?) {
+                paint.color = context.resources.getColor(colorRes)
+            }
+        })
+        return animator
+    }
+
+    private fun animateLineTo(start: Float, leftSelection: Boolean) {
         updateCoords()
         if ((leftIsSelected && leftSelection) || (rightIsSelected && !leftSelection)) {
             return
@@ -131,7 +182,7 @@ class CritInfoRelativeLayout : RelativeLayout, ValueAnimator.AnimatorUpdateListe
     }
 
 
-    fun updateCoords() {
+    private fun updateCoords() {
         centerXLeft = leftImageView.left + (leftImageView.measuredWidth / 2f)
         centerXRight = rightImageView.left + (rightImageView.measuredWidth / 2f)
         centerY = rightImageView.bottom - (rightImageView.measuredHeight / 2f)
