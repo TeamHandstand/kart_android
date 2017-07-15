@@ -7,8 +7,10 @@
     <color name="game_info_player_background">#F8F8F8</color>
     <color name="light_grey">#AAAAAA</color>
     <color name="blue">#00D5FF</color>
+    <color name="blue_loading">#00768e</color>
     <color name="blue_background">#7E00d5ff</color>
     <color name="red">#FF4200</color>
+    <color name="red_loading">#FF3000</color>
     <color name="green">#3ECF8E</color>
     <color name="yellow">#FFC000</color>
     <color name="yellow_40">#28FFC000</color>

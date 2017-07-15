@@ -44,6 +44,10 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
             return R.color.grey_button_disabled
         }
 
+        fun getAdvanceButtonLoadingColor(): Int {
+            return android.R.color.black
+        }
+
         fun isAdvanceButtonEnabled(): Boolean {
             return false
         }
@@ -135,11 +139,12 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
             try {
                 ViewUtil.setButtonState(resources, button,
                         ticketFragment!!.getAdvanceButtonColor(),
+                        ticketFragment!!.getAdvanceButtonLoadingColor(),
                         ticketFragment!!.getAdvanceButtonTextResId(),
                         ticketFragment!!.isAdvanceButtonEnabled()
                 )
             } catch (e: UninitializedPropertyAccessException) {
-                ViewUtil.setButtonState(resources, button, R.color.grey_button_disabled, R.string.next, false)
+                ViewUtil.setButtonState(resources, button, R.color.grey_button_disabled, android.R.color.black, R.string.next, false)
             }
         }
     }

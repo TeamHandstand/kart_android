@@ -53,11 +53,12 @@ object ViewUtil {
         }
     }
 
-    fun setButtonState(resources: Resources, button: AppCompatButton?, @ColorRes color: Int, @StringRes textRes: Int, enabled: Boolean) {
+    fun setButtonState(resources: Resources, button: KartButton?, @ColorRes color: Int, @ColorRes loadingColor: Int, @StringRes textRes: Int, enabled: Boolean) {
         if (button == null) {
             return
         }
         ViewCompat.setBackgroundTintList(button, ColorStateList.valueOf(resources.getColor(color)))
+        button.setLoadingColor(loadingColor)
         button.setText(textRes)
         button.isEnabled = enabled
     }

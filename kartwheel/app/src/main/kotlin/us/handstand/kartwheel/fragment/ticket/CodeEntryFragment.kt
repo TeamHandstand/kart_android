@@ -46,6 +46,10 @@ class CodeEntryFragment : Fragment(), TicketActivity.TicketFragment, TextView.On
         return if (isAdvanceButtonEnabled()) R.color.blue else super.getAdvanceButtonColor()
     }
 
+    override fun getAdvanceButtonLoadingColor(): Int {
+        return R.color.blue_loading
+    }
+
     override fun isAdvanceButtonEnabled(): Boolean {
         return !isEmpty(codeEntry.text?.toString())
     }

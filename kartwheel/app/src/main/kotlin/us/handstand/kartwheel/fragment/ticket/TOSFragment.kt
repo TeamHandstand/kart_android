@@ -3,18 +3,18 @@ package us.handstand.kartwheel.fragment.ticket
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.AppCompatButton
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.TicketActivity
+import us.handstand.kartwheel.layout.KartButton
 import us.handstand.kartwheel.layout.TOSScrollView
 import us.handstand.kartwheel.layout.ViewUtil
 
 class TOSFragment : Fragment(), TicketActivity.TicketFragment {
     internal lateinit var scrollView: TOSScrollView
-    private lateinit var button: AppCompatButton
+    private lateinit var button: KartButton
     private var scrolledToBottom: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -32,7 +32,7 @@ class TOSFragment : Fragment(), TicketActivity.TicketFragment {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         button = ViewUtil.findView(activity, R.id.button)
-        ViewUtil.setButtonState(resources, button, getAdvanceButtonColor(), getAdvanceButtonTextResId(), isAdvanceButtonEnabled())
+        ViewUtil.setButtonState(resources, button, getAdvanceButtonColor(), getAdvanceButtonLoadingColor(), getAdvanceButtonTextResId(), isAdvanceButtonEnabled())
     }
 
     override fun getTitleResId(): Int {
@@ -45,6 +45,10 @@ class TOSFragment : Fragment(), TicketActivity.TicketFragment {
 
     override fun getAdvanceButtonColor(): Int {
         return if (isAdvanceButtonEnabled()) R.color.blue else super.getAdvanceButtonColor()
+    }
+
+    override fun getAdvanceButtonLoadingColor(): Int {
+        return if (isAdvanceButtonEnabled()) R.color.blue_loading else super.getAdvanceButtonLoadingColor()
     }
 
     override fun isAdvanceButtonEnabled(): Boolean {

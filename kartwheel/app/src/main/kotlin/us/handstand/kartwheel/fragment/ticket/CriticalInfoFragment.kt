@@ -55,6 +55,10 @@ class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnC
         return if (isAdvanceButtonEnabled()) R.color.blue else super.getAdvanceButtonColor()
     }
 
+    override fun getAdvanceButtonLoadingColor(): Int {
+        return if (isAdvanceButtonEnabled()) R.color.blue_loading else super.getAdvanceButtonLoadingColor()
+    }
+
     override fun isAdvanceButtonEnabled(): Boolean {
         return selectedAnswer != NONE
     }
