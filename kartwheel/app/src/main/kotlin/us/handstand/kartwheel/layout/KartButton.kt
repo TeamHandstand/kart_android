@@ -8,6 +8,7 @@ import android.graphics.Path
 import android.graphics.RectF
 import android.support.v7.widget.AppCompatButton
 import android.util.AttributeSet
+import android.view.animation.LinearInterpolator
 import us.handstand.kartwheel.R
 
 
@@ -42,6 +43,7 @@ class KartButton : AppCompatButton, KartFontView, ValueAnimator.AnimatorUpdateLi
         set(value) {
             if (value && !field) {
                 animator = ValueAnimator.ofFloat(0f, totalLength)
+                animator!!.interpolator = LinearInterpolator()
                 animator!!.repeatCount = ValueAnimator.INFINITE
                 animator!!.duration = 1000L
                 animator!!.addUpdateListener(this)
