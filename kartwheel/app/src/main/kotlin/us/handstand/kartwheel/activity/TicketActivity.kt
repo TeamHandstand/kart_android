@@ -86,7 +86,6 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
         title = ViewUtil.findView(this, R.id.title_text)
         button = ViewUtil.findView(this, R.id.button)
         button!!.setOnClickListener(this)
-        Storage.lastTicketState = CRITICAL_INFO
         ticketController.transition(NONE, Storage.lastTicketState)
     }
 
