@@ -78,7 +78,7 @@ android {
             buildConfigField "String", "PLAYER_NO_IMAGE_URL", "\"https://kartwheel-app.s3.amazonaws.com/shared/empty-profile.jpg\""
             buildConfigField "String", "PUBNUB_PUBLISH_KEY", "\"pub-c-0c369432-d79b-470d-9f2b-0967e1ac5f91\""
             buildConfigField "String", "PUBNUB_SUBSCRIPTION_KEY", "\"sub-c-061cf426-099e-11e7-b34d-02ee2ddab7fe\""
-            buildConfigField "String", "SERVER", "\"http://api.staging.handstandwith.us\""
+            buildConfigField "String", "SERVER", "\"https://api.staging.handstandwith.us\""
             buildConfigField "String", "SERVER_FRAGMENT", "\"kart/v1/\""
             debuggable true
             minifyEnabled false
