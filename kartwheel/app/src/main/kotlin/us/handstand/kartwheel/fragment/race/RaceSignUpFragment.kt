@@ -102,7 +102,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
         countdownScheduler.scheduleWithFixedDelay({
             raceCountdown.post {
                 if (controller.race?.r()?.alreadyStarted() == true) {
-                    raceCountdown.text = "Start The Race!"
+                    raceCountdown.text = context.getString(R.string.start_race)
                     raceCountdownTitle.visibility = GONE
                 } else {
                     raceCountdown.text = StringUtil.hourMinSecFromMs(controller.race?.timeUntilRace)
@@ -182,8 +182,8 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
         activity.runOnUiThread {
             raceName.text = race.r().name() ?: Race.DEFAULT_RACE_NAME
             val miles = (race.c()?.distance() ?: 0.0) * (race.r().totalLaps() ?: 0L)
-            raceDescription.text = race.r().totalLaps().toString() + " laps | " + miles.toString().substring(0, 3) + " miles"
-            spotsLeft.text = "+ ${race.r().openSpots()} Spots Available"
+            raceDescription.text = context.getString(R.string.race_details, race.r().totalLaps(), miles)
+            spotsLeft.text = context.getString(R.string.spots_available, race.r().openSpots())
             registrantAvatarAdapter.openSpots = race.r().openSpots() ?: 0L
             registrantAvatarAdapter.notifyOpenSpotsChanged()
             // Draw the course in case the map was ready before we got the race
