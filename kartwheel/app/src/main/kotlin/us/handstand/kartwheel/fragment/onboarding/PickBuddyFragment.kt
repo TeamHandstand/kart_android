@@ -62,7 +62,10 @@ class PickBuddyFragment : Fragment(), OnboardingActivity.OnboardingFragment, Vie
 
                 override fun onFailure(errorCode: Int, errorResponse: String) {
                     super.onFailure(errorCode, errorResponse)
-                    activity.runOnUiThread { Toast.makeText(activity, R.string.buddy_upload_failed, Toast.LENGTH_LONG).show() }
+                    activity.runOnUiThread {
+                        Toast.makeText(activity, R.string.buddy_upload_failed, Toast.LENGTH_LONG).show()
+                        button.isEnabled = true
+                    }
                 }
             })
             return true
