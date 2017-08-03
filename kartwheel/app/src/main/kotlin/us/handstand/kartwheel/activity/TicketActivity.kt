@@ -112,10 +112,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
 
             if (next != ERROR) {
                 ViewUtil.hideKeyboard(this)
-                ticketFragment = TicketFragment.getFragment(next)
-                title!!.text = resources.getString(ticketFragment!!.getTitleResId())
                 Storage.lastTicketState = next
-                onTicketFragmentStateChanged()
                 if (next == RACE_LIST) {
                     startActivity(Intent(this, LoggedInActivity::class.java))
                     finish()
@@ -123,6 +120,9 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
                     startActivity(Intent(this, OnboardingActivity::class.java))
                     finish()
                 } else if (!isFinishing && !supportFragmentManager.isDestroyed) {
+                    ticketFragment = TicketFragment.getFragment(next)
+                    title!!.text = resources.getString(ticketFragment!!.getTitleResId())
+                    onTicketFragmentStateChanged()
                     supportFragmentManager.beginTransaction().replace(R.id.fragment, ticketFragment as Fragment?).commit()
                 }
             }
