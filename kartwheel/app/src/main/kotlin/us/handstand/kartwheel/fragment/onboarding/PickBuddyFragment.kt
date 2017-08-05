@@ -53,6 +53,7 @@ class PickBuddyFragment : Fragment(), OnboardingActivity.OnboardingFragment, Vie
         } else {
             // Upload the selectedBuddyUrl and move onto the next step, once the uploadPhoto is completed.
             // If not completed, then show an error message
+            buddy.isEnabled = false
             API.updateUser(API.gson.fromJson("{\"buddyUrl\":\"${Storage.selectedBuddyUrl}\"}", JsonObject::class.java), object : API.APICallback<User> {
                 override fun onSuccess(response: User) {
                     Storage.userBuddyUrl = response.buddyUrl()!!
@@ -65,6 +66,7 @@ class PickBuddyFragment : Fragment(), OnboardingActivity.OnboardingFragment, Vie
                     activity.runOnUiThread {
                         Toast.makeText(activity, R.string.buddy_upload_failed, Toast.LENGTH_LONG).show()
                         button.isEnabled = true
+                        buddy.isEnabled = true
                     }
                 }
             })
