@@ -1,12 +1,10 @@
 package us.handstand.kartwheel.activity
 
-import us.handstand.kartwheel.layout.KartButton
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.AppCompatButton
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -27,6 +25,7 @@ import us.handstand.kartwheel.controller.TicketController.Companion.RACE_LIST
 import us.handstand.kartwheel.controller.TicketController.Companion.TOS
 import us.handstand.kartwheel.controller.TicketController.Companion.WELCOME
 import us.handstand.kartwheel.fragment.ticket.*
+import us.handstand.kartwheel.layout.KartButton
 import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.layout.setCandyCaneBackground
 import us.handstand.kartwheel.model.Database
@@ -102,6 +101,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
     override fun showDialog(@FragmentType step: Long, message: String) {
         runOnUiThread {
             if (step == CODE_ENTRY && ticketFragment is CodeEntryFragment) {
+                button?.loading = false
                 (ticketFragment as CodeEntryFragment).setProgressVisibility(View.INVISIBLE)
             }
             Toast.makeText(this, message, LENGTH_LONG).show()
@@ -117,6 +117,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
 
             if (next != ERROR) {
                 ViewUtil.hideKeyboard(this)
+                button?.loading = false
                 Storage.lastTicketState = next
                 if (next == RACE_LIST) {
                     startActivity(Intent(this, LoggedInActivity::class.java))

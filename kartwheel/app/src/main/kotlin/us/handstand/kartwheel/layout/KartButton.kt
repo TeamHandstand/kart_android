@@ -42,25 +42,18 @@ class KartButton : AppCompatButton, KartFontView, ValueAnimator.AnimatorUpdateLi
     private var animator: ValueAnimator? = null
     var loading: Boolean = false
         set(value) {
-            if (value && !field) {
+            if (value) {
                 animator = ValueAnimator.ofFloat(0f, totalLength)
                 animator!!.interpolator = LinearInterpolator()
                 animator!!.repeatCount = ValueAnimator.INFINITE
                 animator!!.duration = 1000L
                 animator!!.addUpdateListener(this)
                 animator!!.start()
-            } else if (animator != null) {
-                /*
-                if (animator!!.currentPlayTime > animator!!.duration) {
-                    animator!!.cancel()
-                    animator = null
-                } else {
-                    postDelayed({
-                        animator!!.cancel()
-                        animator = null
-                    }, animator!!.duration)
-                }
-                **/
+            } else {
+                animator?.cancel()
+                animator = null
+                segment.reset()
+                postInvalidate()
             }
         }
 
@@ -69,7 +62,7 @@ class KartButton : AppCompatButton, KartFontView, ValueAnimator.AnimatorUpdateLi
         setBackgroundResource(R.drawable.button_long)
     }
 
-    fun setLoadingParams(attrs: AttributeSet?) {
+    private fun setLoadingParams(attrs: AttributeSet?) {
         if (isInEditMode) {
             return
         }
@@ -104,8 +97,6 @@ class KartButton : AppCompatButton, KartFontView, ValueAnimator.AnimatorUpdateLi
         rightRect.left = rightRect.right - 2 * cornerRadius - paint.strokeWidth
         rightRect.top = 0f + paint.strokeWidth
         rightRect.bottom = measuredHeight.toFloat() - paint.strokeWidth
-
-        loading = true
     }
 
     fun setLoadingColor(@ColorRes loadingColor: Int) {
@@ -114,9 +105,6 @@ class KartButton : AppCompatButton, KartFontView, ValueAnimator.AnimatorUpdateLi
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        if (!loading && animator?.isRunning == false) {
-//            return
-        }
         canvas.save()
         canvas.drawPath(segment, paint)
         canvas.restore()

@@ -44,7 +44,7 @@ class LogoutFragment : Fragment(), View.OnClickListener {
                     KartWheel.logout()
 
                     activity.runOnUiThread {
-                        ViewUtil.copyToClipboard(activity, activity.intent.getStringExtra(TicketModel.CODE))
+                        ViewUtil.copyToClipboard(activity, activity.intent.getStringExtra(TicketModel.CODE) ?: Storage.code)
                         startActivity(Intent(activity, LaunchActivity::class.java))
                         activity.finish()
                     }
