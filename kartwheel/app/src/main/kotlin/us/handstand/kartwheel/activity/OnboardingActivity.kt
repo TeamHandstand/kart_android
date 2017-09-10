@@ -13,7 +13,10 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
-import android.widget.*
+import android.widget.FrameLayout
+import android.widget.RelativeLayout
+import android.widget.TextView
+import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView
 import us.handstand.kartwheel.KartWheel
@@ -34,6 +37,7 @@ import us.handstand.kartwheel.fragment.onboarding.SelfieFragment
 import us.handstand.kartwheel.fragment.onboarding.StartedFragment
 import us.handstand.kartwheel.fragment.onboarding.VideoFragment
 import us.handstand.kartwheel.inject.provider.BottomSheetCallbackProvider.BSBCallbackIMPL
+import us.handstand.kartwheel.layout.KartButton
 import us.handstand.kartwheel.layout.MedalRain
 import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.layout.recyclerview.adapter.PickBuddyAdapter
@@ -43,7 +47,7 @@ import javax.inject.Inject
 
 class OnboardingActivity : AppCompatActivity(), View.OnClickListener, OnboardingStepCompletionListener {
     private lateinit var background: RelativeLayout
-    private lateinit var button: Button
+    private lateinit var button: KartButton
     private lateinit var description: TextView
     private lateinit var makeItRainText: TextView
     private lateinit var pageNumber: TextView
@@ -127,6 +131,7 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
             val nextFragment = getFragmentForStep(next)
             button.visibility = VISIBLE
             button.isEnabled = true
+            button.loading = false
             Storage.selfieUri = ""
             Storage.selectedBuddyUrl = ""
             if (nextFragment == null) {
@@ -211,7 +216,7 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
 
         fun getActivity(): Activity
 
-        val button: Button
+        val button: KartButton
             get() = (getActivity() as OnboardingActivity).button
         val controller: OnboardingController
             get() = (getActivity() as OnboardingActivity).controller
