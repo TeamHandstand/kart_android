@@ -1,12 +1,10 @@
 package us.handstand.kartwheel.activity
 
-import us.handstand.kartwheel.layout.KartButton
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.AppCompatButton
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -27,6 +25,7 @@ import us.handstand.kartwheel.controller.TicketController.Companion.RACE_LIST
 import us.handstand.kartwheel.controller.TicketController.Companion.TOS
 import us.handstand.kartwheel.controller.TicketController.Companion.WELCOME
 import us.handstand.kartwheel.fragment.ticket.*
+import us.handstand.kartwheel.layout.KartButton
 import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.layout.setCandyCaneBackground
 import us.handstand.kartwheel.model.Database
@@ -122,7 +121,6 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
                 title!!.text = resources.getString(ticketFragment!!.getTitleResId())
                 button?.loading = false
                 Storage.lastTicketState = next
-                onTicketFragmentStateChanged()
                 if (next == RACE_LIST) {
                     startActivity(Intent(this, LoggedInActivity::class.java))
                     finish()
@@ -130,6 +128,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
                     startActivity(Intent(this, OnboardingActivity::class.java))
                     finish()
                 } else if (!isFinishing && !supportFragmentManager.isDestroyed) {
+                    onTicketFragmentStateChanged()
                     supportFragmentManager.beginTransaction().replace(R.id.fragment, ticketFragment as Fragment?).commit()
                 }
             }
