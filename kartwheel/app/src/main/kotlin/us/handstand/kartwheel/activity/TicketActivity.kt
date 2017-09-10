@@ -102,6 +102,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
     override fun showDialog(@FragmentType step: Long, message: String) {
         runOnUiThread {
             if (step == CODE_ENTRY && ticketFragment is CodeEntryFragment) {
+                button?.loading = false
                 (ticketFragment as CodeEntryFragment).setProgressVisibility(View.INVISIBLE)
             }
             Toast.makeText(this, message, LENGTH_LONG).show()
@@ -119,6 +120,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
                 ViewUtil.hideKeyboard(this)
                 ticketFragment = TicketFragment.getFragment(next)
                 title!!.text = resources.getString(ticketFragment!!.getTitleResId())
+                button?.loading = false
                 Storage.lastTicketState = next
                 onTicketFragmentStateChanged()
                 if (next == RACE_LIST) {
