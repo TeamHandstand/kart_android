@@ -54,18 +54,19 @@ class SelfieFragment : Fragment(), OnboardingActivity.OnboardingFragment, Selfie
         updateOnboardingState()
     }
 
-    override fun readyForNextStep(): Boolean {
-        return !isEmpty(Storage.userImageUrl) || !isEmpty(Storage.selfieUri)
-    }
+    override fun readyForNextStep(): Boolean =
+            !isEmpty(Storage.userImageUrl) || !isEmpty(Storage.selfieUri)
 
     override fun onStateChanged(state: TransferState) {
         activity.runOnUiThread {
             when (state) {
                 TransferState.FAILED, TransferState.CANCELED -> {
+                    button.loading = false
                     button.isEnabled = true
                     selfie.isEnabled = true
                 }
                 TransferState.IN_PROGRESS, TransferState.PART_COMPLETED -> {
+                    button.loading = true
                     button.isEnabled = false
                     selfie.isEnabled = false
                 }

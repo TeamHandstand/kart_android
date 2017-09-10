@@ -110,7 +110,6 @@ open class SelfieUploadController @Inject constructor(val context: Context) : Tr
         listener?.showMessage(R.string.selfie_upload_failed)
     }
 
-    private fun uploadInProgress(): Boolean {
-        return !isEmpty(Storage.selfieUri) && transferObserver != null && transferObserver?.bytesTotal != transferObserver?.bytesTransferred
-    }
+    private fun uploadInProgress(): Boolean =
+            !isEmpty(Storage.selfieUri) && transferObserver != null && transferObserver?.bytesTotal != transferObserver?.bytesTransferred
 }

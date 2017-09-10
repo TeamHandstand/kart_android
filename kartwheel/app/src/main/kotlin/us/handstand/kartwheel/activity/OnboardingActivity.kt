@@ -156,6 +156,7 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
                     (fragment as SelfieFragment).selfieController.upload()
                 } else if (fragment is PickBuddyFragment && (isEmpty(Storage.userBuddyUrl) || !isEmpty(Storage.selectedBuddyUrl))) {
                     button.isEnabled = !(fragment as PickBuddyFragment).uploadBuddyEmoji()
+                    button.loading = !button.isEnabled
                 } else if (fragment?.readyForNextStep() == true || fragment == null) {
                     controller.onStepCompleted(Storage.lastOnboardingState)
                 }
@@ -173,7 +174,7 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
     }
 
     override fun onOnboardingFragmentStateChanged() {
-        if (fragment?.readyForNextStep() ?: true) {
+        if (fragment?.readyForNextStep() == true) {
             button.visibility = VISIBLE
         }
     }
@@ -234,7 +235,7 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
 
     }
 
-    fun getFragmentForStep(step: Long): OnboardingFragment? {
+    private fun getFragmentForStep(step: Long): OnboardingFragment? {
         when (step) {
             STARTED -> return StartedFragment()
             SELFIE -> return SelfieFragment()
