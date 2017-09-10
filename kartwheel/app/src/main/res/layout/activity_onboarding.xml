@@ -76,6 +76,7 @@
             android:textAllCaps="true"
             android:textColor="@color/blue"
             android:textSize="34dp"
+            app:loadingSpinnerColor="@color/blue"
             app:backgroundTint="@android:color/white"
             app:typeface="zamenhof"
             tools:text="@string/onboarding_pick_buddy_button" />
