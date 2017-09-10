@@ -191,9 +191,7 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
         return super.onKeyUp(keyCode, event)
     }
 
-    private fun hasVisibleBottomSheet(): Boolean {
-        return getVisibleBottomSheetBehavior() != null
-    }
+    private fun hasVisibleBottomSheet(): Boolean = getVisibleBottomSheetBehavior() != null
 
     private fun getVisibleBottomSheetBehavior(): BottomSheetBehavior<*>? {
         if (pickBuddyBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
@@ -205,9 +203,7 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
     }
 
     interface OnboardingFragment {
-        fun readyForNextStep(): Boolean {
-            return false
-        }
+        fun readyForNextStep(): Boolean = false
 
         fun updateOnboardingState() {
             (getActivity() as OnboardingActivity).onOnboardingFragmentStateChanged()
@@ -216,34 +212,20 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
         fun getActivity(): Activity
 
         val button: Button
-            get() {
-                return (getActivity() as OnboardingActivity).button
-            }
+            get() = (getActivity() as OnboardingActivity).button
         val controller: OnboardingController
-            get() {
-                return (getActivity() as OnboardingActivity).controller
-            }
+            get() = (getActivity() as OnboardingActivity).controller
         val video: SimpleExoPlayerView
-            get() {
-                return (getActivity() as OnboardingActivity).video
-            }
+            get() = (getActivity() as OnboardingActivity).video
         val recyclerViewBehavior: BottomSheetBehavior<RecyclerView>
-            get() {
-                return (getActivity() as OnboardingActivity).pickBuddyBehavior
-            }
+            get() = (getActivity() as OnboardingActivity).pickBuddyBehavior
         val videoBehavior: BottomSheetBehavior<FrameLayout>
-            get() {
-                return (getActivity() as OnboardingActivity).videoBehavior
-            }
+            get() = (getActivity() as OnboardingActivity).videoBehavior
 
         val pickBuddyBehaviorCallback: BSBCallbackIMPL
-            get() {
-                return (getActivity() as OnboardingActivity).pickBuddyBehaviorCallback
-            }
+            get() = (getActivity() as OnboardingActivity).pickBuddyBehaviorCallback
         val videoBehaviorCallback: BSBCallbackIMPL
-            get() {
-                return (getActivity() as OnboardingActivity).videoBehaviorCallback
-            }
+            get() = (getActivity() as OnboardingActivity).videoBehaviorCallback
 
     }
 
