@@ -101,11 +101,16 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
         bottomSheet.setCandyCaneBackground(android.R.color.white, R.color.textLightGrey_40p)
         countdownScheduler.scheduleWithFixedDelay({
             raceCountdown.post {
-                if (controller.race?.r()?.alreadyStarted() == true) {
-                    raceCountdown.setText(R.string.start_race)
-                    raceCountdownTitle.visibility = GONE
-                } else {
-                    raceCountdown.text = StringUtil.hourMinSecFromMs(controller.race?.timeUntilRace)
+                when (controller.race?.raceStatus) {
+                    Race.FINISHED -> {
+                        raceCountdown.setText(R.string.finished)
+                        raceCountdownTitle.visibility = GONE
+                    }
+                    Race.REGISTRATION_CLOSED -> {
+                        raceCountdown.setText(R.string.start_race)
+                        raceCountdownTitle.visibility = GONE
+                    }
+                    else -> raceCountdown.text = StringUtil.hourMinSecFromMs(controller.race?.timeUntilRace)
                 }
             }
         }, 0, 1L, TimeUnit.SECONDS)
