@@ -16,7 +16,7 @@ class LoggedInActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         PubNubManager.setup(Database.get())
         setContentView(R.layout.activity_logged_in)
-        findViewById(R.id.loggedInParent).setCandyCaneBackground(R.color.blue_background, R.color.blue)
+        findViewById(R.id.parent).setCandyCaneBackground(R.color.blue_background, R.color.blue)
         val pager = ViewUtil.findView<ViewPager>(this, R.id.pager)
         val tabLayout = ViewUtil.findView<TabLayout>(this, R.id.tabLayout)
         tabLayout.setupWithViewPager(pager)
