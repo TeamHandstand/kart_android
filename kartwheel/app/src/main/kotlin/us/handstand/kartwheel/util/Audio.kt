@@ -67,6 +67,6 @@ object Audio : SoundPool.OnLoadCompleteListener {
         }
     }
 
-    data class AudioFuture(val priority: Int, val loop: Int)
+    private data class AudioFuture(val priority: Int, val loop: Int)
 
 }
