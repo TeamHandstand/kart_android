@@ -8,7 +8,6 @@ import android.text.TextUtils.isEmpty
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.google.gson.JsonObject
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.OnboardingActivity
@@ -19,6 +18,7 @@ import us.handstand.kartwheel.layout.recyclerview.adapter.PickBuddyAdapter
 import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.model.User
 import us.handstand.kartwheel.network.API
+import us.handstand.kartwheel.util.SnackbarUtil
 
 class PickBuddyFragment : Fragment(), OnboardingActivity.OnboardingFragment, View.OnClickListener {
     lateinit var buddy: CircularImageView
@@ -48,7 +48,7 @@ class PickBuddyFragment : Fragment(), OnboardingActivity.OnboardingFragment, Vie
      */
     fun uploadBuddyEmoji(): Boolean {
         if (isEmpty(Storage.selectedBuddyUrl)) {
-            activity.runOnUiThread { Toast.makeText(activity, R.string.need_buddy, Toast.LENGTH_LONG).show() }
+            SnackbarUtil.show(activity, R.string.need_buddy)
             return false
         } else {
             // Upload the selectedBuddyUrl and move onto the next step, once the uploadPhoto is completed.
@@ -62,7 +62,7 @@ class PickBuddyFragment : Fragment(), OnboardingActivity.OnboardingFragment, Vie
 
                 override fun onFailure(errorCode: Int, errorResponse: String) {
                     super.onFailure(errorCode, errorResponse)
-                    activity.runOnUiThread { Toast.makeText(activity, R.string.buddy_upload_failed, Toast.LENGTH_LONG).show() }
+                    SnackbarUtil.show(activity, R.string.buddy_upload_failed)
                 }
             })
             return true

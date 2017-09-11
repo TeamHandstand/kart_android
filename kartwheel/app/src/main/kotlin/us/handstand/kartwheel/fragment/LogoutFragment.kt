@@ -8,8 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast.LENGTH_LONG
-import android.widget.Toast.makeText
 import com.google.gson.JsonElement
 import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
@@ -20,6 +18,7 @@ import us.handstand.kartwheel.layout.ViewUtil.findView
 import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.model.TicketModel
 import us.handstand.kartwheel.network.API
+import us.handstand.kartwheel.util.SnackbarUtil
 
 
 class LogoutFragment : Fragment(), View.OnClickListener {
@@ -52,7 +51,9 @@ class LogoutFragment : Fragment(), View.OnClickListener {
 
                 override fun onFailure(errorCode: Int, errorResponse: String) {
                     super.onFailure(errorCode, errorResponse)
-                    activity.runOnUiThread { makeText(activity, "Unable to logout. Try again.", LENGTH_LONG).show() }
+                    activity.runOnUiThread {
+                        SnackbarUtil.show(activity, "Unable to logout. Try again.")
+                    }
                 }
             })
         }

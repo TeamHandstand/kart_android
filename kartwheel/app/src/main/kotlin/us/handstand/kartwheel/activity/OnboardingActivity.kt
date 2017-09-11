@@ -16,8 +16,6 @@ import android.view.View.VISIBLE
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
-import android.widget.Toast
-import android.widget.Toast.LENGTH_LONG
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView
 import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
@@ -44,6 +42,7 @@ import us.handstand.kartwheel.layout.recyclerview.adapter.PickBuddyAdapter
 import us.handstand.kartwheel.layout.setCandyCaneBackground
 import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.util.Audio
+import us.handstand.kartwheel.util.SnackbarUtil
 import javax.inject.Inject
 
 class OnboardingActivity : AppCompatActivity(), View.OnClickListener, OnboardingStepCompletionListener {
@@ -183,7 +182,7 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
     }
 
     override fun showDialog(message: String) {
-        runOnUiThread { Toast.makeText(this, message, LENGTH_LONG).show() }
+        SnackbarUtil.show(this, message)
     }
 
     override fun onOnboardingFragmentStateChanged() {

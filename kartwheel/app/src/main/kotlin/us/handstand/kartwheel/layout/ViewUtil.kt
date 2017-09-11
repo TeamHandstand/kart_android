@@ -15,7 +15,6 @@ import android.support.annotation.ColorRes
 import android.support.annotation.IdRes
 import android.support.annotation.StringRes
 import android.support.v4.view.ViewCompat
-import android.support.v7.widget.AppCompatButton
 import android.text.TextUtils
 import android.util.TypedValue
 import android.view.View
@@ -24,8 +23,8 @@ import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import us.handstand.kartwheel.R
+import us.handstand.kartwheel.util.SnackbarUtil
 
 
 object ViewUtil {
@@ -107,10 +106,10 @@ object ViewUtil {
         return BitmapDrawable(context.resources, bmp)
     }
 
-    fun copyToClipboard(context: Context, text: String) {
-        Toast.makeText(context, R.string.code_copied, Toast.LENGTH_LONG).show()
-        val clipboard = context.getSystemService(android.content.Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clip = ClipData.newPlainText(context.getString(R.string.code_copied), text)
+    fun copyToClipboard(activity: Activity, text: String) {
+        SnackbarUtil.show(activity, R.string.code_copied)
+        val clipboard = activity.getSystemService(android.content.Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText(activity.getString(R.string.code_copied), text)
         clipboard.primaryClip = clip
     }
 }

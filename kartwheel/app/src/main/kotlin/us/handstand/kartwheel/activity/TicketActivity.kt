@@ -7,8 +7,6 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
-import android.widget.Toast.LENGTH_LONG
 import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.controller.TicketController
@@ -30,6 +28,7 @@ import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.layout.setCandyCaneBackground
 import us.handstand.kartwheel.model.Database
 import us.handstand.kartwheel.model.Storage
+import us.handstand.kartwheel.util.SnackbarUtil
 
 class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketController.Companion.TicketStepCompletionListener {
 
@@ -104,7 +103,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
                 button?.loading = false
                 (ticketFragment as CodeEntryFragment).setProgressVisibility(View.INVISIBLE)
             }
-            Toast.makeText(this, message, LENGTH_LONG).show()
+            SnackbarUtil.show(this, message)
         }
     }
 

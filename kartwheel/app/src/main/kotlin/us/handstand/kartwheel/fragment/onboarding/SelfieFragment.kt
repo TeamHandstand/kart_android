@@ -7,7 +7,6 @@ import android.text.TextUtils.isEmpty
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.OnboardingActivity
@@ -18,6 +17,7 @@ import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.network.storage.TransferState
 import us.handstand.kartwheel.util.Photos
+import us.handstand.kartwheel.util.SnackbarUtil
 import javax.inject.Inject
 
 class SelfieFragment : Fragment(), OnboardingActivity.OnboardingFragment, SelfieUploadController.SelfieUploadControllerListener {
@@ -76,6 +76,6 @@ class SelfieFragment : Fragment(), OnboardingActivity.OnboardingFragment, Selfie
     }
 
     override fun showMessage(stringResId: Int) {
-        activity.runOnUiThread { Toast.makeText(activity, stringResId, Toast.LENGTH_LONG).show() }
+        SnackbarUtil.show(activity, stringResId)
     }
 }
