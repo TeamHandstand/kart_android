@@ -11,6 +11,7 @@ import android.support.v7.widget.AppCompatButton
 import android.util.AttributeSet
 import android.view.animation.LinearInterpolator
 import us.handstand.kartwheel.R
+import us.handstand.kartwheel.util.Audio
 
 
 class KartButton : AppCompatButton, KartFontView, ValueAnimator.AnimatorUpdateListener {
@@ -60,6 +61,11 @@ class KartButton : AppCompatButton, KartFontView, ValueAnimator.AnimatorUpdateLi
     init {
         paint.style = Paint.Style.STROKE
         setBackgroundResource(R.drawable.button_long)
+        isSoundEffectsEnabled = true
+    }
+
+    override fun playSoundEffect(soundConstant: Int) {
+        Audio.play(Audio.CLICK_BUTTON, priority = 1)
     }
 
     private fun setLoadingParams(attrs: AttributeSet?) {

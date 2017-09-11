@@ -43,6 +43,7 @@ import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.layout.recyclerview.adapter.PickBuddyAdapter
 import us.handstand.kartwheel.layout.setCandyCaneBackground
 import us.handstand.kartwheel.model.Storage
+import us.handstand.kartwheel.util.Audio
 import javax.inject.Inject
 
 class OnboardingActivity : AppCompatActivity(), View.OnClickListener, OnboardingStepCompletionListener {
@@ -90,9 +91,11 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
         videoBehavior.setBottomSheetCallback(videoBehaviorCallback)
 
         controller.transition(NONE, Storage.lastOnboardingState)
+        Audio.play(Audio.ONBOARDING)
     }
 
     override fun onDestroy() {
+        Audio.stop(Audio.ONBOARDING)
         medalRain.onDestroy()
         super.onDestroy()
     }

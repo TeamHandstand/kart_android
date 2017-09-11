@@ -12,12 +12,13 @@ import us.handstand.kartwheel.inject.DaggerInjector
 import us.handstand.kartwheel.inject.Injector
 import us.handstand.kartwheel.inject.provider.*
 import us.handstand.kartwheel.layout.Font
+import us.handstand.kartwheel.model.CompiledStatements
 import us.handstand.kartwheel.model.Database
 import us.handstand.kartwheel.model.Storage
-import us.handstand.kartwheel.model.CompiledStatements
 import us.handstand.kartwheel.network.API
-import us.handstand.kartwheel.util.ThreadManager
 import us.handstand.kartwheel.notifications.PubNubManager
+import us.handstand.kartwheel.util.Audio
+import us.handstand.kartwheel.util.ThreadManager
 
 open class KartWheel : Application() {
 
@@ -35,6 +36,7 @@ open class KartWheel : Application() {
         CompiledStatements.initialize(Database.get())
         API.db = Database.get()
         Fabric.with(this, Crashlytics())
+        Audio.initialize(this)
         injector = DaggerInjector.builder()
                 .applicationProvider(ApplicationProvider(this))
                 .controllerProvider(ControllerProvider())
