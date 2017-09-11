@@ -16,7 +16,6 @@ import android.widget.TextView
 import android.widget.TextView.OnEditorActionListener
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import us.handstand.kartwheel.R
-import us.handstand.kartwheel.R.*
 import us.handstand.kartwheel.activity.TicketActivity.TicketFragment
 import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.layout.ViewUtil.findView
@@ -35,7 +34,7 @@ class WelcomeFragment : Fragment(), TicketFragment, android.text.TextWatcher, On
     lateinit private var button: AppCompatButton
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val fragmentView = inflater!!.inflate(layout.fragment_ticket_welcome, container, false) as ViewGroup
+        val fragmentView = inflater!!.inflate(R.layout.fragment_ticket_welcome, container, false) as ViewGroup
         birth = findView(fragmentView, R.id.birth)
         cell = findView(fragmentView, R.id.cell)
         email = findView(fragmentView, R.id.email)
@@ -71,19 +70,19 @@ class WelcomeFragment : Fragment(), TicketFragment, android.text.TextWatcher, On
     }
 
     override fun getTitleResId(): Int {
-        return string.welcome
+        return R.string.welcome
     }
 
     override fun getAdvanceButtonTextResId(): Int {
-        return string.im_ready
+        return R.string.im_ready
     }
 
     override fun getAdvanceButtonColor(): Int {
-        return if (isAdvanceButtonEnabled()) color.blue else super.getAdvanceButtonColor()
+        return if (isAdvanceButtonEnabled()) R.color.blue else super.getAdvanceButtonColor()
     }
 
     override fun getAdvanceButtonLoadingColor(): Int {
-        return if (isAdvanceButtonEnabled()) color.blue_loading else super.getAdvanceButtonLoadingColor()
+        return if (isAdvanceButtonEnabled()) R.color.blue_loading else super.getAdvanceButtonLoadingColor()
     }
 
     override fun isAdvanceButtonEnabled(): Boolean {
