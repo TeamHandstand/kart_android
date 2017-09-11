@@ -65,7 +65,7 @@ class KartButton : AppCompatButton, KartFontView, ValueAnimator.AnimatorUpdateLi
     }
 
     override fun playSoundEffect(soundConstant: Int) {
-        Audio.play(Audio.CLICK_BUTTON, priority = 1)
+        Audio.play(Audio.CLICK_BUTTON)
     }
 
     private fun setLoadingParams(attrs: AttributeSet?) {

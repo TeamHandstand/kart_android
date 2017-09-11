@@ -22,7 +22,7 @@ object Audio : SoundPool.OnLoadCompleteListener {
         soundPool.setOnLoadCompleteListener(this)
     }
 
-    fun play(sound: String, priority: Int = 0, loop: Int = 0) {
+    fun play(sound: String, priority: Int = 1, loop: Int = 0) {
         if (SOUNDS.indexOfValue(sound) >= 0) {
             playAndStoreStream(sound, priority, loop)
         } else if (!playQueue.containsKey(sound)) {
