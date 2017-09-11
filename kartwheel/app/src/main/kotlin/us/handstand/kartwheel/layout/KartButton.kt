@@ -51,6 +51,7 @@ class KartButton : AppCompatButton, KartFontView, ValueAnimator.AnimatorUpdateLi
                 animator!!.addUpdateListener(this)
                 animator!!.start()
             } else {
+                animator?.removeUpdateListener(this)
                 animator?.cancel()
                 animator = null
                 segment.reset()
@@ -135,7 +136,6 @@ class KartButton : AppCompatButton, KartFontView, ValueAnimator.AnimatorUpdateLi
         val lineMovementBottom = getBottomLine(animatedValue)
         segment.moveTo(lineMovementBottom.start, centerY + cornerRadius - paint.strokeWidth)
         segment.lineTo(lineMovementBottom.end, centerY + cornerRadius - paint.strokeWidth)
-
         invalidate()
     }
 
