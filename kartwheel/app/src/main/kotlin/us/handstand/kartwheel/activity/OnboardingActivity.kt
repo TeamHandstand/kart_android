@@ -91,7 +91,17 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
         videoBehavior.setBottomSheetCallback(videoBehaviorCallback)
 
         controller.transition(NONE, Storage.lastOnboardingState)
-        Audio.play(Audio.ONBOARDING)
+        Audio.play(Audio.ONBOARDING, loop = -1)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Audio.resume(Audio.ONBOARDING)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Audio.pause(Audio.ONBOARDING)
     }
 
     override fun onDestroy() {
