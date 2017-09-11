@@ -102,7 +102,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
         countdownScheduler.scheduleWithFixedDelay({
             raceCountdown.post {
                 if (controller.race?.r()?.alreadyStarted() == true) {
-                    raceCountdown.text = context.getString(R.string.start_race)
+                    raceCountdown.setText(R.string.start_race)
                     raceCountdownTitle.visibility = GONE
                 } else {
                     raceCountdown.text = StringUtil.hourMinSecFromMs(controller.race?.timeUntilRace)
@@ -263,7 +263,6 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
     private val anchorPointCenter: Float
         get() = raceSignUpParent.measuredHeight / 2f - (behavior.anchorPoint / 2f)
 
-    private fun checkLastState(state: Long): Boolean {
-        return lastBehaviorState == state || lastBehaviorState == 0L
-    }
+    private fun checkLastState(state: Long): Boolean =
+            lastBehaviorState == state || lastBehaviorState == 0L
 }
