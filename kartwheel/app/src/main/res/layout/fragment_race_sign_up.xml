@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/raceSignUpParent"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:parentTag="android.support.design.widget.CoordinatorLayout">
+    android:layout_height="match_parent">
 
     <com.google.android.gms.maps.MapView
         android:id="@+id/map"
@@ -161,4 +160,4 @@
                 app:rank="3" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
-</merge>
+</android.support.design.widget.CoordinatorLayout>

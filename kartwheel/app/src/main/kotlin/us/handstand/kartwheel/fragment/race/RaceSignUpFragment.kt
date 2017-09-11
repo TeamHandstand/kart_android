@@ -78,7 +78,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val fragmentView = inflater.inflate(R.layout.fragment_race_sign_up, container, true) as ViewGroup
+        val fragmentView = inflater.inflate(R.layout.fragment_race_sign_up, container) as ViewGroup
         raceSignUpParent = ViewUtil.findView(fragmentView, R.id.raceSignUpParent)
         signUpButton = ViewUtil.findView(fragmentView, R.id.signUpButton)
         signUpButton.setOnClickListener(this)
