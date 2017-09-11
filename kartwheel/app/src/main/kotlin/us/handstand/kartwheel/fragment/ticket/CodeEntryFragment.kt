@@ -9,7 +9,7 @@ import android.text.TextUtils.isEmpty
 import android.text.TextWatcher
 import android.text.method.LinkMovementMethod
 import android.view.KeyEvent
-import android.view.KeyEvent.ACTION_UP
+import android.view.KeyEvent.ACTION_DOWN
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -59,7 +59,7 @@ class CodeEntryFragment : Fragment(), TicketActivity.TicketFragment, TextView.On
     }
 
     override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
-        if (actionId == IME_ACTION_GO || event?.action == ACTION_UP) {
+        if (actionId == IME_ACTION_GO || event?.action == ACTION_DOWN) {
             activity.findViewById(R.id.button).performClick()
             return true
         }

@@ -22,14 +22,13 @@
 
         <EditText
             android:id="@+id/codeEditText"
+            style="@style/TicketInputStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
+            android:layout_margin="0dp"
             android:gravity="center_horizontal"
             android:imeOptions="actionGo"
-            android:inputType="text"
-            android:maxLines="1"
-            android:padding="16dp" />
+            android:inputType="text" />
 
         <android.support.v4.widget.ContentLoadingProgressBar
             android:id="@+id/networkProgress"
