@@ -32,9 +32,23 @@ object Audio : SoundPool.OnLoadCompleteListener {
         }
     }
 
-    fun stop(sound: String) {
+    fun resume(sound: String) {
         if (STREAMS.contains(sound)) {
-            soundPool.stop(STREAMS[sound]!!)
+            soundPool.resume(STREAMS[sound]!!)
+        }
+    }
+
+
+    fun stop(sound: String) {
+        val streamId = STREAMS.remove(sound)
+        if (streamId != null) {
+            soundPool.stop(streamId)
+        }
+    }
+
+    fun pause(sound: String) {
+        if (STREAMS.contains(sound)) {
+            soundPool.pause(STREAMS[sound]!!)
         }
     }
 
