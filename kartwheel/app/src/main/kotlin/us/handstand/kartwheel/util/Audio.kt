@@ -22,9 +22,6 @@ object Audio : SoundPool.OnLoadCompleteListener {
         soundPool.setOnLoadCompleteListener(this)
     }
 
-    /**
-     * @return stream ID of the playing sound. If return value is 0, then the sound was not played.
-     */
     fun play(sound: String, priority: Int = 0, loop: Int = 0) {
         if (SOUNDS.indexOfValue(sound) >= 0) {
             playAndStoreStream(sound, priority, loop)
@@ -50,7 +47,7 @@ object Audio : SoundPool.OnLoadCompleteListener {
 
     override fun onLoadComplete(soundPool: SoundPool?, sampleId: Int, status: Int) {
         val sound = SOUNDS.get(sampleId)
-        val audioFuture = playQueue[sound]
+        val audioFuture = playQueue.remove(sound)
         if (audioFuture != null) {
             playAndStoreStream(sound, audioFuture.priority, audioFuture.loop)
         }
