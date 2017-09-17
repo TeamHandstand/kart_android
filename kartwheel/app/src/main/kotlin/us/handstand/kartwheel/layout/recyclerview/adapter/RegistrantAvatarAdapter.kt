@@ -9,8 +9,8 @@ import us.handstand.kartwheel.layout.recyclerview.viewholder.RegistrantAvatarVH
 
 
 class RegistrantAvatarAdapter : RecyclerView.Adapter<RegistrantAvatarVH>() {
-    val registrantInfos = ArrayList<RegistrantInfo>()
-    val handler = Handler(Looper.getMainLooper())
+    private val registrantInfos = ArrayList<RegistrantInfo>()
+    private val handler = Handler(Looper.getMainLooper())
     var openSpots = 0L
 
     fun setRegistrantInfos(registrantInfos: List<RegistrantInfo>) {
@@ -34,20 +34,10 @@ class RegistrantAvatarAdapter : RecyclerView.Adapter<RegistrantAvatarVH>() {
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RegistrantAvatarVH {
-        return RegistrantAvatarVH.constructNewInstance(parent)
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RegistrantAvatarVH = RegistrantAvatarVH.constructNewInstance(parent)
 
-    override fun onBindViewHolder(holder: RegistrantAvatarVH, position: Int) {
-        synchronized(RegistrantAvatarAdapter@ this, {
-            holder.bind(registrantInfos[position])
-        })
-    }
+    @Synchronized override fun onBindViewHolder(holder: RegistrantAvatarVH, position: Int) = holder.bind(registrantInfos[position])
 
-    override fun getItemCount(): Int {
-        synchronized(RegistrantAvatarAdapter@ this, {
-            return registrantInfos.size
-        })
-    }
+    @Synchronized override fun getItemCount(): Int = registrantInfos.size
 }
 
