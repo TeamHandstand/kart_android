@@ -24,6 +24,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import us.handstand.kartwheel.R
+import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior
 import us.handstand.kartwheel.util.SnackbarUtil
 
 
@@ -112,6 +113,8 @@ object ViewUtil {
         val clip = ClipData.newPlainText(activity.getString(R.string.code_copied), text)
         clipboard.primaryClip = clip
     }
+
+    fun <T : View> getCenterOfAnchor(parent: View, behavior: AnchoredBottomSheetBehavior<T>): Float = parent.measuredHeight / 2f - (behavior.anchorPoint / 2f)
 }
 
 fun View.runOnPreDraw(runnable: (view: View) -> Unit) {

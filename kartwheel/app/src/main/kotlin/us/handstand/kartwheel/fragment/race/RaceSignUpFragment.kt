@@ -31,12 +31,12 @@ import us.handstand.kartwheel.controller.RaceSignUpListener
 import us.handstand.kartwheel.controller.RegistrantInfo
 import us.handstand.kartwheel.layout.BatteryWarningView
 import us.handstand.kartwheel.layout.TopCourseTimeView
+import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior
 import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior.Companion.STATE_ANCHOR_POINT
 import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior.Companion.STATE_COLLAPSED
 import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior.Companion.STATE_EXPANDED
 import us.handstand.kartwheel.layout.recyclerview.adapter.RegistrantAvatarAdapter
-import us.handstand.kartwheel.layout.runOnGlobalLayout
 import us.handstand.kartwheel.layout.setCandyCaneBackground
 import us.handstand.kartwheel.location.MapUtil
 import us.handstand.kartwheel.model.*
@@ -67,9 +67,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener {
     lateinit private var unbinder: Unbinder
     lateinit private var behavior: AnchoredBottomSheetBehavior<NestedScrollView>
     lateinit private var controller: RaceSignUpController
-    private var map: GoogleMap? = null
-    private var mapInitialized = false
-    private var lastBehaviorState: Long = 0
+    private val map = MapUtil()
 
     private val registrantAvatarAdapter = RegistrantAvatarAdapter()
     private val countdownScheduler = Executors.newSingleThreadScheduledExecutor()!!
@@ -107,7 +105,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {}
 
             override fun onStateChanged(bottomSheet: View, newState: Long) {
-                moveToCenter(controller.race?.c(), newState)
+                map.moveToCenter(controller.race?.c(), ViewUtil.getCenterOfAnchor(raceSignUpParent, behavior), behavior.state, newState)
             }
         })
         mapView.onCreate(savedInstanceState)
@@ -159,8 +157,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener {
         mapView.onLowMemory()
     }
 
-    @Suppress("DEPRECATION")
-    override fun onRegistrantsUpdated(registrantInfos: List<RegistrantInfo>) {
+    @Suppress("DEPRECATION") override fun onRegistrantsUpdated(registrantInfos: List<RegistrantInfo>) {
         activity.runOnUiThread {
             registrantAvatarAdapter.setRegistrantInfos(registrantInfos)
             if (controller.userInRace) {
@@ -182,7 +179,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener {
             registrantAvatarAdapter.openSpots = race.r().openSpots() ?: 0L
             registrantAvatarAdapter.notifyOpenSpotsChanged()
             // Draw the course in case the map was ready before we got the race
-            drawCourse(race.c(), map)
+            map.draw(race.c())
         }
     }
 
@@ -190,8 +187,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener {
         // TODO
     }
 
-    @OnClick(R.id.batteryWarning)
-    fun onBatteryWarning() {
+    @OnClick(R.id.batteryWarning) fun onBatteryWarning() {
         if (behavior.state == STATE_COLLAPSED) {
             behavior.state = STATE_EXPANDED
         } else if (behavior.state == STATE_EXPANDED) {
@@ -199,8 +195,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener {
         }
     }
 
-    @OnClick(R.id.signUpButton)
-    fun onSignUp() {
+    @OnClick(R.id.signUpButton) fun onSignUp() {
         if (controller.userInRace) {
             API.leaveRace(controller.eventId, controller.raceId)
         } else {
@@ -208,20 +203,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener {
         }
     }
 
-    override fun onMapReady(map: GoogleMap) {
-        this.map = map
-        raceSignUpParent.runOnGlobalLayout {
-            drawCourse(controller.race?.c(), map)
-            moveToCenter(controller.race?.c(), STATE_ANCHOR_POINT)
-        }
-    }
-
-    private fun drawCourse(course: Course?, map: GoogleMap?) {
-        mapInitialized = mapInitialized || MapUtil.draw(course, map)
-    }
-
-    private fun moveToCenter(course: Course?, newState: Long) {
-        val center = MapUtil.getCenter(raceSignUpParent, behavior)
-        lastBehaviorState = MapUtil.moveToCenter(course, map, center, behavior.state, newState, lastBehaviorState)
+    override fun onMapReady(googleMap: GoogleMap) {
+        map.onMapReady(controller.race?.c(), googleMap, ViewUtil.getCenterOfAnchor(raceSignUpParent, behavior), behavior.state)
     }
 }
