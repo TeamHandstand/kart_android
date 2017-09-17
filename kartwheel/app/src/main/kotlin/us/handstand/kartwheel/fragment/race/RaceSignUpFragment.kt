@@ -18,14 +18,9 @@ import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.TextView
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolylineOptions
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.controller.RaceSignUpController
 import us.handstand.kartwheel.controller.RaceSignUpListener
@@ -34,10 +29,9 @@ import us.handstand.kartwheel.layout.*
 import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior
 import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior.Companion.STATE_ANCHOR_POINT
 import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior.Companion.STATE_COLLAPSED
-import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior.Companion.STATE_DRAGGING
 import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior.Companion.STATE_EXPANDED
-import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior.Companion.STATE_SETTLING
 import us.handstand.kartwheel.layout.recyclerview.adapter.RegistrantAvatarAdapter
+import us.handstand.kartwheel.location.MapUtil
 import us.handstand.kartwheel.model.*
 import us.handstand.kartwheel.network.API
 import us.handstand.kartwheel.util.StringUtil
@@ -192,7 +186,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
             registrantAvatarAdapter.openSpots = race.r().openSpots() ?: 0L
             registrantAvatarAdapter.notifyOpenSpotsChanged()
             // Draw the course in case the map was ready before we got the race
-            drawCourse(race.c(), map)
+            MapUtil.draw(race.c(), map)
         }
     }
 
@@ -225,49 +219,11 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
     }
 
     private fun drawCourse(course: Course?, map: GoogleMap?) {
-        if (mapInitialized || course == null || course.vertices() == null || map == null) {
-            return
-        } else {
-            mapInitialized = true
-        }
-        // Move the camera to the course
-        val courseCenter = course.findCenter()
-        map.moveCamera(CameraUpdateFactory.newLatLng(LatLng(courseCenter.longitude, courseCenter.latitude)))
-        map.setMinZoomPreference(15f)
-        // Draw the course
-        val coursePolyline = PolylineOptions()
-        course.vertices()?.forEach { coursePolyline.add(LatLng(it.latitude(), it.longitude())) }
-        @Suppress("DEPRECATION")
-        coursePolyline.color(resources.getColor(R.color.blue))
-        map.addPolyline(coursePolyline)
-        val flag = MarkerOptions()
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_flag))
-                .position(LatLng(course.startLat(), course.startLong()))
-                .anchor(.5f, .5f)
-                .zIndex(10f)
-        map.addMarker(flag)
+        mapInitialized = mapInitialized || MapUtil.draw(course, map)
     }
 
-    private fun moveToCenter(course: Course?, newState: Long = behavior.state) {
-        if (course != null && newState != STATE_SETTLING && newState != STATE_DRAGGING) {
-            drawCourse(course, map)
-            if (behavior.state == lastBehaviorState) {
-                return
-            }
-            if (newState == STATE_ANCHOR_POINT && checkLastState(STATE_COLLAPSED)) {
-                map?.animateCamera(CameraUpdateFactory.scrollBy(0f, anchorPointCenter))
-            } else if (newState == STATE_COLLAPSED && checkLastState(STATE_ANCHOR_POINT)) {
-                map?.animateCamera(CameraUpdateFactory.scrollBy(0f, -anchorPointCenter))
-            } else {
-                return
-            }
-            lastBehaviorState = newState
-        }
+    private fun moveToCenter(course: Course?, newState: Long) {
+        val center = MapUtil.getCenter(raceSignUpParent, behavior)
+        lastBehaviorState = MapUtil.moveToCenter(course, map, center, behavior.state, newState, lastBehaviorState)
     }
-
-    private val anchorPointCenter: Float
-        get() = raceSignUpParent.measuredHeight / 2f - (behavior.anchorPoint / 2f)
-
-    private fun checkLastState(state: Long): Boolean =
-            lastBehaviorState == state || lastBehaviorState == 0L
 }
