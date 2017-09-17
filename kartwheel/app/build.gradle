@@ -5,6 +5,7 @@ buildscript {
         aws_version = '2.4.4'
         autovalue_version = '1.4.1'
         autovalue_gson_version = '0.4.6'
+        butterknife_version = '8.8.1'
         crashlytics_version = '2.6.8'
         dagger_version = '2.11'
         espresso_version = '2.2.2'
@@ -153,6 +154,7 @@ dependencies {
     compile "com.google.dagger:dagger:$dagger_version"
     compile "com.google.firebase:firebase-messaging:$gms_version"
     compile "com.googlecode.libphonenumber:libphonenumber:$google_phonenumber_version"
+    compile "com.jakewharton:butterknife:$butterknife_version"
     compile "com.pubnub:pubnub-gson:$pubnub_version"
     compile "com.squareup.okhttp3:okhttp:$okhttp3_version"
     compile "com.squareup.retrofit2:converter-gson:$retrofit_version"
@@ -162,6 +164,7 @@ dependencies {
 
     kapt "com.google.auto.value:auto-value:$autovalue_version"
     kapt("com.google.dagger:dagger-compiler:$dagger_version")
+    kapt "com.jakewharton:butterknife-compiler:$butterknife_version"
     kapt "com.ryanharter.auto.value:auto-value-gson:$autovalue_gson_version"
 
     provided "com.google.auto.value:auto-value:$autovalue_version"
@@ -178,8 +181,8 @@ dependencies {
     androidTestCompile "com.android.support.test.espresso:espresso-intents:$espresso_version"
     androidTestCompile "com.android.support.test:runner:$android_test_runner_version"
     androidTestCompile "com.android.support.test.uiautomator:uiautomator-v18:$uiautomator_version"
-    androidTestCompile "com.squareup.okhttp3:mockwebserver:$okhttp3_version"
     androidTestCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    androidTestCompile "com.squareup.okhttp3:mockwebserver:$okhttp3_version"
 
     testCompile "com.squareup.okhttp3:mockwebserver:$okhttp3_version"
     testCompile "org.mockito:mockito-core:$mockito_version"
