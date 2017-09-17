@@ -42,7 +42,7 @@ import us.handstand.kartwheel.location.MapUtil
 import us.handstand.kartwheel.model.*
 import us.handstand.kartwheel.network.API
 import us.handstand.kartwheel.util.StringUtil
-import java.util.concurrent.Executors
+import us.handstand.kartwheel.util.ThreadManager
 import java.util.concurrent.TimeUnit
 
 
@@ -70,7 +70,6 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener {
     private val map = MapUtil()
 
     private val registrantAvatarAdapter = RegistrantAvatarAdapter()
-    private val countdownScheduler = Executors.newSingleThreadScheduledExecutor()!!
     private val batteryInfoReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             batteryWarning.setBatteryPercentage(intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0))
@@ -83,7 +82,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener {
         registrantRecyclerView.layoutManager = LinearLayoutManager(inflater.context, HORIZONTAL, false)
         registrantRecyclerView.adapter = registrantAvatarAdapter
         bottomSheet.setCandyCaneBackground(android.R.color.white, R.color.textLightGrey_40p)
-        countdownScheduler.scheduleWithFixedDelay({
+        ThreadManager.scheduler.scheduleWithFixedDelay({
             raceCountdown.post {
                 when (controller.race?.raceStatus) {
                     Race.FINISHED -> {

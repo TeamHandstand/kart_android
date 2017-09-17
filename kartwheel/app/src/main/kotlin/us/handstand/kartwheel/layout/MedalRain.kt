@@ -11,8 +11,8 @@ import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.OnboardingActivity
 import us.handstand.kartwheel.controller.OnboardingController.Companion.POINT_SYSTEM
 import us.handstand.kartwheel.model.Storage
+import us.handstand.kartwheel.util.ThreadManager
 import java.util.*
-import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
@@ -30,7 +30,7 @@ class MedalRain(val activity: OnboardingActivity) {
     }
 
     fun start() {
-        timer = scheduler.scheduleWithFixedDelay({
+        timer = ThreadManager.scheduler.scheduleWithFixedDelay({
             if (Storage.lastOnboardingState == POINT_SYSTEM && !activity.isDestroyed && !(timer?.isCancelled ?: true)) {
                 activity.runOnUiThread { animateMedal() }
             } else {
@@ -74,7 +74,6 @@ class MedalRain(val activity: OnboardingActivity) {
     }
 
     companion object {
-        private val scheduler = Executors.newSingleThreadScheduledExecutor()!!
         private var timer: ScheduledFuture<*>? = null
         val random = Random()
         val accelerateInterpolator = AccelerateInterpolator()
