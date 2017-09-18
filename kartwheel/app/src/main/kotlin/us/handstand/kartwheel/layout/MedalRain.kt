@@ -31,7 +31,7 @@ class MedalRain(val activity: OnboardingActivity) {
 
     fun start() {
         timer = ThreadManager.scheduler.scheduleWithFixedDelay({
-            if (Storage.lastOnboardingState == POINT_SYSTEM && !activity.isDestroyed && !(timer?.isCancelled ?: true)) {
+            if (Storage.lastOnboardingState == POINT_SYSTEM && !activity.isDestroyed && timer?.isCancelled == false) {
                 activity.runOnUiThread { animateMedal() }
             } else {
                 timer?.cancel(true)
@@ -56,7 +56,7 @@ class MedalRain(val activity: OnboardingActivity) {
         animator.start()
     }
 
-    fun getRandomEmojiImageView(): ImageView {
+    private fun getRandomEmojiImageView(): ImageView {
         val randomEmoji = ImageView(activity)
         val emojiDrawableResource = pointSystemEmojis[nextRandom(0, pointSystemEmojis.size)]
         val size = ViewUtil.dpToPx(activity, pointSystemSizes[nextRandom(0, pointSystemSizes.size)])
@@ -67,7 +67,7 @@ class MedalRain(val activity: OnboardingActivity) {
         return randomEmoji
     }
 
-    fun getRandomXValue(): Float {
+    private fun getRandomXValue(): Float {
         val measuredWidth = background?.measuredWidth ?: 0
         val random = nextRandom(0, if (measuredWidth <= 0) 1 else measuredWidth)
         return if (random < 20) 20f else if (random > measuredWidth - 50f) random - 50f else random.toFloat()
@@ -75,13 +75,11 @@ class MedalRain(val activity: OnboardingActivity) {
 
     companion object {
         private var timer: ScheduledFuture<*>? = null
-        val random = Random()
+        private val random = Random()
         val accelerateInterpolator = AccelerateInterpolator()
-        val pointSystemEmojis = listOf<Int>(R.drawable.leaderboard_first_place, R.drawable.leaderboard_second_place, R.drawable.leaderboard_third_place, R.drawable.team_detail_medal_ribbon, R.drawable.onboarding_preview_crown)
-        val pointSystemSizes = listOf<Int>(50, 60, 70, 80, 90)
+        val pointSystemEmojis = listOf(R.drawable.leaderboard_first_place, R.drawable.leaderboard_second_place, R.drawable.leaderboard_third_place, R.drawable.team_detail_medal_ribbon, R.drawable.onboarding_preview_crown)
+        val pointSystemSizes = listOf(50, 60, 70, 80, 90)
 
-        fun nextRandom(min: Int, max: Int): Int {
-            return random.nextInt(max) + min
-        }
+        fun nextRandom(min: Int, max: Int): Int = random.nextInt(max) + min
     }
 }
