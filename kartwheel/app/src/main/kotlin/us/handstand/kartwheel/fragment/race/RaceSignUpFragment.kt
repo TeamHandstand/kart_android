@@ -1,11 +1,6 @@
 package us.handstand.kartwheel.fragment.race
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.content.res.ColorStateList
-import android.os.BatteryManager
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
@@ -61,20 +56,13 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener {
     @BindView(R.id.registrantRecyclerView) lateinit var registrantRecyclerView: RecyclerView
     @BindView(R.id.batteryWarning) lateinit var batteryWarning: BatteryWarningView
     @BindView(R.id.map) lateinit var mapView: MapView
-    @BindView(R.id.toolbar) lateinit var toolbar: View
     @BindView(R.id.raceSignUpParent) lateinit var raceSignUpParent: ViewGroup
     @BindView(R.id.bottomSheet) lateinit var bottomSheet: NestedScrollView
     lateinit private var unbinder: Unbinder
     lateinit private var behavior: AnchoredBottomSheetBehavior<NestedScrollView>
     lateinit private var controller: RaceSignUpController
     private val map = MapUtil()
-
     private val registrantAvatarAdapter = RegistrantAvatarAdapter()
-    private val batteryInfoReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            batteryWarning.setBatteryPercentage(intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0))
-        }
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val fragmentView = inflater.inflate(R.layout.fragment_race_sign_up, container) as ViewGroup
@@ -126,14 +114,14 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener {
         super.onResume()
         mapView.onResume()
         controller.subscribe()
-        activity.registerReceiver(batteryInfoReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+        batteryWarning.registerReceiver()
     }
 
     override fun onPause() {
         super.onPause()
         mapView.onPause()
         controller.unsubscribe()
-        activity.unregisterReceiver(batteryInfoReceiver)
+        batteryWarning.unregisterReceiver()
     }
 
     override fun onDestroy() {

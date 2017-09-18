@@ -1,6 +1,10 @@
 package us.handstand.kartwheel.layout
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.os.BatteryManager
 import android.util.AttributeSet
 import android.view.View
 import android.widget.LinearLayout
@@ -17,6 +21,11 @@ class BatteryWarningView : LinearLayout {
 
     @BindView(R.id.batteryPercentage) lateinit var batteryPercentage: TextView
     @BindView(R.id.batteryDescription) lateinit var batteryDescription: TextView
+    private val batteryInfoReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            setBatteryPercentage(intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0))
+        }
+    }
 
     init {
         View.inflate(context, R.layout.view_battery_warning, this)
@@ -25,6 +34,10 @@ class BatteryWarningView : LinearLayout {
             setBatteryPercentage(50)
         }
     }
+
+    fun registerReceiver() = context.registerReceiver(batteryInfoReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+
+    fun unregisterReceiver() = context.unregisterReceiver(batteryInfoReceiver)
 
     fun setBatteryPercentage(level: Int) {
         when {
