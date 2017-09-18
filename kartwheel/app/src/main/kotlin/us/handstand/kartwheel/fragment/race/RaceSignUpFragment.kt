@@ -10,18 +10,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import kotlinx.android.synthetic.main.fragment_race_sign_up.*
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.controller.RaceSignUpController
 import us.handstand.kartwheel.controller.RaceSignUpListener
 import us.handstand.kartwheel.controller.RegistrantInfo
-import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior
 import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior.Companion.STATE_ANCHOR_POINT
 import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior.Companion.STATE_COLLAPSED
 import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior.Companion.STATE_EXPANDED
 import us.handstand.kartwheel.layout.recyclerview.adapter.RegistrantAvatarAdapter
+import us.handstand.kartwheel.layout.runOnGlobalLayout
 import us.handstand.kartwheel.layout.setCandyCaneBackground
 import us.handstand.kartwheel.location.MapUtil
 import us.handstand.kartwheel.location.UserLocation
@@ -33,20 +34,30 @@ import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
 // TODO: Add error callbacks when trying to join/leave a race
-class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, View.OnClickListener {
+class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, MapUtil.MapViewHolder, View.OnClickListener {
     lateinit private var behavior: AnchoredBottomSheetBehavior<NestedScrollView>
     lateinit private var controller: RaceSignUpController
     lateinit private var scheduledCountdownFuture: ScheduledFuture<*>
     lateinit private var userLocation: UserLocation
-    private val mapUtil = MapUtil()
+    lateinit private var mapUtil: MapUtil
+    lateinit private var mapView: MapView
+    lateinit private var raceSignUpParent: View
     private val registrantAvatarAdapter = RegistrantAvatarAdapter()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-            inflater.inflate(R.layout.fragment_race_sign_up, container) as ViewGroup
-
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        controller = RaceSignUpController(Database.get(), Storage.eventId, activity.intent.getStringExtra(RaceModel.ID), this)
+        mapUtil = MapUtil(context)
         userLocation = UserLocation(context)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
+            inflater.inflate(R.layout.fragment_race_sign_up, container)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        mapView = view.findViewById(R.id.mapView) // Need to keep this around for lifecycle callbacks
+        raceSignUpParent = view.findViewById(R.id.raceSignUpParent)
         registrantRecyclerView.layoutManager = LinearLayoutManager(context, HORIZONTAL, false)
         registrantRecyclerView.adapter = registrantAvatarAdapter
         bottomSheet.setCandyCaneBackground(android.R.color.white, R.color.textLightGrey_40p)
@@ -74,7 +85,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, V
             override fun onSlide(bottomSheet: View, slideOffset: Float) {}
 
             override fun onStateChanged(bottomSheet: View, newState: Long) {
-                mapUtil.moveToCenter(controller.race?.c(), ViewUtil.getCenterOfAnchor(raceSignUpParent, behavior), behavior.state, newState)
+                mapUtil.moveToCenter(controller.race?.c(), this@RaceSignUpFragment, newState)
             }
         })
         mapView.onCreate(savedInstanceState)
@@ -84,11 +95,6 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, V
     override fun onDestroyView() {
         super.onDestroyView()
         scheduledCountdownFuture.cancel(true)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        controller = RaceSignUpController(Database.get(), Storage.eventId, activity.intent.getStringExtra(RaceModel.ID), this)
     }
 
     override fun onResume() {
@@ -107,14 +113,16 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, V
 
     override fun onDestroy() {
         mapView.onDestroy()
-        userLocation.ignoreLocationUpdates()
+        userLocation.dispose()
         super.onDestroy()
     }
 
     override fun onStart() {
         super.onStart()
         mapView.onStart()
-        userLocation.requestLocationUpdates()
+        userLocation.subscribe {
+            mapUtil.draw(Storage.userId, Storage.userBuddyUrl, it)
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -177,6 +185,14 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, V
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        mapUtil.onMapReady(controller.race?.c(), googleMap, ViewUtil.getCenterOfAnchor(raceSignUpParent, behavior), behavior.state)
+        raceSignUpParent.runOnGlobalLayout {
+            mapUtil.onMapReady(controller.race?.c(), googleMap, this)
+        }
     }
+
+    override val calculateCenter: Float
+        get() = raceSignUpParent.measuredHeight / 2f - (behavior.anchorPoint / 2f)
+
+    override val behaviorState: Long
+        get() = behavior.state
 }
