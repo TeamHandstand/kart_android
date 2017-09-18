@@ -5,8 +5,8 @@ import android.text.TextUtils.isEmpty
 import android.util.Log
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
-import com.squareup.sqlbrite.BriteDatabase
-import rx.Subscription
+import com.squareup.sqlbrite2.BriteDatabase
+import io.reactivex.disposables.Disposable
 import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.model.User
 import us.handstand.kartwheel.model.UserModel
@@ -38,22 +38,22 @@ class TicketController(val db: BriteDatabase?, var listener: TicketStepCompletio
         }
     }
 
-    private var userSubscription: Subscription? = null
+    private var userDisposable: Disposable? = null
 
     init {
         val query = User.FACTORY.select_for_id(Storage.userId)
-        userSubscription = db?.createQuery(UserModel.TABLE_NAME, query.statement, *query.args)
+        userDisposable = db?.createQuery(UserModel.TABLE_NAME, query.statement, *query.args)
                 ?.mapToOne { User.FACTORY.select_for_idMapper().map(it) }
                 ?.subscribe {
                     user = it
-                    userSubscription?.unsubscribe()
-                    userSubscription = null
+                    userDisposable?.dispose()
+                    userDisposable = null
                 }
     }
 
     fun onDestroy() {
-        userSubscription?.unsubscribe()
-        userSubscription = null
+        userDisposable?.dispose()
+        userDisposable = null
     }
 
     var code: String = ""

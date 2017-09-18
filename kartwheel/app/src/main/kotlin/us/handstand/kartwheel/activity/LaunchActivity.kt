@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils.isEmpty
 import android.view.View
-import rx.Subscription
+import io.reactivex.disposables.Disposable
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.controller.OnboardingController
 import us.handstand.kartwheel.controller.TicketController
@@ -17,7 +17,7 @@ import us.handstand.kartwheel.model.Storage
 
 
 class LaunchActivity : AppCompatActivity() {
-    var subscription: Subscription? = null
+    var disposable: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +32,7 @@ class LaunchActivity : AppCompatActivity() {
             finish()
         } else {
             val eventQuery = Event.FACTORY.select_all(Storage.eventId)
-            subscription = Database.get().createQuery(EventModel.TABLE_NAME, eventQuery.statement, *eventQuery.args)
+            disposable = Database.get().createQuery(EventModel.TABLE_NAME, eventQuery.statement, *eventQuery.args)
                     .mapToOne { it.use { Event.FACTORY.select_allMapper().map(it) } }
                     .subscribe {
                         if (it.usersCanSeeRaces() == true
@@ -49,6 +49,6 @@ class LaunchActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        subscription?.unsubscribe()
+        disposable?.dispose()
     }
 }

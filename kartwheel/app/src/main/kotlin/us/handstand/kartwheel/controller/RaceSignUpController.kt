@@ -1,7 +1,7 @@
 package us.handstand.kartwheel.controller
 
-import com.squareup.sqlbrite.BriteDatabase
-import rx.Subscription
+import com.squareup.sqlbrite2.BriteDatabase
+import io.reactivex.disposables.Disposable
 import us.handstand.kartwheel.model.*
 import us.handstand.kartwheel.network.API
 import us.handstand.kartwheel.notifications.PubNubManager
@@ -15,16 +15,16 @@ interface RaceSignUpListener {
 }
 
 class RaceSignUpController(val db: BriteDatabase?, val eventId: String, val raceId: String, val listener: RaceSignUpListener) {
-    private var raceSubscription: Subscription? = null
-    private var registrantSubscription: Subscription? = null
-    private var topThreeSubscription: Subscription? = null
+    private var raceDisposable: Disposable? = null
+    private var registrantDisposable: Disposable? = null
+    private var topThreeDisposable: Disposable? = null
     var race: Race.RaceWithCourse? = null
     var userInRace = false
 
     fun subscribe() {
         // Listen for Race updates
         val raceQuery = Race.FACTORY.select_race_with_course(raceId)
-        raceSubscription = Database.get().createQuery(RaceModel.RACEWITHCOURSE_VIEW_NAME, raceQuery.statement, *raceQuery.args)
+        raceDisposable = Database.get().createQuery(RaceModel.RACEWITHCOURSE_VIEW_NAME, raceQuery.statement, *raceQuery.args)
                 .mapToOne { Race.RACE_WITH_COURSE_SELECT.map(it) }
                 .subscribe {
                     this.race = it
@@ -32,12 +32,12 @@ class RaceSignUpController(val db: BriteDatabase?, val eventId: String, val race
                 }
         // Listen for registrant updates
         val registrantQuery = User.FACTORY.select_for_race_id(raceId)
-        registrantSubscription = db?.createQuery(UserModel.TABLE_NAME, registrantQuery.statement, *registrantQuery.args)
+        registrantDisposable = db?.createQuery(UserModel.TABLE_NAME, registrantQuery.statement, *registrantQuery.args)
                 ?.mapToList { User.FACTORY.select_for_race_idMapper().map(it) }
                 ?.subscribe { onRegistrantsUpdated(it) }
         // Listen for the top three registrants for this race
 //        val topThreeQuery = User.FACTORY.select_top_three_for_race(raceId)
-//        topThreeSubscription = db?.createQuery(UserModel.TABLE_NAME, topThreeQuery.statement, *topThreeQuery.args)
+//        topThreeDisposable = db?.createQuery(UserModel.TABLE_NAME, topThreeQuery.statement, *topThreeQuery.args)
 //                ?.mapToList { User.FACTORY.select_top_three_for_raceMapper().map(it) }
 //                ?.subscribe { listener.onTopThreeUpdated(it) }
         API.getUserRaceInfos(eventId, raceId)
@@ -46,10 +46,10 @@ class RaceSignUpController(val db: BriteDatabase?, val eventId: String, val race
     }
 
 
-    fun unsubscribe() {
-        raceSubscription?.unsubscribe()
-        registrantSubscription?.unsubscribe()
-        topThreeSubscription?.unsubscribe()
+    fun dispose() {
+        raceDisposable?.dispose()
+        registrantDisposable?.dispose()
+        topThreeDisposable?.dispose()
         PubNubManager.unsubscribe(PubNubManager.PubNubChannelType.raceRoomChannel, raceId)
     }
 

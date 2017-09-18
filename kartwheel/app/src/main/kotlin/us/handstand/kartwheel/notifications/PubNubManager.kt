@@ -12,7 +12,7 @@ import com.pubnub.api.models.consumer.channel_group.PNChannelGroupsAddChannelRes
 import com.pubnub.api.models.consumer.channel_group.PNChannelGroupsRemoveChannelResult
 import com.pubnub.api.models.consumer.pubsub.PNMessageResult
 import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult
-import com.squareup.sqlbrite.BriteDatabase
+import com.squareup.sqlbrite2.BriteDatabase
 import us.handstand.kartwheel.BuildConfig
 import us.handstand.kartwheel.model.*
 import us.handstand.kartwheel.network.API

@@ -1,6 +1,6 @@
 package us.handstand.kartwheel.model
 
-import com.squareup.sqlbrite.BriteDatabase
+import com.squareup.sqlbrite2.BriteDatabase
 import com.squareup.sqldelight.SqlDelightCompiledStatement
 
 

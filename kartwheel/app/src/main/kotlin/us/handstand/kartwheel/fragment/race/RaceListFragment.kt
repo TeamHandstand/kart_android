@@ -40,7 +40,7 @@ class RaceListFragment : Fragment(), RaceListController.RaceListListener {
 
     override fun onPause() {
         super.onPause()
-        controller.unsubscribe()
+        controller.dispose()
     }
 
     override fun onRaceItemClicked(raceId: String) {

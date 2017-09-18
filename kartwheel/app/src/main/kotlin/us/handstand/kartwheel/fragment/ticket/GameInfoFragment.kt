@@ -43,7 +43,7 @@ class GameInfoFragment : Fragment(), TicketActivity.TicketFragment, GameInfoCont
     }
 
     override fun onPause() {
-        controller.unsubscribe()
+        controller.dispose()
         super.onPause()
     }
 

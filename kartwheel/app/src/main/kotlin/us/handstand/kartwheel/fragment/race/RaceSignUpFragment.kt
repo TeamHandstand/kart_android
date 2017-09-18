@@ -101,7 +101,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, V
     override fun onPause() {
         super.onPause()
         mapView.onPause()
-        controller.unsubscribe()
+        controller.dispose()
         batteryWarning.unregisterReceiver()
     }
 

@@ -6,7 +6,7 @@ import android.text.TextUtils.isEmpty
 import com.google.auto.value.AutoValue
 import com.google.gson.Gson
 import com.google.gson.TypeAdapter
-import com.squareup.sqlbrite.BriteDatabase
+import com.squareup.sqlbrite2.BriteDatabase
 import us.handstand.kartwheel.model.UserModel.Creator
 import us.handstand.kartwheel.model.Util.putIfNotAbsent
 import us.handstand.kartwheel.util.DateFormatter

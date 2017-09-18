@@ -1,6 +1,6 @@
 package us.handstand.kartwheel.controller
 
-import rx.Subscription
+import io.reactivex.disposables.Disposable
 import us.handstand.kartwheel.model.*
 
 
@@ -9,9 +9,9 @@ open class GameInfoController {
     private var p2: User? = null
     private var t1: Ticket? = null
     private var t2: Ticket? = null
-    private var userSubscription: Subscription? = null
-    private var ticket1Subscription: Subscription? = null
-    private var ticket2Subscription: Subscription? = null
+    private var userDisposable: Disposable? = null
+    private var ticket1Disposable: Disposable? = null
+    private var ticket2Disposable: Disposable? = null
     lateinit var listener: GameInfoCompletionListener
 
     companion object {
@@ -23,7 +23,7 @@ open class GameInfoController {
 
     fun subscribe() {
         val query = User.FACTORY.select_from_team(Storage.teamId)
-        userSubscription = Database.get().createQuery(UserModel.TABLE_NAME, query.statement, *query.args)
+        userDisposable = Database.get().createQuery(UserModel.TABLE_NAME, query.statement, *query.args)
                 .mapToList { User.FACTORY.select_from_teamMapper().map(it) }
                 .subscribe { users ->
                     synchronized(this, {
@@ -32,17 +32,17 @@ open class GameInfoController {
                 }
     }
 
-    fun unsubscribe() {
-        userSubscription?.unsubscribe()
-        ticket1Subscription?.unsubscribe()
-        ticket2Subscription?.unsubscribe()
+    fun dispose() {
+        userDisposable?.dispose()
+        ticket1Disposable?.dispose()
+        ticket2Disposable?.dispose()
         p1 = null
         p2 = null
         t1 = null
         t2 = null
     }
 
-    fun getTicketForUser(userId: String): Subscription {
+    fun getTicketForUser(userId: String): Disposable {
         val query = Ticket.FACTORY.select_for_player(userId)
         return Database.get().createQuery(TicketModel.TABLE_NAME, query.statement, *query.args)
                 .mapToOne { Ticket.FACTORY.select_for_playerMapper().map(it) }
@@ -57,10 +57,10 @@ open class GameInfoController {
         for (user in users) {
             if (user.id() == Storage.userId) {
                 p1 = user
-                ticket1Subscription = getTicketForUser(user.id())
+                ticket1Disposable = getTicketForUser(user.id())
             } else {
                 p2 = user
-                ticket2Subscription = getTicketForUser(user.id())
+                ticket2Disposable = getTicketForUser(user.id())
             }
         }
     }

@@ -4,9 +4,9 @@ package us.handstand.kartwheel.model
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.squareup.sqlbrite.BriteDatabase
-import com.squareup.sqlbrite.SqlBrite
-import rx.schedulers.Schedulers
+import com.squareup.sqlbrite2.BriteDatabase
+import com.squareup.sqlbrite2.SqlBrite
+import io.reactivex.schedulers.Schedulers
 
 class Database private constructor(context: Context) : SQLiteOpenHelper(context, Database.DB_NAME, null, Database.VERSION) {
     private val db: BriteDatabase

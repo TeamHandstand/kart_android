@@ -6,12 +6,14 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import io.reactivex.Observable
+import io.reactivex.Observer
 import us.handstand.kartwheel.model.Database
 import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.model.UserRaceInfo
 import us.handstand.kartwheel.network.API
 
-class UserLocation(context: Context) : LocationListener {
+class UserLocation(context: Context) : Observable<Location>(), LocationListener {
     private var locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
     @Throws(SecurityException::class) fun requestLocationUpdates() = locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, this)
@@ -35,5 +37,9 @@ class UserLocation(context: Context) : LocationListener {
     }
 
     override fun onProviderDisabled(provider: String) {
+    }
+
+    override fun subscribeActual(observer: Observer<in Location>?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

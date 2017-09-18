@@ -1,11 +1,9 @@
 package us.handstand.kartwheel.model
 
 import android.content.ContentValues
-import android.database.sqlite.SQLiteDatabase
 import com.google.auto.value.AutoValue
 import com.google.gson.Gson
 import com.google.gson.TypeAdapter
-import com.squareup.sqlbrite.BriteDatabase
 import us.handstand.kartwheel.model.RaceEventModel.Creator
 import us.handstand.kartwheel.model.Util.putIfNotAbsent
 

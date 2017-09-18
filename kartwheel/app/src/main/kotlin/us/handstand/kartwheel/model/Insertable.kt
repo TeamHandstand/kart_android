@@ -2,7 +2,7 @@ package us.handstand.kartwheel.model
 
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
-import com.squareup.sqlbrite.BriteDatabase
+import com.squareup.sqlbrite2.BriteDatabase
 import java.util.concurrent.CountDownLatch
 
 
