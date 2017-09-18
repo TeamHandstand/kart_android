@@ -34,9 +34,9 @@ class GameInfoPlayerView : RelativeLayout, View.OnClickListener {
 
     fun init(attrs: AttributeSet?) {
         View.inflate(context, R.layout.view_game_info_player, this)
-        playerNumber = findViewById(R.id.player_number) as TextView
-        playerName = findViewById(R.id.player_name) as TextView
-        forfeitOrShare = findViewById(R.id.forfeit_or_share) as ImageView
+        playerNumber = findViewById(R.id.player_number)
+        playerName = findViewById(R.id.player_name)
+        forfeitOrShare = findViewById(R.id.forfeit_or_share)
         val a = context.theme.obtainStyledAttributes(attrs, R.styleable.GameInfoPlayerView, 0, 0)
         val number: Int
         try {

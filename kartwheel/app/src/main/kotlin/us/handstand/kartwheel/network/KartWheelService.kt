@@ -47,4 +47,7 @@ internal interface KartWheelService {
 
     @GET(BuildConfig.SERVER_FRAGMENT + "mini_game_types")
     fun getMiniGameTypes(): Call<JsonElement>
+
+    @PUT(BuildConfig.SERVER_FRAGMENT + "events/{eventId}/races/{raceId}/user_race_infos/{userRaceInfoId}")
+    fun updateLocation(@Path("eventId") eventId: String, @Path("raceId") raceId: String, @Path("userRaceInfoId") userRaceInfoId: String, @Body locationUpdate: JsonObject): Call<JsonElement>
 }

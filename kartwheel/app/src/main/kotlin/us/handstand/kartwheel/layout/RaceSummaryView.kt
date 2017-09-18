@@ -30,11 +30,11 @@ class RaceSummaryView : RelativeLayout {
 
     init {
         View.inflate(context, R.layout.recycler_view_holder_race_list, this)
-        startTime = ViewUtil.findView(this, R.id.startTime)
-        raceName = ViewUtil.findView(this, R.id.raceName)
-        details = ViewUtil.findView(this, R.id.raceDetails)
-        spotsLeft = ViewUtil.findView(this, R.id.spotsLeft)
-        avatar = ViewUtil.findView(this, R.id.avatar)
+        startTime = findViewById(R.id.startTime)
+        raceName = findViewById(R.id.raceName)
+        details = findViewById(R.id.raceDetails)
+        spotsLeft = findViewById(R.id.spotsLeft)
+        avatar = findViewById(R.id.avatar)
     }
 
     fun setRace(race: Race.RaceWithCourse) {

@@ -13,8 +13,8 @@ import us.handstand.kartwheel.layout.recyclerview.adapter.AdapterVHClickListener
 
 class RegistrantAvatarVH private constructor(val parent: ViewGroup) : AdapterVH(parent) {
     override var adapterVHClickListener: AdapterVHClickListener<RegistrantAvatarVH>? = null
-    val avatarView = parent.findViewById(R.id.avatar) as CircularImageView
-    val firstName = parent.findViewById(R.id.firstName) as TextView
+    val avatarView: CircularImageView = parent.findViewById(R.id.avatar)
+    val firstName: TextView = parent.findViewById(R.id.firstName)
 
     companion object {
         fun constructNewInstance(parent: ViewGroup): RegistrantAvatarVH {

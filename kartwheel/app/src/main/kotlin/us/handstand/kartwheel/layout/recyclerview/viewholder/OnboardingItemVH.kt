@@ -5,11 +5,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import us.handstand.kartwheel.R
-import us.handstand.kartwheel.layout.ViewUtil
 
 
 class OnboardingItemVH private constructor(viewGroup: ViewGroup) : RecyclerView.ViewHolder(viewGroup) {
-    private val imageView: ImageView = ViewUtil.findView(viewGroup, R.id.onboardingItem)
+    private val imageView: ImageView = viewGroup.findViewById(R.id.onboardingItem)
 
     companion object {
         fun constructNewInstance(parent: ViewGroup): OnboardingItemVH {

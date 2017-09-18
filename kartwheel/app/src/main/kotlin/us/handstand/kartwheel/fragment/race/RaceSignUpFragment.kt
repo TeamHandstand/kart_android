@@ -2,30 +2,20 @@ package us.handstand.kartwheel.fragment.race
 
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.support.v4.widget.NestedScrollView
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.LinearLayoutManager.HORIZONTAL
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
 import android.view.ViewGroup
-import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
-import butterknife.Unbinder
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
+import kotlinx.android.synthetic.main.fragment_race_sign_up.*
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.controller.RaceSignUpController
 import us.handstand.kartwheel.controller.RaceSignUpListener
 import us.handstand.kartwheel.controller.RegistrantInfo
-import us.handstand.kartwheel.layout.BatteryWarningView
-import us.handstand.kartwheel.layout.TopCourseTimeView
 import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior
 import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior.Companion.STATE_ANCHOR_POINT
@@ -41,34 +31,16 @@ import us.handstand.kartwheel.util.ThreadManager
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
-
 // TODO: Add error callbacks when trying to join/leave a race
-class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener {
-
-    @BindView(R.id.signUpButton) lateinit var signUpButton: FloatingActionButton
-    @BindView(R.id.batteryWarning) lateinit var raceName: TextView
-    @BindView(R.id.raceDescription) lateinit var raceDescription: TextView
-    @BindView(R.id.raceCountdownTitle) lateinit var raceCountdownTitle: TextView
-    @BindView(R.id.raceCountdown) lateinit var raceCountdown: TextView
-    @BindView(R.id.spotsLeft) lateinit var spotsLeft: TextView
-    @BindView(R.id.firstTopTime) lateinit var firstTopTime: TopCourseTimeView
-    @BindView(R.id.secondTopTime) lateinit var secondTopTime: TopCourseTimeView
-    @BindView(R.id.thirdTopTime) lateinit var thirdTopTime: TopCourseTimeView
-    @BindView(R.id.registrantRecyclerView) lateinit var registrantRecyclerView: RecyclerView
-    @BindView(R.id.batteryWarning) lateinit var batteryWarning: BatteryWarningView
-    @BindView(R.id.map) lateinit var mapView: MapView
-    @BindView(R.id.raceSignUpParent) lateinit var raceSignUpParent: ViewGroup
-    @BindView(R.id.bottomSheet) lateinit var bottomSheet: NestedScrollView
-    lateinit private var unbinder: Unbinder
+class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, View.OnClickListener {
     lateinit private var behavior: AnchoredBottomSheetBehavior<NestedScrollView>
     lateinit private var controller: RaceSignUpController
-    private val map = MapUtil()
+    lateinit private var scheduledCountdownFuture: ScheduledFuture<*>
+    private val mapUtil = MapUtil()
     private val registrantAvatarAdapter = RegistrantAvatarAdapter()
-    lateinit var scheduledCountdownFuture: ScheduledFuture<*>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val fragmentView = inflater.inflate(R.layout.fragment_race_sign_up, container) as ViewGroup
-        unbinder = ButterKnife.bind(this, fragmentView)
         registrantRecyclerView.layoutManager = LinearLayoutManager(inflater.context, HORIZONTAL, false)
         registrantRecyclerView.adapter = registrantAvatarAdapter
         bottomSheet.setCandyCaneBackground(android.R.color.white, R.color.textLightGrey_40p)
@@ -77,12 +49,12 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener {
                 when (controller.race?.raceStatus) {
                     Race.FINISHED -> {
                         raceCountdown.setText(R.string.finished)
-                        raceCountdownTitle.visibility = GONE
+                        raceCountdownTitle.visibility = View.GONE
                         scheduledCountdownFuture.cancel(true)
                     }
                     Race.REGISTRATION_CLOSED -> {
                         raceCountdown.setText(R.string.start_race)
-                        raceCountdownTitle.visibility = GONE
+                        raceCountdownTitle.visibility = View.GONE
                         scheduledCountdownFuture.cancel(true)
                     }
                     else -> raceCountdown.text = StringUtil.hourMinSecFromMs(controller.race?.timeUntilRace)
@@ -96,7 +68,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {}
 
             override fun onStateChanged(bottomSheet: View, newState: Long) {
-                map.moveToCenter(controller.race?.c(), ViewUtil.getCenterOfAnchor(raceSignUpParent, behavior), behavior.state, newState)
+                mapUtil.moveToCenter(controller.race?.c(), ViewUtil.getCenterOfAnchor(raceSignUpParent, behavior), behavior.state, newState)
             }
         })
         mapView.onCreate(savedInstanceState)
@@ -104,9 +76,12 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener {
         return fragmentView
     }
 
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
-        unbinder.unbind()
         scheduledCountdownFuture.cancel(true)
     }
 
@@ -171,7 +146,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener {
             registrantAvatarAdapter.openSpots = race.r().openSpots() ?: 0L
             registrantAvatarAdapter.notifyOpenSpotsChanged()
             // Draw the course in case the map was ready before we got the race
-            map.draw(race.c())
+            mapUtil.draw(race.c())
         }
     }
 
@@ -179,23 +154,26 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener {
         // TODO
     }
 
-    @OnClick(R.id.batteryWarning) fun onBatteryWarning() {
-        if (behavior.state == STATE_COLLAPSED) {
-            behavior.state = STATE_EXPANDED
-        } else if (behavior.state == STATE_EXPANDED) {
-            behavior.state = STATE_COLLAPSED
-        }
-    }
-
-    @OnClick(R.id.signUpButton) fun onSignUp() {
-        if (controller.userInRace) {
-            API.leaveRace(controller.eventId, controller.raceId)
-        } else {
-            API.joinRace(controller.eventId, controller.raceId)
+    override fun onClick(view: View) {
+        when (view.id) {
+            R.id.batteryWarning -> {
+                if (behavior.state == STATE_COLLAPSED) {
+                    behavior.state = STATE_EXPANDED
+                } else if (behavior.state == STATE_EXPANDED) {
+                    behavior.state = STATE_COLLAPSED
+                }
+            }
+            R.id.signUpButton -> {
+                if (controller.userInRace) {
+                    API.leaveRace(controller.eventId, controller.raceId)
+                } else {
+                    API.joinRace(controller.eventId, controller.raceId)
+                }
+            }
         }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        map.onMapReady(controller.race?.c(), googleMap, ViewUtil.getCenterOfAnchor(raceSignUpParent, behavior), behavior.state)
+        mapUtil.onMapReady(controller.race?.c(), googleMap, ViewUtil.getCenterOfAnchor(raceSignUpParent, behavior), behavior.state)
     }
 }

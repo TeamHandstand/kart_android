@@ -5,7 +5,6 @@ buildscript {
         aws_version = '2.4.4'
         autovalue_version = '1.4.1'
         autovalue_gson_version = '0.4.6'
-        butterknife_version = '8.8.1'
         crashlytics_version = '2.6.8'
         dagger_version = '2.11'
         espresso_version = '2.2.2'
@@ -44,6 +43,7 @@ buildscript {
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.squareup.sqldelight'
 apply plugin: 'io.fabric'
@@ -124,7 +124,7 @@ android {
     }
     sourceSets {
         androidTest.java.srcDirs = ['src/main/kotlin', 'src/androidTest/kotlin', 'src/commonTest/kotlin']
-        main.java.srcDirs = ['src/main/kotlin']
+        main.java.srcDirs += 'src/main/kotlin'
         test.java.srcDirs = ['src/main/kotlin', 'src/test/kotlin', 'src/commonTest/kotlin']
     }
     testOptions {
@@ -139,35 +139,33 @@ configurations.all {
 }
 
 dependencies {
-    api "com.amazonaws:aws-android-sdk-s3:$aws_version"
-    api "com.android.support:appcompat-v7:$android_support_version"
-    api "com.android.support:design:$android_support_version"
-    api "com.android.support:multidex:$multidex_version"
+    compile "com.amazonaws:aws-android-sdk-s3:$aws_version"
+    compile "com.android.support:appcompat-v7:$android_support_version"
+    compile "com.android.support:design:$android_support_version"
+    compile "com.android.support:multidex:$multidex_version"
     api("com.crashlytics.sdk.android:crashlytics:$crashlytics_version@aar") {
-        transitive = true;
+        transitive = true
     }
-    api "com.github.bumptech.glide:glide:$glide_version"
-    api "com.github.bumptech.glide:okhttp3-integration:$glide_okhttp3_integration_version"
-    api "com.google.android.exoplayer:exoplayer-core:$exoplayer_version"
-    api "com.google.android.exoplayer:exoplayer-ui:$exoplayer_version"
-    api "com.google.android.gms:play-services-maps:$gms_version"
-    api "com.google.code.gson:gson:$gson_version"
-    api "com.google.dagger:dagger:$dagger_version"
-    api "com.google.firebase:firebase-messaging:$gms_version"
-    api "com.googlecode.libphonenumber:libphonenumber:$google_phonenumber_version"
-    api "com.jakewharton:butterknife:$butterknife_version"
-    api "com.pubnub:pubnub-gson:$pubnub_version"
-    api "com.squareup.okhttp3:okhttp:$okhttp3_version"
-    api "com.squareup.retrofit2:converter-gson:$retrofit_version"
-    api "com.squareup.retrofit2:retrofit:$retrofit_version"
-    api "com.squareup.sqlbrite:sqlbrite:$sqlbrite_version"
-    api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "com.github.bumptech.glide:glide:$glide_version"
+    compile "com.github.bumptech.glide:okhttp3-integration:$glide_okhttp3_integration_version"
+    compile "com.google.android.exoplayer:exoplayer-core:$exoplayer_version"
+    compile "com.google.android.exoplayer:exoplayer-ui:$exoplayer_version"
+    compile "com.google.android.gms:play-services-maps:$gms_version"
+    compile "com.google.code.gson:gson:$gson_version"
+    compile "com.google.dagger:dagger:$dagger_version"
+    compile "com.google.firebase:firebase-messaging:$gms_version"
+    compile "com.googlecode.libphonenumber:libphonenumber:$google_phonenumber_version"
+    compile "com.pubnub:pubnub-gson:$pubnub_version"
+    compile "com.squareup.okhttp3:okhttp:$okhttp3_version"
+    compile "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    compile "com.squareup.retrofit2:retrofit:$retrofit_version"
+    compile "com.squareup.sqlbrite:sqlbrite:$sqlbrite_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     kapt "com.google.auto.value:auto-value:$autovalue_version"
     kapt("com.google.dagger:dagger-compiler:$dagger_version")
-    kapt "com.jakewharton:butterknife-compiler:$butterknife_version"
     kapt "com.ryanharter.auto.value:auto-value-gson:$autovalue_gson_version"
-    compileOnly "com.google.auto.value:auto-value:$autovalue_version"
-    compileOnly "com.ryanharter.auto.value:auto-value-gson:$autovalue_gson_version"
+    provided "com.google.auto.value:auto-value:$autovalue_version"
+    provided "com.ryanharter.auto.value:auto-value-gson:$autovalue_gson_version"
     androidTestCompile "com.android.support:support-annotations:$android_support_version"
     androidTestCompile("com.android.support.test.espresso:espresso-contrib:$espresso_version") {
         exclude group: 'com.android.support', module: 'appcompat'

@@ -11,7 +11,7 @@ import us.handstand.kartwheel.layout.recyclerview.adapter.AdapterVHClickListener
 
 class BuddyVH private constructor(val viewGroup: ViewGroup) : AdapterVH(viewGroup) {
     override var adapterVHClickListener: AdapterVHClickListener<BuddyVH>? = null
-    private val buddy: GlideImageView = viewGroup.findViewById(R.id.buddy) as GlideImageView
+    private val buddy: GlideImageView = viewGroup.findViewById(R.id.buddy)
 
     companion object {
         fun constructNewInstance(parent: ViewGroup): BuddyVH {

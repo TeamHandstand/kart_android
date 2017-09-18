@@ -29,13 +29,13 @@ class TopCourseTimeView : RelativeLayout {
 
     fun init(attrs: AttributeSet?) {
         View.inflate(context, R.layout.view_top_course_time, this)
-        name = ViewUtil.findView(this, R.id.name)
-        time = ViewUtil.findView(this, R.id.time)
-        avatar = ViewUtil.findView(this, R.id.avatar)
+        name = findViewById(R.id.name)
+        time = findViewById(R.id.time)
+        avatar = findViewById(R.id.avatar)
         val a = context.theme.obtainStyledAttributes(attrs, R.styleable.TopCourseTimeView, 0, 0)
         try {
             val rank = a.getInt(R.styleable.TopCourseTimeView_rank, 1)
-            (findViewById(R.id.rank) as TextView).text = if (rank == 1) "1st" else if (rank == 2) "2nd" else "3rd"
+            findViewById<TextView>(R.id.rank).text = if (rank == 1) "1st" else if (rank == 2) "2nd" else "3rd"
         } finally {
             a.recycle()
         }

@@ -13,7 +13,6 @@ import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.OnboardingActivity
 import us.handstand.kartwheel.controller.OnboardingController.Companion.PICK_BUDDY
 import us.handstand.kartwheel.layout.CircularImageView
-import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.layout.recyclerview.adapter.PickBuddyAdapter
 import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.model.User
@@ -26,7 +25,7 @@ class PickBuddyFragment : Fragment(), OnboardingActivity.OnboardingFragment, Vie
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val fragment = inflater.inflate(R.layout.fragment_onboarding_pick_buddy, container, false) as ViewGroup
-        buddy = ViewUtil.findView(fragment, R.id.image)
+        buddy = fragment.findViewById(R.id.image)
         buddy.setOnClickListener(this)
         buddy.setImageUrl(Storage.userBuddyUrl, placeholder = R.drawable.buddy_placeholder)
         pickBuddyBehaviorCallback.delegate = object : BottomSheetBehavior.BottomSheetCallback() {

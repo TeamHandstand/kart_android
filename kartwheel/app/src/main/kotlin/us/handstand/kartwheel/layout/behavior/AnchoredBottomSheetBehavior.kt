@@ -249,7 +249,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
         return !ignoreEvents
     }
 
-    override fun onStartNestedScroll(coordinatorLayout: CoordinatorLayout, child: V, directTargetChild: View?, target: View?, nestedScrollAxes: Int): Boolean {
+    override fun onStartNestedScroll(coordinatorLayout: CoordinatorLayout, child: V, directTargetChild: View, target: View, nestedScrollAxes: Int): Boolean {
         nestedScrolled = false
         return nestedScrollAxes and ViewCompat.SCROLL_AXIS_VERTICAL != 0
     }
@@ -274,7 +274,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
         }
     }
 
-    override fun onNestedPreScroll(coordinatorLayout: CoordinatorLayout, child: V, target: View?, dx: Int, dy: Int, consumed: IntArray) {
+    override fun onNestedPreScroll(coordinatorLayout: CoordinatorLayout, child: V, target: View, dx: Int, dy: Int, consumed: IntArray) {
         val scrollingChild = nestedScrollingChildRef!!.get()
         if (target !== scrollingChild) {
             return
@@ -323,7 +323,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
         nestedScrolled = true
     }
 
-    override fun onStopNestedScroll(coordinatorLayout: CoordinatorLayout, child: V, target: View?) {
+    override fun onStopNestedScroll(coordinatorLayout: CoordinatorLayout, child: V, target: View) {
         if (child.top == minOffset) {
             setStateInternal(STATE_EXPANDED)
             lastStableState = STATE_EXPANDED
@@ -395,7 +395,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
         nestedScrolled = false
     }
 
-    override fun onNestedPreFling(coordinatorLayout: CoordinatorLayout?, child: V?, target: View?, velocityX: Float, velocityY: Float): Boolean {
+    override fun onNestedPreFling(coordinatorLayout: CoordinatorLayout, child: V, target: View, velocityX: Float, velocityY: Float): Boolean {
         return target === nestedScrollingChildRef!!.get()
                 && (mState != STATE_EXPANDED || super.onNestedPreFling(coordinatorLayout, child, target, velocityX, velocityY))
     }

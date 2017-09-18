@@ -21,7 +21,6 @@ import com.google.android.exoplayer2.util.Util
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.OnboardingActivity
 import us.handstand.kartwheel.layout.CircularImageView
-import us.handstand.kartwheel.layout.ViewUtil
 
 
 class VideoFragment : Fragment(), OnboardingActivity.OnboardingFragment {
@@ -33,8 +32,8 @@ class VideoFragment : Fragment(), OnboardingActivity.OnboardingFragment {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         layout = inflater.inflate(R.layout.fragment_onboarding_circle_image, container, false) as ViewGroup
-        layout.findViewById(R.id.imageText).visibility = View.GONE
-        startVideoButton = ViewUtil.findView(layout, R.id.image)
+        layout.findViewById<View>(R.id.imageText).visibility = View.GONE
+        startVideoButton = layout.findViewById(R.id.image)
         startVideoButton.setImageResource(R.drawable.onboarding_play_button, R.drawable.onboarding_play_button)
         startVideoButton.setOnClickListener { videoBehavior.state = BottomSheetBehavior.STATE_EXPANDED }
         videoBehaviorCallback.delegate = object : BottomSheetBehavior.BottomSheetCallback() {

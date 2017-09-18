@@ -39,9 +39,9 @@ class CritInfoRelativeLayout : RelativeLayout, ValueAnimator.AnimatorUpdateListe
 
     init {
         View.inflate(context, R.layout.view_crit_info, this)
-        leftImageView = ViewUtil.findView(this, R.id.leftImage)
-        rightImageView = ViewUtil.findView(this, R.id.rightImage)
-        question = ViewUtil.findView(this, R.id.question)
+        leftImageView = findViewById(R.id.leftImage)
+        rightImageView = findViewById(R.id.rightImage)
+        question = findViewById(R.id.question)
         paint.color = context.resources.getColor(R.color.yellow)
         paint.strokeWidth = ViewUtil.dpToPx(context, 2).toFloat()
         paint.style = Paint.Style.STROKE

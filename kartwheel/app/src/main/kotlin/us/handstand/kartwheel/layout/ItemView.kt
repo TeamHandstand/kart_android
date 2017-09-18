@@ -26,9 +26,9 @@ class ItemView : RelativeLayout {
         View.inflate(context, R.layout.view_game_info_item, this)
         val a = context.theme.obtainStyledAttributes(attrs, R.styleable.ItemView, 0, 0)
         try {
-            (findViewById(R.id.image) as ImageView).setImageResource(a.getResourceId(R.styleable.ItemView_src, R.drawable.race_item_red_shell))
-            (findViewById(R.id.title) as TextView).text = a.getString(R.styleable.ItemView_title)
-            (findViewById(R.id.description) as TextView).text = a.getString(R.styleable.ItemView_description)
+            findViewById<ImageView>(R.id.image).setImageResource(a.getResourceId(R.styleable.ItemView_src, R.drawable.race_item_red_shell))
+            findViewById<TextView>(R.id.title).text = a.getString(R.styleable.ItemView_title)
+            findViewById<TextView>(R.id.description).text = a.getString(R.styleable.ItemView_description)
         } finally {
             a.recycle()
         }

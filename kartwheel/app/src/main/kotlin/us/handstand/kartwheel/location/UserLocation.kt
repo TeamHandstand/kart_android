@@ -6,8 +6,10 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import us.handstand.kartwheel.model.Storage
+import us.handstand.kartwheel.network.API
 
-object UserLocation : LocationListener {
+class UserLocation : LocationListener {
 
     private var locationManager: LocationManager? = null
 
@@ -15,25 +17,22 @@ object UserLocation : LocationListener {
         locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     }
 
-    fun requestLocationUpdates() = locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, this)
+    @Throws(SecurityException::class) fun requestLocationUpdates() = locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, this)
 
     fun ignoreLocationUpdates() = locationManager?.removeUpdates(this)
 
-    fun getLocation() = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+    @Throws(SecurityException::class) fun getLocation() = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
 
     override fun onLocationChanged(location: Location) {
-
+        API.updateLocation(Storage.eventId, Storage.raceId, "", location)
     }
 
     override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {
-
     }
 
     override fun onProviderEnabled(provider: String) {
-
     }
 
     override fun onProviderDisabled(provider: String) {
-
     }
 }

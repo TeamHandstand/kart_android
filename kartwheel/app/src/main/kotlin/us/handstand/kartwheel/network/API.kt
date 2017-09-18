@@ -1,6 +1,7 @@
 package us.handstand.kartwheel.network
 
 
+import android.location.Location
 import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -292,6 +293,15 @@ object API {
                 apiCallback?.onFailure(errorCode, errorResponse)
             }
         }))
+    }
+
+    fun updateLocation(eventId: String, raceId: String, userRaceInfoId: String, location: Location) {
+        val locationUpdate = JsonObject()
+        locationUpdate.addProperty("latitude", location.latitude)
+        locationUpdate.addProperty("longitude", location.longitude)
+        locationUpdate.addProperty("horizontalAccuracy", location.accuracy)
+        locationUpdate.addProperty("clientTime", DateFormatter.dateFormat.format(DateFormatter[location.time]))
+        kartWheelService!!.updateLocation(eventId, raceId, userRaceInfoId, locationUpdate)
     }
 
     fun getMiniGameTypes() {

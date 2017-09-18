@@ -16,7 +16,6 @@ import us.handstand.kartwheel.controller.TicketController.Companion.FORFEIT
 import us.handstand.kartwheel.controller.TicketController.Companion.GAME_INFO
 import us.handstand.kartwheel.layout.GameInfoPlayerView
 import us.handstand.kartwheel.layout.GameInfoPlayerView.Companion.OnPlayerActionClickListener
-import us.handstand.kartwheel.layout.ViewUtil.findView
 import us.handstand.kartwheel.model.Ticket
 import us.handstand.kartwheel.model.User
 import javax.inject.Inject
@@ -30,8 +29,8 @@ class GameInfoFragment : Fragment(), TicketActivity.TicketFragment, GameInfoCont
         KartWheel.injector.inject(this)
         // TODO: FAB Buttons
         val fragmentView = inflater!!.inflate(R.layout.fragment_ticket_game_info, container, false) as ViewGroup
-        playerOne = findView(fragmentView, R.id.playerOne)
-        playerTwo = findView(fragmentView, R.id.playerTwo)
+        playerOne = fragmentView.findViewById(R.id.playerOne)
+        playerTwo = fragmentView.findViewById(R.id.playerTwo)
         playerOne.playerActionClickListener = this
         playerTwo.playerActionClickListener = this
         controller.listener = this

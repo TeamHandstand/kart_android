@@ -14,18 +14,22 @@ import us.handstand.kartwheel.R
 import us.handstand.kartwheel.util.Audio
 
 
-class KartButton : AppCompatButton, KartFontView, ValueAnimator.AnimatorUpdateListener {
+class KartButton : AppCompatButton, ValueAnimator.AnimatorUpdateListener {
 
 
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
-        setLineSpacingFromAttrs(attrs)
-        setTypefaceFromAttrs(attrs)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        KartFontView.setLineSpacingFromAttrs(this, context, attrs)
+        if (!isInEditMode) {
+            KartFontView.setTypefaceFromAttrs(this, context, attrs)
+        }
         setLoadingParams(attrs)
     }
 
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        setLineSpacingFromAttrs(attrs)
-        setTypefaceFromAttrs(attrs)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+        KartFontView.setLineSpacingFromAttrs(this, context, attrs)
+        if (!isInEditMode) {
+            KartFontView.setTypefaceFromAttrs(this, context, attrs)
+        }
         setLoadingParams(attrs)
     }
 

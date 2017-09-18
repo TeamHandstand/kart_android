@@ -13,7 +13,6 @@ import us.handstand.kartwheel.activity.OnboardingActivity
 import us.handstand.kartwheel.controller.OnboardingController
 import us.handstand.kartwheel.controller.SelfieUploadController
 import us.handstand.kartwheel.layout.CircularImageView
-import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.network.storage.TransferState
 import us.handstand.kartwheel.util.Photos
@@ -28,7 +27,7 @@ class SelfieFragment : Fragment(), OnboardingActivity.OnboardingFragment, Selfie
         val fragment = inflater.inflate(R.layout.fragment_onboarding_circle_image, container, false) as ViewGroup
         KartWheel.injector.inject(this)
         selfieController.listener = this
-        selfie = ViewUtil.findView(fragment, R.id.image)
+        selfie = fragment.findViewById(R.id.image)
         selfie.setOnClickListener { Photos.takeSelfie(this) }
         selfie.setImageUrl(Storage.userImageUrl, placeholder = R.drawable.onboarding_camera)
         return fragment

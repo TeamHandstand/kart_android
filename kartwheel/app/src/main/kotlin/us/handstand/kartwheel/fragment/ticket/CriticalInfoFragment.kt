@@ -13,7 +13,6 @@ import android.widget.TextView
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.TicketActivity
 import us.handstand.kartwheel.layout.CritInfoRelativeLayout
-import us.handstand.kartwheel.layout.ViewUtil
 
 class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnClickListener {
     private lateinit var button: AppCompatButton
@@ -26,10 +25,10 @@ class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnC
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_ticket_crit_info, container, false) as ViewGroup
-        glassesSelector = ViewUtil.findView(view, R.id.imageHolder)
-        critInfoText = ViewUtil.findView(view, R.id.question)
-        leftImage = ViewUtil.findView(view, R.id.leftImage)
-        rightImage = ViewUtil.findView(view, R.id.rightImage)
+        glassesSelector = view.findViewById(R.id.imageHolder)
+        critInfoText = view.findViewById(R.id.question)
+        leftImage = view.findViewById(R.id.leftImage)
+        rightImage = view.findViewById(R.id.rightImage)
         leftImage.setOnClickListener(this)
         rightImage.setOnClickListener(this)
         currentQuestion = FOOD
@@ -40,7 +39,7 @@ class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnC
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        button = (activity.findViewById(R.id.button) as AppCompatButton)
+        button = activity.findViewById(R.id.button)
     }
 
     override fun getTitleResId(): Int {

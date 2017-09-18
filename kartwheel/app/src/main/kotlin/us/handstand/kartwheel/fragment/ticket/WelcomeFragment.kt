@@ -18,7 +18,6 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.TicketActivity.TicketFragment
 import us.handstand.kartwheel.layout.ViewUtil
-import us.handstand.kartwheel.layout.ViewUtil.findView
 import us.handstand.kartwheel.layout.ViewUtil.isEmpty
 import us.handstand.kartwheel.model.User
 import us.handstand.kartwheel.util.DateFormatter
@@ -35,12 +34,12 @@ class WelcomeFragment : Fragment(), TicketFragment, android.text.TextWatcher, On
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val fragmentView = inflater!!.inflate(R.layout.fragment_ticket_welcome, container, false) as ViewGroup
-        birth = findView(fragmentView, R.id.birth)
-        cell = findView(fragmentView, R.id.cell)
-        email = findView(fragmentView, R.id.email)
-        firstName = findView(fragmentView, R.id.firstName)
-        lastName = findView(fragmentView, R.id.lastName)
-        nickname = findView(fragmentView, R.id.nickname)
+        birth = fragmentView.findViewById(R.id.birth)
+        cell = fragmentView.findViewById(R.id.cell)
+        email = fragmentView.findViewById(R.id.email)
+        firstName = fragmentView.findViewById(R.id.firstName)
+        lastName = fragmentView.findViewById(R.id.lastName)
+        nickname = fragmentView.findViewById(R.id.nickname)
         birth.addTextChangedListener(FormatTextWatcher("/", 2))
         cell.addTextChangedListener(FormatTextWatcher("-", 3))
         email.addTextChangedListener(this)
@@ -66,7 +65,7 @@ class WelcomeFragment : Fragment(), TicketFragment, android.text.TextWatcher, On
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        button = findView(activity, R.id.button)
+        button = activity.findViewById(R.id.button)
     }
 
     override fun getTitleResId(): Int {
@@ -119,7 +118,7 @@ class WelcomeFragment : Fragment(), TicketFragment, android.text.TextWatcher, On
 
     override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
         if (actionId == IME_ACTION_GO || event?.action == ACTION_DOWN) {
-            activity.findViewById(R.id.button).performClick()
+            button.performClick()
             return true
         }
         return false

@@ -18,7 +18,6 @@ import android.widget.EditText
 import android.widget.TextView
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.TicketActivity
-import us.handstand.kartwheel.layout.ViewUtil.findView
 
 class CodeEntryFragment : Fragment(), TicketActivity.TicketFragment, TextView.OnEditorActionListener, TextWatcher {
     private lateinit var codeEntry: EditText
@@ -26,11 +25,11 @@ class CodeEntryFragment : Fragment(), TicketActivity.TicketFragment, TextView.On
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val fragmentView = inflater.inflate(R.layout.fragment_ticket_code_entry, container, false) as ViewGroup
-        codeEntry = findView(fragmentView, R.id.codeEditText)
-        progress = findView(fragmentView, R.id.networkProgress)
+        codeEntry = fragmentView.findViewById(R.id.codeEditText)
+        progress = fragmentView.findViewById(R.id.networkProgress)
         codeEntry.setOnEditorActionListener(this)
         codeEntry.addTextChangedListener(this)
-        (fragmentView.findViewById(R.id.getCodeText) as TextView).movementMethod = LinkMovementMethod.getInstance()
+        (fragmentView.findViewById<TextView>(R.id.getCodeText)).movementMethod = LinkMovementMethod.getInstance()
         return fragmentView
     }
 
@@ -60,7 +59,7 @@ class CodeEntryFragment : Fragment(), TicketActivity.TicketFragment, TextView.On
 
     override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
         if (actionId == IME_ACTION_GO || event?.action == ACTION_DOWN) {
-            activity.findViewById(R.id.button).performClick()
+            activity.findViewById<View>(R.id.button).performClick()
             return true
         }
         return false

@@ -37,7 +37,6 @@ import us.handstand.kartwheel.fragment.onboarding.VideoFragment
 import us.handstand.kartwheel.inject.provider.BottomSheetCallbackProvider.BSBCallbackIMPL
 import us.handstand.kartwheel.layout.KartButton
 import us.handstand.kartwheel.layout.MedalRain
-import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.layout.recyclerview.adapter.PickBuddyAdapter
 import us.handstand.kartwheel.layout.setCandyCaneBackground
 import us.handstand.kartwheel.model.Storage
@@ -68,16 +67,16 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_onboarding)
         KartWheel.injector.inject(this)
-        background = ViewUtil.findView(this, R.id.onboardingBackground)
-        button = ViewUtil.findView(this, R.id.button)
-        description = ViewUtil.findView(this, R.id.description)
-        makeItRainText = ViewUtil.findView(this, R.id.makeItRainDescription)
-        pageNumber = ViewUtil.findView(this, R.id.pageNumber)
-        pickBuddyRecyclerView = ViewUtil.findView(this, R.id.bottomSheet)
-        title = ViewUtil.findView(this, R.id.title)
-        video = ViewUtil.findView(this, R.id.video)
+        background = findViewById(R.id.onboardingBackground)
+        button = findViewById(R.id.button)
+        description = findViewById(R.id.description)
+        makeItRainText = findViewById(R.id.makeItRainDescription)
+        pageNumber = findViewById(R.id.pageNumber)
+        pickBuddyRecyclerView = findViewById(R.id.bottomSheet)
+        title = findViewById(R.id.title)
+        video = findViewById(R.id.video)
         pickBuddyBehavior = BottomSheetBehavior.from(pickBuddyRecyclerView)
-        videoBehavior = BottomSheetBehavior.from(ViewUtil.findView(this, R.id.videoSheet))
+        videoBehavior = BottomSheetBehavior.from(findViewById(R.id.videoSheet))
 
         background.setCandyCaneBackground(R.color.blue_background, R.color.blue)
         background.setOnClickListener(this)

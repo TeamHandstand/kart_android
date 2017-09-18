@@ -85,9 +85,9 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ticket)
-        findViewById(R.id.parent).setCandyCaneBackground(android.R.color.white, R.color.textLightGrey_40p)
-        title = ViewUtil.findView(this, R.id.title_text)
-        button = ViewUtil.findView(this, R.id.button)
+        findViewById<View>(R.id.parent).setCandyCaneBackground(android.R.color.white, R.color.textLightGrey_40p)
+        title = findViewById(R.id.title_text)
+        button = findViewById(R.id.button)
         button!!.setOnClickListener(this)
         ticketController.transition(NONE, Storage.lastTicketState)
     }

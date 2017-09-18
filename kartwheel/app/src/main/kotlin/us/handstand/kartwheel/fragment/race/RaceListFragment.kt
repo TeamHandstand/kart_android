@@ -12,7 +12,6 @@ import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.RaceSignUpActivity
 import us.handstand.kartwheel.controller.RaceListController
-import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.layout.recyclerview.adapter.RaceListAdapter
 import us.handstand.kartwheel.model.Race
 import us.handstand.kartwheel.model.RaceModel
@@ -27,7 +26,7 @@ class RaceListFragment : Fragment(), RaceListController.RaceListListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         KartWheel.injector.inject(this)
         val raceList = inflater.inflate(R.layout.fragment_race_list, container, false) as ViewGroup
-        raceRecyclerView = ViewUtil.findView(raceList, R.id.raceListRecyclerView)
+        raceRecyclerView = raceList.findViewById(R.id.raceListRecyclerView)
         raceRecyclerView.layoutManager = LinearLayoutManager(inflater.context)
         raceAdapter = RaceListAdapter(controller)
         raceRecyclerView.adapter = raceAdapter
