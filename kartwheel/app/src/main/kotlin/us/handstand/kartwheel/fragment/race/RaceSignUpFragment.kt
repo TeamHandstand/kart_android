@@ -24,6 +24,7 @@ import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior.Compan
 import us.handstand.kartwheel.layout.recyclerview.adapter.RegistrantAvatarAdapter
 import us.handstand.kartwheel.layout.setCandyCaneBackground
 import us.handstand.kartwheel.location.MapUtil
+import us.handstand.kartwheel.location.UserLocation
 import us.handstand.kartwheel.model.*
 import us.handstand.kartwheel.network.API
 import us.handstand.kartwheel.util.StringUtil
@@ -36,12 +37,17 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, V
     lateinit private var behavior: AnchoredBottomSheetBehavior<NestedScrollView>
     lateinit private var controller: RaceSignUpController
     lateinit private var scheduledCountdownFuture: ScheduledFuture<*>
+    lateinit private var userLocation: UserLocation
     private val mapUtil = MapUtil()
     private val registrantAvatarAdapter = RegistrantAvatarAdapter()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val fragmentView = inflater.inflate(R.layout.fragment_race_sign_up, container) as ViewGroup
-        registrantRecyclerView.layoutManager = LinearLayoutManager(inflater.context, HORIZONTAL, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
+            inflater.inflate(R.layout.fragment_race_sign_up, container) as ViewGroup
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        userLocation = UserLocation(context)
+        registrantRecyclerView.layoutManager = LinearLayoutManager(context, HORIZONTAL, false)
         registrantRecyclerView.adapter = registrantAvatarAdapter
         bottomSheet.setCandyCaneBackground(android.R.color.white, R.color.textLightGrey_40p)
         scheduledCountdownFuture = ThreadManager.scheduler.scheduleWithFixedDelay({
@@ -73,11 +79,6 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, V
         })
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
-        return fragmentView
-    }
-
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onDestroyView() {
@@ -106,12 +107,14 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, V
 
     override fun onDestroy() {
         mapView.onDestroy()
+        userLocation.ignoreLocationUpdates()
         super.onDestroy()
     }
 
     override fun onStart() {
         super.onStart()
         mapView.onStart()
+        userLocation.requestLocationUpdates()
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
