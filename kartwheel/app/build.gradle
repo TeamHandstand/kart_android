@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        android_support_version = '25.3.1'
+        android_support_version = '26.1.0'
         android_test_runner_version = '0.5'
         aws_version = '2.4.4'
         autovalue_version = '1.4.1'
@@ -13,7 +13,7 @@ buildscript {
         glide_version = '3.8.0'
         glide_okhttp3_integration_version = '1.5.0@aar'
         gson_version = '2.8.1'
-        gms_version = '11.0.4'
+        gms_version = '11.2.2'
         google_phonenumber_version = '8.5.2'
         junit_version = '4.12'
         kotlin_version = '1.1.4-3'
@@ -50,10 +50,11 @@ apply plugin: 'io.fabric'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
+    google()
 }
 
 android {
-    buildToolsVersion "25.0.3"
+    buildToolsVersion '26.0.1'
     buildTypes {
         debug {
             buildConfigField "String", "AWS_BUCKET_NAME", "\"kartwheel-staging\""
@@ -105,11 +106,11 @@ android {
             resValue "string", "google_maps_key", "AIzaSyDMR6PxrRUtWt2QJ5AeZ1G-ayl5AwXsltU"
         }
     }
-    compileSdkVersion 25
+    compileSdkVersion 26
     defaultConfig {
         applicationId "us.handstand.kartwheel"
         minSdkVersion 19
-        targetSdkVersion 25
+        targetSdkVersion 26
         testInstrumentationRunner "us.handstand.kartwheel.test.KartWheelTestRunner"
         testFunctionalTest true
         versionCode 1
@@ -138,38 +139,35 @@ configurations.all {
 }
 
 dependencies {
-    compile "com.amazonaws:aws-android-sdk-s3:$aws_version"
-    compile "com.android.support:appcompat-v7:$android_support_version"
-    compile "com.android.support:design:$android_support_version"
-    compile "com.android.support:multidex:$multidex_version"
-    compile("com.crashlytics.sdk.android:crashlytics:$crashlytics_version@aar") {
+    api "com.amazonaws:aws-android-sdk-s3:$aws_version"
+    api "com.android.support:appcompat-v7:$android_support_version"
+    api "com.android.support:design:$android_support_version"
+    api "com.android.support:multidex:$multidex_version"
+    api("com.crashlytics.sdk.android:crashlytics:$crashlytics_version@aar") {
         transitive = true;
     }
-    compile "com.github.bumptech.glide:glide:$glide_version"
-    compile "com.github.bumptech.glide:okhttp3-integration:$glide_okhttp3_integration_version"
-    compile "com.google.android.exoplayer:exoplayer-core:$exoplayer_version"
-    compile "com.google.android.exoplayer:exoplayer-ui:$exoplayer_version"
-    compile "com.google.android.gms:play-services-maps:$gms_version"
-    compile "com.google.code.gson:gson:$gson_version"
-    compile "com.google.dagger:dagger:$dagger_version"
-    compile "com.google.firebase:firebase-messaging:$gms_version"
-    compile "com.googlecode.libphonenumber:libphonenumber:$google_phonenumber_version"
-    compile "com.jakewharton:butterknife:$butterknife_version"
-    compile "com.pubnub:pubnub-gson:$pubnub_version"
-    compile "com.squareup.okhttp3:okhttp:$okhttp3_version"
-    compile "com.squareup.retrofit2:converter-gson:$retrofit_version"
-    compile "com.squareup.retrofit2:retrofit:$retrofit_version"
-    compile "com.squareup.sqlbrite:sqlbrite:$sqlbrite_version"
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-
+    api "com.github.bumptech.glide:glide:$glide_version"
+    api "com.github.bumptech.glide:okhttp3-integration:$glide_okhttp3_integration_version"
+    api "com.google.android.exoplayer:exoplayer-core:$exoplayer_version"
+    api "com.google.android.exoplayer:exoplayer-ui:$exoplayer_version"
+    api "com.google.android.gms:play-services-maps:$gms_version"
+    api "com.google.code.gson:gson:$gson_version"
+    api "com.google.dagger:dagger:$dagger_version"
+    api "com.google.firebase:firebase-messaging:$gms_version"
+    api "com.googlecode.libphonenumber:libphonenumber:$google_phonenumber_version"
+    api "com.jakewharton:butterknife:$butterknife_version"
+    api "com.pubnub:pubnub-gson:$pubnub_version"
+    api "com.squareup.okhttp3:okhttp:$okhttp3_version"
+    api "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    api "com.squareup.retrofit2:retrofit:$retrofit_version"
+    api "com.squareup.sqlbrite:sqlbrite:$sqlbrite_version"
+    api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     kapt "com.google.auto.value:auto-value:$autovalue_version"
     kapt("com.google.dagger:dagger-compiler:$dagger_version")
     kapt "com.jakewharton:butterknife-compiler:$butterknife_version"
     kapt "com.ryanharter.auto.value:auto-value-gson:$autovalue_gson_version"
-
-    provided "com.google.auto.value:auto-value:$autovalue_version"
-    provided "com.ryanharter.auto.value:auto-value-gson:$autovalue_gson_version"
-
+    compileOnly "com.google.auto.value:auto-value:$autovalue_version"
+    compileOnly "com.ryanharter.auto.value:auto-value-gson:$autovalue_gson_version"
     androidTestCompile "com.android.support:support-annotations:$android_support_version"
     androidTestCompile("com.android.support.test.espresso:espresso-contrib:$espresso_version") {
         exclude group: 'com.android.support', module: 'appcompat'
@@ -183,7 +181,6 @@ dependencies {
     androidTestCompile "com.android.support.test.uiautomator:uiautomator-v18:$uiautomator_version"
     androidTestCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
     androidTestCompile "com.squareup.okhttp3:mockwebserver:$okhttp3_version"
-
     testCompile "com.squareup.okhttp3:mockwebserver:$okhttp3_version"
     testCompile "org.mockito:mockito-core:$mockito_version"
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
