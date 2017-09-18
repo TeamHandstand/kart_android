@@ -38,6 +38,7 @@ import us.handstand.kartwheel.model.*
 import us.handstand.kartwheel.network.API
 import us.handstand.kartwheel.util.StringUtil
 import us.handstand.kartwheel.util.ThreadManager
+import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
 
@@ -63,6 +64,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener {
     lateinit private var controller: RaceSignUpController
     private val map = MapUtil()
     private val registrantAvatarAdapter = RegistrantAvatarAdapter()
+    lateinit var scheduledCountdownFuture: ScheduledFuture<*>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val fragmentView = inflater.inflate(R.layout.fragment_race_sign_up, container) as ViewGroup
@@ -70,16 +72,18 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener {
         registrantRecyclerView.layoutManager = LinearLayoutManager(inflater.context, HORIZONTAL, false)
         registrantRecyclerView.adapter = registrantAvatarAdapter
         bottomSheet.setCandyCaneBackground(android.R.color.white, R.color.textLightGrey_40p)
-        ThreadManager.scheduler.scheduleWithFixedDelay({
+        scheduledCountdownFuture = ThreadManager.scheduler.scheduleWithFixedDelay({
             raceCountdown.post {
                 when (controller.race?.raceStatus) {
                     Race.FINISHED -> {
                         raceCountdown.setText(R.string.finished)
                         raceCountdownTitle.visibility = GONE
+                        scheduledCountdownFuture.cancel(true)
                     }
                     Race.REGISTRATION_CLOSED -> {
                         raceCountdown.setText(R.string.start_race)
                         raceCountdownTitle.visibility = GONE
+                        scheduledCountdownFuture.cancel(true)
                     }
                     else -> raceCountdown.text = StringUtil.hourMinSecFromMs(controller.race?.timeUntilRace)
                 }
@@ -103,6 +107,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener {
     override fun onDestroyView() {
         super.onDestroyView()
         unbinder.unbind()
+        scheduledCountdownFuture.cancel(true)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
