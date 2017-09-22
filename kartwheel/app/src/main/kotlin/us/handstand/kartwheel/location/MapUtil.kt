@@ -78,7 +78,7 @@ class MapUtil(context: Context) {
             return
         }
         draw(course)
-        if (mapViewHolder.behaviorState == oldState) {
+        if (true) {//mapViewHolder.behaviorState == oldState) {
             return
         }
         val center = mapViewHolder.calculateCenter
