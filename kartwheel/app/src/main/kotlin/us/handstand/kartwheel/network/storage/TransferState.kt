@@ -76,9 +76,9 @@ enum class TransferState {
         private val MAP = mutableMapOf<String, TransferState>()
 
         init {
-            for (state in TransferState.values()) {
-                MAP.putIfAbsent(state.toString(), state)
-            }
+            TransferState.values()
+                    .filterNot { MAP.contains(it.toString()) }
+                    .forEach { MAP.put(it.toString(), it) }
         }
 
         /**
@@ -89,9 +89,9 @@ enum class TransferState {
          */
         fun getState(stateAsString: String): TransferState {
             if (MAP.containsKey(stateAsString)) {
-                return MAP.get(stateAsString)!!
+                return MAP[stateAsString]!!
             }
-            return UNKNOWN;
+            return UNKNOWN
         }
     }
 }
