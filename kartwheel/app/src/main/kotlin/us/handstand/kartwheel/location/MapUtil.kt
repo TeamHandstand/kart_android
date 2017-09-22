@@ -39,8 +39,8 @@ class MapUtil(context: Context) {
         mapInitialized = true
         // Move the camera to the course
         val courseCenter = course.findCenter()
-        googleMap?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(courseCenter.latitude, courseCenter.longitude)))
         googleMap?.setMinZoomPreference(15f)
+        googleMap?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(courseCenter.latitude, courseCenter.longitude)))
         // Draw the course
         val coursePolyline = PolylineOptions()
         course.vertices()?.forEach { coursePolyline.add(LatLng(it.latitude(), it.longitude())) }
@@ -86,16 +86,16 @@ class MapUtil(context: Context) {
             STATE_ANCHOR_POINT -> {
                 if (isOldState(STATE_COLLAPSED)) {
                     googleMap?.animateCamera(CameraUpdateFactory.scrollBy(0f, center))
+                    oldState = newState
                 }
             }
             STATE_COLLAPSED -> {
                 if (isOldState(STATE_ANCHOR_POINT)) {
                     googleMap?.animateCamera(CameraUpdateFactory.scrollBy(0f, -center))
+                    oldState = newState
                 }
             }
-            else -> return
         }
-        oldState = newState
     }
 
     private fun isOldState(state: Long): Boolean = state == oldState || oldState == 0L
