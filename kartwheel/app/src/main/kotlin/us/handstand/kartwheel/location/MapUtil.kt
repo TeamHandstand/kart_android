@@ -36,9 +36,10 @@ class MapUtil(context: Context) {
         if (mapInitialized || course?.vertices() == null || googleMap == null) {
             return
         }
+        mapInitialized = true
         // Move the camera to the course
         val courseCenter = course.findCenter()
-        googleMap?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(courseCenter.longitude, courseCenter.latitude)))
+        googleMap?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(courseCenter.latitude, courseCenter.longitude)))
         googleMap?.setMinZoomPreference(15f)
         // Draw the course
         val coursePolyline = PolylineOptions()
@@ -51,12 +52,11 @@ class MapUtil(context: Context) {
                 .anchor(.5f, .5f)
                 .zIndex(10f)
         googleMap?.addMarker(flag)
-        mapInitialized = true
     }
 
     fun draw(userId: String, buddyUrl: String, location: Location) {
         if (markerMap.containsKey(userId)) {
-            markerMap[userId]?.position = LatLng(location.longitude, location.latitude)
+            markerMap[userId]?.position = LatLng(location.latitude, location.longitude)
         } else {
             glide.load(buddyUrl)
                     .asBitmap()
@@ -64,7 +64,7 @@ class MapUtil(context: Context) {
                         override fun onResourceReady(resource: Bitmap, glideAnimation: GlideAnimation<in Bitmap>) {
                             val flag = MarkerOptions()
                                     .icon(BitmapDescriptorFactory.fromBitmap(resource))
-                                    .position(LatLng(location.longitude, location.latitude))
+                                    .position(LatLng(location.latitude, location.longitude))
                                     .anchor(.5f, .5f)
                                     .zIndex(10f)
                             markerMap.put(userId, googleMap?.addMarker(flag)!!)
@@ -78,7 +78,7 @@ class MapUtil(context: Context) {
             return
         }
         draw(course)
-        if (true) {//mapViewHolder.behaviorState == oldState) {
+        if (mapViewHolder.behaviorState == oldState) {
             return
         }
         val center = mapViewHolder.calculateCenter
