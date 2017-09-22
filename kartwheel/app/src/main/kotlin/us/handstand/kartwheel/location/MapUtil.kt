@@ -39,8 +39,7 @@ class MapUtil(context: Context) {
         mapInitialized = true
         // Move the camera to the course
         val courseCenter = course.findCenter()
-        googleMap?.setMinZoomPreference(15f)
-        googleMap?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(courseCenter.latitude, courseCenter.longitude)))
+        googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(courseCenter.latitude, courseCenter.longitude), 15f))
         // Draw the course
         val coursePolyline = PolylineOptions()
         course.vertices()?.forEach { coursePolyline.add(LatLng(it.latitude(), it.longitude())) }
