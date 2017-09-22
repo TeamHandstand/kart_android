@@ -38,21 +38,13 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
 
         fun getAdvanceButtonTextResId(): Int
 
-        fun getAdvanceButtonColor(): Int {
-            return R.color.grey_button_disabled
-        }
+        fun getAdvanceButtonColor(): Int = R.color.grey_button_disabled
 
-        fun getAdvanceButtonLoadingColor(): Int {
-            return android.R.color.black
-        }
+        fun getAdvanceButtonLoadingColor(): Int = android.R.color.black
 
-        fun isAdvanceButtonEnabled(): Boolean {
-            return false
-        }
+        fun isAdvanceButtonEnabled(): Boolean = false
 
-        fun canAdvanceToNextStep(): Boolean {
-            return true
-        }
+        fun canAdvanceToNextStep(): Boolean = true
 
         fun getActivity(): Activity
 
@@ -72,9 +64,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
         }
 
         val ticketController: TicketController
-            get() {
-                return (getActivity() as TicketActivity).ticketController
-            }
+            get() = (getActivity() as TicketActivity).ticketController
     }
 
     val ticketController = TicketController(Database.get(), this)
