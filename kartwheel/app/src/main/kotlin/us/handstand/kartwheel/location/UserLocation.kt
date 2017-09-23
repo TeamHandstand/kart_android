@@ -1,11 +1,13 @@
 package us.handstand.kartwheel.location
 
 
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Context
 import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
-import android.os.Bundle
+import android.os.Looper
+import android.support.v4.content.ContextCompat
+import android.support.v4.content.PermissionChecker.PERMISSION_GRANTED
+import com.google.android.gms.location.*
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.subjects.PublishSubject
@@ -14,39 +16,37 @@ import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.model.UserRaceInfo
 import us.handstand.kartwheel.network.API
 
-class UserLocation(context: Context) : Observable<Location>(), LocationListener {
-    private var locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+class UserLocation(val context: Context) : Observable<Location>() {
     private var publisher = PublishSubject.create<Location>()
+    private val locationProvider = FusedLocationProviderClient(context)
 
-    @Throws(SecurityException::class) fun getLocation() = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+    private val locationCallbacks = object : LocationCallback() {
 
-    override fun onLocationChanged(location: Location) {
-        publisher.onNext(location)
-        val query = UserRaceInfo.FACTORY.select_for_id(Storage.userId)
-        Database.get().query(query.statement, *query.args).use {
-            val userRaceInfo = UserRaceInfo.FACTORY.select_for_idMapper().map(it)
-            API.updateLocation(Storage.eventId, Storage.raceId, userRaceInfo.id(), location)
+        override fun onLocationResult(result: LocationResult) {
+            super.onLocationResult(result)
+            publisher.onNext(result.lastLocation)
+            val query = UserRaceInfo.FACTORY.select_for_id(Storage.userId)
+            Database.get().query(query.statement, *query.args).use {
+                val userRaceInfo = UserRaceInfo.FACTORY.select_for_idMapper().map(it)
+                API.updateLocation(Storage.eventId, Storage.raceId, userRaceInfo.id(), result.lastLocation)
+            }
         }
-    }
 
-    override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {
-    }
-
-    override fun onProviderEnabled(provider: String) {
-    }
-
-    override fun onProviderDisabled(provider: String) {
+        override fun onLocationAvailability(availability: LocationAvailability) {
+            super.onLocationAvailability(availability)
+            if (availability.isLocationAvailable) {
+            }
+        }
     }
 
     override fun subscribeActual(observer: Observer<in Location>) {
         publisher.subscribe(observer)
-        try {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, this)
-        } catch (e: SecurityException) {
+        if (ContextCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) == PERMISSION_GRANTED) {
+            locationProvider.requestLocationUpdates(LocationRequest().setInterval(1000), locationCallbacks, Looper.getMainLooper())
         }
     }
 
     fun dispose() {
-        locationManager.removeUpdates(this)
+        locationProvider.removeLocationUpdates(locationCallbacks)
     }
 }

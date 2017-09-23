@@ -6,18 +6,22 @@ import us.handstand.kartwheel.R
 
 
 object SnackbarUtil {
+    var currentSnackbar: Snackbar? = null
 
     fun show(activity: Activity, id: Int) {
         show(activity, activity.resources.getString(id))
     }
 
     fun show(activity: Activity, message: CharSequence) {
+        if (currentSnackbar != null) {
+            currentSnackbar?.dismiss()
+        }
+        currentSnackbar = Snackbar.make(activity.findViewById(R.id.parent), message, Snackbar.LENGTH_SHORT)
+        currentSnackbar?.setAction(android.R.string.ok, {
+            currentSnackbar?.dismiss()
+        })
         activity.runOnUiThread {
-            val snackbar = Snackbar.make(activity.findViewById(R.id.parent), message, Snackbar.LENGTH_SHORT)
-            snackbar.setAction(android.R.string.ok, {
-                snackbar.dismiss()
-            })
-            snackbar.show()
+            currentSnackbar?.show()
         }
     }
 }
