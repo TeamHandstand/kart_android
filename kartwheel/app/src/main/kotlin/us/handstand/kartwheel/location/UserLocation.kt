@@ -33,13 +33,16 @@ class UserLocation(val activity: Activity) : Observable<Location>() {
             .setPriority(PRIORITY_HIGH_ACCURACY)
 
     private val locationCallbacks = object : LocationCallback() {
-        override fun onLocationResult(result: LocationResult) {
+        override fun onLocationResult(result: LocationResult?) {
             super.onLocationResult(result)
-            publishLocation(result.lastLocation)
+            if (result != null) {
+                publishLocation(result.lastLocation)
+            }
         }
     }
 
-    private fun publishLocation(location: Location) {
+    private fun publishLocation(location: Location?) {
+        if (location == null) return
         publisher.onNext(location)
         val query = UserRaceInfo.FACTORY.select_for_id(Storage.userId)
         Database.get().createQuery(UserRaceInfoModel.TABLE_NAME, query.statement, *query.args)
@@ -62,6 +65,13 @@ class UserLocation(val activity: Activity) : Observable<Location>() {
         if (Permissions.hasLocationPermissions(activity)) {
             val settingsResponse = checkDeviceLocationSettings()
             settingsResponse.addOnCompleteListener {
+                locationProvider.lastLocation
+                        .addOnSuccessListener {
+                            publishLocation(it)
+                        }
+                        .addOnFailureListener {
+                            SnackbarUtil.show(activity, "Unable to get last location")
+                        }
                 locationProvider.requestLocationUpdates(locationRequest, locationCallbacks, Looper.getMainLooper())
             }
         }
