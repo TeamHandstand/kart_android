@@ -14,6 +14,7 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import kotlinx.android.synthetic.main.fragment_race_sign_up.*
 import us.handstand.kartwheel.R
+import us.handstand.kartwheel.activity.LocationAwareActivity
 import us.handstand.kartwheel.controller.RaceSignUpController
 import us.handstand.kartwheel.controller.RaceSignUpListener
 import us.handstand.kartwheel.controller.RegistrantInfo
@@ -48,7 +49,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, M
         super.onActivityCreated(savedInstanceState)
         controller = RaceSignUpController(Database.get(), Storage.eventId, activity.intent.getStringExtra(RaceModel.ID), this)
         mapUtil = MapUtil(context)
-        userLocation = UserLocation(activity)
+        userLocation = (activity as LocationAwareActivity).userLocation
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
@@ -103,7 +104,6 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, M
         mapView.onResume()
         controller.subscribe()
         batteryWarning.registerReceiver()
-        userLocation.requestLocationUpdates()
     }
 
     override fun onPause() {
@@ -111,7 +111,6 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, M
         mapView.onPause()
         controller.dispose()
         batteryWarning.unregisterReceiver()
-        userLocation.stopLocationUpdates()
     }
 
     override fun onStart() {

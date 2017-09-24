@@ -1,6 +1,5 @@
 package us.handstand.kartwheel.activity
 
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
@@ -14,8 +13,6 @@ import us.handstand.kartwheel.model.Database
 import us.handstand.kartwheel.model.Storage
 import us.handstand.kartwheel.network.API
 import us.handstand.kartwheel.notifications.PubNubManager
-import us.handstand.kartwheel.util.Permissions
-import us.handstand.kartwheel.util.SnackbarUtil
 
 class LoggedInActivity : AppCompatActivity() {
 
@@ -34,23 +31,12 @@ class LoggedInActivity : AppCompatActivity() {
             layout.findViewById<ImageView>(R.id.icon).setImageResource(LoggedInPagerAdapter.getIconFromType(i))
             layout.findViewById<TextView>(R.id.title).text = LoggedInPagerAdapter.getTitleFromType(i)
         }
-        if (!Permissions.hasLocationPermissions(this)) {
-            Permissions.requestLocationPermissions(this)
-        }
 
         API.getUser(Storage.userId) {
             if (it != null) {
                 Storage.userBuddyUrl = it.buddyUrl()!!
                 Storage.userImageUrl = it.imageUrl()!!
             }
-        }
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode == Permissions.LOCATION_REQUEST && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-            SnackbarUtil.show(this, "Need location permissions to play, bro!")
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
     }
 }

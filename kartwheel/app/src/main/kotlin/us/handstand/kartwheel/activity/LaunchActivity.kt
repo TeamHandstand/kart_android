@@ -17,7 +17,7 @@ import us.handstand.kartwheel.model.Storage
 
 
 class LaunchActivity : AppCompatActivity() {
-    var disposable: Disposable? = null
+    private var disposable: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
