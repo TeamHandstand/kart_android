@@ -37,6 +37,10 @@
     <string name="onboarding_video_description">In a short, awesome video.</string>
     <string name="onboarding_video_button">Let\'s go!</string>
 
+    <!-- Permissions -->
+    <string name="location_permission_dialog_title">Location Permissions Required</string>
+    <string name="location_permission_dialog_message">We use your location to show your avatar on the map while you run!</string>
+
     <!-- RaceSummaryView -->
     <string name="finished">Finished</string>
     <string name="registered">Registered %1$s</string>

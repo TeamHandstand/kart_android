@@ -13,7 +13,7 @@ object SnackbarUtil {
     }
 
     fun show(activity: Activity, message: CharSequence) {
-        if (currentSnackbar != null) {
+        if (currentSnackbar != null && currentSnackbar?.isShown == true) {
             currentSnackbar?.dismiss()
         }
         currentSnackbar = Snackbar.make(activity.findViewById(R.id.parent), message, Snackbar.LENGTH_SHORT)

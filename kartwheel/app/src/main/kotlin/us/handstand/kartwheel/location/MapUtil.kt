@@ -11,6 +11,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.*
 import us.handstand.kartwheel.R
+import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior.Companion.STATE_ANCHOR_POINT
 import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior.Companion.STATE_COLLAPSED
 import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior.Companion.STATE_DRAGGING
@@ -19,6 +20,7 @@ import us.handstand.kartwheel.model.Course
 
 
 class MapUtil(context: Context) {
+    @Suppress("DEPRECATION")
     @ColorInt private var courseColor: Int = context.resources.getColor(R.color.blue)
     private lateinit var flagIcon: BitmapDescriptor
     private val glide = Glide.with(context)
@@ -26,6 +28,7 @@ class MapUtil(context: Context) {
     private var markerMap = mutableMapOf<String, Marker>()
     private var mapInitialized = false
     private var oldState: Long = 0
+    private var buddyIconSize = ViewUtil.dpToPx(context, 24)
 
     interface MapViewHolder {
         val calculateCenter: Float
@@ -59,6 +62,7 @@ class MapUtil(context: Context) {
         } else {
             glide.load(buddyUrl)
                     .asBitmap()
+                    .override(buddyIconSize, buddyIconSize)
                     .into(object : SimpleTarget<Bitmap>() {
                         override fun onResourceReady(resource: Bitmap, glideAnimation: GlideAnimation<in Bitmap>) {
                             val flag = MarkerOptions()

@@ -140,17 +140,17 @@ object API {
                 }))
     }
 
-    fun getUser(userId: String, useExecutor: Boolean = true, blindCallback: () -> Unit) {
+    fun getUser(userId: String, useExecutor: Boolean = true, blindCallback: (User?) -> Unit) {
         kartWheelService!!.getUser(userId, Storage.eventId).enqueue(SafeCallback(object : APICallback<JsonObject> {
             override fun onSuccess(response: JsonObject) {
                 val user = gson.fromJson(response.get("user"), User::class.java)
                 user.insertOrUpdate(db)
-                blindCallback.invoke()
+                blindCallback.invoke(user)
             }
 
             override fun onFailure(errorCode: Int, errorResponse: String) {
                 super.onFailure(errorCode, errorResponse)
-                blindCallback.invoke()
+                blindCallback.invoke(null)
             }
         }, useExecutor = useExecutor))
     }

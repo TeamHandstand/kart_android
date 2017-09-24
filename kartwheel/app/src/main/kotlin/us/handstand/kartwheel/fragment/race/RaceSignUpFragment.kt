@@ -14,7 +14,6 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import kotlinx.android.synthetic.main.fragment_race_sign_up.*
 import us.handstand.kartwheel.R
-import us.handstand.kartwheel.activity.LocationAwareActivity
 import us.handstand.kartwheel.controller.RaceSignUpController
 import us.handstand.kartwheel.controller.RaceSignUpListener
 import us.handstand.kartwheel.controller.RegistrantInfo
@@ -29,8 +28,6 @@ import us.handstand.kartwheel.location.MapUtil
 import us.handstand.kartwheel.location.UserLocation
 import us.handstand.kartwheel.model.*
 import us.handstand.kartwheel.network.API
-import us.handstand.kartwheel.util.Permissions
-import us.handstand.kartwheel.util.SnackbarUtil
 import us.handstand.kartwheel.util.StringUtil
 import us.handstand.kartwheel.util.ThreadManager
 import java.util.concurrent.ScheduledFuture
@@ -51,7 +48,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, M
         super.onActivityCreated(savedInstanceState)
         controller = RaceSignUpController(Database.get(), Storage.eventId, activity.intent.getStringExtra(RaceModel.ID), this)
         mapUtil = MapUtil(context)
-        userLocation = (activity as LocationAwareActivity).userLocation
+        userLocation = UserLocation(activity)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
@@ -64,6 +61,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, M
         registrantRecyclerView.layoutManager = LinearLayoutManager(context, HORIZONTAL, false)
         registrantRecyclerView.adapter = registrantAvatarAdapter
         bottomSheet.setCandyCaneBackground(android.R.color.white, R.color.textLightGrey_40p)
+        // Show the race status on a timer
         scheduledCountdownFuture = ThreadManager.scheduler.scheduleWithFixedDelay({
             raceCountdown.post {
                 when (controller.race?.raceStatus) {
@@ -102,13 +100,10 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, M
 
     override fun onResume() {
         super.onResume()
-        if (!Permissions.hasLocationPermissions(activity)) {
-            SnackbarUtil.show(activity, "Gonna need location permissions, dawg!")
-            Permissions.requestLocationPermissions(activity, this)
-        }
         mapView.onResume()
         controller.subscribe()
         batteryWarning.registerReceiver()
+        userLocation.requestLocationUpdates()
     }
 
     override fun onPause() {
@@ -116,12 +111,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, M
         mapView.onPause()
         controller.dispose()
         batteryWarning.unregisterReceiver()
-    }
-
-    override fun onDestroy() {
-        mapView.onDestroy()
-        userLocation.dispose()
-        super.onDestroy()
+        userLocation.stopLocationUpdates()
     }
 
     override fun onStart() {
@@ -132,6 +122,11 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, M
         }
     }
 
+    override fun onDestroy() {
+        mapView.onDestroy()
+        super.onDestroy()
+    }
+
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
         mapView.onSaveInstanceState(outState)
@@ -140,18 +135,6 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, M
     override fun onLowMemory() {
         super.onLowMemory()
         mapView.onLowMemory()
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode == Permissions.LOCATION_REQUEST) {
-            if (Permissions.hasLocationPermissions(activity)) {
-                mapUtil.draw(controller.race?.c())
-            } else {
-                SnackbarUtil.show(activity, "Need location permissions to play, bro!")
-            }
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        }
     }
 
     @Suppress("DEPRECATION") override fun onRegistrantsUpdated(registrantInfos: List<RegistrantInfo>) {
