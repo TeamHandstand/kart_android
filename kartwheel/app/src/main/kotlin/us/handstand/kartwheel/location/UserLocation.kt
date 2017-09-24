@@ -5,7 +5,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import android.os.Looper
-import com.google.android.gms.location.*
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.subjects.PublishSubject
@@ -24,12 +27,6 @@ class UserLocation(val context: Context) : Observable<Location>() {
         override fun onLocationResult(result: LocationResult) {
             super.onLocationResult(result)
             publishLocation(result.lastLocation)
-        }
-
-        override fun onLocationAvailability(availability: LocationAvailability) {
-            super.onLocationAvailability(availability)
-            if (availability.isLocationAvailable) {
-            }
         }
     }
 

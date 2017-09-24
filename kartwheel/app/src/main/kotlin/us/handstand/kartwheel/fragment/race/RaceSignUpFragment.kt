@@ -118,7 +118,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, M
         super.onStart()
         mapView.onStart()
         userLocation.subscribe {
-            mapUtil.draw(Storage.userId, Storage.userBuddyUrl, it)
+            mapUtil.draw(Storage.userId, Storage.userImageUrl, it)
         }
     }
 

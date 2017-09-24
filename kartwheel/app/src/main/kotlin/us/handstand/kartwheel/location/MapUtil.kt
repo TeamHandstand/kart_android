@@ -1,7 +1,7 @@
 package us.handstand.kartwheel.location
 
 import android.content.Context
-import android.graphics.Bitmap
+import android.graphics.*
 import android.location.Location
 import android.support.annotation.ColorInt
 import com.bumptech.glide.Glide
@@ -28,7 +28,13 @@ class MapUtil(context: Context) {
     private var markerMap = mutableMapOf<String, Marker>()
     private var mapInitialized = false
     private var oldState: Long = 0
-    private var buddyIconSize = ViewUtil.dpToPx(context, 24)
+    private var buddyIconSize = ViewUtil.dpToPx(context, 32)
+    private val paint = Paint()
+
+    init {
+        paint.isAntiAlias = true
+        paint.color = 0xFF_42_42_42.toInt()
+    }
 
     interface MapViewHolder {
         val calculateCenter: Float
@@ -56,17 +62,17 @@ class MapUtil(context: Context) {
         googleMap?.addMarker(flag)
     }
 
-    fun draw(userId: String, buddyUrl: String, location: Location) {
+    fun draw(userId: String, imageUrl: String, location: Location) {
         if (markerMap.containsKey(userId)) {
             markerMap[userId]?.position = LatLng(location.latitude, location.longitude)
         } else {
-            glide.load(buddyUrl)
+            glide.load(imageUrl)
                     .asBitmap()
                     .override(buddyIconSize, buddyIconSize)
                     .into(object : SimpleTarget<Bitmap>() {
                         override fun onResourceReady(resource: Bitmap, glideAnimation: GlideAnimation<in Bitmap>) {
                             val flag = MarkerOptions()
-                                    .icon(BitmapDescriptorFactory.fromBitmap(resource))
+                                    .icon(BitmapDescriptorFactory.fromBitmap(getCroppedBitmap(resource)))
                                     .position(LatLng(location.latitude, location.longitude))
                                     .anchor(.5f, .5f)
                                     .zIndex(10f)
@@ -74,6 +80,20 @@ class MapUtil(context: Context) {
                         }
                     })
         }
+    }
+
+    private fun getCroppedBitmap(bitmap: Bitmap): Bitmap {
+        val output = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(output)
+        val rect = Rect(0, 0, bitmap.width, bitmap.height)
+
+        val radius = bitmap.width / 2f
+        canvas.drawARGB(0, 0, 0, 0)
+        paint.xfermode = null
+        canvas.drawCircle(radius, radius, radius, paint)
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+        canvas.drawBitmap(bitmap, rect, rect, paint)
+        return output
     }
 
     fun moveToCenter(course: Course?, mapViewHolder: MapViewHolder, newState: Long) {
