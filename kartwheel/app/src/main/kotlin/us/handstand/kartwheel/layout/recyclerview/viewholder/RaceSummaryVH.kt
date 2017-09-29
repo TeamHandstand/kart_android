@@ -7,11 +7,9 @@ import us.handstand.kartwheel.layout.RaceSummaryView
 import us.handstand.kartwheel.model.Race
 
 
-class RaceSummaryVH private constructor(val raceSummaryView: RaceSummaryView) : RecyclerView.ViewHolder(raceSummaryView) {
+class RaceSummaryVH private constructor(private val raceSummaryView: RaceSummaryView) : RecyclerView.ViewHolder(raceSummaryView) {
     companion object {
-        fun constructNewInstance(parent: ViewGroup): RaceSummaryVH {
-            return RaceSummaryVH(RaceSummaryView(parent.context))
-        }
+        fun constructNewInstance(parent: ViewGroup): RaceSummaryVH = RaceSummaryVH(RaceSummaryView(parent.context))
     }
 
     var raceId: String = ""

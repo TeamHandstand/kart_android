@@ -12,7 +12,7 @@ object DateFormatter {
     val dateFormat = SimpleDateFormat(DATE_FORMAT_STRING, Locale.ENGLISH)
     val backupDateFormat = SimpleDateFormat(BACKUP_DATE_FORMAT_STRING, Locale.ENGLISH)
     val timeOfDayFormat = SimpleDateFormat("hh:mm a", Locale.ENGLISH)
-    val millisecondsPerMinute = 60L * 1000L
+    const val millisecondsPerMinute = 60L * 1000L
 
     init {
         val utcTimeZone = TimeZone.getTimeZone("UTC")

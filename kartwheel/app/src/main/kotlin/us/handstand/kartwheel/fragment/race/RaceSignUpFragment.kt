@@ -65,7 +65,9 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, M
         // Show the race status on a timer
         scheduledCountdownFuture = ThreadManager.scheduler.scheduleWithFixedDelay({
             raceCountdown.post {
-                when (controller.race?.raceStatus) {
+                val timeUntilRace = controller.race?.timeUntilRace
+                val raceStatus = controller.race?.raceStatus(Storage.userId,timeUntilRace ?: Long.MIN_VALUE)
+                when (raceStatus) {
                     Race.FINISHED -> {
                         raceCountdown.setText(R.string.finished)
                         raceCountdownTitle.visibility = View.GONE
@@ -76,7 +78,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, M
                         raceCountdownTitle.visibility = View.GONE
                         scheduledCountdownFuture.cancel(true)
                     }
-                    else -> raceCountdown.text = StringUtil.hourMinSecFromMs(controller.race?.timeUntilRace)
+                    else -> raceCountdown.text = StringUtil.hourMinSecFromMs(timeUntilRace)
                 }
             }
         }, 0, 1L, TimeUnit.SECONDS)

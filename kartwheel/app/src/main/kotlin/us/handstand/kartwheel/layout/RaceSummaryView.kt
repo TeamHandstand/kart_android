@@ -26,7 +26,7 @@ class RaceSummaryView : RelativeLayout {
     var details: TextView
     var spotsLeft: TextView
     var avatar: CircularImageView
-    val runnerEmojiCode = 0x1F3C3
+    private val runnerEmojiCode = 0x1F3C3
 
     init {
         View.inflate(context, R.layout.recycler_view_holder_race_list, this)
@@ -46,7 +46,9 @@ class RaceSummaryView : RelativeLayout {
         alpha = 1f
         var spotsLeftTextColorRes = R.color.textDarkGrey
         avatar.visibility = View.GONE
-        when (race.raceStatus) {
+        val timeUntilRace = race.timeUntilRace
+        val raceStatus = race.raceStatus(Storage.userId, timeUntilRace)
+        when (raceStatus) {
             FINISHED -> {
                 alpha = 0.75f
                 spotsLeft.setText(R.string.finished)
@@ -55,6 +57,7 @@ class RaceSummaryView : RelativeLayout {
                 spotsLeft.text = resources.getString(R.string.registered, String(Character.toChars(runnerEmojiCode)))
                 avatar.visibility = View.VISIBLE
                 avatar.setImageUrl(Storage.userImageUrl)
+                // TODO: Show timer
             }
             REGISTRATION_CLOSED -> {
                 spotsLeft.setText(R.string.registration_closed)
@@ -67,19 +70,14 @@ class RaceSummaryView : RelativeLayout {
                 spotsLeft.text = resources.getString(R.string.spots_left, race.r().openSpots())
             }
         }
+        startTime.setBackgroundResource(backgroundFromStartTime(raceStatus, timeUntilRace))
         @Suppress("DEPRECATION")
         spotsLeft.setTextColor(resources.getColor(spotsLeftTextColorRes))
-        startTime.setBackgroundResource(backgroundFromStartTime(race))
     }
 
-    fun backgroundFromStartTime(race: Race.RaceWithCourse): Int {
-        val timeSinceNow = race.timeUntilRace
-        if (timeSinceNow < 60 * 2) {
-            return R.drawable.background_race_list_time_red
-        } else if (timeSinceNow < 60 * 5) {
-            return R.drawable.background_race_list_time_yellow
-        } else {
-            return R.drawable.background_race_list_time_green
-        }
+    private fun backgroundFromStartTime(raceStatus: Long, timeUntilRace: Long): Int = when {
+        raceStatus == Race.REGISTRATION_CLOSED || raceStatus == Race.FINISHED -> R.drawable.background_race_list_time_red
+        timeUntilRace <= Race.MINUTES_BEFORE_START_TIME_TO_SHOW_COUNTDOWN -> R.drawable.background_race_list_time_yellow
+        else -> R.drawable.background_race_list_time_green
     }
 }

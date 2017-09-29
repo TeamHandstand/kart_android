@@ -9,6 +9,7 @@ import com.google.gson.TypeAdapter
 import us.handstand.kartwheel.model.RaceModel.*
 import us.handstand.kartwheel.model.Util.putIfNotAbsent
 import us.handstand.kartwheel.util.DateFormatter
+import java.util.*
 
 @AutoValue
 abstract class Race : RaceModel, Comparable<Race>, Insertable {
@@ -66,12 +67,14 @@ abstract class Race : RaceModel, Comparable<Race>, Insertable {
     companion object : Creator<Race> by Creator(::AutoValue_Race) {
 
         const val ALLOWABLE_SECONDS_BEFORE_START_TIME_TO_REGISTER = 5
+        const val MINUTES_BEFORE_START_TIME_TO_SHOW_COUNTDOWN = 10 * DateFormatter.millisecondsPerMinute
         const val LOW_REGISTRANTS_NUMBER = 5
         const val FINISHED = 0L
         const val REGISTERED = 1L
         const val REGISTRATION_CLOSED = 2L
         const val RACE_IS_FULL = 3L
-        const val HAS_OPEN_SPOTS = 4L
+        const val SHOW_TIME_UNTIL_RACE = 4L
+        const val HAS_OPEN_SPOTS = 5L
         const val DEFAULT_RACE_NAME = "Racey McRacerson"
 
         val FACTORY = RaceModel.Factory<Race>(Creator<Race> { id, courseId, deletedAt, endTime, eventId, funQuestion, name, openSpots, raceOrder, replayUrl, shortAnswer1, shortAnswer2, slug, startTime, totalLaps, updatedAt, videoUrl -> create(id, courseId, deletedAt, endTime, eventId, funQuestion, name, openSpots, raceOrder, replayUrl, shortAnswer1, shortAnswer2, slug, startTime, totalLaps, updatedAt, videoUrl) }, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG)
@@ -79,9 +82,7 @@ abstract class Race : RaceModel, Comparable<Race>, Insertable {
         val RACE_WITH_COURSE_SELECT: RaceModel.RaceWithCourseMapper<Race, Course, RaceWithCourse> = FACTORY.select_race_with_courseMapper(::AutoValue_Race_RaceWithCourse, Course.FACTORY)
         // Required by Gson
         @JvmStatic
-        fun typeAdapter(gson: Gson): TypeAdapter<Race> {
-            return AutoValue_Race.GsonTypeAdapter(gson)
-        }
+        fun typeAdapter(gson: Gson): TypeAdapter<Race> = AutoValue_Race.GsonTypeAdapter(gson)
     }
 
     @AutoValue
@@ -90,23 +91,21 @@ abstract class Race : RaceModel, Comparable<Race>, Insertable {
         // Registration is closed
         // Registration is full
         // Not registered for the race
-        val raceStatus: Long
-            @RaceStatus
-            get() {
-                val openSpots = r().openSpots()
-                val endTime = r().endTime()
-                if (endTime != null && endTime.before(DateFormatter[System.currentTimeMillis()])) {
-                    return FINISHED
-                } else if (registrantIds().contains(Storage.userId)) {
-                    return REGISTERED
-                } else if (timeUntilRace < Race.ALLOWABLE_SECONDS_BEFORE_START_TIME_TO_REGISTER) {
-                    return REGISTRATION_CLOSED
-                } else if (openSpots ?: 0 == 0L) {
-                    return RACE_IS_FULL
-                } else {
-                    return HAS_OPEN_SPOTS
-                }
+        @RaceStatus
+        fun raceStatus(userId: String, timeUntilRace: Long): Long {
+            val openSpots = r().openSpots() ?: 0L
+            val endTime = r().endTime() ?: Date(Long.MAX_VALUE)
+            return when {
+                endTime.before(DateFormatter[System.currentTimeMillis()]) -> FINISHED
+                registrantIds().contains(userId) -> REGISTERED
+                timeUntilRace < Race.ALLOWABLE_SECONDS_BEFORE_START_TIME_TO_REGISTER -> REGISTRATION_CLOSED
+                openSpots == 0L -> RACE_IS_FULL
+                else -> HAS_OPEN_SPOTS
             }
+        }
+
+        val aboutToStart: Boolean
+            get() = timeUntilRace <= Race.MINUTES_BEFORE_START_TIME_TO_SHOW_COUNTDOWN
 
         val timeUntilRace: Long
             get() = if (r().startTime() == null) 0L else r().startTime()!!.time - System.currentTimeMillis()
