@@ -1,5 +1,6 @@
 package us.handstand.kartwheel.layout.recyclerview.viewholder
 
+import android.animation.ValueAnimator
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import us.handstand.kartwheel.controller.RaceListController
@@ -19,8 +20,8 @@ class RaceSummaryVH private constructor(private val raceSummaryView: RaceSummary
         raceSummaryView.setOnClickListener { raceListController?.onRaceItemClicked(raceId) }
     }
 
-    fun bind(race: Race.RaceWithCourse) {
+    fun bind(race: Race.RaceWithCourse, valueAnimator: ValueAnimator) {
         raceId = race.r().id()
-        raceSummaryView.setRace(race)
+        raceSummaryView.setRace(race, valueAnimator)
     }
 }

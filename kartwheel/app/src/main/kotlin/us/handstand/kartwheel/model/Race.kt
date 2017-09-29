@@ -73,8 +73,7 @@ abstract class Race : RaceModel, Comparable<Race>, Insertable {
         const val REGISTERED = 1L
         const val REGISTRATION_CLOSED = 2L
         const val RACE_IS_FULL = 3L
-        const val SHOW_TIME_UNTIL_RACE = 4L
-        const val HAS_OPEN_SPOTS = 5L
+        const val HAS_OPEN_SPOTS = 4L
         const val DEFAULT_RACE_NAME = "Racey McRacerson"
 
         val FACTORY = RaceModel.Factory<Race>(Creator<Race> { id, courseId, deletedAt, endTime, eventId, funQuestion, name, openSpots, raceOrder, replayUrl, shortAnswer1, shortAnswer2, slug, startTime, totalLaps, updatedAt, videoUrl -> create(id, courseId, deletedAt, endTime, eventId, funQuestion, name, openSpots, raceOrder, replayUrl, shortAnswer1, shortAnswer2, slug, startTime, totalLaps, updatedAt, videoUrl) }, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG, ColumnAdapters.DATE_LONG)
@@ -98,11 +97,14 @@ abstract class Race : RaceModel, Comparable<Race>, Insertable {
             return when {
                 endTime.before(DateFormatter[System.currentTimeMillis()]) -> FINISHED
                 registrantIds().contains(userId) -> REGISTERED
-                timeUntilRace < Race.ALLOWABLE_SECONDS_BEFORE_START_TIME_TO_REGISTER -> REGISTRATION_CLOSED
+                registrationClosed -> REGISTRATION_CLOSED
                 openSpots == 0L -> RACE_IS_FULL
                 else -> HAS_OPEN_SPOTS
             }
         }
+
+        val registrationClosed: Boolean
+            get() = timeUntilRace < Race.ALLOWABLE_SECONDS_BEFORE_START_TIME_TO_REGISTER
 
         val aboutToStart: Boolean
             get() = timeUntilRace <= Race.MINUTES_BEFORE_START_TIME_TO_SHOW_COUNTDOWN

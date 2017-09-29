@@ -94,6 +94,8 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, M
         })
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
+        signUpButton.setOnClickListener(this)
+        toolbar.setOnClickListener(this)
     }
 
     override fun onDestroyView() {
@@ -170,7 +172,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, M
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.batteryWarning -> {
+            R.id.toolbar -> {
                 if (behavior.state == STATE_COLLAPSED) {
                     behavior.state = STATE_EXPANDED
                 } else if (behavior.state == STATE_EXPANDED) {
