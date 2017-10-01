@@ -174,10 +174,10 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, M
     override fun onClick(view: View) {
         when (view.id) {
             R.id.toolbar -> {
-                if (behavior.state == STATE_COLLAPSED) {
-                    behavior.state = STATE_EXPANDED
-                } else if (behavior.state == STATE_EXPANDED) {
-                    behavior.state = STATE_COLLAPSED
+                when (behavior.state) {
+                    STATE_COLLAPSED -> behavior.state = STATE_ANCHOR_POINT
+                    STATE_ANCHOR_POINT -> behavior.state = STATE_EXPANDED
+                    STATE_EXPANDED -> behavior.state = STATE_ANCHOR_POINT
                 }
             }
             R.id.signUpButton -> {
