@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import us.handstand.kartwheel.controller.RaceListController
 import us.handstand.kartwheel.layout.RaceSummaryView
-import us.handstand.kartwheel.model.Race
+import us.handstand.kartwheel.layout.recyclerview.binding.RaceListBinding
 
 
 class RaceSummaryVH private constructor(private val raceSummaryView: RaceSummaryView) : RecyclerView.ViewHolder(raceSummaryView) {
@@ -20,8 +20,8 @@ class RaceSummaryVH private constructor(private val raceSummaryView: RaceSummary
         raceSummaryView.setOnClickListener { raceListController?.onRaceItemClicked(raceId) }
     }
 
-    fun bind(race: Race.RaceWithCourse, valueAnimator: ValueAnimator) {
-        raceId = race.r().id()
-        raceSummaryView.setRace(race, valueAnimator)
+    fun bind(binding: RaceListBinding, valueAnimator: ValueAnimator) {
+        raceId = binding.raceId
+        raceSummaryView.bind(binding, valueAnimator)
     }
 }

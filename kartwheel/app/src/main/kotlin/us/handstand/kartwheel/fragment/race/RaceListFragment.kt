@@ -13,8 +13,10 @@ import us.handstand.kartwheel.R
 import us.handstand.kartwheel.activity.RaceSignUpActivity
 import us.handstand.kartwheel.controller.RaceListController
 import us.handstand.kartwheel.layout.recyclerview.adapter.RaceListAdapter
+import us.handstand.kartwheel.layout.recyclerview.binding.RaceListBinding
 import us.handstand.kartwheel.model.Race
 import us.handstand.kartwheel.model.RaceModel
+import us.handstand.kartwheel.model.Storage
 import javax.inject.Inject
 
 
@@ -50,6 +52,12 @@ class RaceListFragment : Fragment(), RaceListController.RaceListListener {
     }
 
     override fun onRacesUpdated(races: List<Race.RaceWithCourse>) {
-        activity.runOnUiThread { raceAdapter.setRaces(races) }
+        val raceBindings = mutableListOf<RaceListBinding>()
+        val res = resources
+        val avatarUrl = Storage.userImageUrl
+        for (race in races) {
+            raceBindings.add(RaceListBinding(race, avatarUrl, res))
+        }
+        activity.runOnUiThread { raceAdapter.setBindings(raceBindings) }
     }
 }

@@ -5,19 +5,19 @@ import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
 import us.handstand.kartwheel.controller.RaceListController
+import us.handstand.kartwheel.layout.recyclerview.binding.RaceListBinding
 import us.handstand.kartwheel.layout.recyclerview.viewholder.RaceSummaryVH
-import us.handstand.kartwheel.model.Race
 
 
 class RaceListAdapter(val controller: RaceListController) : RecyclerView.Adapter<RaceSummaryVH>() {
-    val races = ArrayList<Race.RaceWithCourse>()
+    val races = ArrayList<RaceListBinding>()
     private val timeAnimator = ValueAnimator.ofFloat(0f, 1f)
 
     init {
         timeAnimator.interpolator = LinearInterpolator()
     }
 
-    fun setRaces(races: List<Race.RaceWithCourse>) {
+    fun setBindings(races: List<RaceListBinding>) {
         this.races.clear()
         this.races.addAll(races)
         timeAnimator.cancel()
