@@ -35,131 +35,87 @@ class Storage private constructor(val prefs: SharedPreferences) {
         }
 
         var userId: String
-            get() {
-                return getString(USER_ID)
-            }
+            get() = getString(USER_ID)
             set(value) {
                 set(USER_ID, value)
             }
         var teamId: String
-            get() {
-                return getString(TEAM_ID)
-            }
+            get() = getString(TEAM_ID)
             set(value) {
                 set(TEAM_ID, value)
             }
         var eventId: String
-            get() {
-                return getString(EVENT_ID)
-            }
+            get() = getString(EVENT_ID)
             set(value) {
                 set(EVENT_ID, value)
             }
         var raceId: String
-            get() {
-                return getString(RACE_ID)
-            }
+            get() = getString(RACE_ID)
             set(value) {
                 set(RACE_ID, value)
             }
         var code: String
-            get() {
-                return getString(EMOJI_CODE)
-            }
+            get() = getString(EMOJI_CODE)
             set(value) {
                 set(EMOJI_CODE, value)
             }
         var ticketId: String
-            get() {
-                return getString(TICKET_ID)
-            }
+            get() = getString(TICKET_ID)
             set(value) {
                 set(TICKET_ID, value)
             }
         var userImageUrl: String
-            get() {
-                return getString(USER_IMAGE_URL)
-            }
+            get() = getString(USER_IMAGE_URL)
             set(value) {
                 set(USER_IMAGE_URL, value)
             }
         var userBuddyUrl: String
-            get() {
-                return getString(USER_BUDDY_URL)
-            }
+            get() = getString(USER_BUDDY_URL)
             set(value) {
                 set(USER_BUDDY_URL, value)
             }
         var showRaces: Boolean
-            get() {
-                return getBoolean(SHOW_RACES)
-            }
+            get() = getBoolean(SHOW_RACES)
             set(value) {
                 set(SHOW_RACES, value)
             }
         var lastTicketState: Long
-            get() {
-                return getLong(LAST_TICKET_STEP, TicketController.TOS)
-            }
+            get() = getLong(LAST_TICKET_STEP, TicketController.TOS)
             set(value) {
                 set(LAST_TICKET_STEP, value)
             }
         var lastOnboardingState: Long
-            get() {
-                return getLong(LAST_ONBOARDING_STEP, OnboardingController.STARTED)
-            }
+            get() = getLong(LAST_ONBOARDING_STEP, OnboardingController.STARTED)
             set(value) {
                 set(LAST_ONBOARDING_STEP, value)
             }
         var selfieUri: String
-            get() {
-                return getString(SELFIE_URI)
-            }
-            set(value) {
-                return set(SELFIE_URI, value)
-            }
+            get() = getString(SELFIE_URI)
+            set(value) = set(SELFIE_URI, value)
         var selectedBuddyUrl: String
-            get() {
-                return getString(BUDDY_URI)
-            }
-            set(value) {
-                return set(BUDDY_URI, value)
-            }
+            get() = getString(BUDDY_URI)
+            set(value) = set(BUDDY_URI, value)
         var selfieTransferId: Int
-            get() {
-                return getInt(SELFIE_TRANSFER_ID)
-            }
-            set(value) {
-                return set(SELFIE_TRANSFER_ID, value)
-            }
+            get() = getInt(SELFIE_TRANSFER_ID)
+            set(value) = set(SELFIE_TRANSFER_ID, value)
         val pubNubChannelGroup: String
-            get() {
-                return "user-group-$userId"
-            }
+            get() = "user-group-$userId"
         var fcmToken: String
-            get() {
-                return getString(FCM_TOKEN)
-            }
-            set(value) {
-                return set(FCM_TOKEN, value)
-            }
+            get() = getString(FCM_TOKEN)
+            set(value) = set(FCM_TOKEN, value)
 
 
-        private fun getString(@KEYS key: String, default: String = ""): String {
-            return instance.prefs.getString(key, default)
-        }
+        private fun getString(@KEYS key: String, default: String = ""): String =
+                instance.prefs.getString(key, default)
 
-        private fun getLong(@KEYS key: String, default: Long): Long {
-            return instance.prefs.getLong(key, default)
-        }
+        private fun getLong(@KEYS key: String, default: Long): Long =
+                instance.prefs.getLong(key, default)
 
-        private fun getInt(@KEYS key: String, default: Int = -1): Int {
-            return instance.prefs.getInt(key, default)
-        }
+        private fun getInt(@KEYS key: String, default: Int = -1): Int =
+                instance.prefs.getInt(key, default)
 
-        private fun getBoolean(@KEYS key: String, default: Boolean = false): Boolean {
-            return instance.prefs.getBoolean(key, default)
-        }
+        private fun getBoolean(@KEYS key: String, default: Boolean = false): Boolean =
+                instance.prefs.getBoolean(key, default)
 
         private operator fun set(@KEYS key: String, value: String) {
             instance.prefs.edit().putString(key, value).apply()
