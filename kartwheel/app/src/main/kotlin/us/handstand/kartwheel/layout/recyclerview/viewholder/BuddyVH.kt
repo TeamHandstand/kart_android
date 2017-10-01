@@ -2,8 +2,9 @@ package us.handstand.kartwheel.layout.recyclerview.viewholder
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import us.handstand.kartwheel.R
+import us.handstand.kartwheel.layout.GlideApp
 import us.handstand.kartwheel.layout.GlideImageView
 import us.handstand.kartwheel.layout.recyclerview.adapter.AdapterVH
 import us.handstand.kartwheel.layout.recyclerview.adapter.AdapterVHClickListener
@@ -24,9 +25,9 @@ class BuddyVH private constructor(val viewGroup: ViewGroup) : AdapterVH(viewGrou
     }
 
     fun bind(imageUrl: String) {
-        Glide.with(buddy.context)
+        GlideApp.with(buddy.context)
                 .load(imageUrl)
-                .placeholder(R.drawable.buddy_placeholder)
+                .apply(RequestOptions.placeholderOf(R.drawable.buddy_placeholder))
                 .into(buddy)
     }
 }

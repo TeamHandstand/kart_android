@@ -17,29 +17,19 @@ abstract class Race : RaceModel, Comparable<Race>, Insertable {
     override fun compareTo(other: Race): Int {
         val myRaceOrder = raceOrder()
         val theirRaceOrder = other.raceOrder()
-        if (myRaceOrder == null) {
-            return 1
+        return if (myRaceOrder == null) {
+            1
         } else if (theirRaceOrder == null) {
-            return -1
+            -1
         } else {
-            return myRaceOrder.compareTo(theirRaceOrder)
+            myRaceOrder.compareTo(theirRaceOrder)
         }
     }
 
     @IntDef(FINISHED, REGISTERED, REGISTRATION_CLOSED, RACE_IS_FULL, HAS_OPEN_SPOTS)
     annotation class RaceStatus
 
-    fun alreadyStarted(): Boolean {
-        val startTime = startTime()
-        return startTime == null || startTime.time - System.currentTimeMillis() < 0
-    }
-
-    val timeUntilRace: Long
-        get() = if (startTime() == null) 0L else startTime()!!.time - System.currentTimeMillis()
-
-    override fun tableName(): String {
-        return TABLE_NAME
-    }
+    override fun tableName(): String = TABLE_NAME
 
     override val contentValues: ContentValues
         get() {
@@ -91,7 +81,7 @@ abstract class Race : RaceModel, Comparable<Race>, Insertable {
         // Registration is full
         // Not registered for the race
         @RaceStatus
-        fun raceStatus(userId: String, timeUntilRace: Long): Long {
+        fun raceStatus(userId: String): Long {
             val openSpots = r().openSpots() ?: 0L
             val endTime = r().endTime() ?: Date(Long.MAX_VALUE)
             return when {
@@ -105,9 +95,6 @@ abstract class Race : RaceModel, Comparable<Race>, Insertable {
 
         val registrationClosed: Boolean
             get() = timeUntilRace < Race.ALLOWABLE_SECONDS_BEFORE_START_TIME_TO_REGISTER
-
-        val aboutToStart: Boolean
-            get() = timeUntilRace <= Race.MINUTES_BEFORE_START_TIME_TO_SHOW_COUNTDOWN
 
         val timeUntilRace: Long
             get() = if (r().startTime() == null) 0L else r().startTime()!!.time - System.currentTimeMillis()

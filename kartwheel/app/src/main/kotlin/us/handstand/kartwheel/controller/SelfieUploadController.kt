@@ -2,7 +2,6 @@ package us.handstand.kartwheel.controller
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.text.TextUtils.isEmpty
 import com.crashlytics.android.Crashlytics
@@ -21,7 +20,7 @@ import javax.inject.Inject
 
 open class SelfieUploadController @Inject constructor(val context: Context) : TransferListener {
     open var listener: SelfieUploadControllerListener? = null
-    private val INVALID_TRANSFER_ID = -1;
+    private val INVALID_TRANSFER_ID = -1
     private var transferObserver: TransferObserver? = null
 
     interface SelfieUploadControllerListener {
@@ -41,7 +40,7 @@ open class SelfieUploadController @Inject constructor(val context: Context) : Tr
         transferObserver?.cleanTransferListener()
     }
 
-    fun onCameraResult(requestCode: Int, resultCode: Int, data: Intent?): Uri? {
+    fun onCameraResult(requestCode: Int, resultCode: Int): Uri? {
         if (requestCode == Photos.REQUEST_IMAGE_CAPTURE) {
             if (resultCode == Activity.RESULT_OK) {
                 // Wait for the user to click the advance button before uploading
@@ -81,8 +80,7 @@ open class SelfieUploadController @Inject constructor(val context: Context) : Tr
     }
 
     override fun onProgressChanged(id: Int, bytesCurrent: Long, bytesTotal: Long) {
-        val progress = (bytesCurrent.toDouble() * 100 / bytesTotal).toInt()
-        // TODO: Progress UI
+        // TODO: Progress UI based on  (bytesCurrent.toDouble() * 100 / bytesTotal).toInt()
     }
 
     override fun onStateChanged(id: Int, state: TransferState) {

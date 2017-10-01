@@ -42,6 +42,7 @@ class CritInfoRelativeLayout : RelativeLayout, ValueAnimator.AnimatorUpdateListe
         leftImageView = findViewById(R.id.leftImage)
         rightImageView = findViewById(R.id.rightImage)
         question = findViewById(R.id.question)
+        @Suppress("DEPRECATION")
         paint.color = context.resources.getColor(R.color.yellow)
         paint.strokeWidth = ViewUtil.dpToPx(context, 2).toFloat()
         paint.style = Paint.Style.STROKE
@@ -139,6 +140,7 @@ class CritInfoRelativeLayout : RelativeLayout, ValueAnimator.AnimatorUpdateListe
         }
         animator.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
+                @Suppress("DEPRECATION")
                 paint.color = context.resources.getColor(colorRes)
             }
         })

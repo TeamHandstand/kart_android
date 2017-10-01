@@ -83,6 +83,7 @@ class KartButton : AppCompatButton, ValueAnimator.AnimatorUpdateListener {
             val strokeWidth = typedArray.getDimension(R.styleable.KartButton_loadingSpinnerWidth, ViewUtil.dpToPx(context, 2).toFloat())
             cornerRadius = typedArray.getDimension(R.styleable.KartButton_cornerRadius, ViewUtil.dpToPx(context, 33).toFloat())
             halfCircumference = Math.PI.toFloat() * cornerRadius
+            @Suppress("DEPRECATION")
             paint.color = context.resources.getColor(loadingColor)
             paint.strokeWidth = strokeWidth
             paint.isAntiAlias = true
@@ -111,6 +112,7 @@ class KartButton : AppCompatButton, ValueAnimator.AnimatorUpdateListener {
     }
 
     fun setLoadingColor(@ColorRes loadingColor: Int) {
+        @Suppress("DEPRECATION")
         paint.color = context.resources.getColor(loadingColor)
     }
 
@@ -159,10 +161,8 @@ class KartButton : AppCompatButton, ValueAnimator.AnimatorUpdateListener {
     private fun getRightArc(animatedValue: Float): Arc {
         val startOfRightArc = totalLength - legLength - halfCircumference
         val endOfRightArc = totalLength - legLength
-        // Animated value (left side) will have something contained within the half circle if the value + halfCircumference is within the half circle
-        val amountWithinHalfCircle = halfCircumference - /* amount to animate in circle */(totalLength - legLength - animatedValue)
-        var valueStartInCircle = 0f
-        var valueEndInCircle = 0f
+        val valueStartInCircle : Float
+        val valueEndInCircle : Float
         var startAngle = 0f
         var sweepAngle = 0f
         if (animatedValue < startOfRightArc && animatedValue > startOfRightArc - halfCircumference) {
@@ -208,7 +208,6 @@ class KartButton : AppCompatButton, ValueAnimator.AnimatorUpdateListener {
         var start = 0f
         var end = 0f
         val lineStart = totalLength - legLength
-        val lineEnd = totalLength
         if (animatedValue >= lineStart - halfCircumference) {
             if (animatedValue > lineStart) {
                 start = centerXRight - (animatedValue - lineStart)

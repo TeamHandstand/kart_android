@@ -15,14 +15,14 @@ class SafeCallback(private val relay: API.APICallback<JsonObject>?, private val 
     override fun onResponse(call: Call<JsonElement>?, response: Response<JsonElement>?) {
         if (useExecutor) {
             ThreadManager.databaseExecutor.execute {
-                performResponse(call, response)
+                performResponse(response)
             }
         } else {
-            performResponse(call, response)
+            performResponse(response)
         }
     }
 
-    private fun performResponse(call: Call<JsonElement>?, response: Response<JsonElement>?) {
+    private fun performResponse(response: Response<JsonElement>?) {
         try {
             if (response?.code() == 200) {
                 if (response.body() is JsonObject) {
@@ -49,14 +49,14 @@ class SafeCallback(private val relay: API.APICallback<JsonObject>?, private val 
     override fun onFailure(call: Call<JsonElement>?, t: Throwable?) {
         if (useExecutor) {
             ThreadManager.databaseExecutor.execute {
-                performFailure(call, t)
+                performFailure(t)
             }
         } else {
-            performFailure(call, t)
+            performFailure(t)
         }
     }
 
-    private fun performFailure(call: Call<JsonElement>?, t: Throwable?) {
+    private fun performFailure(t: Throwable?) {
         if (BuildConfig.DEBUG) {
             t?.printStackTrace()
         }

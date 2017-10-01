@@ -1,13 +1,15 @@
 package us.handstand.kartwheel.util
 
 import android.content.Context
+import android.content.res.AssetManager
 import android.media.AudioManager
 import android.media.SoundPool
 import android.util.SparseArray
 
 
 object Audio : SoundPool.OnLoadCompleteListener {
-    private lateinit var applicationContext: Context
+    private lateinit var assetManager: AssetManager
+    @Suppress("DEPRECATION")
     private val soundPool: SoundPool = SoundPool(2, AudioManager.STREAM_NOTIFICATION, 0)
     private val playQueue = mutableMapOf<String, AudioFuture>()
     private val SOUNDS = SparseArray<String>()
@@ -18,7 +20,7 @@ object Audio : SoundPool.OnLoadCompleteListener {
     val CLICK_BUTTON = "user-click-button.m4a"
 
     fun initialize(context: Context) {
-        applicationContext = context.applicationContext
+        assetManager = context.applicationContext.assets
         soundPool.setOnLoadCompleteListener(this)
     }
 
@@ -26,7 +28,7 @@ object Audio : SoundPool.OnLoadCompleteListener {
         if (SOUNDS.indexOfValue(sound) >= 0) {
             playAndStoreStream(sound, priority, loop)
         } else if (!playQueue.containsKey(sound)) {
-            val soundId = soundPool.load(applicationContext.assets.openFd(PREFIX + sound), 1)
+            val soundId = soundPool.load(assetManager.openFd(PREFIX + sound), 1)
             SOUNDS.put(soundId, sound)
             playQueue[sound] = AudioFuture(priority, loop)
         }

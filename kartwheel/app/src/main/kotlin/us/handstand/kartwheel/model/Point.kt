@@ -8,15 +8,11 @@ import us.handstand.kartwheel.model.PointModel.Creator
 
 @AutoValue
 abstract class Point : PointModel, Comparable<Point> {
-    override fun compareTo(o: Point): Int {
-        return stepOrder()!!.compareTo(o.stepOrder()!!)
-    }
+    override fun compareTo(other: Point): Int = stepOrder()!!.compareTo(other.stepOrder()!!)
 
     companion object : Creator<Point> by Creator(::AutoValue_Point) {
         // Required by Gson
         @JvmStatic
-        fun typeAdapter(gson: Gson): TypeAdapter<Point> {
-            return AutoValue_Point.GsonTypeAdapter(gson)
-        }
+        fun typeAdapter(gson: Gson): TypeAdapter<Point> = AutoValue_Point.GsonTypeAdapter(gson)
     }
 }

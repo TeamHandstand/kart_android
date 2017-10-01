@@ -22,6 +22,7 @@ import us.handstand.kartwheel.util.SnackbarUtil
 class UserLocation(val activity: LocationAwareActivity) : Observable<Location>() {
     private val publisher = PublishSubject.create<Location>()
     private val locationProvider = FusedLocationProviderClient(activity)
+    private val userId = Storage.userId
 
     private val locationCallbacks = object : LocationCallback() {
         override fun onLocationResult(result: LocationResult?) {
@@ -35,7 +36,7 @@ class UserLocation(val activity: LocationAwareActivity) : Observable<Location>()
     private fun publishLocation(location: Location?) {
         if (location == null) return
         publisher.onNext(location)
-        val query = UserRaceInfo.FACTORY.select_for_id(Storage.userId)
+        val query = UserRaceInfo.FACTORY.select_for_id(userId)
         Database.get().createQuery(UserRaceInfoModel.TABLE_NAME, query.statement, *query.args)
                 .mapToOne { UserRaceInfo.FACTORY.select_for_idMapper().map(it) }
                 .doOnNext {

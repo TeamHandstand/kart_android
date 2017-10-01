@@ -47,6 +47,7 @@ class GameInfoPlayerView : RelativeLayout, View.OnClickListener {
         } finally {
             a.recycle()
         }
+        @Suppress("DEPRECATION")
         playerNumber.setTextColor(if (number == 1) resources.getColor(android.R.color.black) else resources.getColor(R.color.red))
         forfeitOrShare.setOnClickListener(this)
         setBackgroundResource(R.drawable.game_info_player_background)

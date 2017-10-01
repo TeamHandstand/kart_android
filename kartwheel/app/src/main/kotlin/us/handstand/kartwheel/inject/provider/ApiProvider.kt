@@ -19,8 +19,9 @@ class ApiProvider(val url: String) : Interceptor {
         val requestBuilder = chain.request().newBuilder()
         requestBuilder.header("Content-Type", "application/json")
         requestBuilder.header("Accept", "application/json")
-        if (!isEmpty(Storage.userId)) {
-            requestBuilder.header("auth-id", Storage.userId)
+        val userId = Storage.userId
+        if (!isEmpty(userId)) {
+            requestBuilder.header("auth-id", userId)
         }
         return chain.proceed(requestBuilder.build())
     }

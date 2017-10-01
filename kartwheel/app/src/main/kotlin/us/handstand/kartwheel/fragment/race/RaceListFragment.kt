@@ -55,8 +55,9 @@ class RaceListFragment : Fragment(), RaceListController.RaceListListener {
         val raceBindings = mutableListOf<RaceListBinding>()
         val res = resources
         val avatarUrl = Storage.userImageUrl
+        val userId = Storage.userId
         for (race in races) {
-            raceBindings.add(RaceListBinding(race, avatarUrl, res))
+            raceBindings.add(RaceListBinding(race, res, avatarUrl, userId))
         }
         activity.runOnUiThread { raceAdapter.setBindings(raceBindings) }
     }

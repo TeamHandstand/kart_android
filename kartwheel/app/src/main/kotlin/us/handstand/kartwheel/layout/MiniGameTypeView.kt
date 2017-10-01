@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.model.MiniGameType
 
@@ -33,9 +34,9 @@ class MiniGameTypeView : RelativeLayout {
         name.text = miniGame.name()
         timeEstimate.text = miniGame.timeEstimate()
         meetupInstructions.text = miniGame.meetupInstructions()
-        Glide.with(context)
+        GlideApp.with(context)
                 .load(miniGame.imageUrl())
-                .placeholder(R.drawable.placeholder_registrant_avatar_grey)
+                .apply(RequestOptions.placeholderOf(R.drawable.placeholder_registrant_avatar_grey))
                 .into(image)
     }
 }

@@ -5,7 +5,6 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.support.annotation.IntDef
 import android.support.design.widget.CoordinatorLayout
-import android.support.v4.view.MotionEventCompat
 import android.support.v4.view.NestedScrollingChild
 import android.support.v4.view.ViewCompat
 import android.support.v4.widget.ViewDragHelper
@@ -139,7 +138,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
         // First let the parent lay it out
         if (mState != STATE_DRAGGING && mState != STATE_SETTLING) {
             if (ViewCompat.getFitsSystemWindows(parent) && !ViewCompat.getFitsSystemWindows(child)) {
-                ViewCompat.setFitsSystemWindows(child, true)
+                child.setFitsSystemWindows(true)
             }
             parent.onLayoutChild(child, layoutDirection)
         }
@@ -170,7 +169,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
             return false
         }
 
-        val action = MotionEventCompat.getActionMasked(event)
+        val action = event.getActionMasked()
         if (action == MotionEvent.ACTION_DOWN) {
             reset()
         }
@@ -228,7 +227,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
             return false
         }
 
-        val action = MotionEventCompat.getActionMasked(event)
+        val action = event.getActionMasked()
         if (mState == STATE_DRAGGING && action == MotionEvent.ACTION_DOWN) {
             return true
         }
@@ -307,7 +306,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
                 setStateInternal(STATE_DRAGGING)
             }
         } else if (dy < 0) { // Downward
-            if (!ViewCompat.canScrollVertically(target, -1)) {
+            if (!target.canScrollVertically(-1)) {
                 if (newTop <= maxOffset || isHideable) {
                     consumed[1] = dy
                     ViewCompat.offsetTopAndBottom(child, -dy)
@@ -517,7 +516,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
             }
             if (mState == STATE_EXPANDED && activePointerId == pointerId) {
                 val scroll = nestedScrollingChildRef!!.get()
-                if (scroll != null && ViewCompat.canScrollVertically(scroll, -1)) {
+                if (scroll != null && scroll.canScrollVertically(-1)) {
                     // Let the content scroll up
                     return false
                 }

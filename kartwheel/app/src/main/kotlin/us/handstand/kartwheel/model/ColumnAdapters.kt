@@ -12,80 +12,20 @@ import java.io.ObjectOutputStream
 import java.util.*
 
 object ColumnAdapters {
-    val COURSE_BLOB: ColumnAdapter<Course, ByteArray> = object : ColumnAdapter<Course, ByteArray> {
-        override fun decode(databaseValue: ByteArray): Course {
-            return blobToCourse(databaseValue)
-        }
-
-        override fun encode(value: Course): ByteArray {
-            return courseToBlob(value)
-        }
-    }
-
-    fun courseToBlob(course: Course?): ByteArray {
-        if (course == null) {
-            return ByteArray(0)
-        } else {
-            return API.gson.toJson(course).toByteArray()
-        }
-    }
-
-    fun blobToCourse(blob: ByteArray?): Course {
-        if (blob == null || blob.isEmpty()) {
-            return Course.EMPTY_COURSE
-        } else {
-            return API.gson.fromJson(String(blob), Course::class.java)
-        }
-    }
-
     val DATE_LONG: ColumnAdapter<Date, Long> = object : ColumnAdapter<Date, Long> {
-        override fun decode(databaseValue: Long?): Date {
-            return if (databaseValue != null) DateFormatter[databaseValue] ?: Date() else Date()
-        }
+        override fun decode(databaseValue: Long?): Date =
+                if (databaseValue != null) DateFormatter[databaseValue] ?: Date() else Date()
 
         override fun encode(value: Date): Long {
+            @Suppress("UNNECESSARY_SAFE_CALL")
             return value?.time ?: 0L
         }
     }
 
-    val LIST_STRING_BLOB: ColumnAdapter<List<String>, ByteArray> = object : ColumnAdapter<List<String>, ByteArray> {
-        override fun decode(databaseValue: ByteArray): List<String> {
-            return blobToListString(databaseValue)
-        }
-
-        override fun encode(value: List<String>): ByteArray {
-            return listStringToBlob(value)
-        }
-    }
-
-    private val listStringType = object : TypeToken<List<String>>() {
-
-    }.type
-
-    fun blobToListString(blob: ByteArray?): List<String> {
-        if (blob == null || blob.isEmpty()) {
-            return emptyList()
-        } else {
-            return API.gson.fromJson<List<String>>(String(blob), listStringType)
-        }
-    }
-
-    fun listStringToBlob(list: List<String>?): ByteArray {
-        if (list == null) {
-            return ByteArray(0)
-        } else {
-            return API.gson.toJson(list).toByteArray()
-        }
-    }
-
     val LIST_POINT_BLOB: ColumnAdapter<List<Point>, ByteArray> = object : ColumnAdapter<List<Point>, ByteArray> {
-        override fun decode(databaseValue: ByteArray): List<Point> {
-            return blobToListPoint(databaseValue)
-        }
+        override fun decode(databaseValue: ByteArray): List<Point> = blobToListPoint(databaseValue)
 
-        override fun encode(value: List<Point>): ByteArray {
-            return listPointToBlob(value)
-        }
+        override fun encode(value: List<Point>): ByteArray = listPointToBlob(value)
     }
 
     private val listPointType = object : TypeToken<List<Point>>() {
@@ -114,6 +54,7 @@ object ColumnAdapters {
             try {
                 val `in` = ByteArrayInputStream(databaseValue)
                 val `is` = ObjectInputStream(`in`)
+                @Suppress("UNCHECKED_CAST")
                 tickets = `is`.readObject() as List<T>
             } catch (e: Exception) {
                 e.printStackTrace()

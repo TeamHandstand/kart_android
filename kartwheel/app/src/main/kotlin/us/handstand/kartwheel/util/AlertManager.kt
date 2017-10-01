@@ -3,6 +3,7 @@ package us.handstand.kartwheel.util
 import android.text.TextUtils.isEmpty
 
 
+@Suppress("UNUSED_PARAMETER")
 object AlertManager {
     fun showAlert(message: String?, vibrate: Boolean, showFireAction: Boolean, soundName: String?) {
         if (!isEmpty(soundName)) {
@@ -12,13 +13,10 @@ object AlertManager {
             // TODO: vibrate now, 200ms, 500ms
         }
         if (!isEmpty(message)) {
-            generateLocalNotification(message!!, showFireAction)
+            // TODO: Generate local notification
         }
     }
 
-    private fun generateLocalNotification(pushMessage: String, showFireAction: Boolean) {
-        // TODO: Show notification
-    }
 
     fun playSound(soundName: String) {
         // TODO: Play sound

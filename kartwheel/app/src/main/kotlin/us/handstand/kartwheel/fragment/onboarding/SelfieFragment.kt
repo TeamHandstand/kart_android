@@ -44,7 +44,7 @@ class SelfieFragment : Fragment(), OnboardingActivity.OnboardingFragment, Selfie
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val uri = selfieController.onCameraResult(requestCode, resultCode, data)
+        val uri = selfieController.onCameraResult(requestCode, resultCode)
         if (uri != null) {
             selfie.setImageUri(uri)
         } else {
@@ -70,6 +70,9 @@ class SelfieFragment : Fragment(), OnboardingActivity.OnboardingFragment, Selfie
                     selfie.isEnabled = false
                 }
                 TransferState.COMPLETED -> controller.onStepCompleted(OnboardingController.SELFIE)
+                else -> {
+                    // Nothing
+                }
             }
         }
     }

@@ -15,9 +15,9 @@
         android:padding="16dp"
         android:textColor="@android:color/white"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/spotsLeft"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/raceName"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="1:02\npm"/>
 
 

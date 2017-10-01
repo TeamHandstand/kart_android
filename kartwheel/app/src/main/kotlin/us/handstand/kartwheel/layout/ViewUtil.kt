@@ -27,13 +27,10 @@ import us.handstand.kartwheel.util.SnackbarUtil
 
 object ViewUtil {
 
-    fun isEmpty(editText: EditText?): Boolean {
-        return TextUtils.isEmpty(editText?.text?.toString())
-    }
+    fun isEmpty(editText: EditText?): Boolean = TextUtils.isEmpty(editText?.text?.toString())
 
-    fun dpToPx(context: Context, dp: Int): Int {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(), context.resources.displayMetrics).toInt()
-    }
+    fun dpToPx(context: Context, dp: Int): Int =
+            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(), context.resources.displayMetrics).toInt()
 
     fun hideKeyboard(context: Activity) {
         if (context.currentFocus != null) {
@@ -46,6 +43,7 @@ object ViewUtil {
         if (button == null) {
             return
         }
+        @Suppress("DEPRECATION")
         ViewCompat.setBackgroundTintList(button, ColorStateList.valueOf(resources.getColor(color)))
         button.setLoadingColor(loadingColor)
         button.setText(textRes)
@@ -79,11 +77,13 @@ object ViewUtil {
             paint.strokeWidth = strokeWidth / 2
         }
 
+        @Suppress("DEPRECATION")
         paint.color = context.resources.getColor(stripeColor)
 
         val bmp = Bitmap.createBitmap(width.toInt(), height.toInt(), Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bmp)
 
+        @Suppress("DEPRECATION")
         canvas.drawColor(context.resources.getColor(backgroundColor))
         canvas.translate(-width / 2, height / 10)
         canvas.rotate(-30f)

@@ -1,14 +1,11 @@
 package us.handstand.kartwheel.layout
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.text.TextUtils.isEmpty
 import android.util.AttributeSet
 import android.widget.ImageView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.BitmapImageViewTarget
+import com.bumptech.glide.request.RequestOptions
 import us.handstand.kartwheel.R
 
 
@@ -16,64 +13,51 @@ abstract class GlideImageView : ImageView {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
-    abstract fun toDrawable(original: Bitmap): Drawable
+    abstract fun getImageRequestOptions(): RequestOptions
 
     init {
         if (!isInEditMode) {
-            setImageResource(R.drawable.placeholder_registrant_avatar_grey)
+            super.setImageResource(R.drawable.placeholder_registrant_avatar_grey)
         }
     }
 
     fun setImageUri(uri: Uri) {
-        Glide.with(context)
+        GlideApp.with(context)
                 .load(uri)
-                .asBitmap()
+                .apply(getImageRequestOptions())
                 .centerCrop()
                 .placeholder(R.drawable.onboarding_camera)
-                .into(object : BitmapImageViewTarget(this) {
-                    override fun setResource(resource: Bitmap) {
-                        setImageDrawable(toDrawable(resource))
-                    }
-                })
+                .into(this)
     }
 
     fun setImageResource(imageRes: Int, placeholder: Int = R.drawable.background_white_circle) {
         if (imageRes == -1) {
             super.setImageResource(placeholder)
         } else {
-            Glide.with(context)
+            GlideApp.with(context)
                     .load(imageRes)
-                    .asBitmap()
                     .fitCenter()
-                    .into(object : BitmapImageViewTarget(this) {
-                        override fun setResource(resource: Bitmap) {
-                            setImageDrawable(toDrawable(resource))
-                        }
-                    })
+                    .apply(getImageRequestOptions())
+                    .into(this)
         }
     }
 
     fun setImageUrl(imageUrl: String?, default: String = "", placeholder: Int = R.drawable.placeholder_registrant_avatar, crop: Boolean = true) {
         if (isEmpty(imageUrl)) {
             if (isEmpty(default)) {
-                Glide.with(context).load(placeholder).fitCenter().into(this)
+                GlideApp.with(context).load(placeholder).fitCenter().into(this)
             } else {
                 setImageUrl(default, placeholder = placeholder)
             }
         } else {
             if (crop) {
-                Glide.with(context)
+                GlideApp.with(context)
                         .load(imageUrl)
-                        .asBitmap()
-                        .fitCenter()
+                        .apply(getImageRequestOptions())
                         .placeholder(placeholder)
-                        .into(object : BitmapImageViewTarget(this) {
-                            override fun setResource(resource: Bitmap) {
-                                setImageDrawable(toDrawable(resource))
-                            }
-                        })
+                        .into(this)
             } else {
-                Glide.with(context)
+                GlideApp.with(context)
                         .load(imageUrl)
                         .fitCenter()
                         .placeholder(placeholder)

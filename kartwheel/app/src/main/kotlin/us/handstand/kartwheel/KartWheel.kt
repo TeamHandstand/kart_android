@@ -12,6 +12,7 @@ import us.handstand.kartwheel.inject.DaggerInjector
 import us.handstand.kartwheel.inject.Injector
 import us.handstand.kartwheel.inject.provider.*
 import us.handstand.kartwheel.layout.Font
+import us.handstand.kartwheel.layout.GlideAppModule
 import us.handstand.kartwheel.model.CompiledStatements
 import us.handstand.kartwheel.model.Database
 import us.handstand.kartwheel.model.Storage

@@ -30,6 +30,10 @@ class RaceSummaryView : ConstraintLayout {
     private val spotsLeft: TextView
     private val avatar: CircularImageView
     private var timerRunning = false
+    private var backgroundResId = -1
+    private var timeUntilRace = -1L
+    private val updateListener: ValueAnimator.AnimatorUpdateListener
+    private val animatorListener: Animator.AnimatorListener
 
     init {
         View.inflate(context, R.layout.recycler_view_holder_race_list, this)
@@ -46,19 +50,51 @@ class RaceSummaryView : ConstraintLayout {
         details = findViewById(R.id.raceDetails)
         spotsLeft = findViewById(R.id.spotsLeft)
         avatar = findViewById(R.id.avatar)
+
+        animatorListener = object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator?) {
+                if (timerRunning) {
+                    spotsLeft.setText(R.string.start_race)
+                }
+            }
+
+            override fun onAnimationCancel(animation: Animator?) {
+                spotsLeft.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16f)
+                @Suppress("DEPRECATION")
+                spotsLeft.setTextColor(resources.getColor(R.color.textDarkGrey))
+            }
+        }
+
+        updateListener = ValueAnimator.AnimatorUpdateListener {
+            if (timerRunning) {
+                spotsLeft.text = StringUtil.hourMinSecFromMs(timeUntilRace - ((it.animatedValue as Float) * timeUntilRace).toLong())
+            }
+        }
     }
 
     fun bind(binding: RaceListBinding, valueAnimator: ValueAnimator) {
         timerRunning = binding.timerRunning
+        timeUntilRace = binding.timeUntilRace
         raceName.text = binding.raceName
-        details.text = binding.detailsText
-        spotsLeft.text = binding.spotsLeftText
-        spotsLeft.setTextSize(TypedValue.COMPLEX_UNIT_DIP, binding.spotsLeftSize)
+        if (details.text != binding.detailsText) {
+            details.text = binding.detailsText
+        }
+        if (spotsLeft.text != binding.spotsLeftText) {
+            spotsLeft.text = binding.spotsLeftText
+        }
+        if (spotsLeft.textSize != binding.spotsLeftSize) {
+            spotsLeft.paint.textSize = binding.spotsLeftSize
+        }
         spotsLeft.setTextColor(binding.spotsLeftColor)
         startTime.text = binding.startTimeText
-        startTime.setBackgroundResource(binding.backgroundResId)
+        if (backgroundResId != binding.backgroundResId) {
+            startTime.setBackgroundResource(binding.backgroundResId)
+            backgroundResId = binding.backgroundResId
+        }
         alpha = binding.alpha
-        avatar.visibility = binding.avatarVisibility
+        if (avatar.visibility != binding.avatarVisibility) {
+            avatar.visibility = binding.avatarVisibility
+        }
         if (binding.avatarVisibility == View.VISIBLE) {
             avatar.setImageUrl(binding.avatarUrl)
         }
@@ -67,23 +103,8 @@ class RaceSummaryView : ConstraintLayout {
             valueAnimator.duration = binding.animationTime
             valueAnimator.removeAllUpdateListeners()
             valueAnimator.removeAllListeners()
-            valueAnimator.addUpdateListener {
-                if (timerRunning) {
-                    spotsLeft.text = StringUtil.hourMinSecFromMs(binding.timeUntilRace - ((it.animatedValue as Float) * binding.timeUntilRace).toLong())
-                }
-            }
-            valueAnimator.addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
-                    if (timerRunning) {
-                        spotsLeft.setText(R.string.start_race)
-                    }
-                }
-
-                override fun onAnimationCancel(animation: Animator?) {
-                    spotsLeft.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16f)
-                    spotsLeft.setTextColor(resources.getColor(R.color.textDarkGrey))
-                }
-            })
+            valueAnimator.addUpdateListener(updateListener)
+            valueAnimator.addListener(animatorListener)
             valueAnimator.start()
         }
 

@@ -1,16 +1,18 @@
 package us.handstand.kartwheel.location
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Paint
 import android.location.Location
 import android.support.annotation.ColorInt
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.animation.GlideAnimation
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.*
 import us.handstand.kartwheel.R
+import us.handstand.kartwheel.layout.GlideApp
 import us.handstand.kartwheel.layout.ViewUtil
 import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior.Companion.STATE_ANCHOR_POINT
 import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior.Companion.STATE_COLLAPSED
@@ -23,7 +25,7 @@ class MapUtil(context: Context) {
     @Suppress("DEPRECATION")
     @ColorInt private var courseColor: Int = context.resources.getColor(R.color.blue)
     private lateinit var flagIcon: BitmapDescriptor
-    private val glide = Glide.with(context)
+    private val glide = GlideApp.with(context).asBitmap()
     private var googleMap: GoogleMap? = null
     private var markerMap = mutableMapOf<String, Marker>()
     private var mapInitialized = false
@@ -67,12 +69,12 @@ class MapUtil(context: Context) {
             markerMap[userId]?.position = LatLng(location.latitude, location.longitude)
         } else {
             glide.load(imageUrl)
-                    .asBitmap()
-                    .override(buddyIconSize, buddyIconSize)
+                    .apply(RequestOptions.overrideOf(buddyIconSize, buddyIconSize))
+                    .apply(RequestOptions.circleCropTransform())
                     .into(object : SimpleTarget<Bitmap>() {
-                        override fun onResourceReady(resource: Bitmap, glideAnimation: GlideAnimation<in Bitmap>) {
+                        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                             val flag = MarkerOptions()
-                                    .icon(BitmapDescriptorFactory.fromBitmap(getCroppedBitmap(resource)))
+                                    .icon(BitmapDescriptorFactory.fromBitmap(resource))
                                     .position(LatLng(location.latitude, location.longitude))
                                     .anchor(.5f, .5f)
                                     .zIndex(10f)
@@ -80,20 +82,6 @@ class MapUtil(context: Context) {
                         }
                     })
         }
-    }
-
-    private fun getCroppedBitmap(bitmap: Bitmap): Bitmap {
-        val output = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(output)
-        val rect = Rect(0, 0, bitmap.width, bitmap.height)
-
-        val radius = bitmap.width / 2f
-        canvas.drawARGB(0, 0, 0, 0)
-        paint.xfermode = null
-        canvas.drawCircle(radius, radius, radius, paint)
-        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
-        canvas.drawBitmap(bitmap, rect, rect, paint)
-        return output
     }
 
     fun moveToCenter(course: Course?, mapViewHolder: MapViewHolder, newState: Long) {

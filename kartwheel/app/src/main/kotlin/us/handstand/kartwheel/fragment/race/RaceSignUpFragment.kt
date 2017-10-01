@@ -44,6 +44,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, M
     lateinit private var mapView: MapView
     lateinit private var raceSignUpParent: View
     private val registrantAvatarAdapter = RegistrantAvatarAdapter()
+    private val userId = Storage.userId
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -66,7 +67,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, M
         scheduledCountdownFuture = ThreadManager.scheduler.scheduleWithFixedDelay({
             raceCountdown.post {
                 val timeUntilRace = controller.race?.timeUntilRace
-                val raceStatus = controller.race?.raceStatus(Storage.userId,timeUntilRace ?: Long.MIN_VALUE)
+                val raceStatus = controller.race?.raceStatus(userId)
                 when (raceStatus) {
                     Race.FINISHED -> {
                         raceCountdown.setText(R.string.finished)
@@ -121,7 +122,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, M
         super.onStart()
         mapView.onStart()
         userLocation.subscribe {
-            mapUtil.draw(Storage.userId, Storage.userImageUrl, it)
+            mapUtil.draw(userId, Storage.userImageUrl, it)
         }
     }
 

@@ -276,11 +276,12 @@ object API {
                 val successfullyLeftRace = response.get("success").asBoolean
                 if (successfullyLeftRace) {
                     db?.newTransaction()?.use {
+                        val userId = Storage.userId
                         // Remove the race id for the User
-                        CompiledStatements.User.updateRace.bind(null, Storage.userId)
+                        CompiledStatements.User.updateRace.bind(null, userId)
                         CompiledStatements.execute(db, CompiledStatements.User.updateRace)
                         // Delete the UserRaceInfo for this race
-                        CompiledStatements.UserRaceInfo.deleteForUserAndRace.bind(Storage.userId, raceId)
+                        CompiledStatements.UserRaceInfo.deleteForUserAndRace.bind(userId, raceId)
                         CompiledStatements.execute(db, CompiledStatements.UserRaceInfo.deleteForUserAndRace)
                         it.markSuccessful()
                     }
