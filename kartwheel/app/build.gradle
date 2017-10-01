@@ -6,6 +6,7 @@ buildscript {
         autovalue_version = '1.4.1'
         autovalue_gson_version = '0.4.6'
         crashlytics_version = '2.6.8'
+        constraint_layout_version = '1.0.2'
         dagger_version = '2.11'
         espresso_version = '2.2.2'
         exoplayer_version = 'r2.4.2'
@@ -54,7 +55,7 @@ repositories {
 }
 
 android {
-    buildToolsVersion '26.0.1'
+    buildToolsVersion '26.0.2'
     buildTypes {
         debug {
             buildConfigField "String", "AWS_BUCKET_NAME", "\"kartwheel-staging\""
@@ -152,6 +153,7 @@ dependencies {
     compile "com.google.android.exoplayer:exoplayer-ui:$exoplayer_version"
     compile "com.google.android.gms:play-services-maps:$gms_version"
     compile "com.google.android.gms:play-services-location:$gms_version"
+    compile "com.android.support.constraint:constraint-layout:$constraint_layout_version"
     compile "com.google.code.gson:gson:$gson_version"
     compile "com.google.dagger:dagger:$dagger_version"
     compile "com.google.firebase:firebase-messaging:$gms_version"

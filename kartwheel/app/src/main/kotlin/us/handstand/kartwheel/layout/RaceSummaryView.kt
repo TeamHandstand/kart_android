@@ -4,17 +4,22 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
+import android.os.Build
+import android.support.constraint.ConstraintLayout
+import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
-import android.widget.RelativeLayout
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.TextView
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.layout.recyclerview.binding.RaceListBinding
+import us.handstand.kartwheel.util.Permissions
 import us.handstand.kartwheel.util.StringUtil
 
 
-class RaceSummaryView : RelativeLayout {
+class RaceSummaryView : ConstraintLayout {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle)
@@ -28,6 +33,14 @@ class RaceSummaryView : RelativeLayout {
 
     init {
         View.inflate(context, R.layout.recycler_view_holder_race_list, this)
+        setBackgroundResource(R.drawable.background_race_list_content)
+        val lp = RecyclerView.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+        val eightDp = ViewUtil.dpToPx(context, 8)
+        lp.setMargins(eightDp, eightDp, eightDp, eightDp / 2)
+        layoutParams = lp
+        if (Permissions.hasApi(Build.VERSION_CODES.LOLLIPOP)) {
+            elevation = ViewUtil.dpToPx(context, 5).toFloat()
+        }
         startTime = findViewById(R.id.startTime)
         raceName = findViewById(R.id.raceName)
         details = findViewById(R.id.raceDetails)

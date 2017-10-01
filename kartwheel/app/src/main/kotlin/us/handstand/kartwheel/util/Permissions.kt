@@ -4,6 +4,7 @@ import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Context
 import android.content.IntentSender
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.os.Build
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
@@ -24,6 +25,8 @@ object Permissions {
             .setInterval(1000)
             .setFastestInterval(400)
             .setPriority(PRIORITY_HIGH_ACCURACY)!!
+
+    fun hasApi(apiLevel: Int): Boolean = Build.VERSION.SDK_INT >= apiLevel
 
     fun hasLocationPermissions(context: Context): Boolean =
             ContextCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) == PERMISSION_GRANTED

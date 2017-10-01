@@ -1,75 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:parentTag="RelativeLayout">
+       xmlns:app="http://schemas.android.com/apk/res-auto"
+       xmlns:tools="http://schemas.android.com/tools"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       tools:parentTag="android.support.constraint.ConstraintLayout">
 
     <us.handstand.kartwheel.layout.KartTextView
         android:id="@+id/startTime"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignTop="@+id/content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="8dp"
+        android:layout_height="0dp"
         android:background="@drawable/background_race_list_time_red"
-        android:elevation="5dp"
         android:gravity="center"
         android:padding="16dp"
         android:textColor="@android:color/white"
         android:textStyle="bold"
-        tools:text="1:02\npm" />
+        app:layout_constraintBottom_toBottomOf="@+id/spotsLeft"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/raceName"
+        tools:text="1:02\npm"/>
 
 
-    <LinearLayout
-        android:id="@+id/content"
-        android:layout_width="wrap_content"
+    <us.handstand.kartwheel.layout.KartTextView
+        android:id="@+id/raceName"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="4dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginLeft="16dp"
+        android:paddingTop="16dp"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/raceDetails"
+        app:layout_constraintLeft_toRightOf="@+id/startTime"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="#1 - Final race!"/>
+
+    <us.handstand.kartwheel.layout.KartTextView
+        android:id="@+id/raceDetails"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/spotsLeft"
+        app:layout_constraintLeft_toRightOf="@+id/startTime"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/raceName"
+        tools:text="1 lap | 0.5 miles"/>
+
+    <us.handstand.kartwheel.layout.KartTextView
+        android:id="@+id/spotsLeft"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
         android:layout_marginTop="8dp"
-        android:layout_toRightOf="@+id/startTime"
-        android:background="@drawable/background_race_list_content"
-        android:elevation="5dp"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <us.handstand.kartwheel.layout.KartTextView
-            android:id="@+id/raceName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16dp"
-            tools:text="#1 - Final race!" />
-
-        <us.handstand.kartwheel.layout.KartTextView
-            android:id="@+id/raceDetails"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="1 lap | 0.5 miles" />
-
-        <us.handstand.kartwheel.layout.KartTextView
-            android:id="@+id/spotsLeft"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textAllCaps="true"
-            android:textColor="@color/textDarkGrey"
-            android:textSize="16dp"
-            android:textStyle="bold"
-            tools:text="15 spots left" />
-    </LinearLayout>
+        android:paddingBottom="16dp"
+        android:textAllCaps="true"
+        android:textColor="@color/textDarkGrey"
+        android:textSize="16dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/startTime"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/raceDetails"
+        tools:text="15 spots left"/>
 
     <us.handstand.kartwheel.layout.CircularImageView
         android:id="@+id/avatar"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_alignBottom="@+id/content"
-        android:layout_alignRight="@+id/content"
         android:layout_marginBottom="8dp"
         android:layout_marginRight="8dp"
-        android:elevation="5dp" />
+        app:layout_constraintBottom_toBottomOf="@+id/spotsLeft"
+        app:layout_constraintRight_toRightOf="parent"/>
 
 </merge>
