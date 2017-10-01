@@ -36,6 +36,8 @@ class MapUtil(context: Context) {
     init {
         paint.isAntiAlias = true
         paint.color = 0xFF_42_42_42.toInt()
+        glide.apply(RequestOptions.overrideOf(buddyIconSize, buddyIconSize))
+                .apply(RequestOptions.circleCropTransform())
     }
 
     interface MapViewHolder {
@@ -69,8 +71,6 @@ class MapUtil(context: Context) {
             markerMap[userId]?.position = LatLng(location.latitude, location.longitude)
         } else {
             glide.load(imageUrl)
-                    .apply(RequestOptions.overrideOf(buddyIconSize, buddyIconSize))
-                    .apply(RequestOptions.circleCropTransform())
                     .into(object : SimpleTarget<Bitmap>() {
                         override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                             val flag = MarkerOptions()
