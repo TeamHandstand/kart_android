@@ -1,7 +1,7 @@
 package us.handstand.kartwheel.mocks
 
 import android.content.Context
-import com.squareup.sqlbrite.BriteDatabase
+import com.squareup.sqlbrite2.BriteDatabase
 import okhttp3.mockwebserver.MockWebServer
 import us.handstand.kartwheel.model.*
 import us.handstand.kartwheel.network.API
