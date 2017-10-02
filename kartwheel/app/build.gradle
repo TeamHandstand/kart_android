@@ -85,9 +85,9 @@ android {
             debuggable true
             minifyEnabled false
             multiDexEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             resValue "string", "google_maps_key", "AIzaSyBwQypLziEhFbISihza2BfCCcd_y9brGps"
             signingConfig signingConfigs.debug
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
             buildConfigField "String", "AWS_BUCKET_NAME", "\"kartwheel-production\""
@@ -124,9 +124,9 @@ android {
         exclude 'META-INF/rxjava.properties'
     }
     sourceSets {
-        androidTest.java.srcDirs = ['src/main/kotlin', 'src/androidTest/kotlin', 'src/commonTest/kotlin']
+        androidTest.java.srcDirs += ['src/androidTest/kotlin', 'src/commonTest/kotlin']
         main.java.srcDirs += 'src/main/kotlin'
-        test.java.srcDirs = ['src/main/kotlin', 'src/test/kotlin', 'src/commonTest/kotlin']
+        test.java.srcDirs += ['src/test/kotlin', 'src/commonTest/kotlin']
     }
     testOptions {
         unitTests.returnDefaultValues = true
@@ -193,5 +193,5 @@ dependencies {
     testCompile "junit:junit:$junit_version"
 }
 
-//kapt { generateStubs = true }
+kapt { generateStubs = true }
 apply plugin: 'com.google.gms.google-services'
