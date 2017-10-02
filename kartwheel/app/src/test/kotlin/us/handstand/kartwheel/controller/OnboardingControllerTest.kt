@@ -18,11 +18,9 @@ import us.handstand.kartwheel.mocks.MockDBContext
 import us.handstand.kartwheel.model.Storage
 
 class OnboardingControllerTest : OnboardingStepCompletionListener {
-    val onboardingController = OnboardingController(this)
-
-    var nextStep: Long = NONE
-
-    val items = listOf(STARTED, SELFIE, PICK_BUDDY, BUDDY_EXPLANATION, POINT_SYSTEM, VIDEO, FINISHED)
+    private val onboardingController = OnboardingController(this)
+    private val items = listOf(STARTED, SELFIE, PICK_BUDDY, BUDDY_EXPLANATION, POINT_SYSTEM, VIDEO, FINISHED)
+    private var nextStep: Long = NONE
 
     @Before
     fun setUp() {

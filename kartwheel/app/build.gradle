@@ -124,9 +124,9 @@ android {
         exclude 'META-INF/rxjava.properties'
     }
     sourceSets {
-        androidTest.java.srcDirs += ['src/androidTest/kotlin', 'src/commonTest/kotlin']
         main.java.srcDirs += 'src/main/kotlin'
-        test.java.srcDirs += ['src/test/kotlin', 'src/commonTest/kotlin']
+        androidTest.java.srcDirs += ['src/androidTest/kotlin', 'src/commonTest/kotlin'] + main.java.srcDirs
+        test.java.srcDirs += ['src/test/kotlin', 'src/commonTest/kotlin'] + main.java.srcDirs
     }
     testOptions {
         unitTests.returnDefaultValues = true

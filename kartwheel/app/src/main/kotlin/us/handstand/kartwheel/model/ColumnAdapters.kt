@@ -17,7 +17,7 @@ object ColumnAdapters {
                 if (databaseValue != null) DateFormatter[databaseValue] ?: Date() else Date()
 
         override fun encode(value: Date): Long {
-            @Suppress("UNNECESSARY_SAFE_CALL")
+            @Suppress("UNNECESSARY_SAFE_CALL", "USELESS_ELVIS")
             return value?.time ?: 0L
         }
     }
