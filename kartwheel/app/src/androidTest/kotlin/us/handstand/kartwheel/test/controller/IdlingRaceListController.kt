@@ -13,7 +13,7 @@ class IdlingRaceListController(val idlingResource: CountingIdlingResource) : Rac
         super.subscribe(raceListListener)
     }
 
-    override fun onRacesUpdated(races: List<Race>) {
+    override fun onRacesUpdated(races: List<Race.RaceWithCourse>) {
         super.onRacesUpdated(races)
         for (race in races) {
             idlingResource.decrement()

@@ -3,15 +3,15 @@ buildscript {
         android_support_version = '26.1.0'
         android_test_runner_version = '0.5'
         aws_version = '2.4.4'
-        autovalue_version = '1.4.1'
-        autovalue_gson_version = '0.4.6'
+        autovalue_version = '1.5'
+        autovalue_gson_version = '0.5.0'
         crashlytics_version = '2.6.8'
         constraint_layout_version = '1.0.2'
         dagger_version = '2.11'
         espresso_version = '2.2.2'
         exoplayer_version = 'r2.4.2'
         glide_version = '4.1.1'
-        gson_version = '2.8.1'
+        gson_version = '2.8.2'
         gms_version = '11.4.0'
         google_phonenumber_version = '8.5.2'
         junit_version = '4.12'
@@ -125,8 +125,8 @@ android {
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
-        androidTest.java.srcDirs += ['src/androidTest/kotlin', 'src/commonTest/kotlin'] + main.java.srcDirs
-        test.java.srcDirs += ['src/test/kotlin', 'src/commonTest/kotlin'] + main.java.srcDirs
+        androidTest.java.srcDirs += ['src/androidTest/kotlin', 'src/commonTest/kotlin']
+        test.java.srcDirs += ['src/test/kotlin', 'src/commonTest/kotlin']
     }
     testOptions {
         unitTests.returnDefaultValues = true
@@ -154,6 +154,7 @@ dependencies {
     compile "com.google.android.gms:play-services-maps:$gms_version"
     compile "com.google.android.gms:play-services-location:$gms_version"
     compile "com.android.support.constraint:constraint-layout:$constraint_layout_version"
+    compileOnly "com.google.auto.value:auto-value:$autovalue_version"
     compile "com.google.code.gson:gson:$gson_version"
     compile "com.google.dagger:dagger:$dagger_version"
     compile "com.google.firebase:firebase-messaging:$gms_version"
@@ -168,10 +169,7 @@ dependencies {
     kapt "com.google.auto.value:auto-value:$autovalue_version"
     kapt("com.google.dagger:dagger-compiler:$dagger_version")
     kapt "com.ryanharter.auto.value:auto-value-gson:$autovalue_gson_version"
-    provided "com.google.auto.value:auto-value:$autovalue_version"
     provided "com.ryanharter.auto.value:auto-value-gson:$autovalue_gson_version"
-    annotationProcessor "com.google.auto.value:auto-value:$autovalue_version"
-    annotationProcessor "com.ryanharter.auto.value:auto-value-gson:$autovalue_gson_version"
     androidTestCompile "com.android.support:support-annotations:$android_support_version"
     androidTestCompile("com.android.support.test.espresso:espresso-contrib:$espresso_version") {
         exclude group: 'com.android.support', module: 'appcompat'
