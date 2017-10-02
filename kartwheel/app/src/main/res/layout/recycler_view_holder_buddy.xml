@@ -5,7 +5,7 @@
     android:padding="4dp"
     android:layout_gravity="center">
 
-    <us.handstand.kartwheel.layout.SimpleGlideImageView
+    <ImageView
         android:id="@+id/buddy"
         android:layout_width="100dp"
         android:layout_height="100dp"

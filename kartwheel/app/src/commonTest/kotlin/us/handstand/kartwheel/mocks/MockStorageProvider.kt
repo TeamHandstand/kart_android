@@ -31,7 +31,7 @@ object MockStorageProvider : StorageProvider {
         override var bytesTransferred: Long = 0L
             set(value) {
                 transferListener_?.onProgressChanged(1, value, bytesTotal)
-                if (value == bytesTotal) {
+                if (value == 100L) {
                     uploading = false
                     transferListener_?.onStateChanged(1, TransferState.COMPLETED)
                 }

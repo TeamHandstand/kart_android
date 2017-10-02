@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/imageContainer"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <us.handstand.kartwheel.layout.CircularImageView
         android:id="@+id/image"
-        android:layout_width="175dp"
-        android:layout_height="175dp"
-        android:layout_gravity="center"
+        android:layout_width="0dp"
+        android:layout_height="125dp"
         android:background="@drawable/background_white_circle"
-        android:minHeight="175dp"
-        android:minWidth="175dp"
-        android:src="@drawable/onboarding_camera" />
+        app:layout_constraintBottom_toTopOf="@+id/imageText"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"/>
 
     <us.handstand.kartwheel.layout.KartTextView
         android:id="@+id/imageText"
@@ -23,5 +25,9 @@
         android:layout_marginTop="11dp"
         android:gravity="center_horizontal"
         android:text="@string/onboarding_selfie_tap_to_change"
-        android:textColor="@android:color/white" />
-</LinearLayout>
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/image"/>
+</android.support.constraint.ConstraintLayout>

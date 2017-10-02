@@ -32,9 +32,9 @@ class VideoFragment : Fragment(), OnboardingActivity.OnboardingFragment {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         layout = inflater.inflate(R.layout.fragment_onboarding_circle_image, container, false) as ViewGroup
-        layout.findViewById<View>(R.id.imageText).visibility = View.GONE
+        layout.findViewById<View>(R.id.imageText).visibility = View.INVISIBLE
         startVideoButton = layout.findViewById(R.id.image)
-        startVideoButton.setImageResource(R.drawable.onboarding_play_button, R.drawable.onboarding_play_button)
+        startVideoButton.setCircularImageResource(R.drawable.onboarding_play_button)
         startVideoButton.setOnClickListener { videoBehavior.state = BottomSheetBehavior.STATE_EXPANDED }
         videoBehaviorCallback.delegate = object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -91,7 +91,7 @@ class VideoFragment : Fragment(), OnboardingActivity.OnboardingFragment {
                     }
                     exoPlayer.prepare(videoSource, !haveResumePosition, false)
                     exoPlayer.playWhenReady = true
-                    break;
+                    break
                 }
             }
         } else {
@@ -102,14 +102,12 @@ class VideoFragment : Fragment(), OnboardingActivity.OnboardingFragment {
     private fun releasePlayer() {
         if (!isDetached) {
             resumeWindow = video.player?.currentWindowIndex ?: 0
-            resumePosition = if (video.player?.isCurrentWindowSeekable ?: false) Math.max(0, video.player.currentPosition) else C.TIME_UNSET
+            resumePosition = if (video.player?.isCurrentWindowSeekable == true) Math.max(0, video.player.currentPosition) else C.TIME_UNSET
             video.player?.playWhenReady = false
             video.player?.release()
             video.player = null
         }
     }
 
-    override fun readyForNextStep(): Boolean {
-        return wasVideoSeen
-    }
+    override fun readyForNextStep(): Boolean = wasVideoSeen
 }

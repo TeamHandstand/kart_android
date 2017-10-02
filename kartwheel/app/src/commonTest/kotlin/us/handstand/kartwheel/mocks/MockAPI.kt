@@ -29,7 +29,7 @@ fun String.matches(pattern: Pattern): Boolean {
     return matcher.matches()
 }
 
-class MockAPI(val db: BriteDatabase?) {
+class MockAPI(db: BriteDatabase?) {
     val context = MockDBContext()
     val server = MockWebServer()
 
