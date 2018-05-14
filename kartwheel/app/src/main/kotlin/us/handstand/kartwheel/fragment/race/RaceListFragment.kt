@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
-import us.handstand.kartwheel.activity.RaceSignUpActivity
+import us.handstand.kartwheel.activity.RaceActivity
 import us.handstand.kartwheel.controller.RaceListController
 import us.handstand.kartwheel.layout.recyclerview.adapter.RaceListAdapter
 import us.handstand.kartwheel.layout.recyclerview.binding.RaceListBinding
@@ -46,7 +46,7 @@ class RaceListFragment : Fragment(), RaceListController.RaceListListener {
     }
 
     override fun onRaceItemClicked(raceId: String) {
-        val intent = Intent(activity, RaceSignUpActivity::class.java)
+        val intent = Intent(activity, RaceActivity::class.java)
         intent.putExtra(RaceModel.ID, raceId)
         activity.startActivity(intent)
     }

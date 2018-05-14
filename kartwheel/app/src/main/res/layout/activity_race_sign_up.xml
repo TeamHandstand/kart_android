@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <fragment
-        android:id="@+id/fragment"
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:name="us.handstand.kartwheel.fragment.race.RaceSignUpFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

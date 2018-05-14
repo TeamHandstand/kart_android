@@ -51,7 +51,7 @@
             android:name=".activity.TicketActivity"
             android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".activity.LoggedInActivity"/>
-        <activity android:name=".activity.RaceSignUpActivity"/>
+        <activity android:name=".activity.RaceActivity"/>
         <activity android:name=".activity.OnboardingActivity"/>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
