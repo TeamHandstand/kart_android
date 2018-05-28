@@ -15,6 +15,7 @@ import android.support.annotation.ColorRes
 import android.support.annotation.StringRes
 import android.support.v4.view.ViewCompat
 import android.text.TextUtils
+import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewTreeObserver
@@ -68,6 +69,22 @@ object ViewUtil {
 
     init {
         paint.style = Paint.Style.STROKE
+    }
+
+    fun getBitmapFromView(view: View, activity: Activity): Bitmap {
+        val metrics = DisplayMetrics()
+        activity.windowManager.defaultDisplay.getMetrics(metrics)
+        view.measure(metrics.widthPixels, metrics.heightPixels)
+        view.buildDrawingCache()
+
+        val bitmap = Bitmap.createBitmap(view.measuredWidth, view.measuredHeight, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        val backgroundDrawable = view.background
+        if (backgroundDrawable != null) {
+            backgroundDrawable.draw(canvas)
+        }
+        view.draw(canvas)
+        return bitmap
     }
 
     fun getCandyCaneBackgroundDrawable(context: Context, width: Float, height: Float, backgroundColor: Int, stripeColor: Int = 0): Drawable {

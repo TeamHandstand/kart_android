@@ -8,13 +8,13 @@ import us.handstand.kartwheel.notifications.PubNubManager
 
 data class RegistrantInfo(val firstName: String? = "", val imageUrl: String? = "")
 
-interface RaceSignUpListener {
+interface RaceSignUpControllerListener {
     fun onRegistrantsUpdated(registrantInfos: List<RegistrantInfo>)
     fun onRaceUpdated(race: Race.RaceWithCourse)
     fun onTopThreeUpdated(topThree: List<User>)
 }
 
-class RaceSignUpController(val db: BriteDatabase?, val eventId: String, val raceId: String, val listener: RaceSignUpListener) {
+class RaceSignUpController(val db: BriteDatabase?, val eventId: String, val raceId: String, val listener: RaceSignUpControllerListener) {
     private var raceDisposable: Disposable? = null
     private var registrantDisposable: Disposable? = null
     private var topThreeDisposable: Disposable? = null

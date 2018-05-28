@@ -109,6 +109,19 @@ class MapUtil(context: Context) {
         }
     }
 
+    fun moveToLocation(latLng: LatLng) {
+        googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+    }
+
+    fun addMarker(markerBitmap: Bitmap, location: Location) {
+        val marker = MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromBitmap(markerBitmap))
+                .position(LatLng(location.latitude, location.longitude))
+                .anchor(.5f, .5f)
+                .zIndex(10f)
+        googleMap?.addMarker(marker)
+    }
+
     private fun isOldState(state: Long): Boolean = state == oldState || oldState == 0L
 
     fun onMapReady(course: Course?, googleMap: GoogleMap, mapViewHolder: MapViewHolder) {
