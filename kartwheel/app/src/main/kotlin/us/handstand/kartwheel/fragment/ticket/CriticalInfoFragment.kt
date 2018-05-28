@@ -39,7 +39,7 @@ class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnC
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        button = activity.findViewById(R.id.button)
+        button = requireActivity().findViewById(R.id.button)
     }
 
     override fun getTitleResId(): Int {

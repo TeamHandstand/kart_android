@@ -46,7 +46,7 @@ class TicketActivity : AppCompatActivity(), View.OnClickListener, TicketControll
 
         fun canAdvanceToNextStep(): Boolean = true
 
-        fun getActivity(): Activity
+        fun getActivity(): Activity?
 
         companion object {
             fun getFragment(@FragmentType fragmentType: Long): TicketFragment {

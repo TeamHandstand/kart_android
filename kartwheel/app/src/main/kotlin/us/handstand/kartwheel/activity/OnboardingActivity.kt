@@ -226,7 +226,7 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
             (getActivity() as OnboardingActivity).onOnboardingFragmentStateChanged()
         }
 
-        fun getActivity(): Activity
+        fun getActivity(): Activity?
 
         val button: KartButton
             get() = (getActivity() as OnboardingActivity).button

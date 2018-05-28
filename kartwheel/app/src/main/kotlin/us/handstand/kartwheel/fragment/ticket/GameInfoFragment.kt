@@ -25,10 +25,10 @@ class GameInfoFragment : Fragment(), TicketActivity.TicketFragment, GameInfoCont
     private lateinit var playerTwo: GameInfoPlayerView
     @Inject lateinit var controller: GameInfoController
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         KartWheel.injector.inject(this)
         // TODO: FAB Buttons
-        val fragmentView = inflater!!.inflate(R.layout.fragment_ticket_game_info, container, false) as ViewGroup
+        val fragmentView = inflater.inflate(R.layout.fragment_ticket_game_info, container, false) as ViewGroup
         playerOne = fragmentView.findViewById(R.id.playerOne)
         playerTwo = fragmentView.findViewById(R.id.playerTwo)
         playerOne.playerActionClickListener = this
@@ -48,11 +48,11 @@ class GameInfoFragment : Fragment(), TicketActivity.TicketFragment, GameInfoCont
     }
 
     override fun onPlayer1Info(user: User, ticket: Ticket) {
-        activity.runOnUiThread { playerOne.update(user, ticket) }
+        requireActivity().runOnUiThread { playerOne.update(user, ticket) }
     }
 
     override fun onPlayer2Info(user: User, ticket: Ticket) {
-        activity.runOnUiThread { playerTwo.update(user, ticket) }
+        requireActivity().runOnUiThread { playerTwo.update(user, ticket) }
     }
 
     override fun getTitleResId(): Int {

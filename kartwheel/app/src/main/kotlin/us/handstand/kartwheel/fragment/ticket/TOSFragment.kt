@@ -21,7 +21,7 @@ class TOSFragment : Fragment(), TicketActivity.TicketFragment {
         val fragmentView = inflater.inflate(R.layout.fragment_ticket_tos, container, false) as ViewGroup
         scrollView = fragmentView.findViewById(R.id.tosScrollView)
         scrollView.listener = {
-            activity.runOnUiThread {
+            requireActivity().runOnUiThread {
                 scrolledToBottom = true
                 ticketController.onTicketFragmentStateChanged()
             }
@@ -31,7 +31,7 @@ class TOSFragment : Fragment(), TicketActivity.TicketFragment {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        button = activity.findViewById(R.id.button)
+        button = requireActivity().findViewById(R.id.button)
         ViewUtil.setButtonState(resources, button, getAdvanceButtonColor(), getAdvanceButtonLoadingColor(), getAdvanceButtonTextResId(), isAdvanceButtonEnabled())
     }
 

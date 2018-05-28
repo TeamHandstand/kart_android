@@ -32,8 +32,8 @@ class WelcomeFragment : Fragment(), TicketFragment, android.text.TextWatcher, On
     lateinit internal var nickname: EditText
     lateinit private var button: AppCompatButton
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val fragmentView = inflater!!.inflate(R.layout.fragment_ticket_welcome, container, false) as ViewGroup
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val fragmentView = inflater.inflate(R.layout.fragment_ticket_welcome, container, false) as ViewGroup
         birth = fragmentView.findViewById(R.id.birth)
         cell = fragmentView.findViewById(R.id.cell)
         email = fragmentView.findViewById(R.id.email)
@@ -65,7 +65,7 @@ class WelcomeFragment : Fragment(), TicketFragment, android.text.TextWatcher, On
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        button = activity.findViewById(R.id.button)
+        button = requireActivity().findViewById(R.id.button)
     }
 
     override fun getTitleResId(): Int {

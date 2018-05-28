@@ -8,7 +8,7 @@ import us.handstand.kartwheel.layout.recyclerview.viewholder.OnboardingItemVH
 class EndlessItemAdapter : RecyclerView.Adapter<OnboardingItemVH>() {
     var recyclerView: RecyclerView? = null
 
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView?) {
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         this.recyclerView = recyclerView
     }

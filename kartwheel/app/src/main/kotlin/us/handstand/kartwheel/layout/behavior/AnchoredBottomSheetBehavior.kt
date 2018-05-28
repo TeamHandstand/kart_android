@@ -524,7 +524,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
             return viewRef != null && viewRef!!.get() === child
         }
 
-        override fun onViewPositionChanged(changedView: View?, left: Int, top: Int, dx: Int, dy: Int) {
+        override fun onViewPositionChanged(changedView: View, left: Int, top: Int, dx: Int, dy: Int) {
             dispatchOnSlide(top)
         }
 
@@ -565,7 +565,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
             }
         }
 
-        override fun clampViewPositionVertical(child: View?, top: Int, dy: Int): Int {
+        override fun clampViewPositionVertical(child: View, top: Int, dy: Int): Int {
             return constrain(top, minOffset, if (isHideable) parentHeight else maxOffset)
         }
 
@@ -573,11 +573,11 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
             return if (amount < low) low else if (amount > high) high else amount
         }
 
-        override fun clampViewPositionHorizontal(child: View?, left: Int, dx: Int): Int {
-            return child!!.left
+        override fun clampViewPositionHorizontal(child: View, left: Int, dx: Int): Int {
+            return child.left
         }
 
-        override fun getViewVerticalDragRange(child: View?): Int {
+        override fun getViewVerticalDragRange(child: View): Int {
             if (isHideable) {
                 return parentHeight - minOffset
             } else {

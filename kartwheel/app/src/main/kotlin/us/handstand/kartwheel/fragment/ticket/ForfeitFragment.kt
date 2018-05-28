@@ -17,18 +17,18 @@ import us.handstand.kartwheel.model.TicketModel
 
 class ForfeitFragment : Fragment(), TicketActivity.TicketFragment, OnClickListener {
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val fragmentView = inflater!!.inflate(R.layout.fragment_ticket_forfeit, container, false) as ViewGroup
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val fragmentView = inflater.inflate(R.layout.fragment_ticket_forfeit, container, false) as ViewGroup
         fragmentView.findViewById<View>(R.id.additionalButton).setOnClickListener(this)
         val codeLink = fragmentView.findViewById<TextView>(R.id.forfeit_code_link)
-        codeLink.text = activity.resources.getText(R.string.copy_code).toString() + Storage.code
+        codeLink.text = requireActivity().resources.getText(R.string.copy_code).toString() + Storage.code
         codeLink.setOnClickListener(this)
         return fragmentView
     }
 
     override fun onClick(v: View) {
         if (v.id == R.id.forfeit_code_link) {
-            ViewUtil.copyToClipboard(activity, activity.intent.getStringExtra(TicketModel.CODE))
+            ViewUtil.copyToClipboard(requireActivity(), requireActivity().intent.getStringExtra(TicketModel.CODE))
         } else if (v.id == R.id.additionalButton) {
             ticketController.transition(Companion.FORFEIT, Companion.GAME_INFO)
         }

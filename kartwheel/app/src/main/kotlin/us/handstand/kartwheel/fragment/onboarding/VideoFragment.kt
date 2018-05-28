@@ -64,12 +64,12 @@ class VideoFragment : Fragment(), OnboardingActivity.OnboardingFragment {
         if (video.player == null) {
             video.setControlDispatcher(PlaybackControlView.DEFAULT_CONTROL_DISPATCHER)
             val trackSelector = DefaultTrackSelector(AdaptiveTrackSelection.Factory(DefaultBandwidthMeter()))
-            val exoPlayer = ExoPlayerFactory.newSimpleInstance(activity, trackSelector)
+            val exoPlayer = ExoPlayerFactory.newSimpleInstance(requireActivity(), trackSelector)
             video.player = exoPlayer
             video.player?.addListener(object : ExoPlayer.EventListener {
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     if (playbackState == ExoPlayer.STATE_ENDED) {
-                        activity.runOnUiThread { videoBehavior.state = BottomSheetBehavior.STATE_HIDDEN }
+                        requireActivity().runOnUiThread { videoBehavior.state = BottomSheetBehavior.STATE_HIDDEN }
                     }
                 }
 
@@ -81,8 +81,8 @@ class VideoFragment : Fragment(), OnboardingActivity.OnboardingFragment {
                 override fun onTimelineChanged(timeline: Timeline?, manifest: Any?) {}
             })
             // Prepare media for playback
-            val dataSourceFactory = DefaultDataSourceFactory(activity, Util.getUserAgent(context, activity.applicationContext.javaClass.simpleName))
-            for (asset in activity.assets.list("")) {
+            val dataSourceFactory = DefaultDataSourceFactory(requireActivity(), Util.getUserAgent(requireActivity(), requireActivity().applicationContext.javaClass.simpleName))
+            for (asset in requireActivity().assets.list("")) {
                 if (asset.endsWith(".mp4")) {
                     val videoSource = ExtractorMediaSource(Uri.parse("asset:///$asset"), dataSourceFactory, DefaultExtractorsFactory(), null, null)
                     val haveResumePosition = resumeWindow != C.INDEX_UNSET

@@ -62,11 +62,11 @@ class PickBuddyFragment : Fragment(), OnboardingActivity.OnboardingFragment, Vie
 
                 override fun onFailure(errorCode: Int, errorResponse: String) {
                     super.onFailure(errorCode, errorResponse)
-                    activity.runOnUiThread {
+                    requireActivity().runOnUiThread {
                         button.isEnabled = true
                         buddy.isEnabled = true
                     }
-                    SnackbarUtil.show(activity, R.string.buddy_upload_failed)
+                    SnackbarUtil.show(requireActivity(), R.string.buddy_upload_failed)
                 }
             })
             return true

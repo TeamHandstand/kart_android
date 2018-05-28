@@ -8,11 +8,14 @@ import us.handstand.kartwheel.R
 object SnackbarUtil {
     var currentSnackbar: Snackbar? = null
 
-    fun show(activity: Activity, id: Int) {
-        show(activity, activity.resources.getString(id))
+    fun show(activity: Activity?, id: Int) {
+        show(activity, activity?.resources?.getString(id) ?: "")
     }
 
-    fun show(activity: Activity, message: CharSequence) {
+    fun show(activity: Activity?, message: CharSequence) {
+        if (activity == null) {
+            return
+        }
         if (currentSnackbar != null && currentSnackbar?.isShown == true) {
             currentSnackbar?.dismiss()
         }
