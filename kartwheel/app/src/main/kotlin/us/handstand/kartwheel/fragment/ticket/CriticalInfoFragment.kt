@@ -2,7 +2,7 @@ package us.handstand.kartwheel.fragment.ticket
 
 
 import android.os.Bundle
-import android.support.annotation.IntDef
+import android.support.annotation.LongDef
 import android.support.v4.app.Fragment
 import android.support.v7.widget.AppCompatButton
 import android.view.LayoutInflater
@@ -106,10 +106,10 @@ class CriticalInfoFragment : Fragment(), TicketActivity.TicketFragment, View.OnC
         const val NINETIES = 2
         const val FINISHED = 3
 
-        @IntDef(NONE.toLong(), LEFT.toLong(), RIGHT.toLong())
+        @LongDef(NONE.toLong(), LEFT.toLong(), RIGHT.toLong())
         annotation class Answer
 
-        @IntDef(FOOD.toLong(), POKEMON.toLong(), FINISHED.toLong())
+        @LongDef(FOOD.toLong(), POKEMON.toLong(), FINISHED.toLong())
         annotation class Question
     }
 }

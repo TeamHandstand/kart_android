@@ -1,6 +1,6 @@
 package us.handstand.kartwheel.controller
 
-import android.support.annotation.IntDef
+import android.support.annotation.LongDef
 import android.text.TextUtils.isEmpty
 import us.handstand.kartwheel.R
 import us.handstand.kartwheel.model.Storage
@@ -23,7 +23,7 @@ class OnboardingController(var listener: OnboardingStepCompletionListener) {
         const val VIDEO = 5L
         const val FINISHED = 6L
 
-        @IntDef(STARTED, SELFIE, PICK_BUDDY, BUDDY_EXPLANATION, POINT_SYSTEM, VIDEO, FINISHED, ERROR, NONE)
+        @LongDef(STARTED, SELFIE, PICK_BUDDY, BUDDY_EXPLANATION, POINT_SYSTEM, VIDEO, FINISHED, ERROR, NONE)
         annotation class OnboardingStep
 
         fun getTitleStringResIdForStep(@OnboardingStep step: Long): Int {

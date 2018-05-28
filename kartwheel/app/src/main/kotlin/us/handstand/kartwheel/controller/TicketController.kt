@@ -1,6 +1,6 @@
 package us.handstand.kartwheel.controller
 
-import android.support.annotation.IntDef
+import android.support.annotation.LongDef
 import android.text.TextUtils.isEmpty
 import android.util.Log
 import com.google.gson.JsonElement
@@ -27,7 +27,7 @@ class TicketController(val db: BriteDatabase?, var listener: TicketStepCompletio
         const val ONBOARDING = 7L
         const val RACE_LIST = 8L
 
-        @IntDef(TOS, CODE_ENTRY, CRITICAL_INFO, WELCOME, ALREADY_CLAIMED, FORFEIT, GAME_INFO, ONBOARDING,
+        @LongDef(TOS, CODE_ENTRY, CRITICAL_INFO, WELCOME, ALREADY_CLAIMED, FORFEIT, GAME_INFO, ONBOARDING,
                 RACE_LIST, ERROR, NONE)
         annotation class FragmentType
 

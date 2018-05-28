@@ -3,7 +3,7 @@ package us.handstand.kartwheel.layout.behavior
 import android.content.Context
 import android.os.Parcel
 import android.os.Parcelable
-import android.support.annotation.IntDef
+import android.support.annotation.LongDef
 import android.support.design.widget.CoordinatorLayout
 import android.support.v4.view.NestedScrollingChild
 import android.support.v4.view.ViewCompat
@@ -45,7 +45,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
         abstract fun onSlide(bottomSheet: View, slideOffset: Float)
     }
 
-    @IntDef(STATE_EXPANDED, STATE_COLLAPSED, STATE_DRAGGING,
+    @LongDef(STATE_EXPANDED, STATE_COLLAPSED, STATE_DRAGGING,
             STATE_ANCHOR_POINT, STATE_SETTLING, STATE_HIDDEN)
     @Retention(AnnotationRetention.SOURCE)
     annotation class State

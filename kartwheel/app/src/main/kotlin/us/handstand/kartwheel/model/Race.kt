@@ -2,7 +2,7 @@ package us.handstand.kartwheel.model
 
 
 import android.content.ContentValues
-import android.support.annotation.IntDef
+import android.support.annotation.LongDef
 import com.google.auto.value.AutoValue
 import com.google.gson.Gson
 import com.google.gson.TypeAdapter
@@ -26,7 +26,7 @@ abstract class Race : RaceModel, Comparable<Race>, Insertable {
         }
     }
 
-    @IntDef(FINISHED, REGISTERED, REGISTRATION_CLOSED, RACE_IS_FULL, HAS_OPEN_SPOTS)
+    @LongDef(FINISHED, REGISTERED, REGISTRATION_CLOSED, RACE_IS_FULL, HAS_OPEN_SPOTS)
     annotation class RaceStatus
 
     override fun tableName(): String = TABLE_NAME

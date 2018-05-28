@@ -120,10 +120,10 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, M
 
     override fun onStart() {
         super.onStart()
-        mapView.onStart()
         userLocation.subscribe {
             mapUtil.draw(userId, Storage.userImageUrl, it)
         }
+        mapView.onStart()
     }
 
     override fun onDestroy() {
