@@ -11,10 +11,7 @@ import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
 import org.hamcrest.CoreMatchers.allOf
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.*
 import org.junit.runner.RunWith
 import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
@@ -71,9 +68,11 @@ class RaceListFragmentTest {
         ControllerProviderWithIdlingResources.unregisterIdlingResources()
     }
 
+    @Ignore
     @Test
     fun checkColorsOnRaces() {
         races.clear()
+        // TODO: Set status on race
         races.add(MockAPI.getRace(1L, "race-1", MockAPI.hellmanCourse))
         races.add(MockAPI.getRace(2L, "race-2", MockAPI.hellmanCourse))
         races.add(MockAPI.getRace(3L, "race-3", MockAPI.hellmanCourse))

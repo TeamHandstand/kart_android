@@ -12,7 +12,7 @@ fun withBackground(background: Int): Matcher<View> {
     Checks.checkNotNull(background)
     return object: TypeSafeMatcher<View>() {
         override fun describeTo(description: Description) {
-            description.appendText("with background: ")
+            description.appendText("with background: $background")
         }
 
         override fun matchesSafely(item: View): Boolean =

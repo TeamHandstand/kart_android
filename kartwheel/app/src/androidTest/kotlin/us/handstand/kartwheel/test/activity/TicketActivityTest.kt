@@ -343,10 +343,11 @@ class TicketActivityTest {
         onView(withId(R.id.button)).perform(click())
 
         // Enter the code
+        mockApi.server.enqueue(MockResponse().setBody(MockAPI.getUser(1, false, false).toJson()))
+
         onView(withId(R.id.codeEditText)).perform(replaceText(MockAPI.code1))
         onView(withId(R.id.button)).perform(click())
 
-        mockApi.server.enqueue(MockResponse().setBody(MockAPI.getUser(1, false, false).toJson()))
         // Enter information
         onView(withId(R.id.firstName)).perform(replaceText("Matthew"))
         onView(withId(R.id.lastName)).perform(replaceText("Ott"))
