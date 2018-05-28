@@ -21,8 +21,8 @@ import us.handstand.kartwheel.util.SnackbarUtil
 
 
 class LogoutFragment : Fragment(), View.OnClickListener {
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val fragmentView = inflater!!.inflate(layout.fragment_logout, container, false) as ViewGroup
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val fragmentView = inflater.inflate(layout.fragment_logout, container, false) as ViewGroup
         fragmentView.findViewById<View>(R.id.keepTicketButton).setOnClickListener(this)
         fragmentView.findViewById<View>(R.id.logoutButton).setOnClickListener(this)
         val codeLink = fragmentView.findViewById<TextView>(R.id.forfeit_code_link)
