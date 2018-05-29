@@ -232,7 +232,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
             return true
         }
 
-        viewDragHelper!!.processTouchEvent(event)
+        viewDragHelper?.processTouchEvent(event)
 
         if (action == MotionEvent.ACTION_DOWN) {
             reset()
@@ -242,7 +242,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
         // to capture the bottom sheet in case it is not captured and the touch slop is passed.
         if (action == MotionEvent.ACTION_MOVE && !ignoreEvents) {
             if (Math.abs(initialY - event.y) > viewDragHelper!!.touchSlop) {
-                viewDragHelper!!.captureChildView(child, event.getPointerId(event.actionIndex))
+                viewDragHelper?.captureChildView(child, event.getPointerId(event.actionIndex))
             }
         }
         return !ignoreEvents
