@@ -24,10 +24,10 @@ class PickBuddyFragment : Fragment(), OnboardingActivity.OnboardingFragment, Vie
     lateinit var adapter: PickBuddyAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val fragment = inflater.inflate(R.layout.fragment_onboarding_pick_buddy, container, false) as ViewGroup
+        val fragment = inflater.inflate(R.layout.fragment_onboarding_circle_image, container, false) as ViewGroup
         buddy = fragment.findViewById(R.id.image)
         buddy.setOnClickListener(this)
-        buddy.setImageUrl(Storage.userBuddyUrl, placeholder = R.drawable.buddy_placeholder)
+        buddy.setImageUrl(Storage.userBuddyUrl, placeholder = R.drawable.buddy_placeholder, crop = false)
         pickBuddyBehaviorCallback.delegate = object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 // Set the emoji icon to the one that the user has selected
@@ -62,11 +62,11 @@ class PickBuddyFragment : Fragment(), OnboardingActivity.OnboardingFragment, Vie
 
                 override fun onFailure(errorCode: Int, errorResponse: String) {
                     super.onFailure(errorCode, errorResponse)
-                    activity.runOnUiThread {
+                    requireActivity().runOnUiThread {
                         button.isEnabled = true
                         buddy.isEnabled = true
                     }
-                    SnackbarUtil.show(activity, R.string.buddy_upload_failed)
+                    SnackbarUtil.show(requireActivity(), R.string.buddy_upload_failed)
                 }
             })
             return true

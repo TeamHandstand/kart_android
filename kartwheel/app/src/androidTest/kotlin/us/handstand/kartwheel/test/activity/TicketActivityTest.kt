@@ -22,7 +22,10 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.QueueDispatcher
 import okhttp3.mockwebserver.RecordedRequest
 import org.hamcrest.Matchers.*
-import org.junit.*
+import org.junit.After
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 import org.junit.runner.RunWith
 import us.handstand.kartwheel.KartWheel
 import us.handstand.kartwheel.R
@@ -59,7 +62,7 @@ class TicketActivityTest {
 
     @Test
     fun show_codeEntry_whenFinishedReadingTOS() {
-        (testRule.activity.findViewById(R.id.tosScrollView) as TOSScrollView).listener!!.invoke()
+        testRule.activity.findViewById<TOSScrollView>(R.id.tosScrollView).listener!!.invoke()
         onView(withId(R.id.button)).perform(click())
         onView(withId(R.id.codeEditText)).check(matches(isDisplayed()))
     }
@@ -72,7 +75,7 @@ class TicketActivityTest {
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getEvent(false).toJson()))
 
         // Scroll TOS
-        (testRule.activity.findViewById(R.id.tosScrollView) as TOSScrollView).listener!!.invoke()
+        testRule.activity.findViewById<TOSScrollView>(R.id.tosScrollView).listener!!.invoke()
         onView(withId(R.id.button)).perform(click())
 
         // Enter the code
@@ -113,7 +116,7 @@ class TicketActivityTest {
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getEvent(false).toJson()))
 
         // Scroll TOS
-        (testRule.activity.findViewById(R.id.tosScrollView) as TOSScrollView).listener!!.invoke()
+        testRule.activity.findViewById<TOSScrollView>(R.id.tosScrollView).listener!!.invoke()
         onView(withId(R.id.button)).perform(click())
 
         // Enter the code
@@ -174,7 +177,7 @@ class TicketActivityTest {
         mockApi.server.enqueue(MockResponse().setResponseCode(409).setBody("{}"))
 
         // Scroll TOS
-        (testRule.activity.findViewById(R.id.tosScrollView) as TOSScrollView).listener!!.invoke()
+        testRule.activity.findViewById<TOSScrollView>(R.id.tosScrollView).listener!!.invoke()
         onView(withId(R.id.button)).perform(click())
 
         // Enter the code
@@ -198,7 +201,7 @@ class TicketActivityTest {
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getEvent(false).toJson()))
 
         // Scroll TOS
-        (testRule.activity.findViewById(R.id.tosScrollView) as TOSScrollView).listener!!.invoke()
+        testRule.activity.findViewById<TOSScrollView>(R.id.tosScrollView).listener!!.invoke()
         onView(withId(R.id.button)).perform(click())
 
         // Enter the code
@@ -233,7 +236,7 @@ class TicketActivityTest {
         })
 
         // Scroll TOS
-        (testRule.activity.findViewById(R.id.tosScrollView) as TOSScrollView).listener!!.invoke()
+        testRule.activity.findViewById<TOSScrollView>(R.id.tosScrollView).listener!!.invoke()
         onView(withId(R.id.button)).perform(click())
 
         // Enter the code
@@ -251,7 +254,7 @@ class TicketActivityTest {
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getEvent(false).toJson()))
 
         // Scroll TOS
-        (testRule.activity.findViewById(R.id.tosScrollView) as TOSScrollView).listener!!.invoke()
+        testRule.activity.findViewById<TOSScrollView>(R.id.tosScrollView).listener!!.invoke()
         onView(withId(R.id.button)).perform(click())
 
         // Enter the code
@@ -272,7 +275,7 @@ class TicketActivityTest {
         mockApi.server.enqueue(MockResponse().setBody("{}"))
 
         // Scroll TOS
-        (testRule.activity.findViewById(R.id.tosScrollView) as TOSScrollView).listener!!.invoke()
+        testRule.activity.findViewById<TOSScrollView>(R.id.tosScrollView).listener!!.invoke()
         onView(withId(R.id.button)).perform(click())
 
         // Enter the code
@@ -316,7 +319,7 @@ class TicketActivityTest {
         })
 
         // Scroll TOS
-        (testRule.activity.findViewById(R.id.tosScrollView) as TOSScrollView).listener!!.invoke()
+        testRule.activity.findViewById<TOSScrollView>(R.id.tosScrollView).listener!!.invoke()
         onView(withId(R.id.button)).perform(click())
 
         // Enter the code
@@ -336,14 +339,15 @@ class TicketActivityTest {
         mockApi.server.enqueue(MockResponse().setBody(MockAPI.getEvent(false).toJson()))
 
         // Scroll TOS
-        (testRule.activity.findViewById(R.id.tosScrollView) as TOSScrollView).listener!!.invoke()
+        testRule.activity.findViewById<TOSScrollView>(R.id.tosScrollView).listener!!.invoke()
         onView(withId(R.id.button)).perform(click())
 
         // Enter the code
+        mockApi.server.enqueue(MockResponse().setBody(MockAPI.getUser(1, false, false).toJson()))
+
         onView(withId(R.id.codeEditText)).perform(replaceText(MockAPI.code1))
         onView(withId(R.id.button)).perform(click())
 
-        mockApi.server.enqueue(MockResponse().setBody(MockAPI.getUser(1, false, false).toJson()))
         // Enter information
         onView(withId(R.id.firstName)).perform(replaceText("Matthew"))
         onView(withId(R.id.lastName)).perform(replaceText("Ott"))

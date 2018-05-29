@@ -13,8 +13,8 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
+import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.RelativeLayout
 import android.widget.TextView
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView
 import us.handstand.kartwheel.KartWheel
@@ -45,7 +45,7 @@ import us.handstand.kartwheel.util.SnackbarUtil
 import javax.inject.Inject
 
 class OnboardingActivity : AppCompatActivity(), View.OnClickListener, OnboardingStepCompletionListener {
-    private lateinit var background: RelativeLayout
+    private lateinit var background: ViewGroup
     private lateinit var button: KartButton
     private lateinit var description: TextView
     private lateinit var makeItRainText: TextView
@@ -226,7 +226,7 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
             (getActivity() as OnboardingActivity).onOnboardingFragmentStateChanged()
         }
 
-        fun getActivity(): Activity
+        fun getActivity(): Activity?
 
         val button: KartButton
             get() = (getActivity() as OnboardingActivity).button

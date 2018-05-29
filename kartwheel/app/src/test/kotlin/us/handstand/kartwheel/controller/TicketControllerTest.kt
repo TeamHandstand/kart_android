@@ -20,11 +20,9 @@ import us.handstand.kartwheel.mocks.MockDBContext
 import us.handstand.kartwheel.model.Storage
 
 class TicketControllerTest : TicketController.Companion.TicketStepCompletionListener {
-    val ticketController = TicketController(null, this)
-
-    var nextStep = NONE
-
-    val items = listOf(TOS, CODE_ENTRY, CRITICAL_INFO, WELCOME, ALREADY_CLAIMED, FORFEIT, GAME_INFO, ONBOARDING, RACE_LIST)
+    private val ticketController = TicketController(null, this)
+    private val items = listOf(TOS, CODE_ENTRY, CRITICAL_INFO, WELCOME, ALREADY_CLAIMED, FORFEIT, GAME_INFO, ONBOARDING, RACE_LIST)
+    private var nextStep = NONE
 
     @Before
     fun setUp() {

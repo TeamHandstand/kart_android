@@ -3,7 +3,7 @@ package us.handstand.kartwheel.layout.behavior
 import android.content.Context
 import android.os.Parcel
 import android.os.Parcelable
-import android.support.annotation.IntDef
+import android.support.annotation.LongDef
 import android.support.design.widget.CoordinatorLayout
 import android.support.v4.view.NestedScrollingChild
 import android.support.v4.view.ViewCompat
@@ -45,7 +45,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
         abstract fun onSlide(bottomSheet: View, slideOffset: Float)
     }
 
-    @IntDef(STATE_EXPANDED, STATE_COLLAPSED, STATE_DRAGGING,
+    @LongDef(STATE_EXPANDED, STATE_COLLAPSED, STATE_DRAGGING,
             STATE_ANCHOR_POINT, STATE_SETTLING, STATE_HIDDEN)
     @Retention(AnnotationRetention.SOURCE)
     annotation class State
@@ -232,7 +232,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
             return true
         }
 
-        viewDragHelper!!.processTouchEvent(event)
+        viewDragHelper?.processTouchEvent(event)
 
         if (action == MotionEvent.ACTION_DOWN) {
             reset()
@@ -242,7 +242,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
         // to capture the bottom sheet in case it is not captured and the touch slop is passed.
         if (action == MotionEvent.ACTION_MOVE && !ignoreEvents) {
             if (Math.abs(initialY - event.y) > viewDragHelper!!.touchSlop) {
-                viewDragHelper!!.captureChildView(child, event.getPointerId(event.actionIndex))
+                viewDragHelper?.captureChildView(child, event.getPointerId(event.actionIndex))
             }
         }
         return !ignoreEvents
@@ -524,7 +524,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
             return viewRef != null && viewRef!!.get() === child
         }
 
-        override fun onViewPositionChanged(changedView: View?, left: Int, top: Int, dx: Int, dy: Int) {
+        override fun onViewPositionChanged(changedView: View, left: Int, top: Int, dx: Int, dy: Int) {
             dispatchOnSlide(top)
         }
 
@@ -565,7 +565,7 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
             }
         }
 
-        override fun clampViewPositionVertical(child: View?, top: Int, dy: Int): Int {
+        override fun clampViewPositionVertical(child: View, top: Int, dy: Int): Int {
             return constrain(top, minOffset, if (isHideable) parentHeight else maxOffset)
         }
 
@@ -573,11 +573,11 @@ class AnchoredBottomSheetBehavior<V : View> : CoordinatorLayout.Behavior<V> {
             return if (amount < low) low else if (amount > high) high else amount
         }
 
-        override fun clampViewPositionHorizontal(child: View?, left: Int, dx: Int): Int {
-            return child!!.left
+        override fun clampViewPositionHorizontal(child: View, left: Int, dx: Int): Int {
+            return child.left
         }
 
-        override fun getViewVerticalDragRange(child: View?): Int {
+        override fun getViewVerticalDragRange(child: View): Int {
             if (isHideable) {
                 return parentHeight - minOffset
             } else {

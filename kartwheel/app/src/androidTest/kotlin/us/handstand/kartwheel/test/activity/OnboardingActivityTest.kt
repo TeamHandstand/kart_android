@@ -14,6 +14,7 @@ import android.support.test.espresso.matcher.ViewMatchers.Visibility.INVISIBLE
 import android.support.test.espresso.matcher.ViewMatchers.Visibility.VISIBLE
 import android.support.test.runner.AndroidJUnit4
 import android.support.test.uiautomator.By
+import android.support.test.uiautomator.BySelector
 import android.support.test.uiautomator.UiDevice
 import android.support.test.uiautomator.Until
 import android.util.Log
@@ -382,12 +383,14 @@ class OnboardingActivityTest {
         onView(allOf(withParent(withId(R.id.playerTwo)), withId(R.id.player_name))).check(matches(withText(startsWith("UNCLAIMED"))))
     }
 
-    fun takePhotoWithNativeCamera() {
-        device.findObject(By.res("com.android.camera:id/shutter_button").clazz("android.widget.ImageView").text(Pattern.compile("")).pkg("com.android.camera")).clickAndWait(Until.newWindow(), 500)
-        device.findObject(By.res("com.android.camera:id/btn_done").clazz("android.widget.ImageView").text(Pattern.compile("")).pkg("com.android.camera")).clickAndWait(Until.newWindow(), 500)
+    private fun takePhotoWithNativeCamera() {
+        device.findObject(getBySelector("Shutter","shutter_button", "android.widget.ImageView")).clickAndWait(Until.newWindow(), 1000)
+        device.findObject(getBySelector("Done", "done_button", "android.widget.ImageButton")).clickAndWait(Until.newWindow(), 1000)
     }
 
-    fun checkOnboardingState(@OnboardingStep step: Long) {
+    private fun getBySelector(description: String, id: String, widgetName: String): BySelector = By.res("com.android.camera2:id/$id").desc(description).clazz(widgetName).text(Pattern.compile("")).pkg("com.android.camera2")
+
+    private fun checkOnboardingState(@OnboardingStep step: Long) {
         onView(withId(R.id.title)).check(matches(withText(OnboardingController.getTitleStringResIdForStep(step))))
         onView(withId(R.id.pageNumber)).check(matches(withEffectiveVisibility(if (step == STARTED) INVISIBLE else VISIBLE)))
         onView(withId(R.id.pageNumber)).check(matches(withText("$step of 5")))

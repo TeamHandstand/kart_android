@@ -59,7 +59,7 @@ class CodeEntryFragment : Fragment(), TicketActivity.TicketFragment, TextView.On
 
     override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
         if (actionId == IME_ACTION_GO || event?.action == ACTION_DOWN) {
-            activity.findViewById<View>(R.id.button).performClick()
+            requireActivity().findViewById<View>(R.id.button).performClick()
             return true
         }
         return false

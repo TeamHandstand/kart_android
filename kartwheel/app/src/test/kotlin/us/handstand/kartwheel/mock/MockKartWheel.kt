@@ -5,7 +5,5 @@ import us.handstand.kartwheel.KartWheel
 
 
 class MockKartWheel : KartWheel() {
-    override fun getAssets(): AssetManager? {
-        return null
-    }
+    override fun getAssets(): AssetManager? = null
 }

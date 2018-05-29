@@ -9,7 +9,7 @@ object MockTextUtils {
     fun setUp() {
         PowerMockito.`when`(TextUtils.isEmpty(Mockito.any(CharSequence::class.java))).then({
             val str = it.getArgument<CharSequence>(0)
-            (str == null || str.length == 0)
+            (str == null || str.isEmpty())
         })
     }
 }

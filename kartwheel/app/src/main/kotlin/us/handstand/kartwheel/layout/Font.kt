@@ -2,13 +2,13 @@ package us.handstand.kartwheel.layout
 
 import android.content.res.AssetManager
 import android.graphics.Typeface
-import android.support.annotation.IntDef
+import android.support.annotation.LongDef
 import javax.inject.Inject
 
 
 // TODO: The line and letter spacing are off (letters: W, A, O)
 object Font {
-    @IntDef(REGULAR, LIGHT, EXTRA_LIGHT, MEDIUM, BOLD, SEMI_BOLD, EXTRA_BOLD, BLACK, PHOSPHATE, ZAMENHOF)
+    @LongDef(REGULAR, LIGHT, EXTRA_LIGHT, MEDIUM, BOLD, SEMI_BOLD, EXTRA_BOLD, BLACK, PHOSPHATE, ZAMENHOF)
     annotation class Kart
 
     const val REGULAR = 1L

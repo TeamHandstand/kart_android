@@ -65,8 +65,9 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpControllerL
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        controller = RaceSignUpController(Database.get(), Storage.eventId, activity.intent.getStringExtra(RaceModel.ID), this)
-        mapUtil = MapUtil(context)
+
+        controller = RaceSignUpController(Database.get(), Storage.eventId, requireActivity().intent.getStringExtra(RaceModel.ID), this)
+        mapUtil = MapUtil(requireActivity())
         userLocation = signUpListener.getLocation()
     }
 
@@ -77,7 +78,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpControllerL
         super.onViewCreated(view, savedInstanceState)
         mapView = view.findViewById(R.id.mapView) // Need to keep this around for lifecycle callbacks
         raceSignUpParent = view.findViewById(R.id.raceSignUpParent)
-        registrantRecyclerView.layoutManager = LinearLayoutManager(context, HORIZONTAL, false)
+        registrantRecyclerView.layoutManager = LinearLayoutManager(requireActivity(), HORIZONTAL, false)
         registrantRecyclerView.adapter = registrantAvatarAdapter
         bottomSheet.setCandyCaneBackground(android.R.color.white, R.color.textLightGrey_40p)
         // Show the race status on a timer
@@ -137,10 +138,10 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpControllerL
 
     override fun onStart() {
         super.onStart()
-        mapView.onStart()
         userLocation.subscribe {
             mapUtil.draw(userId, Storage.userImageUrl, it)
         }
+        mapView.onStart()
     }
 
     override fun onDestroy() {
@@ -148,7 +149,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpControllerL
         super.onDestroy()
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         mapView.onSaveInstanceState(outState)
     }
@@ -163,7 +164,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpControllerL
     //region - RaceSignUpControllerListener
 
     @Suppress("DEPRECATION") override fun onRegistrantsUpdated(registrantInfos: List<RegistrantInfo>) {
-        activity.runOnUiThread {
+        requireActivity().runOnUiThread {
             registrantAvatarAdapter.setRegistrantInfos(registrantInfos)
             if (controller.userInRace) {
                 signUpButton.setImageResource(R.drawable.ic_clear_white_24dp)
@@ -176,11 +177,11 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpControllerL
     }
 
     override fun onRaceUpdated(race: Race.RaceWithCourse) {
-        activity.runOnUiThread {
+        requireActivity().runOnUiThread {
             raceName.text = race.r().name() ?: Race.DEFAULT_RACE_NAME
             val miles = (race.c()?.distance() ?: 0.0) * (race.r().totalLaps() ?: 0L)
-            raceDescription.text = context.getString(R.string.race_details, race.r().totalLaps(), miles)
-            spotsLeft.text = context.getString(R.string.spots_available, race.r().openSpots())
+            raceDescription.text = requireContext().getString(R.string.race_details, race.r().totalLaps(), miles)
+            spotsLeft.text = requireContext().getString(R.string.spots_available, race.r().openSpots())
             registrantAvatarAdapter.openSpots = race.r().openSpots() ?: 0L
             registrantAvatarAdapter.notifyOpenSpotsChanged()
             // Draw the course in case the map was ready before we got the race
@@ -195,10 +196,10 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpControllerL
     override fun onClick(view: View) {
         when (view.id) {
             R.id.toolbar -> {
-                if (behavior.state == STATE_COLLAPSED) {
-                    behavior.state = STATE_EXPANDED
-                } else if (behavior.state == STATE_EXPANDED) {
-                    behavior.state = STATE_COLLAPSED
+                when (behavior.state) {
+                    STATE_COLLAPSED -> behavior.state = STATE_ANCHOR_POINT
+                    STATE_ANCHOR_POINT -> behavior.state = STATE_EXPANDED
+                    STATE_EXPANDED -> behavior.state = STATE_ANCHOR_POINT
                 }
             }
             R.id.signUpButton -> {

@@ -48,7 +48,7 @@ class RaceListFragment : Fragment(), RaceListController.RaceListListener {
     override fun onRaceItemClicked(raceId: String) {
         val intent = Intent(activity, RaceActivity::class.java)
         intent.putExtra(RaceModel.ID, raceId)
-        activity.startActivity(intent)
+        requireActivity().startActivity(intent)
     }
 
     override fun onRacesUpdated(races: List<Race.RaceWithCourse>) {
@@ -59,6 +59,6 @@ class RaceListFragment : Fragment(), RaceListController.RaceListListener {
         for (race in races) {
             raceBindings.add(RaceListBinding(race, res, avatarUrl, userId))
         }
-        activity.runOnUiThread { raceAdapter.setBindings(raceBindings) }
+        requireActivity().runOnUiThread { raceAdapter.setBindings(raceBindings) }
     }
 }

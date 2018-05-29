@@ -28,7 +28,7 @@ object Photos {
      * Start Camera app for selfie. When the user takes a photo, use the returned File to retrieve it.
      */
     fun takeSelfie(fragment: Fragment): File? {
-        val activity = fragment.activity
+        val activity = fragment.requireActivity()
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         val resolvedComponent = takePictureIntent.resolveActivity(activity.packageManager)
         if (resolvedComponent != null) {

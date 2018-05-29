@@ -10,7 +10,7 @@ import us.handstand.kartwheel.model.Storage
 class PickBuddyAdapter : RecyclerView.Adapter<BuddyVH>(), AdapterVHClickListener<BuddyVH> {
     var recyclerView: RecyclerView? = null
 
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView?) {
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         this.recyclerView = recyclerView
     }

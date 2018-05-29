@@ -57,7 +57,7 @@ class SelfieFragment : Fragment(), OnboardingActivity.OnboardingFragment, Selfie
             !isEmpty(Storage.userImageUrl) || !isEmpty(Storage.selfieUri)
 
     override fun onStateChanged(state: TransferState) {
-        activity.runOnUiThread {
+        requireActivity().runOnUiThread {
             when (state) {
                 TransferState.FAILED, TransferState.CANCELED -> {
                     button.loading = false
@@ -78,6 +78,6 @@ class SelfieFragment : Fragment(), OnboardingActivity.OnboardingFragment, Selfie
     }
 
     override fun showMessage(stringResId: Int) {
-        SnackbarUtil.show(activity, stringResId)
+        SnackbarUtil.show(requireActivity(), stringResId)
     }
 }

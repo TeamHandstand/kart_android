@@ -33,7 +33,7 @@ class RaceMapFragment : Fragment(), OnMapReadyCallback {
         userLocation = (activity as LocationAwareActivity).userLocation
 
         // Temporary
-        mapUtil = MapUtil(context)
+        mapUtil = MapUtil(context!!)
 
     }
 
@@ -69,7 +69,7 @@ class RaceMapFragment : Fragment(), OnMapReadyCallback {
         super.onDestroy()
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
         mapView.onSaveInstanceState(outState)
@@ -86,7 +86,7 @@ class RaceMapFragment : Fragment(), OnMapReadyCallback {
     //region - OnMapReadyCallback
 
     override fun onMapReady(googleMap: GoogleMap) {
-        val avatarView = AvatarView(context)
+        val avatarView = AvatarView(context!!)
         val marker = MarkerOptions()
                 .icon(BitmapDescriptorFactory.fromBitmap(avatarView.getBitmapRepresentation()))
                 .position(LatLng(100.0, 100.0))

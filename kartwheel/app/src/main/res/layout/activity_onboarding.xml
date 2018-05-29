@@ -1,71 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/parent"
+    tools:background="@android:color/background_dark"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/onboardingBackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/titleContainer"
-            android:layout_width="match_parent"
+        <us.handstand.kartwheel.layout.KartTextView
+            android:id="@+id/pageNumber"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_margin="15dp"
+            android:gravity="center_horizontal"
+            android:textColor="@android:color/white"
+            android:textSize="20dp"
+            app:layout_constraintBottom_toTopOf="@+id/title"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="spread_inside"
+            app:typeface="bold"
+            tools:text="2 of 5"/>
 
-            <us.handstand.kartwheel.layout.KartTextView
-                android:id="@+id/pageNumber"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                android:gravity="center_horizontal"
-                android:textColor="@android:color/white"
-                android:textSize="20dp"
-                app:typeface="bold"
-                tools:text="2 of 5" />
+        <us.handstand.kartwheel.layout.KartTextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="25dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:gravity="center_horizontal"
+            android:textColor="@android:color/white"
+            android:textSize="37dp"
+            app:layout_constraintBottom_toTopOf="@+id/description"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/pageNumber"
+            app:typeface="zamenhof"
+            tools:text="@string/onboarding_pick_buddy_title"/>
 
-            <us.handstand.kartwheel.layout.KartTextView
-                android:id="@+id/title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="25dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
-                android:gravity="center_horizontal"
-                android:textColor="@android:color/white"
-                android:textSize="37dp"
-                app:typeface="zamenhof"
-                tools:text="@string/onboarding_pick_buddy_title" />
-
-            <us.handstand.kartwheel.layout.KartTextView
-                android:id="@+id/description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
-                android:gravity="center_horizontal"
-                android:textColor="@android:color/white"
-                android:textSize="18dp"
-                tools:text="@string/onboarding_pick_buddy_description" />
-        </LinearLayout>
+        <us.handstand.kartwheel.layout.KartTextView
+            android:id="@+id/description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:gravity="center_horizontal"
+            android:textColor="@android:color/white"
+            android:textSize="18dp"
+            app:layout_constraintBottom_toTopOf="@+id/fragment"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/title"
+            tools:text="@string/onboarding_pick_buddy_description"/>
 
         <FrameLayout
             android:id="@+id/fragment"
             android:name="us.handstand.kartwheel.fragment.onboarding.PickBuddyFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/button"
-            android:layout_below="@+id/titleContainer"
-            tools:layout="@layout/fragment_onboarding_circle_image" />
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/button"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/description"
+            tools:layout="@layout/fragment_onboarding_circle_image"/>
 
         <us.handstand.kartwheel.layout.KartButton
             android:id="@+id/button"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_above="@+id/makeItRainDescription"
             android:layout_marginLeft="16dp"
@@ -77,21 +87,29 @@
             android:textColor="@color/blue"
             android:textSize="34dp"
             app:backgroundTint="@android:color/white"
+            app:layout_constraintBottom_toTopOf="@+id/makeItRainDescription"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fragment"
             app:loadingSpinnerColor="@color/blue"
             app:typeface="zamenhof"
-            tools:text="@string/onboarding_pick_buddy_button" />
+            tools:text="@string/onboarding_pick_buddy_button"/>
 
         <us.handstand.kartwheel.layout.KartTextView
             android:id="@+id/makeItRainDescription"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_margin="8dp"
             android:gravity="center_horizontal"
             android:text="@string/onboarding_make_it_rain"
             android:textColor="@android:color/white"
-            android:textSize="13dp" />
-    </RelativeLayout>
+            android:textSize="13dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button"/>
+    </android.support.constraint.ConstraintLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/bottomSheet"
@@ -105,7 +123,7 @@
         app:layoutManager="GridLayoutManager"
         app:layout_behavior="BottomSheetBehavior"
         app:spanCount="3"
-        tools:listitem="@layout/recycler_view_holder_buddy" />
+        tools:listitem="@layout/recycler_view_holder_buddy"/>
 
     <FrameLayout
         android:id="@+id/videoSheet"
@@ -120,6 +138,6 @@
         <com.google.android.exoplayer2.ui.SimpleExoPlayerView
             android:id="@+id/video"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"/>
     </FrameLayout>
 </android.support.design.widget.CoordinatorLayout>

@@ -16,10 +16,10 @@ interface RaceListener {
 
 class RaceController(var listener: RaceListener) : RaceSignUpListener {
     private companion object {
-        const val NONE = -1L
-        const val RACE_SIGN_UP = 0L
-        const val RACE_MAP = 1L
-        const val FINISHED = 2L
+        const val NONE = -1
+        const val RACE_SIGN_UP = 0
+        const val RACE_MAP = 1
+        const val FINISHED = 2
 
         @IntDef(RACE_SIGN_UP, RACE_MAP)
         annotation class RaceStep
@@ -35,7 +35,7 @@ class RaceController(var listener: RaceListener) : RaceSignUpListener {
 
     //region - Private
 
-    private fun transition(@RaceStep from: Long, @OnboardingController.Companion.OnboardingStep to: Long) {
+    private fun transition(@RaceStep from: Int, @OnboardingController.Companion.OnboardingStep to: Int) {
         validateTransition(from, to)
 
         when (to) {
@@ -49,7 +49,7 @@ class RaceController(var listener: RaceListener) : RaceSignUpListener {
         }
     }
 
-    private fun validateTransition(@RaceStep from: Long, @RaceStep to: Long) {
+    private fun validateTransition(@RaceStep from: Int, @RaceStep to: Int) {
         when (from) {
             NONE -> if (to == RACE_SIGN_UP) return
             RACE_SIGN_UP -> if (to == RACE_MAP) return
@@ -60,7 +60,7 @@ class RaceController(var listener: RaceListener) : RaceSignUpListener {
         throw IllegalStateException("Invalid transition from $from to $to")
     }
 
-    private fun getFragmentForStep(step: Long): Fragment? {
+    private fun getFragmentForStep(step: Int): Fragment? {
         var fragment: Fragment? = null
         when (step) {
             NONE -> { /* NO - OP */ }
