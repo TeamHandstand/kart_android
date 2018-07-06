@@ -76,6 +76,9 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpControllerL
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        signUpListener.onJoinRace()
+
         mapView = view.findViewById(R.id.mapView) // Need to keep this around for lifecycle callbacks
         raceSignUpParent = view.findViewById(R.id.raceSignUpParent)
         registrantRecyclerView.layoutManager = LinearLayoutManager(requireActivity(), HORIZONTAL, false)
@@ -203,28 +206,30 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpControllerL
                 }
             }
             R.id.signUpButton -> {
-                if (controller.userInRace) {
-                    API.leaveRace(controller.eventId, controller.raceId, object : API.APICallback<Boolean> {
-                        override fun onSuccess(response: Boolean) {
-                            // TODO: Handle Successful Race Departure :D
-                        }
-
-                        override fun onFailure(errorCode: Int, errorResponse: String) {
-                            // TODO: Handle Failed Race Departure :(
-                        }
-                    })
-                } else {
-                    API.joinRace(controller.eventId, controller.raceId, object : API.APICallback<UserRaceInfo> {
-                        override fun onSuccess(response: UserRaceInfo) {
-                            // TODO: Handle Successful Race Departure :D
-                        }
-
-                        override fun onFailure(errorCode: Int, errorResponse: String) {
-                            // TODO: Handle Failed Race Departure :(
-                        }
-                    })
-                    signUpListener.onJoinRace()
-                }
+//                if (controller.userInRace) {
+//                    API.leaveRace(controller.eventId, controller.raceId, object : API.APICallback<Boolean> {
+//                        override fun onSuccess(response: Boolean) {
+//                            // TODO: Handle Successful Race Departure :D
+//                        }
+//
+//                        override fun onFailure(errorCode: Int, errorResponse: String) {
+//                            // TODO: Handle Failed Race Departure :(
+//                        }
+//                    })
+//                } else {
+//                    API.joinRace(controller.eventId, controller.raceId, object : API.APICallback<UserRaceInfo> {
+//                        override fun onSuccess(response: UserRaceInfo) {
+//                            // TODO: Handle Successful Race Departure :D
+////                            signUpListener.onJoinRace()
+//                        }
+//
+//                        override fun onFailure(errorCode: Int, errorResponse: String) {
+//                            // TODO: Handle Failed Race Departure :(
+//                        }
+//                    })
+//                }
+                // TODO: This is normally in the 'else' case, but putting here for testing purposes
+                signUpListener.onJoinRace()
             }
         }
     }

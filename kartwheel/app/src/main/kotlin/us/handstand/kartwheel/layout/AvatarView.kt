@@ -28,10 +28,4 @@ class AvatarView : RelativeLayout {
     }
 
     //endregion
-
-    //region - Public
-
-    fun getBitmapRepresentation(): Bitmap = ViewUtil.getBitmapFromView(this, context as Activity)
-
-    //endregion
 }
