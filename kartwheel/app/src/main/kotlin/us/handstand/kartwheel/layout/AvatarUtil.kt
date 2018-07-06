@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.*
 import android.support.v4.content.ContextCompat
 import us.handstand.kartwheel.R
+import us.handstand.kartwheel.model.Storage
+import us.handstand.kartwheel.model.UserRaceInfo
 
 class AvatarUtil(context: Context) {
     private val context: Context = context
@@ -11,34 +13,31 @@ class AvatarUtil(context: Context) {
     //region - Public
 
     // TODO: Update with UserRaceInfo
-    // For testing purposes, we shall hardcode values
     fun createAvatarMarkerBitmap(profileBitmap: Bitmap,
-                                 userState: String,
+                                 userId: String,
+                                 userState: UserRaceInfo.UserState,
                                  isTargeted: Boolean,
                                  ranking: Int,
                                  armored: Boolean): Bitmap {
         val bitmapDimen = ViewUtil.dpToPx(context, 200)
-        val backgroundBitmap = Bitmap.createBitmap(bitmapDimen, bitmapDimen, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(backgroundBitmap)
+        val canvasBitmap = Bitmap.createBitmap(bitmapDimen, bitmapDimen, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(canvasBitmap)
 
-        val canvasWidth = backgroundBitmap.width
-        val canvasHeight = backgroundBitmap.height
-
-        val center = Point(canvasWidth / 2, canvasHeight / 2)
+        val center = Point(canvasBitmap.width / 2, canvasBitmap.height / 2)
         val borderWidth = ViewUtil.dpToPx(context, 2)
 
-        // Draw the profile bitmap
+        val isCurrentUser = (userId == Storage.userId)
+
+        // Bound the profile bitmap to fit our coordinate system and draw the image
+        // TODO: If we pass in 'null' we should default to a placeholder image
         val boundedProfileBitmap = BitmapUtils.getBoundedDimensionBitmap(profileBitmap, ViewUtil.dpToPx(context, 50))
-
-        // TODO: Currently, we will just assign the border color based off placement, but there is a bit more
-        // complex state-based logic to set the correct color
-        var color = if (ranking == 1) Color.YELLOW else ContextCompat.getColor(context, R.color.light_grey)
-
+        val borderColor = getBorderColor(isCurrentUser, userState)
         BitmapUtils.drawBitmap(BitmapUtils.getCircularCroppedBitmap(
                 boundedProfileBitmap,
                 borderWidth.toFloat(),
                 Color.WHITE,
-                color),
+                borderColor,
+                isGrayScale(isCurrentUser, userState)),
                 center,
                 canvas)
 
@@ -52,19 +51,16 @@ class AvatarUtil(context: Context) {
         val profileWidth = profileBitmap.width
 
         val profileCenterTop = Point(center.x, center.y - profileHeight / 2)
-        val profileBottomLeft = Point(center.x - profileWidth / 2, center.y + profileHeight / 2)
-        val profileBottomRight = Point(center.x + profileWidth / 2, center.y + profileHeight / 2)
 
-        // Overlay status affliction
-        // TODO: Map userState to enums
+        // Overlay state affliction
         when (userState) {
-            "disconnected" -> BitmapUtils.drawTextBitmapToCanvas(
+            UserRaceInfo.UserState.DISCONNECTED -> BitmapUtils.drawTextBitmapToCanvas(
                     canvas,
                     "☠",
                     ViewUtil.spToPx(context, 35).toFloat(),
                     Color.DKGRAY,
                     center)
-            "injured" -> {
+            UserRaceInfo.UserState.INJURED -> {
                 val injuredBitmap = BitmapUtils.getBitmap(context, R.drawable.ic_injured_bandage)
                 var injuredBitmapHeight = injuredBitmap.height
                 val injuredBitmapCenter = Point(profileCenterTop.x,
@@ -83,18 +79,43 @@ class AvatarUtil(context: Context) {
         // Create item (if it exists)
         if (armored) {
             val shieldBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.avatar_shield)
-            BitmapUtils.drawBitmap(shieldBitmap, profileBottomLeft, canvas)
+            val shieldCenter = Point(center.x - profileWidth / 2, center.y + profileHeight / 2)
+            BitmapUtils.drawBitmap(shieldBitmap, shieldCenter, canvas)
         }
 
         // Create the buddy (always exists)
         // TODO: For testing purposes, we will just draw the current user's buddy url indiscriminately
 //            Storage.userBuddyUrl
         val buddyBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.avatar_shield)
-        BitmapUtils.drawBitmap(buddyBitmap, profileBottomRight, canvas)
+        val buddyCenter = Point(center.x + profileWidth / 2, center.y + profileHeight / 2)
+        BitmapUtils.drawBitmap(buddyBitmap, buddyCenter, canvas)
 
-        return backgroundBitmap
+        return canvasBitmap
+    }
+
+    // TODO: Pass in the item zone here
+    fun createItemZoneBitmap(activeBlockCount: Int): Bitmap {
+        return if (activeBlockCount > 0) BitmapUtils.getBitmap(context, R.drawable.item_zone_active) else BitmapUtils.getBitmap(context, R.drawable.item_zone_inactive)
     }
 
     //endregion
 
+    //region - Private
+
+    private fun isGrayScale(isCurrentUser: Boolean, userState: UserRaceInfo.UserState): Boolean {
+        val disconnected = (userState == UserRaceInfo.UserState.DISCONNECTED)
+        val detachedOrInjured = (userState == UserRaceInfo.UserState.DETACHED || userState == UserRaceInfo.UserState.INJURED)
+        return (disconnected || (detachedOrInjured && !isCurrentUser))
+    }
+
+    private fun getBorderColor(isCurrentUser: Boolean, userState: UserRaceInfo.UserState): Int {
+        return when (userState) {
+            UserRaceInfo.UserState.DISCONNECTED -> ContextCompat.getColor(context, R.color.light_grey)
+            UserRaceInfo.UserState.ATTACHED -> ContextCompat.getColor(context, R.color.blue)
+            UserRaceInfo.UserState.DETACHED -> if (isCurrentUser) ContextCompat.getColor(context, R.color.red) else ContextCompat.getColor(context, R.color.blue)
+            UserRaceInfo.UserState.INJURED -> ContextCompat.getColor(context, R.color.light_grey)
+        }
+    }
+
+    //endregion
 }

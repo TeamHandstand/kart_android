@@ -49,11 +49,10 @@ object BitmapUtils {
         return Bitmap.createScaledBitmap(bitmap, scaledWidth, scaledHeight, false)
     }
 
-    fun getCircularCroppedBitmap(bitmap: Bitmap, borderWidth: Float, backgroundColor: Int, borderColor: Int): Bitmap {
+    fun getCircularCroppedBitmap(bitmap: Bitmap, borderWidth: Float, backgroundColor: Int, borderColor: Int, isGrayScale: Boolean): Bitmap {
         assert(bitmap != null) { "Passed bitmap must not be 'null'" }
 
         val backgroundBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
-
         val canvas = Canvas(backgroundBitmap)
 
         val radius = (bitmap.width / 2).toFloat()
@@ -66,12 +65,20 @@ object BitmapUtils {
 
         canvas.drawCircle(radius, radius, radius, paint)
 
-        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
-
-        canvas.drawBitmap(bitmap, 0.0f, 0.0f, null)
+        if (isGrayScale) {
+            val grayPaint = Paint()
+            grayPaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+            // Apply gray scale filtering
+            val matrix = ColorMatrix()
+            matrix.setSaturation(0.0f)
+            val filter = ColorMatrixColorFilter(matrix)
+            grayPaint.colorFilter = filter
+            canvas.drawBitmap(bitmap, 0.0f, 0.0f, grayPaint)
+        } else {
+            canvas.drawBitmap(bitmap, 0.0f, 0.0f, null)
+        }
 
         // Draw border
-        paint.xfermode = null
         paint.style = Paint.Style.STROKE
         paint.color = borderColor
         paint.strokeWidth = borderWidth
@@ -82,6 +89,8 @@ object BitmapUtils {
     }
 
     fun drawTextBitmapToCanvas(canvas: Canvas, text: String, textSize: Float, textColor: Int, location: Point) {
+        assert(text != null) { "Passed text must not be 'null'" }
+
         val paint = Paint()
         paint.textSize = textSize
         paint.isAntiAlias = true

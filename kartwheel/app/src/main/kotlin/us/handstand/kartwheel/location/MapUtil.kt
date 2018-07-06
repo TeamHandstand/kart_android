@@ -45,6 +45,8 @@ class MapUtil(context: Context) {
         val behaviorState: Long
     }
 
+    //region - Public
+
     fun draw(course: Course?) {
         if (mapInitialized || course?.vertices() == null || googleMap == null) {
             return
@@ -58,12 +60,7 @@ class MapUtil(context: Context) {
         course.vertices()?.forEach { coursePolyline.add(LatLng(it.latitude(), it.longitude())) }
         coursePolyline.color(courseColor)
         googleMap?.addPolyline(coursePolyline)
-        val flag = MarkerOptions()
-                .icon(flagIcon)
-                .position(LatLng(course.startLat(), course.startLong()))
-                .anchor(.5f, .5f)
-                .zIndex(10f)
-        googleMap?.addMarker(flag)
+        addMarker(flagIcon, LatLng(course.startLat(), course.startLong()))
     }
 
     fun draw(userId: String, imageUrl: String, location: Location) {
@@ -113,16 +110,9 @@ class MapUtil(context: Context) {
         googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
     }
 
-    fun addMarker(markerBitmap: Bitmap, location: Location) {
-        val marker = MarkerOptions()
-                .icon(BitmapDescriptorFactory.fromBitmap(markerBitmap))
-                .position(LatLng(location.latitude, location.longitude))
-                .anchor(.5f, .5f)
-                .zIndex(10f)
-        googleMap?.addMarker(marker)
+    fun addMarker(markerBitmap: Bitmap, latLng: LatLng) {
+        addMarker(BitmapDescriptorFactory.fromBitmap(markerBitmap), latLng)
     }
-
-    private fun isOldState(state: Long): Boolean = state == oldState || oldState == 0L
 
     fun onMapReady(course: Course?, googleMap: GoogleMap, mapViewHolder: MapViewHolder) {
         this.googleMap = googleMap
@@ -130,4 +120,21 @@ class MapUtil(context: Context) {
         draw(course)
         moveToCenter(course, mapViewHolder, STATE_ANCHOR_POINT)
     }
+
+    //endregion
+
+    //region - Private
+
+    private fun isOldState(state: Long): Boolean = state == oldState || oldState == 0L
+
+    private fun addMarker(descriptor: BitmapDescriptor, latLng: LatLng) {
+        val marker = MarkerOptions()
+                .icon(descriptor)
+                .position(latLng)
+                .anchor(.5f, .5f)
+                .zIndex(10f)
+        googleMap?.addMarker(marker)
+    }
+
+    //endregion
 }
