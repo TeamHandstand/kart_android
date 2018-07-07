@@ -16,7 +16,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import us.handstand.kartwheel.activity.LocationAwareActivity
+import us.handstand.kartwheel.interfaces.RaceFragmentInterface
 import us.handstand.kartwheel.layout.AvatarUtil
 import us.handstand.kartwheel.layout.GlideApp
 import us.handstand.kartwheel.location.MapUtil
@@ -31,12 +31,22 @@ class RaceMapFragment : Fragment(), OnMapReadyCallback {
 
     lateinit private var mapUtil: MapUtil
 
+    lateinit private var listener: RaceFragmentInterface
+
+    companion object {
+        fun newInstance(listener: RaceFragmentInterface): RaceMapFragment {
+            val raceMapFragment = RaceMapFragment()
+            raceMapFragment.listener = listener
+            return raceMapFragment
+        }
+    }
+
     // region - Life Cycle
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        userLocation = (activity as LocationAwareActivity).userLocation
+        userLocation = listener.getLocation()
 
         // Temporary
         mapUtil = MapUtil(context!!)
