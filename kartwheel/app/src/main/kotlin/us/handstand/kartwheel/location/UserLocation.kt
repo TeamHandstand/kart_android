@@ -35,7 +35,7 @@ class UserLocation(val activity: LocationAwareActivity) : Observable<Location>()
 
     private fun publishLocation(location: Location?) {
         if (location == null) return
-//        publisher.onNext(location)
+        publisher.onNext(location)
         val query = UserRaceInfo.FACTORY.select_for_id(userId)
         Database.get().createQuery(UserRaceInfoModel.TABLE_NAME, query.statement, *query.args)
                 .mapToOne { UserRaceInfo.FACTORY.select_for_idMapper().map(it) }

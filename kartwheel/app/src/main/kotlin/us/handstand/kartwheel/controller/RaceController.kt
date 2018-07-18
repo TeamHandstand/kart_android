@@ -65,7 +65,7 @@ class RaceController(var listener: RaceListener) : RaceSignUpListener {
         when (step) {
             NONE -> { /* NO - OP */ }
             RACE_SIGN_UP -> fragment = (RaceSignUpFragment.newInstance(this))
-            RACE_MAP -> { fragment = (RaceMapFragment()) }
+            RACE_MAP -> { fragment = (RaceMapFragment.newInstance(this)) }
             FINISHED -> { /* NO - OP */ }
         }
         return fragment

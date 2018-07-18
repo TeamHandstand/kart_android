@@ -9,8 +9,6 @@ object BitmapUtils {
     //region - Public
 
     fun drawBitmap(bitmap: Bitmap, centerPivot: Point, canvas: Canvas) {
-        assert(bitmap != null) { "Passed bitmap must not be 'null'" }
-
         val bitmapWidth = bitmap.width
         val bitmapHeight = bitmap.height
 
@@ -33,8 +31,6 @@ object BitmapUtils {
     }
 
     fun getBoundedDimensionBitmap(bitmap: Bitmap, dimen: Int): Bitmap {
-        assert(bitmap != null) { "Passed bitmap must not be 'null'" }
-
         var scaledWidth: Int
         var scaledHeight: Int
         var widthToHeightRatio = (bitmap.width / bitmap.height)
@@ -49,9 +45,7 @@ object BitmapUtils {
         return Bitmap.createScaledBitmap(bitmap, scaledWidth, scaledHeight, false)
     }
 
-    fun getCircularCroppedBitmap(bitmap: Bitmap, borderWidth: Float, backgroundColor: Int, borderColor: Int, isGrayScale: Boolean): Bitmap {
-        assert(bitmap != null) { "Passed bitmap must not be 'null'" }
-
+    fun getCircularCroppedBitmap(bitmap: Bitmap, borderWidth: Float, backgroundColor: Int, borderColor: Int): Bitmap {
         val backgroundBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(backgroundBitmap)
 
@@ -65,18 +59,7 @@ object BitmapUtils {
 
         canvas.drawCircle(radius, radius, radius, paint)
 
-        if (isGrayScale) {
-            val grayPaint = Paint()
-            grayPaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
-            // Apply gray scale filtering
-            val matrix = ColorMatrix()
-            matrix.setSaturation(0.0f)
-            val filter = ColorMatrixColorFilter(matrix)
-            grayPaint.colorFilter = filter
-            canvas.drawBitmap(bitmap, 0.0f, 0.0f, grayPaint)
-        } else {
-            canvas.drawBitmap(bitmap, 0.0f, 0.0f, null)
-        }
+        canvas.drawBitmap(bitmap, 0.0f, 0.0f, null)
 
         // Draw border
         paint.style = Paint.Style.STROKE
@@ -88,9 +71,23 @@ object BitmapUtils {
         return backgroundBitmap
     }
 
-    fun drawTextBitmapToCanvas(canvas: Canvas, text: String, textSize: Float, textColor: Int, location: Point) {
-        assert(text != null) { "Passed text must not be 'null'" }
+    fun getGrayscaleBitmap(bitmap: Bitmap): Bitmap {
+        val height = bitmap.height
+        val width = bitmap.width
 
+        val grayScaleBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(grayScaleBitmap)
+        val paint = Paint()
+        val matrix = ColorMatrix()
+        matrix.setSaturation(0f)
+        val matrixFilter = ColorMatrixColorFilter(matrix)
+        paint.colorFilter = matrixFilter
+        canvas.drawBitmap(bitmap, 0f, 0f, paint)
+
+        return grayScaleBitmap
+    }
+
+    fun drawTextBitmapToCanvas(canvas: Canvas, text: String, textSize: Float, textColor: Int, location: Point) {
         val paint = Paint()
         paint.textSize = textSize
         paint.isAntiAlias = true

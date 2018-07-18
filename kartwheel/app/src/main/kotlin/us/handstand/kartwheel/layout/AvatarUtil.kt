@@ -10,6 +10,14 @@ import us.handstand.kartwheel.model.UserRaceInfo
 class AvatarUtil(context: Context) {
     private val context: Context = context
 
+    companion object {
+        private fun isGrayScale(isCurrentUser: Boolean, userState: UserRaceInfo.UserState): Boolean {
+            val disconnected = (userState == UserRaceInfo.UserState.DISCONNECTED)
+            val detachedOrInjured = (userState == UserRaceInfo.UserState.DETACHED || userState == UserRaceInfo.UserState.INJURED)
+            return (disconnected || (detachedOrInjured && !isCurrentUser))
+        }
+    }
+
     //region - Public
 
     // TODO: Update with UserRaceInfo
@@ -19,8 +27,8 @@ class AvatarUtil(context: Context) {
                                  isTargeted: Boolean,
                                  ranking: Int,
                                  armored: Boolean): Bitmap {
-        val bitmapDimen = ViewUtil.dpToPx(context, 200)
-        val canvasBitmap = Bitmap.createBitmap(bitmapDimen, bitmapDimen, Bitmap.Config.ARGB_8888)
+        val canvasDimen = ViewUtil.dpToPx(context, 200)
+        val canvasBitmap = Bitmap.createBitmap(canvasDimen, canvasDimen, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(canvasBitmap)
 
         val center = Point(canvasBitmap.width / 2, canvasBitmap.height / 2)
@@ -30,14 +38,18 @@ class AvatarUtil(context: Context) {
 
         // Bound the profile bitmap to fit our coordinate system and draw the image
         // TODO: If we pass in 'null' we should default to a placeholder image
-        val boundedProfileBitmap = BitmapUtils.getBoundedDimensionBitmap(profileBitmap, ViewUtil.dpToPx(context, 50))
+        var boundedProfileBitmap = BitmapUtils.getBoundedDimensionBitmap(profileBitmap, ViewUtil.dpToPx(context, 50))
         val borderColor = getBorderColor(isCurrentUser, userState)
+
+        if (isGrayScale(isCurrentUser, userState)) {
+            boundedProfileBitmap = BitmapUtils.getGrayscaleBitmap(boundedProfileBitmap)
+        }
+
         BitmapUtils.drawBitmap(BitmapUtils.getCircularCroppedBitmap(
                 boundedProfileBitmap,
                 borderWidth.toFloat(),
                 Color.WHITE,
-                borderColor,
-                isGrayScale(isCurrentUser, userState)),
+                borderColor),
                 center,
                 canvas)
 
@@ -93,7 +105,7 @@ class AvatarUtil(context: Context) {
         return canvasBitmap
     }
 
-    // TODO: Pass in the item zone here
+    // TODO: Pass in the item zone model object here
     fun createItemZoneBitmap(activeBlockCount: Int): Bitmap {
         return if (activeBlockCount > 0) BitmapUtils.getBitmap(context, R.drawable.item_zone_active) else BitmapUtils.getBitmap(context, R.drawable.item_zone_inactive)
     }
@@ -101,12 +113,6 @@ class AvatarUtil(context: Context) {
     //endregion
 
     //region - Private
-
-    private fun isGrayScale(isCurrentUser: Boolean, userState: UserRaceInfo.UserState): Boolean {
-        val disconnected = (userState == UserRaceInfo.UserState.DISCONNECTED)
-        val detachedOrInjured = (userState == UserRaceInfo.UserState.DETACHED || userState == UserRaceInfo.UserState.INJURED)
-        return (disconnected || (detachedOrInjured && !isCurrentUser))
-    }
 
     private fun getBorderColor(isCurrentUser: Boolean, userState: UserRaceInfo.UserState): Int {
         return when (userState) {
