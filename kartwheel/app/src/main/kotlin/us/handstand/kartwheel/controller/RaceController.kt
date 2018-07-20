@@ -68,6 +68,7 @@ class RaceController(var listener: RaceListener) : RaceSignUpListener {
             RACE_MAP -> { fragment = (RaceMapFragment.newInstance(this)) }
             FINISHED -> { /* NO - OP */ }
         }
+
         return fragment
     }
 

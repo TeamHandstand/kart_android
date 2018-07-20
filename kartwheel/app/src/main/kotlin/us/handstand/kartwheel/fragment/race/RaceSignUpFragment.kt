@@ -59,8 +59,6 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpControllerL
         }
     }
 
-    //endregion
-
     //region - Life Cycle
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -220,7 +218,7 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpControllerL
                     API.joinRace(controller.eventId, controller.raceId, object : API.APICallback<UserRaceInfo> {
                         override fun onSuccess(response: UserRaceInfo) {
                             // TODO: Handle Successful Race Departure :D
-//                            signUpListener.onJoinRace()
+                            signUpListener.onJoinRace()
                         }
 
                         override fun onFailure(errorCode: Int, errorResponse: String) {

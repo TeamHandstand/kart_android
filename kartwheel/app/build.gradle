@@ -68,14 +68,12 @@ android {
             buildConfigField "String", "PUBNUB_PUBLISH_KEY", "\"pub-c-d910acf2-8540-453a-96d4-b68288c4c98f\""
             buildConfigField "String", "PUBNUB_SUBSCRIPTION_KEY", "\"sub-c-10a277a8-0f99-11e7-bd0e-0619f8945a4f\""
             // 10.0.2.2 is the address that the android emulator uses to access the host machine
-//            buildConfigField "String", "SERVER", "\"http://10.0.2.2:3000\""
-            buildConfigField "String", "SERVER", "\"https://api.handstandwith.us\""
-//            buildConfigField "String", "SERVER_FRAGMENT", "\"\""
-            buildConfigField "String", "SERVER_FRAGMENT", "\"kart/v1/\""
+            buildConfigField "String", "SERVER", "\"http://10.0.2.2:3000\""
+            buildConfigField "String", "SERVER_FRAGMENT", "\"\""
             debuggable true
             minifyEnabled false
             multiDexEnabled true
-            resValue "string", "google_maps_key", "AIzaSyDLFx9yrrbq77ssFNlvYNKUnUtKFN4K_BA"
+            resValue "string", "google_maps_key", "AIzaSyBwQypLziEhFbISihza2BfCCcd_y9brGps"
         }
         staging {
             buildConfigField "String", "AWS_BUCKET_NAME", "\"kartwheel-staging\""
@@ -91,7 +89,7 @@ android {
             minifyEnabled false
             multiDexEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            resValue "string", "google_maps_key", "AIzaSyDLFx9yrrbq77ssFNlvYNKUnUtKFN4K_BA"
+            resValue "string", "google_maps_key", "AIzaSyBwQypLziEhFbISihza2BfCCcd_y9brGps"
             signingConfig signingConfigs.debug
         }
         release {
@@ -108,7 +106,7 @@ android {
             minifyEnabled true
             multiDexEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            resValue "string", "google_maps_key", "AIzaSyDLFx9yrrbq77ssFNlvYNKUnUtKFN4K_BA"
+            resValue "string", "google_maps_key", "AIzaSyBwQypLziEhFbISihza2BfCCcd_y9brGps"
         }
     }
     compileSdkVersion 27

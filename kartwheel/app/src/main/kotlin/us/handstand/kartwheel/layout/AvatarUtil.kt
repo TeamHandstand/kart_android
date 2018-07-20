@@ -96,7 +96,7 @@ class AvatarUtil(context: Context) {
         }
 
         // Create the buddy (always exists)
-        // TODO: For testing purposes, we will just draw the current user's buddy url indiscriminately
+        // TODO: For testing purposes, we will just draw the shield as a placeholder for the buddy image
 //            Storage.userBuddyUrl
         val buddyBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.avatar_shield)
         val buddyCenter = Point(center.x + profileWidth / 2, center.y + profileHeight / 2)
