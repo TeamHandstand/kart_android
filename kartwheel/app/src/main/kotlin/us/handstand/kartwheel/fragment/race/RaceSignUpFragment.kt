@@ -14,10 +14,10 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import kotlinx.android.synthetic.main.fragment_race_sign_up.*
 import us.handstand.kartwheel.R
-import us.handstand.kartwheel.activity.LocationAwareActivity
 import us.handstand.kartwheel.controller.RaceSignUpController
-import us.handstand.kartwheel.controller.RaceSignUpListener
+import us.handstand.kartwheel.controller.RaceSignUpControllerListener
 import us.handstand.kartwheel.controller.RegistrantInfo
+import us.handstand.kartwheel.interfaces.RaceFragmentInterface
 import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior
 import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior.Companion.STATE_ANCHOR_POINT
 import us.handstand.kartwheel.layout.behavior.AnchoredBottomSheetBehavior.Companion.STATE_COLLAPSED
@@ -34,8 +34,12 @@ import us.handstand.kartwheel.util.ThreadManager
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
+interface RaceSignUpListener: RaceFragmentInterface {
+    fun onJoinRace()
+}
+
 // TODO: Add error callbacks when trying to join/leave a race
-class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, MapUtil.MapViewHolder, View.OnClickListener {
+class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpControllerListener, MapUtil.MapViewHolder, View.OnClickListener {
     lateinit private var behavior: AnchoredBottomSheetBehavior<NestedScrollView>
     lateinit private var controller: RaceSignUpController
     lateinit private var scheduledCountdownFuture: ScheduledFuture<*>
@@ -43,21 +47,34 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, M
     lateinit private var mapUtil: MapUtil
     lateinit private var mapView: MapView
     lateinit private var raceSignUpParent: View
+    lateinit private var signUpListener: us.handstand.kartwheel.fragment.race.RaceSignUpListener
     private val registrantAvatarAdapter = RegistrantAvatarAdapter()
     private val userId = Storage.userId
 
+    companion object {
+        fun newInstance(listener: RaceSignUpListener): RaceSignUpFragment {
+            val raceSignUpFragment = RaceSignUpFragment()
+            raceSignUpFragment.signUpListener = listener
+            return raceSignUpFragment
+        }
+    }
+
+    //region - Life Cycle
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
         controller = RaceSignUpController(Database.get(), Storage.eventId, requireActivity().intent.getStringExtra(RaceModel.ID), this)
         mapUtil = MapUtil(requireActivity())
-        userLocation = (requireActivity() as LocationAwareActivity).userLocation
+        userLocation = signUpListener.getLocation()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-            inflater.inflate(R.layout.fragment_race_sign_up, container)
+            inflater.inflate(R.layout.fragment_race_sign_up, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         mapView = view.findViewById(R.id.mapView) // Need to keep this around for lifecycle callbacks
         raceSignUpParent = view.findViewById(R.id.raceSignUpParent)
         registrantRecyclerView.layoutManager = LinearLayoutManager(requireActivity(), HORIZONTAL, false)
@@ -141,6 +158,10 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, M
         mapView.onLowMemory()
     }
 
+    //endregion
+
+    //region - RaceSignUpControllerListener
+
     @Suppress("DEPRECATION") override fun onRegistrantsUpdated(registrantInfos: List<RegistrantInfo>) {
         requireActivity().runOnUiThread {
             registrantAvatarAdapter.setRegistrantInfos(registrantInfos)
@@ -182,9 +203,26 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpListener, M
             }
             R.id.signUpButton -> {
                 if (controller.userInRace) {
-                    API.leaveRace(controller.eventId, controller.raceId)
+                    API.leaveRace(controller.eventId, controller.raceId, object : API.APICallback<Boolean> {
+                        override fun onSuccess(response: Boolean) {
+                            // TODO: Handle Successful Race Departure :D
+                        }
+
+                        override fun onFailure(errorCode: Int, errorResponse: String) {
+                            // TODO: Handle Failed Race Departure :(
+                        }
+                    })
                 } else {
-                    API.joinRace(controller.eventId, controller.raceId)
+                    API.joinRace(controller.eventId, controller.raceId, object : API.APICallback<UserRaceInfo> {
+                        override fun onSuccess(response: UserRaceInfo) {
+                            // TODO: Handle Successful Race Departure :D
+                            signUpListener.onJoinRace()
+                        }
+
+                        override fun onFailure(errorCode: Int, errorResponse: String) {
+                            // TODO: Handle Failed Race Departure :(
+                        }
+                    })
                 }
             }
         }

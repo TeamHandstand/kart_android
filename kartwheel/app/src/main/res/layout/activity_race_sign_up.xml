@@ -5,11 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <fragment
-        android:id="@+id/fragment"
-        android:name="us.handstand.kartwheel.fragment.race.RaceSignUpFragment"
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        tools:layout="@layout/fragment_race_sign_up" />
+        android:layout_alignParentTop="true" />
 </android.support.design.widget.CoordinatorLayout>

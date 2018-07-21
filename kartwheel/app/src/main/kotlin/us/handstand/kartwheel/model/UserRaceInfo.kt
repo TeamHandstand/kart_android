@@ -13,6 +13,14 @@ import java.util.concurrent.CountDownLatch
 
 @AutoValue
 abstract class UserRaceInfo : UserRaceInfoModel, Insertable {
+    // TODO: Map the state property to the corresponding UserState
+    enum class UserState {
+        DISCONNECTED, // Dropped from the race
+        ATTACHED, // Standard racing state
+        DETACHED, // No buddy
+        INJURED // Hit
+    }
+
     override fun tableName(): String {
         return UserRaceInfoModel.TABLE_NAME
     }

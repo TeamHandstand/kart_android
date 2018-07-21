@@ -238,7 +238,6 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener, Onboarding
             get() = (getActivity() as OnboardingActivity).pickBuddyBehavior
         val videoBehavior: BottomSheetBehavior<FrameLayout>
             get() = (getActivity() as OnboardingActivity).videoBehavior
-
         val pickBuddyBehaviorCallback: BSBCallbackIMPL
             get() = (getActivity() as OnboardingActivity).pickBuddyBehaviorCallback
         val videoBehaviorCallback: BSBCallbackIMPL

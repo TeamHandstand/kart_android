@@ -32,6 +32,9 @@ object ViewUtil {
     fun dpToPx(context: Context, dp: Int): Int =
             TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(), context.resources.displayMetrics).toInt()
 
+    fun spToPx(context: Context, sp: Int): Int =
+            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp.toFloat(), context.resources.displayMetrics).toInt()
+
     fun hideKeyboard(context: Activity) {
         if (context.currentFocus != null) {
             val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
