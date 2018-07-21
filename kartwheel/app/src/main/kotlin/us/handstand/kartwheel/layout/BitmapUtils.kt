@@ -71,7 +71,7 @@ object BitmapUtils {
         return backgroundBitmap
     }
 
-    fun getGrayscaleBitmap(bitmap: Bitmap): Bitmap {
+    fun getGrayScaleBitmap(bitmap: Bitmap): Bitmap {
         val height = bitmap.height
         val width = bitmap.width
 

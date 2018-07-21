@@ -75,15 +75,15 @@ class RaceMapFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-
         mapView.onSaveInstanceState(outState)
+
+        super.onSaveInstanceState(outState)
     }
 
     override fun onLowMemory() {
-        super.onLowMemory()
-
         mapView.onLowMemory()
+        
+        super.onLowMemory()
     }
 
     //endregion

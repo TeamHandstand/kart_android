@@ -75,8 +75,6 @@ class RaceSignUpFragment : Fragment(), OnMapReadyCallback, RaceSignUpControllerL
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        signUpListener.onJoinRace()
-
         mapView = view.findViewById(R.id.mapView) // Need to keep this around for lifecycle callbacks
         raceSignUpParent = view.findViewById(R.id.raceSignUpParent)
         registrantRecyclerView.layoutManager = LinearLayoutManager(requireActivity(), HORIZONTAL, false)

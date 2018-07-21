@@ -42,7 +42,7 @@ class AvatarUtil(context: Context) {
         val borderColor = getBorderColor(isCurrentUser, userState)
 
         if (isGrayScale(isCurrentUser, userState)) {
-            boundedProfileBitmap = BitmapUtils.getGrayscaleBitmap(boundedProfileBitmap)
+            boundedProfileBitmap = BitmapUtils.getGrayScaleBitmap(boundedProfileBitmap)
         }
 
         BitmapUtils.drawBitmap(BitmapUtils.getCircularCroppedBitmap(
